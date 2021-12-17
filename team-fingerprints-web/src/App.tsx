@@ -1,26 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 
-function App() {
+const queryClient = new QueryClient()
+
+const Example = () => {
+  const { isLoading, error, data } = useQuery('repoData', () =>
+    fetch('http://localhost:3000').then(res =>res.text())
+  )
+  console.log(data)
+  if (isLoading) return  <div>'Loading...'</div>
+  if (error) return <div>'An error has occurred: ' + console.error;
+  </div>
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Data</h1>
+      <h1>{data}</h1>
     </div>
-  );
+  )
 }
 
-export default App;
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+    </QueryClientProvider>
+  )
+}

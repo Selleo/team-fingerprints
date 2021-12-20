@@ -3,13 +3,13 @@ import { Question, QuestionSchema } from './question.entity';
 
 @Schema()
 export class Trend {
-  @Prop()
+  @Prop({ required: true })
   primary: string;
 
-  @Prop()
+  @Prop({ required: true })
   secondary: string;
 
-  @Prop({ type: [QuestionSchema], default: [] })
-  questions: Question[];
+  @Prop({ type: [QuestionSchema], default: [], required: true })
+  questions?: Question[];
 }
 export const TrendSchema = SchemaFactory.createForClass(Trend);

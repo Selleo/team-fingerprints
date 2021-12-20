@@ -2,10 +2,10 @@ import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 
 @Schema()
 export class Question {
-  @Prop()
-  content: string;
+  @Prop({ required: true })
+  title: string;
 
-  @Prop()
+  @Prop({ required: true })
   primary: boolean;
 }
 export const QuestionSchema = SchemaFactory.createForClass(Question);

@@ -15,5 +15,6 @@ import { SurveyService } from './survey.service';
   ],
   controllers: [SurveyController],
   providers: [SurveyService],
+  exports: [SurveyService],
 })
 export class SurveyModule {}

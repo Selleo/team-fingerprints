@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 const App = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");

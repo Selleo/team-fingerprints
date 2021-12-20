@@ -1,9 +1,14 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { SurveyService } from './survey.service';
 
 @Controller()
 export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
+
+  @Get()
+  async getSurveysAll() {
+    return await this.surveyService.getSurveysAll();
+  }
 
   @Get('/:surveyId')
   async getSurvey(@Param('surveyId') surveyId: string) {
@@ -11,8 +16,8 @@ export class SurveyController {
   }
 
   @Post()
-  async createSurvey() {
-    return await this.surveyService.createSurvey();
+  async createSurvey(@Body('title') title: string) {
+    return await this.surveyService.createSurvey(title);
   }
 
   @Delete('/:surveyId')

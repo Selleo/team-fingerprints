@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { SurveyService } from './survey.service';
 
 @Controller()
@@ -8,6 +8,11 @@ export class SurveyController {
   @Get('/:surveyId')
   async getSurvey(@Param('surveyId') surveyId: string) {
     return this.surveyService.getSurvey(surveyId);
+  }
+
+  @Post()
+  async createSurvey() {
+    return await this.surveyService.createSurvey();
   }
 
   @Delete('/:surveyId')

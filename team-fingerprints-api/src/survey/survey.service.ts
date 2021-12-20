@@ -10,10 +10,14 @@ export class SurveyService {
   ) {}
 
   async getSurvey(surveyId: string) {
-    return surveyId;
+    return await this.surveyModel.findById({ _id: surveyId }).exec();
+  }
+
+  async createSurvey() {
+    return await this.surveyModel.create({});
   }
 
   async removeSurvey(surveyId: string) {
-    return surveyId;
+    return await this.surveyModel.findByIdAndDelete({ _id: surveyId }).exec();
   }
 }

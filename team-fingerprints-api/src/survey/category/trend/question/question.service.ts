@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Survey } from 'src/entities/survey.entity';
 import { CreateQuestionDto } from './dto/CreateQuestionDto.dto';
+import { QuestionParamsDto } from './dto/QuestionParamsDto.dto';
 import { UpdateQuestionDto } from './dto/UpdateQuestionDto.dto';
 
 @Injectable()
@@ -10,19 +11,26 @@ export class QuestionService {
   constructor(
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
   ) {}
-  async getQuestion(questionId: string): Promise<string> {
+  async getQuestionsAll(params: QuestionParamsDto) {
+    return params;
+  }
+
+  async getQuestion({ questionId }: QuestionParamsDto) {
     return questionId;
   }
 
-  async createQuestion(body: CreateQuestionDto) {
-    return body;
+  async createQuestion(params: QuestionParamsDto, body: CreateQuestionDto) {
+    return { params, body };
   }
 
-  async updateQuestion(questionId: string, body: UpdateQuestionDto) {
-    return { body, questionId };
+  async updateQuestion(
+    { questionId }: QuestionParamsDto,
+    body: UpdateQuestionDto,
+  ) {
+    return { questionId, body };
   }
 
-  async removeQuestion(questionId: string) {
+  async removeQuestion({ questionId }: QuestionParamsDto) {
     return questionId;
   }
 }

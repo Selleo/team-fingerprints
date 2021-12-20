@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
+import { CategoryParamsDto } from './dto/CategoryParamsDto.dto';
 import { CreateCategoryDto } from './dto/CreateCategoryDto.dto';
 import { UpdateCategoryDto } from './dto/UpdateCategoryDto.dto';
 
@@ -15,26 +16,29 @@ import { UpdateCategoryDto } from './dto/UpdateCategoryDto.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Get('/:categoryId')
-  async getCategory(@Param('categoryId') categoryId: string): Promise<string> {
-    return await this.categoryService.getCategory(categoryId);
+  @Get('/')
+  async getCategories(@Param() params: CategoryParamsDto) {
+    return await this.categoryService.getCategories(params);
   }
 
   @Post()
-  async createCategory(@Body() body: CreateCategoryDto) {
-    return await this.categoryService.createCategory(body);
+  async createCategory(
+    @Param() params: CategoryParamsDto,
+    @Body() body: CreateCategoryDto,
+  ) {
+    return await this.categoryService.createCategory(params, body);
   }
 
   @Patch('/:categoryId')
   async updateCateory(
-    @Param('categoryId') categoryId: string,
+    @Param() params: CategoryParamsDto,
     @Body() body: UpdateCategoryDto,
   ) {
-    return await this.categoryService.updateCategory(categoryId, body);
+    return await this.categoryService.updateCategory(params, body);
   }
 
   @Delete('/:categoryId')
-  async removeCategory(@Param('categoryId') categoryId: string) {
-    return this.categoryService.removeCategory(categoryId);
+  async removeCategory(@Param() params: CategoryParamsDto) {
+    return this.categoryService.removeCategory(params);
   }
 }

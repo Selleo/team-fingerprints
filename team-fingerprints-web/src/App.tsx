@@ -1,29 +1,31 @@
-import React from 'react';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import AppRoutes from "./routes";
+import { BrowserRouter } from "react-router-dom";
+import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
+import { useState } from "react";
 
-const queryClient = new QueryClient()
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 
-const Example = () => {
-  const { isLoading, error, data } = useQuery('repoData', () =>
-    fetch('http://localhost:3000').then(res =>res.text())
-  )
-  console.log(data)
-  if (isLoading) return  <div>'Loading...'</div>
-  if (error) return <div>'An error has occurred: ' + console.error;
-  </div>
+const queryClient = new QueryClient();
 
-  return (
-    <div>
-      <h1>Data</h1>
-      <h1>{data}</h1>
-    </div>
-  )
-}
+const App = () => {
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
-export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Example />
+      <ColorSchemeProvider
+        colorScheme={theme}
+        toggleColorScheme={() => {
+          setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+        }}
+      >
+        <MantineProvider theme={{ colorScheme: theme }} withGlobalStyles>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </MantineProvider>
+      </ColorSchemeProvider>
     </QueryClientProvider>
-  )
-}
+  );
+};
+
+export default App;

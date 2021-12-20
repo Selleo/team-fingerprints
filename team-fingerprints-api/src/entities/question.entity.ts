@@ -3,7 +3,7 @@ import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 @Schema()
 export class Question {
   @Prop()
-  content: string;
+  title: string;
 
   @Prop()
   primary: boolean;

@@ -1,19 +1,17 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreateSurveyDto } from './dto/CreateSurvey.dto';
+import { Controller, Delete, Get, Param } from '@nestjs/common';
 import { SurveyService } from './survey.service';
 
-@Controller('survey')
+@Controller()
 export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
-  @Get()
-  helloWorld(): string {
-    console.log(this.surveyService.helloWorld());
-    return this.surveyService.helloWorld();
+  @Get('/:surveyId')
+  async getSurvey(@Param('surveyId') surveyId: string) {
+    return this.surveyService.getSurvey(surveyId);
   }
 
-  @Post()
-  async createSurvey(@Body() createSurveyDto: CreateSurveyDto) {
-    return await this.surveyService.createSurvey(createSurveyDto);
+  @Delete('/:surveyId')
+  async removeSurvey(@Param('surveyId') surveyId: string) {
+    return this.surveyService.removeSurvey(surveyId);
   }
 }

@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
 import { SurveyService } from './survey.service';
 
 @Controller()
@@ -16,8 +17,9 @@ export class SurveyController {
   }
 
   @Post()
-  async createSurvey(@Body('title') title: string) {
-    return await this.surveyService.createSurvey(title);
+  async createSurvey(@Body() body: CreateSurveyDto) {
+    console.log(body);
+    return await this.surveyService.createSurvey(body);
   }
 
   @Delete('/:surveyId')

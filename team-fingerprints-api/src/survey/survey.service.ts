@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Survey } from 'src/entities/survey.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
 
 @Injectable()
 export class SurveyService {
@@ -17,8 +18,8 @@ export class SurveyService {
     return await this.surveyModel.findById({ _id: surveyId }).exec();
   }
 
-  async createSurvey(title: string) {
-    return await this.surveyModel.create({ title });
+  async createSurvey({ data }: CreateSurveyDto) {
+    return await this.surveyModel.create({ title: data.title });
   }
 
   async removeSurvey(surveyId: string) {

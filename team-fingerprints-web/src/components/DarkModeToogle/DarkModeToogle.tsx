@@ -1,23 +1,24 @@
 import { FC } from "react";
 import { ActionIcon, useMantineColorScheme } from "@mantine/core";
 import { SunIcon, MoonIcon } from "@modulz/radix-icons";
+import { useStyles } from "./styles";
 
 const DarkMoreToogle: FC = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
+  const { classes } = useStyles();
 
   return (
     <ActionIcon
       variant="outline"
       color={dark ? "yellow" : "blue"}
-      // style={{ position: "absolute", right: "20px" }}
       onClick={() => toggleColorScheme()}
       title="Toggle color scheme"
     >
       {dark ? (
-        <SunIcon style={{ width: 18, height: 18 }} />
+        <SunIcon className={classes.icon} />
       ) : (
-        <MoonIcon style={{ width: 18, height: 18 }} />
+        <MoonIcon className={classes.icon} />
       )}
     </ActionIcon>
   );

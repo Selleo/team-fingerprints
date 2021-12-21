@@ -25,7 +25,7 @@ export class CategoryController {
   }
 
   @Delete('/:categoryId')
-  async removeCategory(@Param() params: CategoryParamsDto) {
-    return this.categoryService.removeCategory(params);
+  async removeCategory(@Param('categoryId') categoryId: string) {
+    return this.categoryService.removeCategory(categoryId);
   }
 }

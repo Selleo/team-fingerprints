@@ -56,11 +56,9 @@ export class TrendService {
     );
   }
 
-  async removeTrend({ surveyId, categoryId, trendId }: TrendParamsDto) {
+  async removeTrend(trendId: string) {
     return await this.surveyModel.updateOne(
       {
-        _id: surveyId,
-        'categories._id': categoryId,
         'categories.trends._id': trendId,
       },
       {

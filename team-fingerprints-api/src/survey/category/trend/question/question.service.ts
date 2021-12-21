@@ -12,18 +12,65 @@ export class QuestionService {
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
   ) {}
 
-  async createQuestion(params: QuestionParamsDto, body: CreateQuestionDto) {
-    return { params, body };
+  async createQuestion(
+    { surveyId, categoryId, trendId }: QuestionParamsDto,
+    { data }: CreateQuestionDto,
+  ) {
+    return await this.surveyModel.updateOne(
+      {
+        _id: surveyId,
+      },
+      {
+        $push: {
+          'categories.$[category].trends.$[trend].questions': data,
+        },
+      },
+      {
+        arrayFilters: [
+          { 'trend._id': trendId },
+          { 'category._id': categoryId },
+        ],
+      },
+    );
   }
 
   async updateQuestion(
-    { questionId }: QuestionParamsDto,
-    body: UpdateQuestionDto,
+    { surveyId, categoryId, trendId, questionId }: QuestionParamsDto,
+    { data }: UpdateQuestionDto,
   ) {
-    return { questionId, body };
+    return await this.surveyModel.updateOne(
+      {
+        _id: surveyId,
+      },
+      {
+        $set: {
+          'categories.$[category].trends.$[trend].questions.$[question].title':
+            data.title,
+          'categories.$[category].trends.$[trend].questions.$[question].primary':
+            data.primary,
+        },
+      },
+      {
+        arrayFilters: [
+          { 'question._id': questionId },
+          { 'trend._id': trendId },
+          { 'category._id': categoryId },
+        ],
+      },
+    );
   }
 
-  async removeQuestion({ questionId }: QuestionParamsDto) {
-    return questionId;
+  async removeQuestion(questionId: string) {
+    console.log(questionId);
+    return await this.surveyModel.updateOne(
+      {
+        'categories.trends.questions._id': questionId,
+      },
+      {
+        $pull: {
+          'categories.$.trends.$[].questions': { _id: questionId },
+        },
+      },
+    );
   }
 }

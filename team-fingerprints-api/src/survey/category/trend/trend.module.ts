@@ -3,7 +3,6 @@ import { TrendController } from './trend.controller';
 import { TrendService } from './trend.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Survey, SurveySchema } from 'src/entities/survey.entity';
-import { SurveyModule } from 'src/survey/survey.module';
 
 @Module({
   imports: [
@@ -13,7 +12,6 @@ import { SurveyModule } from 'src/survey/survey.module';
         schema: SurveySchema,
       },
     ]),
-    SurveyModule,
   ],
   controllers: [TrendController],
   providers: [TrendService],

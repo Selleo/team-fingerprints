@@ -1,4 +1,4 @@
-export class CreateCategoryDto {
+export class CreateSurveyDto {
   data: {
     title: string;
   };

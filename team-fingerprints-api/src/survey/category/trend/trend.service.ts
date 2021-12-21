@@ -42,7 +42,8 @@ export class TrendService {
       },
       {
         $set: {
-          'categories.$[category].trends.$[trend]': data,
+          'categories.$[category].trends.$[trend].primary': data.primary,
+          'categories.$[category].trends.$[trend].secondary': data.secondary,
         },
       },
       {
@@ -63,7 +64,7 @@ export class TrendService {
       },
       {
         $pull: {
-          trends: { _id: trendId },
+          'categories.$[].trends': { _id: trendId },
         },
       },
     );

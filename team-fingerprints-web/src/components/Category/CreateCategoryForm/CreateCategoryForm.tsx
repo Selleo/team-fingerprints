@@ -28,12 +28,12 @@ const CreateCategoryForm = ({
     }
   );
 
-  const onSubmit = (values: any) => {
-    mutation.mutate(values);
+  const onSubmit = (data: any) => {
+    mutation.mutate(data);
   };
 
   const { handleSubmit, handleChange } = useFormik({
-    initialValues: { values: { title: "" } },
+    initialValues: { data: { title: "" } },
     onSubmit,
   });
 
@@ -43,7 +43,7 @@ const CreateCategoryForm = ({
         required
         label="Category title"
         placeholder="Category name"
-        onChange={handleChange("values.title")}
+        onChange={handleChange("data.title")}
       />
 
       <Button className={classes.submitButton} type="submit">

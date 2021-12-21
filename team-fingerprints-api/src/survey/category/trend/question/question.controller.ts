@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/CreateQuestionDto.dto';
+import { QuestionParamsDto } from './dto/QuestionParamsDto.dto';
 import { UpdateQuestionDto } from './dto/UpdateQuestionDto.dto';
 import { QuestionService } from './question.service';
 
@@ -15,31 +16,24 @@ import { QuestionService } from './question.service';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @Get('/:questionId')
-  async getQuestion(@Param('questionId') questionId: string): Promise<string> {
-    return await this.questionService.getQuestion(questionId);
-  }
-
   @Post('/')
-  async createQuestion(@Body() body: CreateQuestionDto) {
-    return await this.questionService.createQuestion(body);
+  async createQuestion(
+    @Param() params: QuestionParamsDto,
+    @Body() body: CreateQuestionDto,
+  ) {
+    return await this.questionService.createQuestion(params, body);
   }
 
   @Patch('/:questionId')
   async updateQuestion(
-    @Param('questionId') questionId: string,
+    @Param() params: QuestionParamsDto,
     @Body() body: UpdateQuestionDto,
   ) {
-    return await this.questionService.updateQuestion(questionId, body);
+    return await this.questionService.updateQuestion(params, body);
   }
 
   @Delete('/:questionId')
-  async removeQuestion(@Param('questionId') questionId: string) {
-    return await this.questionService.removeQuestion(questionId);
+  async removeQuestion(@Param() params: QuestionParamsDto) {
+    return await this.questionService.removeQuestion(params);
   }
-
-  // @Get()
-  // getQuestionsByTrendId() {
-  //   return { successful: true };
-  // }
 }

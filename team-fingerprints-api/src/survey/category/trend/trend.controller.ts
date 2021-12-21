@@ -1,13 +1,6 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { CreateTrendDto } from './dto/CreateTrendDto.dto';
+import { TrendParamsDto } from './dto/TrendParamsDto.dto';
 import { UpdateTrendDto } from './dto/UpdateTrendDto.dto';
 import { TrendService } from './trend.service';
 
@@ -15,22 +8,20 @@ import { TrendService } from './trend.service';
 export class TrendController {
   constructor(private readonly trendService: TrendService) {}
 
-  @Get('/:trendId')
-  async getTrend(@Param('trendId') trendId: string): Promise<string> {
-    return trendId;
-  }
-
   @Post('/')
-  async createTrend(@Body() body: CreateTrendDto) {
-    return await this.trendService.createTrend(body);
+  async createTrend(
+    @Param() params: TrendParamsDto,
+    @Body() body: CreateTrendDto,
+  ) {
+    return await this.trendService.createTrend(params, body);
   }
 
   @Patch('/:trendId')
   async updateTrend(
-    @Param('trendId') trendId: string,
+    @Param() params: TrendParamsDto,
     @Body() body: UpdateTrendDto,
   ) {
-    return await this.trendService.updateTrend(trendId, body);
+    return await this.trendService.updateTrend(params, body);
   }
 
   @Delete('/:trendId')

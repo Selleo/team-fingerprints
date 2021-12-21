@@ -14,28 +14,20 @@ export class CategoryService {
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
   ) {}
 
-  async getCategories({ surveyId }: CategoryParamsDto) {
-    const surveyExists = await this.surveyService.getSurvey(surveyId);
-    if (!surveyExists) return new NotFoundException();
-    return surveyExists.categories;
-  }
-
   async createCategory(
     { surveyId }: CategoryParamsDto,
-    body: CreateCategoryDto,
+    { data }: CreateCategoryDto,
   ) {
     const surveyExists = await this.surveyService.getSurvey(surveyId);
     if (!surveyExists) return new NotFoundException();
-    surveyExists.categories.push({ title: body.data.title });
+    surveyExists.categories.push({ title: data.title });
     return await surveyExists.save();
   }
 
   async updateCategory(
     { surveyId, categoryId }: CategoryParamsDto,
-    body: UpdateCategoryDto,
+    { data }: UpdateCategoryDto,
   ) {
-    const surveyExists = await this.surveyService.getSurvey(surveyId);
-    if (!surveyExists) return new NotFoundException();
     return await this.surveyModel.updateOne(
       {
         _id: surveyId,
@@ -43,15 +35,13 @@ export class CategoryService {
       },
       {
         $set: {
-          'categories.$.title': body.data.title,
+          'categories.$.title': data.title,
         },
       },
     );
   }
 
   async removeCategory({ categoryId, surveyId }: CategoryParamsDto) {
-    const surveyExists = await this.surveyService.getSurvey(surveyId);
-    if (!surveyExists) return new NotFoundException();
     return await this.surveyModel.updateOne(
       {
         _id: surveyId,

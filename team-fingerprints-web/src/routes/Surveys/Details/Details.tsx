@@ -35,9 +35,9 @@ function Details() {
       </h2>
       <AddCategoryButton surveyId={data._id} />
       <Accordion>
-        <Accordion.Item label="category0"></Accordion.Item>
-
-        <Accordion.Item label="category1"></Accordion.Item>
+        {data.categories.map((category: any) => {
+          return <Accordion.Item label={category.title}></Accordion.Item>;
+        })}
       </Accordion>
     </div>
   );

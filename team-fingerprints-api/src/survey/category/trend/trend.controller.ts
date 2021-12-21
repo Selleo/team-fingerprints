@@ -25,7 +25,7 @@ export class TrendController {
   }
 
   @Delete('/:trendId')
-  async removeTrend(@Param() params: TrendParamsDto) {
-    return this.trendService.removeTrend(params);
+  async removeTrend(@Param('trendId') trendId: string) {
+    return this.trendService.removeTrend(trendId);
   }
 }

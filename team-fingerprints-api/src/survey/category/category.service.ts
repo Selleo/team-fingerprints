@@ -35,16 +35,15 @@ export class CategoryService {
       },
       {
         $set: {
-          'categories.$.title': data.title,
+          'categories.$.title': data,
         },
       },
     );
   }
 
-  async removeCategory({ categoryId, surveyId }: CategoryParamsDto) {
+  async removeCategory(categoryId: string) {
     return await this.surveyModel.updateOne(
       {
-        _id: surveyId,
         'categories._id': categoryId,
       },
       {

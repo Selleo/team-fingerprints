@@ -3,18 +3,27 @@ import { useFormik } from "formik";
 import { useMutation } from "react-query";
 import { useStyles } from "./styles";
 import axios from "axios";
-import { queryClient } from "../../App";
+import { queryClient } from "../../../App";
 
-const CreateSurveyForm = ({ onClose }: { onClose: () => void }) => {
+const CreateCategoryForm = ({
+  surveyId,
+  onClose,
+}: {
+  surveyId: string;
+  onClose: () => void;
+}) => {
   const { classes } = useStyles();
 
   const mutation = useMutation(
-    (newSurvey) => {
-      return axios.post("/survey", newSurvey).then(onClose);
+    (newCategory) => {
+      return axios
+        .post(`/survey/${surveyId}/category`, newCategory)
+        .then(onClose)
+        .catch(console.warn);
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["surveysAll"]);
+        queryClient.invalidateQueries(["surveyOne"]);
       },
     }
   );
@@ -32,8 +41,8 @@ const CreateSurveyForm = ({ onClose }: { onClose: () => void }) => {
     <form onSubmit={handleSubmit}>
       <TextInput
         required
-        label="Survey title"
-        placeholder="Survey name"
+        label="Category title"
+        placeholder="Category name"
         onChange={handleChange("values.title")}
       />
 
@@ -44,4 +53,4 @@ const CreateSurveyForm = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-export default CreateSurveyForm;
+export default CreateCategoryForm;

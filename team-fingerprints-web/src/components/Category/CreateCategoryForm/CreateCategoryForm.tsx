@@ -3,28 +3,37 @@ import { useFormik } from "formik";
 import { useMutation } from "react-query";
 import { useStyles } from "./styles";
 import axios from "axios";
-import { queryClient } from "../../App";
+import { queryClient } from "../../../App";
 
-const CreateSurveyForm = ({ onClose }: { onClose: () => void }) => {
+const CreateCategoryForm = ({
+  surveyId,
+  onClose,
+}: {
+  surveyId: string;
+  onClose: () => void;
+}) => {
   const { classes } = useStyles();
 
   const mutation = useMutation(
-    (newSurvey) => {
-      return axios.post("/survey", newSurvey).then(onClose);
+    (newCategory) => {
+      return axios
+        .post(`/survey/${surveyId}/category`, newCategory)
+        .then(onClose)
+        .catch(console.warn);
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["surveysAll"]);
+        queryClient.invalidateQueries(["surveyOne"]);
       },
     }
   );
 
-  const onSubmit = (values: any) => {
-    mutation.mutate(values);
+  const onSubmit = (data: any) => {
+    mutation.mutate(data);
   };
 
   const { handleSubmit, handleChange } = useFormik({
-    initialValues: { values: { title: "" } },
+    initialValues: { data: { title: "" } },
     onSubmit,
   });
 
@@ -32,9 +41,9 @@ const CreateSurveyForm = ({ onClose }: { onClose: () => void }) => {
     <form onSubmit={handleSubmit}>
       <TextInput
         required
-        label="Survey title"
-        placeholder="Survey name"
-        onChange={handleChange("values.title")}
+        label="Category title"
+        placeholder="Category name"
+        onChange={handleChange("data.title")}
       />
 
       <Button className={classes.submitButton} type="submit">
@@ -44,4 +53,4 @@ const CreateSurveyForm = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-export default CreateSurveyForm;
+export default CreateCategoryForm;

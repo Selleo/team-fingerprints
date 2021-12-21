@@ -6,8 +6,8 @@ import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
 
 import { useStyles } from "./styles";
-import SurveyItem from "../../components/_Survey/SurveyItem";
-import CreateSurveyForm from "../../components/CreateSurveyForm";
+import SurveyItem from "../../components/Survey/SurveyItem";
+import CreateSurveyForm from "../../components/Survey/CreateSurveyForm";
 
 const Surveys = () => {
   const { classes } = useStyles();
@@ -16,6 +16,7 @@ const Surveys = () => {
   const { isLoading, error, data } = useQuery("surveysAll", () =>
     fetch(`${process.env.REACT_APP_API_URL}/survey`).then((res) => res.json())
   );
+
   if (isLoading)
     return (
       <>

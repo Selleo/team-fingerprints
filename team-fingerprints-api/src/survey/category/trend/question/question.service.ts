@@ -11,13 +11,6 @@ export class QuestionService {
   constructor(
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
   ) {}
-  async getQuestionsAll(params: QuestionParamsDto) {
-    return params;
-  }
-
-  async getQuestion({ questionId }: QuestionParamsDto) {
-    return questionId;
-  }
 
   async createQuestion(params: QuestionParamsDto, body: CreateQuestionDto) {
     return { params, body };

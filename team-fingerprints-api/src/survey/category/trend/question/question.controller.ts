@@ -16,16 +16,6 @@ import { QuestionService } from './question.service';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @Get('/')
-  async getQuestionsAll(@Param() params: QuestionParamsDto) {
-    return await this.questionService.getQuestionsAll(params);
-  }
-
-  @Get('/:questionId')
-  async getQuestion(@Param() params: QuestionParamsDto) {
-    return await this.questionService.getQuestion(params);
-  }
-
   @Post('/')
   async createQuestion(
     @Param() params: QuestionParamsDto,

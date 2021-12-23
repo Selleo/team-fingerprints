@@ -35,7 +35,7 @@ export class CategoryService {
       },
       {
         $set: {
-          'categories.$.title': data,
+          'categories.$.title': data.title,
         },
       },
     );

@@ -16,17 +16,17 @@ export class CategoryService {
 
   async createCategory(
     { surveyId }: CategoryParamsDto,
-    { data }: CreateCategoryDto,
+    { title }: CreateCategoryDto,
   ) {
     const surveyExists = await this.surveyService.getSurvey(surveyId);
     if (!surveyExists) return new NotFoundException();
-    surveyExists.categories.push({ title: data.title });
+    surveyExists.categories.push({ title });
     return await surveyExists.save();
   }
 
   async updateCategory(
     { surveyId, categoryId }: CategoryParamsDto,
-    { data }: UpdateCategoryDto,
+    { title }: UpdateCategoryDto,
   ) {
     return await this.surveyModel.updateOne(
       {
@@ -35,7 +35,7 @@ export class CategoryService {
       },
       {
         $set: {
-          'categories.$.title': data.title,
+          'categories.$.title': title,
         },
       },
     );

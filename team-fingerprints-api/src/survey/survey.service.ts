@@ -21,18 +21,18 @@ export class SurveyService {
     return await this.surveyModel.findById({ _id: surveyId }).exec();
   }
 
-  async createSurvey({ data }: CreateSurveyDto) {
-    return await this.surveyModel.create({ title: data.title });
+  async createSurvey({ title }: CreateSurveyDto) {
+    return await this.surveyModel.create({ title });
   }
 
-  async updateSurvey(surveyId: string, { data }: UpdateSurveyDto) {
+  async updateSurvey(surveyId: string, { title, isPublic }: UpdateSurveyDto) {
     return await this.surveyModel
       .findByIdAndUpdate(
         { _id: surveyId },
         {
           $set: {
-            title: data.title,
-            public: data.public,
+            title,
+            isPublic,
           },
         },
       )

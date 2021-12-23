@@ -8,13 +8,19 @@ import isEmpty from "lodash/isEmpty";
 import { useStyles } from "./styles";
 import SurveyItem from "../../components/Survey/SurveyItem";
 import CreateSurveyForm from "../../components/Survey/CreateSurveyForm";
+import axios from "axios";
+import { Survey } from "../../types/models";
 
 const Surveys = () => {
   const { classes } = useStyles();
   const [createModalVisible, setCreateModalVisible] = useState(false);
 
-  const { isLoading, error, data } = useQuery("surveysAll", () =>
-    fetch(`${process.env.REACT_APP_API_URL}/survey`).then((res) => res.json())
+  const { isLoading, error, data } = useQuery<Survey[]>(
+    "surveysAll",
+    async () => {
+      const response = await axios.get<Survey[]>("/survey");
+      return response.data;
+    }
   );
 
   if (isLoading)

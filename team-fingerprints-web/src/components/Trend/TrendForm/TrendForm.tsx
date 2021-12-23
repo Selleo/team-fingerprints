@@ -5,19 +5,40 @@ import { useStyles } from "./styles";
 import axios from "axios";
 import { queryClient } from "../../../App";
 import { Trend } from "../../../types/models";
+import { isEmpty } from "lodash";
 
-const CreateTrendForm = ({
+const TrendForm = ({
   surveyId,
   categoryId,
   onClose,
+  initialValues,
 }: {
   surveyId: string;
   onClose: () => void;
   categoryId: string;
+  initialValues?: Trend;
 }) => {
+  const isCreate = isEmpty(initialValues);
   const { classes } = useStyles();
 
-  const mutation = useMutation(
+  const onSuccess = () => {
+    onClose();
+    queryClient.invalidateQueries(["surveyOne"]);
+  };
+
+  const updateMutation = useMutation(
+    async (trend: Partial<Trend>) => {
+      return axios.patch(
+        `/survey/${surveyId}/category/${categoryId}/trend/${trend._id}`,
+        trend
+      );
+    },
+    {
+      onSuccess,
+    }
+  );
+
+  const createMutation = useMutation(
     async (newTrend: Partial<Trend>) => {
       return axios.post(
         `/survey/${surveyId}/category/${categoryId}/trend`,
@@ -25,21 +46,20 @@ const CreateTrendForm = ({
       );
     },
     {
-      onSuccess: () => {
-        onClose();
-        queryClient.invalidateQueries(["surveyOne"]);
-      },
+      onSuccess,
     }
   );
 
-  const { handleSubmit, handleChange } = useFormik<Partial<Trend>>({
-    initialValues: { primary: "", secondary: "" },
-    onSubmit: (val: Partial<Trend>) => mutation.mutate(val),
+  const { handleSubmit, handleChange, values } = useFormik<Partial<Trend>>({
+    initialValues: initialValues || { primary: "", secondary: "" },
+    onSubmit: (val: Partial<Trend>) =>
+      isCreate ? createMutation.mutate(val) : updateMutation.mutate(val),
   });
 
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
+        value={values.primary}
         required
         label="Trend primary"
         placeholder="Trend primary"
@@ -47,6 +67,7 @@ const CreateTrendForm = ({
       />
 
       <TextInput
+        value={values.secondary}
         required
         label="Trend secondary"
         placeholder="Trend secondary"
@@ -54,10 +75,14 @@ const CreateTrendForm = ({
       />
 
       <Button className={classes.submitButton} type="submit">
-        {mutation.isLoading ? "Loading" : "Create"}
+        {createMutation.isLoading || updateMutation.isLoading
+          ? "Loading"
+          : isCreate
+          ? "Create"
+          : "Update"}
       </Button>
     </form>
   );
 };
 
-export default CreateTrendForm;
+export default TrendForm;

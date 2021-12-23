@@ -1,7 +1,7 @@
 import { Button, Modal } from "@mantine/core";
 import { PlusCircledIcon } from "@modulz/radix-icons";
 import React, { useState } from "react";
-import CreateTrendForm from "../CreateTrendForm";
+import TrendForm from "../TrendForm";
 
 function AddTrendButton({
   surveyId,
@@ -19,7 +19,7 @@ function AddTrendButton({
         onClose={() => setModalVisible(false)}
         title="Create Trend"
       >
-        <CreateTrendForm
+        <TrendForm
           surveyId={surveyId}
           categoryId={categoryId}
           onClose={() => setModalVisible(false)}
@@ -28,7 +28,7 @@ function AddTrendButton({
       <Button
         leftIcon={<PlusCircledIcon />}
         variant="gradient"
-        gradient={{ from: "white", to: "pink" }}
+        gradient={{ to: "gray", from: "yellow" }}
         onClick={() => setModalVisible(true)}
       >
         Add new trend

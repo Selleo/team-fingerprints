@@ -4,7 +4,7 @@ import { TrendParamsDto } from './dto/TrendParamsDto.dto';
 import { UpdateTrendDto } from './dto/UpdateTrendDto.dto';
 import { TrendService } from './trend.service';
 
-@Controller()
+@Controller({ version: '1' })
 export class TrendController {
   constructor(private readonly trendService: TrendService) {}
 

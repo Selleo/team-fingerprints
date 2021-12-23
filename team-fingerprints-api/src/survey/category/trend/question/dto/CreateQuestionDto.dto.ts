@@ -1,6 +1,4 @@
 export class CreateQuestionDto {
-  data: {
-    title: string;
-    primary: boolean;
-  };
+  title: string;
+  primary: boolean;
 }

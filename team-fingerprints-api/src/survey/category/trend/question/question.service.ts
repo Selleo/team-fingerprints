@@ -14,7 +14,7 @@ export class QuestionService {
 
   async createQuestion(
     { surveyId, categoryId, trendId }: QuestionParamsDto,
-    { data }: CreateQuestionDto,
+    { title, primary }: CreateQuestionDto,
   ) {
     return await this.surveyModel.updateOne(
       {
@@ -22,7 +22,10 @@ export class QuestionService {
       },
       {
         $push: {
-          'categories.$[category].trends.$[trend].questions': data,
+          'categories.$[category].trends.$[trend].questions': {
+            title,
+            primary,
+          },
         },
       },
       {
@@ -36,7 +39,7 @@ export class QuestionService {
 
   async updateQuestion(
     { surveyId, categoryId, trendId, questionId }: QuestionParamsDto,
-    { data }: UpdateQuestionDto,
+    { title, primary }: UpdateQuestionDto,
   ) {
     return await this.surveyModel.updateOne(
       {
@@ -45,9 +48,9 @@ export class QuestionService {
       {
         $set: {
           'categories.$[category].trends.$[trend].questions.$[question].title':
-            data.title,
+            title,
           'categories.$[category].trends.$[trend].questions.$[question].primary':
-            data.primary,
+            primary,
         },
       },
       {

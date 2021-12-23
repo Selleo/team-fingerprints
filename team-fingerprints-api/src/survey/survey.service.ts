@@ -12,7 +12,9 @@ export class SurveyService {
   ) {}
 
   async getSurveysAll() {
-    return await this.surveyModel.find({}, { _id: 1, public: 1, title: 1 });
+    return await this.surveyModel
+      .find({}, { _id: 1, public: 1, title: 1 })
+      .exec();
   }
 
   async getSurvey(surveyId: string) {
@@ -24,18 +26,20 @@ export class SurveyService {
   }
 
   async updateSurvey(surveyId: string, { data }: UpdateSurveyDto) {
-    return await this.surveyModel.findByIdAndUpdate(
-      { _id: surveyId },
-      {
-        $set: {
-          title: data.title,
-          public: data.public,
+    return await this.surveyModel
+      .findByIdAndUpdate(
+        { _id: surveyId },
+        {
+          $set: {
+            title: data.title,
+            public: data.public,
+          },
         },
-      },
-    );
+      )
+      .exec();
   }
 
   async removeSurvey(surveyId: string) {
-    return await this.surveyModel.findByIdAndDelete({ _id: surveyId }).exec();
+    return await this.surveyModel.deleteOne({ _id: surveyId }).exec();
   }
 }

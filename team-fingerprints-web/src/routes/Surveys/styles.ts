@@ -5,6 +5,12 @@ export const useStyles = createStyles((theme) => ({
     flex: 0,
     margin: "20px",
   },
+  emptyCopy: {
+    width: "100%",
+    padding: "40px",
+    fontWeight: "800",
+    textAlign: "center",
+  },
   header: {
     display: "flex",
   },

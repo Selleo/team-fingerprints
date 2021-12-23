@@ -4,7 +4,7 @@ import { QuestionParamsDto } from './dto/QuestionParamsDto.dto';
 import { UpdateQuestionDto } from './dto/UpdateQuestionDto.dto';
 import { QuestionService } from './question.service';
 
-@Controller()
+@Controller({ version: '1' })
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 

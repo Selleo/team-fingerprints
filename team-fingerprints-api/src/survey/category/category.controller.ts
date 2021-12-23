@@ -4,7 +4,7 @@ import { CategoryParamsDto } from './dto/CategoryParamsDto.dto';
 import { CreateCategoryDto } from './dto/CreateCategoryDto.dto';
 import { UpdateCategoryDto } from './dto/UpdateCategoryDto.dto';
 
-@Controller()
+@Controller({ version: '1' })
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

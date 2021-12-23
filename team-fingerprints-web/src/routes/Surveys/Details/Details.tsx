@@ -1,19 +1,23 @@
-import { Accordion, Badge, Breadcrumbs, Skeleton, Title } from "@mantine/core";
+import { Accordion, Badge, Skeleton } from "@mantine/core";
+import axios from "axios";
 import { times } from "lodash";
-import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import AddCategoryButton from "../../../components/Category/AddCategoryButton";
+import { SurveyDetails } from "../../../types/models";
 
 function Details() {
   const params = useParams();
-  const { isLoading, error, data } = useQuery("surveyOne", () =>
-    fetch(`${process.env.REACT_APP_API_URL}/survey/${params.id}`).then((res) =>
-      res.json()
-    )
+  const { isLoading, error, data } = useQuery<SurveyDetails, Error>(
+    "surveyOne",
+    async () => {
+      const response = await axios.get<SurveyDetails>(`/survey/${params.id}`);
+      return response.data;
+    }
   );
 
-  if (isLoading)
+  if (error) return <div>'An error has occurred: ' + console.error;</div>;
+  if (isLoading || !data)
     return (
       <>
         {times(3, () => (
@@ -21,7 +25,6 @@ function Details() {
         ))}
       </>
     );
-  if (error) return <div>'An error has occurred: ' + console.error;</div>;
 
   return (
     <div>
@@ -33,7 +36,7 @@ function Details() {
           <Badge>Not public</Badge>
         )}
       </h2>
-      <AddCategoryButton surveyId={data._id} />
+      <AddCategoryButton surveyId={data?._id} />
       <Accordion>
         {data.categories.map((category: any) => {
           return <Accordion.Item label={category.title}></Accordion.Item>;

@@ -64,7 +64,6 @@ export class QuestionService {
   }
 
   async removeQuestion(questionId: string) {
-    console.log(questionId);
     return await this.surveyModel.updateOne(
       {
         'categories.trends.questions._id': questionId,

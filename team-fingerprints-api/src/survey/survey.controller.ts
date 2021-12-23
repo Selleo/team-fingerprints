@@ -27,7 +27,6 @@ export class SurveyController {
 
   @Post()
   async createSurvey(@Body() body: CreateSurveyDto) {
-    console.log(body);
     return await this.surveyService.createSurvey(body);
   }
 

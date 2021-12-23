@@ -1,4 +1,11 @@
+import { IsOptional, IsString } from 'class-validator';
+
 export class CreateTrendDto {
-  primary: string;
-  secondary: string;
+  @IsString()
+  @IsOptional()
+  readonly primary?: string;
+
+  @IsString()
+  @IsOptional()
+  readonly secondary?: string;
 }

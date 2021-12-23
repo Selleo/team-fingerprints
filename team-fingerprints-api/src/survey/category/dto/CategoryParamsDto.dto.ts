@@ -1,4 +1,12 @@
+import { IsMongoId, IsOptional, IsString } from 'class-validator';
+
 export class CategoryParamsDto {
-  surveyId: string;
-  categoryId: string;
+  @IsString()
+  @IsMongoId()
+  readonly surveyId: string;
+
+  @IsString()
+  @IsMongoId()
+  @IsOptional()
+  readonly categoryId: string;
 }

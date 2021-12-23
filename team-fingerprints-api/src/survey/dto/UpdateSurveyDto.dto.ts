@@ -1,4 +1,11 @@
+import { IsString, IsBoolean, IsOptional } from 'class-validator';
+
 export class UpdateSurveyDto {
-  title?: string;
-  isPublic?: boolean;
+  @IsString()
+  @IsOptional()
+  readonly title?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  readonly isPublic?: boolean;
 }

@@ -14,7 +14,7 @@ export class TrendService {
 
   async createTrend(
     { surveyId, categoryId }: TrendParamsDto,
-    { data }: CreateTrendDto,
+    { primary, secondary }: CreateTrendDto,
   ) {
     return await this.surveyModel.updateOne(
       {
@@ -24,8 +24,8 @@ export class TrendService {
       {
         $push: {
           'categories.$.trends': {
-            primary: data.primary,
-            secondary: data.secondary,
+            primary,
+            secondary,
           },
         },
       },
@@ -34,7 +34,7 @@ export class TrendService {
 
   async updateTrend(
     { surveyId, categoryId, trendId }: TrendParamsDto,
-    { data }: UpdateTrendDto,
+    { primary, secondary }: UpdateTrendDto,
   ) {
     return await this.surveyModel.updateOne(
       {
@@ -42,8 +42,8 @@ export class TrendService {
       },
       {
         $set: {
-          'categories.$[category].trends.$[trend].primary': data.primary,
-          'categories.$[category].trends.$[trend].secondary': data.secondary,
+          'categories.$[category].trends.$[trend].primary': primary,
+          'categories.$[category].trends.$[trend].secondary': secondary,
         },
       },
       {

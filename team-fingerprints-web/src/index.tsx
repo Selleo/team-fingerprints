@@ -3,10 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
-
-import axios from "axios";
-
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+import "./axios.config";
 
 ReactDOM.render(
   <React.StrictMode>

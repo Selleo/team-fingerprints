@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/CreateQuestionDto.dto';
 import { QuestionParamsDto } from './dto/QuestionParamsDto.dto';
 import { UpdateQuestionDto } from './dto/UpdateQuestionDto.dto';
@@ -33,7 +25,7 @@ export class QuestionController {
   }
 
   @Delete('/:questionId')
-  async removeQuestion(@Param() params: QuestionParamsDto) {
-    return await this.questionService.removeQuestion(params);
+  async removeQuestion(@Param('questionId') questionId: string) {
+    return await this.questionService.removeQuestion(questionId);
   }
 }

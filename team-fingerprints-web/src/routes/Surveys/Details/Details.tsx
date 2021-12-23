@@ -1,18 +1,4 @@
-import {
-  Accordion,
-  Badge,
-  Skeleton,
-  ThemeIcon,
-  List,
-  Group,
-  Text,
-} from "@mantine/core";
-import {
-  GridIcon,
-  SliderIcon,
-  CheckboxIcon,
-  ResetIcon,
-} from "@modulz/radix-icons";
+import { Badge, Skeleton, List, Group, Text } from "@mantine/core";
 import axios from "axios";
 import { times } from "lodash";
 import { useQuery } from "react-query";
@@ -33,37 +19,8 @@ import {
   Trend,
 } from "../../../types/models";
 
-const CategoryIcon = () => {
-  return (
-    <ThemeIcon size={30} color="pink" variant="light" radius="xl">
-      <GridIcon />
-    </ThemeIcon>
-  );
-};
+import { CategoryIcon, PrimaryIcon, SecondaryIcon, TrendIcon } from "./Icons";
 
-const TrendIcon = () => {
-  return (
-    <ThemeIcon size={30} color="yellow" variant="light" radius="xl">
-      <SliderIcon />
-    </ThemeIcon>
-  );
-};
-
-const SecondaryIcon = () => {
-  return (
-    <ThemeIcon color="green" size={30} radius="xl">
-      <ResetIcon />
-    </ThemeIcon>
-  );
-};
-
-const PrimaryIcon = () => {
-  return (
-    <ThemeIcon color="blue" size={30} radius="xl">
-      <CheckboxIcon />
-    </ThemeIcon>
-  );
-};
 function Details() {
   const params = useParams();
   const {
@@ -122,7 +79,10 @@ function Details() {
                   return (
                     <List.Item icon={<TrendIcon />}>
                       <Group>
-                        <Text>{`${trend.primary} <=> ${trend.secondary}`}</Text>
+                        <Text color="yellow">
+                          primary: <strong>{trend.primary}</strong>
+                        </Text>
+                        <Text>secondary: {trend.secondary}</Text>
                         <EditTrendButton
                           trend={trend}
                           surveyId={survey?._id}

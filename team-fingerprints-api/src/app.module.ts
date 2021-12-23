@@ -7,6 +7,7 @@ import { CategoryModule } from './survey/category/category.module';
 import { QuestionModule } from './survey/category/trend/question/question.module';
 import { TrendModule } from './survey/category/trend/trend.module';
 import { SurveyModule } from './survey/survey.module';
+import { UsersModule } from './users/users.module';
 
 const routes: Routes = [
   {
@@ -41,6 +42,7 @@ const routes: Routes = [
     TrendModule,
     QuestionModule,
     RouterModule.register(routes),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

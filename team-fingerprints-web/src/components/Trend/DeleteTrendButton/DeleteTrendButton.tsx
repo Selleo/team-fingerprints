@@ -30,7 +30,7 @@ const DeleteTrendButton = ({
     <Button
       leftIcon={<TrashIcon />}
       variant="outline"
-      color="orange"
+      color="yellow"
       onClick={() => mutation.mutate()}
       compact
     >

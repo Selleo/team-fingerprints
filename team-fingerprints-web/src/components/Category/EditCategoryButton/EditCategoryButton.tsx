@@ -1,9 +1,16 @@
 import { Button, Modal } from "@mantine/core";
-import { PlusCircledIcon } from "@modulz/radix-icons";
-import React, { useState } from "react";
+import { Pencil1Icon } from "@modulz/radix-icons";
+import { useState } from "react";
+import { Category } from "../../../types/models";
 import CategoryForm from "../CategoryForm";
 
-function AddCategoryButton({ surveyId }: { surveyId: string }) {
+function EditCategoryButton({
+  category,
+  surveyId,
+}: {
+  category: Category;
+  surveyId: string;
+}) {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -11,23 +18,25 @@ function AddCategoryButton({ surveyId }: { surveyId: string }) {
       <Modal
         opened={modalVisible}
         onClose={() => setModalVisible(false)}
-        title="Create Category"
+        title="Update Category"
       >
         <CategoryForm
           surveyId={surveyId}
+          initialValues={category}
           onClose={() => setModalVisible(false)}
         />
       </Modal>
       <Button
-        leftIcon={<PlusCircledIcon />}
-        variant="gradient"
-        gradient={{ from: "pink", to: "gray" }}
+        variant="outline"
+        color="pink"
+        compact
+        leftIcon={<Pencil1Icon />}
         onClick={() => setModalVisible(true)}
       >
-        Add new category
+        Update category
       </Button>
     </>
   );
 }
 
-export default AddCategoryButton;
+export default EditCategoryButton;

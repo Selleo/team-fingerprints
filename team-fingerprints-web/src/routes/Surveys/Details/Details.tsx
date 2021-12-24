@@ -1,28 +1,17 @@
-import {
-  Accordion,
-  Badge,
-  Skeleton,
-  ThemeIcon,
-  List,
-  Group,
-  Text,
-} from "@mantine/core";
-import {
-  GridIcon,
-  SliderIcon,
-  CheckboxIcon,
-  ResetIcon,
-} from "@modulz/radix-icons";
+import { Badge, Skeleton, List, Group, Text } from "@mantine/core";
 import axios from "axios";
 import { times } from "lodash";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import AddCategoryButton from "../../../components/Category/AddCategoryButton";
 import DeleteCategoryButton from "../../../components/Category/DeleteCategoryButton";
+import EditCategoryButton from "../../../components/Category/EditCategoryButton";
 import AddQuestionButton from "../../../components/Question/AddQuestionButton";
 import DeleteQuestionButton from "../../../components/Question/DeleteQuestionButton";
+import EditQuestionButton from "../../../components/Question/EditQuestionButton";
 import AddTrendButton from "../../../components/Trend/AddTrendButton";
 import DeleteTrendButton from "../../../components/Trend/DeleteTrendButton";
+import EditTrendButton from "../../../components/Trend/EditTrendButton/EditTrendButton";
 import {
   Category,
   Question,
@@ -30,37 +19,8 @@ import {
   Trend,
 } from "../../../types/models";
 
-const CategoryIcon = () => {
-  return (
-    <ThemeIcon size={30} color="violet" variant="light" radius="xl">
-      <GridIcon />
-    </ThemeIcon>
-  );
-};
+import { CategoryIcon, PrimaryIcon, SecondaryIcon, TrendIcon } from "./Icons";
 
-const TrendIcon = () => {
-  return (
-    <ThemeIcon size={30} color="pink" variant="light" radius="xl">
-      <SliderIcon />
-    </ThemeIcon>
-  );
-};
-
-const SecondaryIcon = () => {
-  return (
-    <ThemeIcon color="red" size={30} radius="xl">
-      <ResetIcon />
-    </ThemeIcon>
-  );
-};
-
-const PrimaryIcon = () => {
-  return (
-    <ThemeIcon color="teal" size={30} radius="xl">
-      <CheckboxIcon />
-    </ThemeIcon>
-  );
-};
 function Details() {
   const params = useParams();
   const {
@@ -99,6 +59,10 @@ function Details() {
             <List.Item icon={<CategoryIcon />}>
               <Group>
                 <Text>{category.title}</Text>
+                <EditCategoryButton
+                  category={category}
+                  surveyId={survey?._id}
+                />
                 <DeleteCategoryButton
                   categoryId={category._id}
                   surveyId={survey?._id}
@@ -115,7 +79,15 @@ function Details() {
                   return (
                     <List.Item icon={<TrendIcon />}>
                       <Group>
-                        <Text>{`${trend.primary} <=> ${trend.secondary}`}</Text>
+                        <Text color="yellow">
+                          primary: <strong>{trend.primary}</strong>
+                        </Text>
+                        <Text>secondary: {trend.secondary}</Text>
+                        <EditTrendButton
+                          trend={trend}
+                          surveyId={survey?._id}
+                          categoryId={category._id}
+                        />
                         <DeleteTrendButton
                           trendId={trend._id}
                           surveyId={survey?._id}
@@ -144,15 +116,23 @@ function Details() {
                             : {};
                           return (
                             <List.Item {...icon}>
-                              {`${question.title} ${
-                                question.primary ? "(primary)" : "(secondary)"
-                              }`}
-                              <DeleteQuestionButton
-                                questionId={question._id}
-                                surveyId={survey._id}
-                                trendId={trend._id}
-                                categoryId={category._id}
-                              />
+                              <Group>
+                                <Text>{`${question.title} ${
+                                  question.primary ? "(primary)" : "(secondary)"
+                                }`}</Text>
+                                <EditQuestionButton
+                                  question={question}
+                                  surveyId={survey._id}
+                                  trendId={trend._id}
+                                  categoryId={category._id}
+                                />
+                                <DeleteQuestionButton
+                                  questionId={question._id}
+                                  surveyId={survey._id}
+                                  trendId={trend._id}
+                                  categoryId={category._id}
+                                />
+                              </Group>
                             </List.Item>
                           );
                         })}

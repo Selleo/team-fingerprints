@@ -10,7 +10,7 @@ export class UserSurveyResponse {
   surveyId: string;
 
   @Prop({ type: [QuestionResponseSchema], default: [], required: true })
-  response: QuestionResponse[];
+  responses: QuestionResponse[];
 }
 export const UserSurveyResponseSchema =
   SchemaFactory.createForClass(UserSurveyResponse);

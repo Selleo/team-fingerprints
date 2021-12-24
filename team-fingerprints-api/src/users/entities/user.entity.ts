@@ -14,11 +14,8 @@ export class User extends Document {
   @Prop({ required: true })
   lastName: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   email: string;
-
-  @Prop({ required: true })
-  password: string;
 
   @Prop({ default: UserRole.USER, required: true })
   role: UserRole;
@@ -26,10 +23,7 @@ export class User extends Document {
   @Prop({ default: '' })
   team?: string;
 
-  @Prop({ default: '' })
-  passwordResetToken?: string;
-
-  @Prop({ default: '' })
+  @Prop({ default: '', unique: true })
   url?: string;
 
   @Prop({ type: [UserSurveyResponseSchema], default: [], required: true })

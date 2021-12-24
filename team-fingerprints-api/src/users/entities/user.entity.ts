@@ -23,7 +23,7 @@ export class User extends Document {
   @Prop({ default: '' })
   team?: string;
 
-  @Prop({ default: '', unique: true })
+  @Prop({ default: '' })
   url?: string;
 
   @Prop({ type: [UserSurveyResponseSchema], default: [], required: true })

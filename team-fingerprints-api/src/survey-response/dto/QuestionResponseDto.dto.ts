@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsDefined,
-  IsMongoId,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsDefined, IsMongoId, IsNumber, IsString } from 'class-validator';
 
 export class QuestionResponseDto {
   @IsString()
@@ -15,8 +9,4 @@ export class QuestionResponseDto {
   @IsNumber()
   @IsDefined()
   readonly value: string;
-
-  @IsBoolean()
-  @IsDefined()
-  readonly primary: boolean;
 }

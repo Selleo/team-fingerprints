@@ -15,5 +15,5 @@ export class UserSurveyResponseDto {
 
   @Type(() => QuestionResponseDto)
   @ValidateNested()
-  readonly responses: QuestionResponseDto;
+  readonly responses: QuestionResponseDto[];
 }

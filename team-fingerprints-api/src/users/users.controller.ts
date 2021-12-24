@@ -7,11 +7,10 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { ChangeRoleDto } from './dto/ChangeUseroleDto.dto';
 import { CreateUserDto } from './dto/CreateUserDto.dto';
 import { UpdateUserDto } from './dto/UpdateUserDto.dto';
-import { UserSurveyResponseDto } from './dto/UserSurveyResponseDto.dto ';
 import { User } from './entities/user.entity';
-import { UserRole } from './Roles/UserRoles.enum';
 import { UsersService } from './users.service';
 
 @Controller({ path: 'users', version: '1' })
@@ -46,22 +45,11 @@ export class UsersController {
     return await this.userService.removeUser(userId);
   }
 
-  @Patch('/:userId')
-  async changeRole(
+  @Patch('/role/:userId')
+  async changeUserRole(
     @Param('userId') userId: string,
-    @Body('role') role: UserRole,
+    @Body() role: ChangeRoleDto,
   ) {
-    return await this.userService.changeRole(userId, role);
-  }
-
-  @Post('/:userId')
-  async saveUsersSurveyRespone(
-    @Param('userId') userId: string,
-    @Body() surveyResponseData: UserSurveyResponseDto,
-  ) {
-    return await this.userService.saveUsersSurveyRespone(
-      userId,
-      surveyResponseData,
-    );
+    return await this.userService.changeUserRole(userId, role);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Survey } from 'src/entities/survey.entity';
+import { Survey } from '../entities/survey.entity';
 import { SurveyService } from '../survey.service';
 import { CategoryParamsDto } from './dto/CategoryParamsDto.dto';
 import { CreateCategoryDto } from './dto/CreateCategoryDto.dto';

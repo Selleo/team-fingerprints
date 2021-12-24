@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Survey, SurveySchema } from 'src/entities/survey.entity';
+import { Survey, SurveySchema } from '../entities/survey.entity';
 import { SurveyModule } from '../survey.module';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';

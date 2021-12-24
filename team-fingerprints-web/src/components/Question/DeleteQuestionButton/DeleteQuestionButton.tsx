@@ -30,7 +30,6 @@ const DeleteQuestionButton = ({
 
   return (
     <Button
-      style={{ marginLeft: "10px" }}
       leftIcon={<TrashIcon />}
       variant="outline"
       onClick={() => mutation.mutate()}

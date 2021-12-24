@@ -1,16 +1,17 @@
 import { Button, Modal } from "@mantine/core";
-import { PlusCircledIcon } from "@modulz/radix-icons";
+import { Pencil1Icon } from "@modulz/radix-icons";
 import React, { useState } from "react";
-import QuestionForm from "../QuestionForm";
+import { Trend } from "../../../types/models";
+import TrendForm from "../TrendForm";
 
-function AddQuestionButton({
+function EditTrendButton({
   surveyId,
   categoryId,
-  trendId,
+  trend,
 }: {
   surveyId: string;
   categoryId: string;
-  trendId: string;
+  trend: Trend;
 }) {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -19,25 +20,26 @@ function AddQuestionButton({
       <Modal
         opened={modalVisible}
         onClose={() => setModalVisible(false)}
-        title="Create question"
+        title="Update Trend"
       >
-        <QuestionForm
-          trendId={trendId}
+        <TrendForm
           surveyId={surveyId}
           categoryId={categoryId}
           onClose={() => setModalVisible(false)}
+          initialValues={trend}
         />
       </Modal>
       <Button
-        leftIcon={<PlusCircledIcon />}
-        variant="gradient"
-        gradient={{ from: "teal", to: "blue" }}
+        leftIcon={<Pencil1Icon />}
+        variant="outline"
+        color="yellow"
         onClick={() => setModalVisible(true)}
+        compact
       >
-        Add new question
+        Update trend
       </Button>
     </>
   );
 }
 
-export default AddQuestionButton;
+export default EditTrendButton;

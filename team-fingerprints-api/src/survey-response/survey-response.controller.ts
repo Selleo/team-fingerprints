@@ -1,14 +1,17 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Patch } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { UserSurveyResponseDto } from './dto/UserSurveyResponseDto.dto ';
 import { SurveyResponseService } from './survey-response.service';
 
+@ApiTags('survey-response')
 @Controller({ path: 'survey-response', version: '1' })
 export class SurveyResponseController {
   constructor(private readonly surveyResponseService: SurveyResponseService) {}
 
-  @Post('/:userId')
+  @Patch('/:userId')
   async saveUsersSurveyRespone(
-    @Param('userId') userId: string,
+    @Param('userId', ValidateObjectId) userId: string,
     @Body() surveyResponseData: UserSurveyResponseDto,
   ) {
     return await this.surveyResponseService.saveUsersSurveyRespone(

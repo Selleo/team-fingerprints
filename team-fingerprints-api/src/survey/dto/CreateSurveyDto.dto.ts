@@ -1,7 +1,7 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsString } from 'class-validator';
 
 export class CreateSurveyDto {
   @IsString()
-  @IsOptional()
-  readonly title?: string;
+  @IsDefined()
+  readonly title: string;
 }

@@ -1,10 +1,12 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { CreateTrendDto } from './dto/CreateTrendDto.dto';
 import { TrendParamsDto } from './dto/TrendParamsDto.dto';
 import { UpdateTrendDto } from './dto/UpdateTrendDto.dto';
 import { TrendService } from './trend.service';
 
+@ApiTags('trend')
 @Controller({ version: '1' })
 export class TrendController {
   constructor(private readonly trendService: TrendService) {}

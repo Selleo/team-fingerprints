@@ -1,10 +1,12 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { CategoryService } from './category.service';
 import { CategoryParamsDto } from './dto/CategoryParamsDto.dto';
 import { CreateCategoryDto } from './dto/CreateCategoryDto.dto';
 import { UpdateCategoryDto } from './dto/UpdateCategoryDto.dto';
 
+@ApiTags('category')
 @Controller({ version: '1' })
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}

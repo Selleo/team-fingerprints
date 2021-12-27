@@ -7,11 +7,13 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
 import { UpdateSurveyDto } from './dto/UpdateSurveyDto.dto';
 import { SurveyService } from './survey.service';
 
+@ApiTags('survey')
 @Controller({ version: '1' })
 export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}

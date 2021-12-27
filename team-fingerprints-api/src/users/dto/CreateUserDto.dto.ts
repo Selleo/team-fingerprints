@@ -1,4 +1,4 @@
-import { IsDefined, IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsEmail, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -13,8 +13,4 @@ export class CreateUserDto {
   @IsEmail()
   @IsDefined()
   readonly email: string;
-
-  @IsString()
-  @IsOptional()
-  readonly url?: string;
 }

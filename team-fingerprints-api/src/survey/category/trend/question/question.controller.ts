@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
+import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { CreateQuestionDto } from './dto/CreateQuestionDto.dto';
 import { QuestionParamsDto } from './dto/QuestionParamsDto.dto';
 import { UpdateQuestionDto } from './dto/UpdateQuestionDto.dto';
@@ -25,7 +26,9 @@ export class QuestionController {
   }
 
   @Delete('/:questionId')
-  async removeQuestion(@Param('questionId') questionId: string) {
+  async removeQuestion(
+    @Param('questionId', ValidateObjectId) questionId: string,
+  ) {
     return await this.questionService.removeQuestion(questionId);
   }
 }

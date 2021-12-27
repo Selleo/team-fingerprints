@@ -8,5 +8,5 @@ export class CategoryParamsDto {
   @IsString()
   @IsMongoId()
   @IsOptional()
-  readonly categoryId: string;
+  readonly categoryId?: string;
 }

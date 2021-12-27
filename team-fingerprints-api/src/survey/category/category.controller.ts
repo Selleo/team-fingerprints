@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
+import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { CategoryService } from './category.service';
 import { CategoryParamsDto } from './dto/CategoryParamsDto.dto';
 import { CreateCategoryDto } from './dto/CreateCategoryDto.dto';
@@ -25,7 +26,9 @@ export class CategoryController {
   }
 
   @Delete('/:categoryId')
-  async removeCategory(@Param('categoryId') categoryId: string) {
+  async removeCategory(
+    @Param('categoryId', ValidateObjectId) categoryId: string,
+  ) {
     return this.categoryService.removeCategory(categoryId);
   }
 }

@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
 import { UpdateSurveyDto } from './dto/UpdateSurveyDto.dto';
 import { SurveyService } from './survey.service';
@@ -21,7 +22,8 @@ export class SurveyController {
   }
 
   @Get('/:surveyId')
-  async getSurvey(@Param('surveyId') surveyId: string) {
+  async getSurvey(@Param('surveyId', ValidateObjectId) surveyId: string) {
+    console.log(surveyId);
     return this.surveyService.getSurvey(surveyId);
   }
 
@@ -32,14 +34,14 @@ export class SurveyController {
 
   @Patch('/:surveyId')
   async updateSurvey(
-    @Param('surveyId') surveyId: string,
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() body: UpdateSurveyDto,
   ) {
     return await this.surveyService.updateSurvey(surveyId, body);
   }
 
   @Delete('/:surveyId')
-  async removeSurvey(@Param('surveyId') surveyId: string) {
+  async removeSurvey(@Param('surveyId', ValidateObjectId) surveyId: string) {
     return this.surveyService.removeSurvey(surveyId);
   }
 }

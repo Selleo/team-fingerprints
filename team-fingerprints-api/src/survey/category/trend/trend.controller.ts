@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
+import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { CreateTrendDto } from './dto/CreateTrendDto.dto';
 import { TrendParamsDto } from './dto/TrendParamsDto.dto';
 import { UpdateTrendDto } from './dto/UpdateTrendDto.dto';
@@ -25,7 +26,7 @@ export class TrendController {
   }
 
   @Delete('/:trendId')
-  async removeTrend(@Param('trendId') trendId: string) {
+  async removeTrend(@Param('trendId', ValidateObjectId) trendId: string) {
     return this.trendService.removeTrend(trendId);
   }
 }

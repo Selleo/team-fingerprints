@@ -9,6 +9,7 @@ import { TrendModule } from './survey/category/trend/trend.module';
 import { SurveyModule } from './survey/survey.module';
 import { UsersModule } from './users/users.module';
 import { SurveyRresponseModule } from './survey-response/survey-response.module';
+import { CompanyModule } from './company/company.module';
 
 const routes: Routes = [
   {
@@ -45,6 +46,7 @@ const routes: Routes = [
     RouterModule.register(routes),
     UsersModule,
     SurveyRresponseModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

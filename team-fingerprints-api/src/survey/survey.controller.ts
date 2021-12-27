@@ -25,7 +25,6 @@ export class SurveyController {
 
   @Get('/:surveyId')
   async getSurvey(@Param('surveyId', ValidateObjectId) surveyId: string) {
-    console.log(surveyId);
     return this.surveyService.getSurvey(surveyId);
   }
 

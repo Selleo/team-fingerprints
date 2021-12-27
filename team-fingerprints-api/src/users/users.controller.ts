@@ -7,12 +7,14 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ChangeRoleDto } from './dto/ChangeUseroleDto.dto';
 import { CreateUserDto } from './dto/CreateUserDto.dto';
 import { UpdateUserDto } from './dto/UpdateUserDto.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
+@ApiTags('users')
 @Controller({ path: 'users', version: '1' })
 export class UsersController {
   constructor(private readonly userService: UsersService) {}

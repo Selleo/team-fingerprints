@@ -6,6 +6,8 @@ import { AppShell } from "@mantine/core";
 import AppNavBar from "./components/AppNavBar";
 import AppHeader from "./components/AppHeader";
 import SurveyDetails from "./routes/Surveys/Details";
+import Responses from "./routes/Responses";
+import ResponseEdit from "./routes/Responses/Edit";
 
 const AppRoutes = () => {
   return (
@@ -28,6 +30,8 @@ const AppRoutes = () => {
             </main>
           }
         />
+        <Route path="responses" element={<Responses />} />
+        <Route path="response/:surveyId" element={<ResponseEdit />} />
       </Routes>
     </AppShell>
   );

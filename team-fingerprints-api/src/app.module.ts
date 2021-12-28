@@ -10,6 +10,7 @@ import { SurveyModule } from './survey/survey.module';
 import { UsersModule } from './users/users.module';
 import { SurveyRresponseModule } from './survey-response/survey-response.module';
 import { CompanyModule } from './company/company.module';
+import { TeamModule } from './company/team/team.module';
 
 const routes: Routes = [
   {
@@ -34,6 +35,16 @@ const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'company',
+    module: CompanyModule,
+    children: [
+      {
+        path: '/:companyId/team',
+        module: TeamModule,
+      },
+    ],
+  },
 ];
 
 @Module({
@@ -47,6 +58,7 @@ const routes: Routes = [
     UsersModule,
     SurveyRresponseModule,
     CompanyModule,
+    TeamModule,
   ],
   controllers: [AppController],
   providers: [AppService],

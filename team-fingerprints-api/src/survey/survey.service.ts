@@ -13,7 +13,7 @@ export class SurveyService {
 
   async getSurveysAll() {
     return await this.surveyModel
-      .find({}, { _id: 1, public: 1, title: 1 })
+      .find({}, { _id: 1, isPublic: 1, title: 1 })
       .exec();
   }
 

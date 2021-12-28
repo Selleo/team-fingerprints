@@ -1,5 +1,5 @@
 import { Navbar, Avatar, Text, Group, UnstyledButton } from "@mantine/core";
-import { DashboardIcon, PersonIcon } from "@modulz/radix-icons";
+import { DashboardIcon, PersonIcon, CheckboxIcon } from "@modulz/radix-icons";
 import { useStyles } from "./styles";
 import { useNavigate } from "react-router-dom";
 
@@ -28,6 +28,17 @@ const AppNavBar = () => {
             </Avatar>
 
             <Text color="pink">Users</Text>
+          </Group>
+        </UnstyledButton>
+      </Navbar.Section>
+      <Navbar.Section className={classes.sectionItem}>
+        <UnstyledButton onClick={() => navigate("/responses")}>
+          <Group>
+            <Avatar size={40} color="green">
+              <CheckboxIcon />
+            </Avatar>
+
+            <Text color="greek">Responses</Text>
           </Group>
         </UnstyledButton>
       </Navbar.Section>

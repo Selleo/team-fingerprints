@@ -1,6 +1,6 @@
 export type Survey = {
   title: string;
-  public: boolean;
+  isPublic: boolean;
   _id: string;
 };
 

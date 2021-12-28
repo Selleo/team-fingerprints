@@ -8,6 +8,7 @@ import AppHeader from "./components/AppHeader";
 import SurveyDetails from "./routes/Surveys/Details";
 import Responses from "./routes/Responses";
 import ResponseEdit from "./routes/Responses/Edit";
+import Users from "./routes/Users";
 
 const AppRoutes = () => {
   return (
@@ -21,6 +22,8 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<MainRoute />} />
         <Route path="surveys" element={<Surveys />} />
+        <Route path="users" element={<Users />} />
+
         <Route path="survey/:id" element={<SurveyDetails />} />
         <Route
           path="*"

@@ -9,16 +9,16 @@ export class Team {
   @Prop()
   description: string;
 
-  @Prop({ required: true, default: [] })
+  @Prop({ default: [] })
   members: string[];
 
-  @Prop({ required: true, default: [] })
+  @Prop({ default: [] })
   emailWhitelist: string[];
 
-  @Prop({ required: true, default: [] })
+  @Prop({ default: [] })
   teamLeader: string[];
 
-  @Prop({ type: [SurveysResultSchema], required: true, default: [] })
+  @Prop({ type: [SurveysResultSchema] })
   surveyResults: SurveysResult[];
 }
 export const TeamSchema = SchemaFactory.createForClass(Team);

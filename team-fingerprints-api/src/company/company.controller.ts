@@ -14,7 +14,7 @@ import { CreateCompanyDto } from './dto/CreateCompanyDto.dto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto.dto';
 
 @ApiTags('company')
-@Controller({ path: 'company', version: '1' })
+@Controller({ version: '1' })
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
   @Get()

@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
 import { Company, CompanySchema } from './entities/Company.entity';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { Company, CompanySchema } from './entities/Company.entity';
         schema: CompanySchema,
       },
     ]),
+    TeamModule,
   ],
   controllers: [CompanyController],
   providers: [CompanyService],

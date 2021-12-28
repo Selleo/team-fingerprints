@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/users/entities/user.entity';
-import { UserSurveyResponseDto } from './dto/UserSurveyResponseDto.dto ';
+import { QuestionResponseDto } from './dto/QuestionResponseDto.dto';
 
 @Injectable()
 export class SurveyResponseService {
@@ -10,13 +10,30 @@ export class SurveyResponseService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async saveUsersSurveyRespone(
+  async getUserAnswers(userId: string, surveyId: string) {
+    return await this.userModel
+      .findOne(
+        { _id: userId, 'surveysResponses.surveyId': surveyId },
+        {
+          'surveysResponses.$': 1,
+        },
+      )
+      .exec();
+  }
+
+  async saveUserSurveyRespone(
     userId: string,
-    surveyResponseData: UserSurveyResponseDto,
+    surveyId: string,
+    questionResponseData: QuestionResponseDto,
   ) {
+    console.log({ userId, surveyId, questionResponseData });
     return await this.userModel.updateOne(
-      { _id: userId },
-      { $push: { surveysResponses: surveyResponseData } },
+      { _id: userId, 'surveysResponses.surveyId': surveyId },
+      {
+        $push: {
+          'surveysResponses.$.responses': questionResponseData,
+        },
+      },
     );
   }
 }

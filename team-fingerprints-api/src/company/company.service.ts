@@ -8,7 +8,7 @@ import { Company } from './entities/Company.entity';
 @Injectable()
 export class CompanyService {
   constructor(
-    @InjectModel(Company.name) private readonly companyModel: Model<Comment>,
+    @InjectModel(Company.name) private readonly companyModel: Model<Company>,
   ) {}
   async getCompaneis() {
     return await this.companyModel.find({}).exec();

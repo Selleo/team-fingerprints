@@ -7,7 +7,7 @@ import isEmpty from "lodash/isEmpty";
 
 import { useStyles } from "./styles";
 import SurveyItem from "../../components/Survey/SurveyItem";
-import CreateSurveyForm from "../../components/Survey/CreateSurveyForm";
+import SurveyForm from "../../components/Survey/SurveyForm";
 import axios from "axios";
 import { Survey } from "../../types/models";
 
@@ -68,7 +68,7 @@ const Surveys = () => {
         onClose={() => setCreateModalVisible(false)}
         title="Create Survey"
       >
-        <CreateSurveyForm onClose={() => setCreateModalVisible(false)} />
+        <SurveyForm onClose={() => setCreateModalVisible(false)} />
       </Modal>
     </>
   );

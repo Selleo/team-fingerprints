@@ -46,11 +46,12 @@ function Details() {
     <div>
       <h2>
         {survey.title}
-        {survey.public ? (
-          <Badge variant="dot">Public</Badge>
-        ) : (
-          <Badge>Not public</Badge>
-        )}
+        <Badge
+          style={{ marginLeft: "10px", top: 0 }}
+          variant={survey.isPublic ? "dot" : "outline"}
+        >
+          {survey.isPublic ? "Public" : "Not public"}
+        </Badge>
       </h2>
       <AddCategoryButton surveyId={survey?._id} />
       <List style={{ padding: "10px" }}>

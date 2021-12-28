@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/users/entities/user.entity';
@@ -26,14 +26,19 @@ export class SurveyResponseService {
     surveyId: string,
     questionResponseData: QuestionResponseDto,
   ) {
-    console.log({ userId, surveyId, questionResponseData });
-    return await this.userModel.updateOne(
-      { _id: userId, 'surveysResponses.surveyId': surveyId },
-      {
-        $push: {
-          'surveysResponses.$.responses': questionResponseData,
+    const current = await this.getUserAnswers(userId, surveyId);
+    const { questionId } = questionResponseData;
+    const [aaa] = current.surveysResponses;
+    if (!aaa.responses.find((el) => el.questionId === questionId)) {
+      return await this.userModel.updateOne(
+        { _id: userId, 'surveysResponses.surveyId': surveyId },
+        {
+          $push: {
+            'surveysResponses.$.responses': questionResponseData,
+          },
         },
-      },
-    );
+      );
+    }
+    return new BadRequestException();
   }
 }

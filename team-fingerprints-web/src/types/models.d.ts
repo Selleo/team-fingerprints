@@ -23,4 +23,8 @@ export type Question = {
   primary: boolean;
 };
 
+export type ResponseItem = {
+  survey: Survey;
+};
+
 export type SurveyDetails = Survey & { categories: Category[] };

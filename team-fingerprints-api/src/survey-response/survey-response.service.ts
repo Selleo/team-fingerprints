@@ -43,6 +43,7 @@ export class SurveyResponseService {
     const [surveyResponses] = survey.surveysResponses;
     if (
       !surveyResponses.responses.find(
+
         (el) => el.questionId === questionResponseData.questionId,
       )
     ) {

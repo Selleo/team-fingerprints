@@ -40,9 +40,10 @@ export class SurveyResponseService {
       survey = await this.getUserAnswers(userId, surveyId);
     }
 
-    const [aaa] = survey.surveysResponses;
+    const [surveyResponses] = survey.surveysResponses;
     if (
-      !aaa.responses.find(
+      !surveyResponses.responses.find(
+
         (el) => el.questionId === questionResponseData.questionId,
       )
     ) {

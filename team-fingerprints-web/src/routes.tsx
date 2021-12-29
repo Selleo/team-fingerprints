@@ -5,6 +5,9 @@ import { AppShell } from "@mantine/core";
 
 import AppNavBar from "./components/AppNavBar";
 import AppHeader from "./components/AppHeader";
+import SurveyDetails from "./routes/Surveys/Details";
+import Responses from "./routes/Responses";
+import ResponseEdit from "./routes/Responses/Edit";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +21,17 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<MainRoute />} />
         <Route path="surveys" element={<Surveys />} />
+        <Route path="survey/:id" element={<SurveyDetails />} />
+        <Route
+          path="*"
+          element={
+            <main style={{ padding: "1rem" }}>
+              <p>There's nothing here!</p>
+            </main>
+          }
+        />
+        <Route path="responses" element={<Responses />} />
+        <Route path="response/:surveyId" element={<ResponseEdit />} />
       </Routes>
     </AppShell>
   );

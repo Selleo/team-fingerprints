@@ -4,7 +4,7 @@ import {
   QuestionResponse,
 } from './questionResponse.entity';
 
-@Schema({ autoIndex: true })
+@Schema({ _id: false })
 export class UserSurveyResponse {
   @Prop({ required: true })
   surveyId: string;

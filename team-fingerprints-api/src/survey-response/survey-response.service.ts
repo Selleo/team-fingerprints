@@ -26,10 +26,26 @@ export class SurveyResponseService {
     surveyId: string,
     questionResponseData: QuestionResponseDto,
   ) {
-    const current = await this.getUserAnswers(userId, surveyId);
-    const { questionId } = questionResponseData;
-    const [aaa] = current.surveysResponses;
-    if (!aaa.responses.find((el) => el.questionId === questionId)) {
+    let survey = await this.getUserAnswers(userId, surveyId);
+
+    if (!survey) {
+      await this.userModel.updateOne(
+        { _id: userId },
+        {
+          $push: {
+            surveysResponses: { questionResponseData, surveyId },
+          },
+        },
+      );
+      survey = await this.getUserAnswers(userId, surveyId);
+    }
+
+    const [aaa] = survey.surveysResponses;
+    if (
+      !aaa.responses.find(
+        (el) => el.questionId === questionResponseData.questionId,
+      )
+    ) {
       return await this.userModel.updateOne(
         { _id: userId, 'surveysResponses.surveyId': surveyId },
         {
@@ -39,6 +55,9 @@ export class SurveyResponseService {
         },
       );
     }
-    return new BadRequestException();
+
+    return new BadRequestException(
+      'Can not answer more than once per question',
+    );
   }
 }

@@ -35,6 +35,15 @@ AUTH0_AUDIENCE=http://localhost:3000/auth0
 API_KEY=safdaifEUJIFGIWYUEFCCVWBevcfvq   -  your key
 
 
+create production.env file in project root directory
+
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/surveys
+AUTH0_DOMAIN=your.auth0.domain
+AUTH0_AUDIENCE=http://localhost:3000/auth0
+API_KEY=safdaifEUJIFGIWYUEFCCVWBevcfvq   -  your key
+
+
 ## License
 
 Nest is [MIT licensed](LICENSE).

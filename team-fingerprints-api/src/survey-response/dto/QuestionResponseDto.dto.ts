@@ -1,4 +1,11 @@
-import { IsDefined, IsMongoId, IsNumber, IsString } from 'class-validator';
+import {
+  IsDefined,
+  IsInt,
+  IsMongoId,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class QuestionResponseDto {
   @IsString()
@@ -6,7 +13,9 @@ export class QuestionResponseDto {
   @IsDefined()
   readonly questionId: string;
 
-  @IsNumber()
+  @IsInt()
+  @Min(1)
+  @Max(5)
   @IsDefined()
   readonly value: string;
 }

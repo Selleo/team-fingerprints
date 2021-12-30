@@ -53,7 +53,7 @@ testing credentials
   "token_type": "Bearer"
 }
 =======
->>>>>>> main
+>>>>>>> refs/remotes/origin/api/auth-module
 
 ## License
 

@@ -13,6 +13,7 @@ import { CompanyModule } from './company/company.module';
 import { TeamModule } from './company/team/team.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { routes } from './routes';
+import { CommonModule } from './common/common.module';
 import * as Joi from 'joi';
 
 const envValidaion = Joi.object({
@@ -22,6 +23,7 @@ const envValidaion = Joi.object({
   PORT: Joi.number().default(3000),
   AUTH_ENABLED: Joi.boolean().default(false),
   MONGODB_URI: Joi.string().default('mongodb://localhost:27017/surveys'),
+  API_KEY: Joi.string(),
 });
 
 const mongooseModuleConfig = {
@@ -53,6 +55,7 @@ const ENV = process.env.NODE_ENV;
     SurveyRresponseModule,
     CompanyModule,
     TeamModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

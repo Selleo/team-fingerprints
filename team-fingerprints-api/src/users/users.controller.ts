@@ -8,7 +8,6 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/common/decorators/public.decorator';
 import { ChangeRoleDto } from './dto/ChangeUseroleDto.dto';
 import { CreateUserDto } from './dto/CreateUserDto.dto';
 import { UpdateUserDto } from './dto/UpdateUserDto.dto';
@@ -20,7 +19,6 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Public()
   @Get('/:userId')
   async getUser(@Param('userId') userId: string): Promise<User> {
     return await this.userService.getUser(userId);

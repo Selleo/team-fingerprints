@@ -32,7 +32,6 @@ const Responses = () => {
   if (error) return <div>'An error has occurred: ' + console.error;</div>;
 
   //TODO map responses together with surveys
-  console.log({data})
   const mappedData = data?.map((el) => {
     return {
       survey: el,

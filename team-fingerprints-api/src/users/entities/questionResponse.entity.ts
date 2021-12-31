@@ -7,9 +7,6 @@ export class QuestionResponse {
 
   @Prop({ required: true })
   value: number;
-
-  @Prop({ required: true })
-  valueForPrimary: number;
 }
 export const QuestionResponseSchema =
   SchemaFactory.createForClass(QuestionResponse);

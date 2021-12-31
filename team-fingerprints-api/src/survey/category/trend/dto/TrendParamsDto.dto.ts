@@ -1,4 +1,4 @@
-import { IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class TrendParamsDto {
   @IsString()
@@ -12,5 +12,6 @@ export class TrendParamsDto {
   @IsString()
   @IsMongoId()
   @IsOptional()
+  @IsNotEmpty()
   readonly trendId: string;
 }

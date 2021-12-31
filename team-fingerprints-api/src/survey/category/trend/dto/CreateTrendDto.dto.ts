@@ -1,11 +1,11 @@
-import { IsDefined, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateTrendDto {
   @IsString()
-  @IsDefined()
+  @IsNotEmpty()
   readonly primary: string;
 
   @IsString()
-  @IsDefined()
+  @IsNotEmpty()
   readonly secondary: string;
 }

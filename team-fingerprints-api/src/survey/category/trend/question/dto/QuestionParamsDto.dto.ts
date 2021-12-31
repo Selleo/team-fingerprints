@@ -1,23 +1,24 @@
-import { IsDefined, IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class QuestionParamsDto {
   @IsString()
   @IsMongoId()
-  @IsDefined()
+  @IsNotEmpty()
   surveyId: string;
 
   @IsString()
   @IsMongoId()
-  @IsDefined()
+  @IsNotEmpty()
   categoryId: string;
 
   @IsString()
   @IsMongoId()
-  @IsDefined()
+  @IsNotEmpty()
   trendId: string;
 
   @IsString()
   @IsMongoId()
+  @IsNotEmpty()
   @IsOptional()
   questionId?: string;
 }

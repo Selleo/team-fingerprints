@@ -27,4 +27,21 @@ export type ResponseItem = {
   survey: Survey;
 };
 
+export type User = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
+export type Answer = {
+  questionId: string;
+  value: number;
+};
+
+export type SurveyResponse = {
+  questionId: string;
+  value: number;
+};
+
 export type SurveyDetails = Survey & { categories: Category[] };

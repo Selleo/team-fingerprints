@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
@@ -29,6 +29,19 @@ export class SurveyResponseController {
       userId,
       surveyId,
       surveyResponseData,
+    );
+  }
+
+  @Patch('/:userId/surveyId/:surveyId')
+  async changeAnswer(
+    @Param('userId', ValidateObjectId) userId: string,
+    @Param('surveyId', ValidateObjectId) surveyId: string,
+    @Body() updateResponseData: QuestionResponseDto,
+  ) {
+    return await this.surveyResponseService.changeAnswer(
+      userId,
+      surveyId,
+      updateResponseData,
     );
   }
 }

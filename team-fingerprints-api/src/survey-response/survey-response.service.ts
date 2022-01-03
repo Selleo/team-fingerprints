@@ -13,9 +13,7 @@ export class SurveyResponseService {
   ) {}
 
   async getUserAnswers(userId: string, surveyId: string) {
-    console.log(
-      await this.surveySummarizeService.countPoints(userId, surveyId),
-    );
+    await this.surveySummarizeService.countPoints(userId, surveyId);
     return await this.userModel
       .findOne(
         { _id: userId, 'surveysResponses.surveyId': surveyId },

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
 import { User } from 'src/users/entities/user.entity';
 import { QuestionResponseDto } from './dto/QuestionResponseDto.dto';
 
@@ -8,9 +9,13 @@ import { QuestionResponseDto } from './dto/QuestionResponseDto.dto';
 export class SurveyResponseService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    private readonly surveySummarizeService: SurveySummarizeService,
   ) {}
 
   async getUserAnswers(userId: string, surveyId: string) {
+    console.log(
+      await this.surveySummarizeService.countPoints(userId, surveyId),
+    );
     return await this.userModel
       .findOne(
         { _id: userId, 'surveysResponses.surveyId': surveyId },

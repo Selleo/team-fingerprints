@@ -1,11 +1,11 @@
-import { IsBoolean, IsDefined, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateQuestionDto {
   @IsString()
-  @IsDefined()
+  @IsNotEmpty()
   title: string;
 
   @IsBoolean()
-  @IsDefined()
+  @IsNotEmpty()
   primary: boolean;
 }

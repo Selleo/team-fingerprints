@@ -12,5 +12,8 @@ export class Survey extends Document {
 
   @Prop({ default: false, required: true })
   isPublic: boolean;
+
+  @Prop({ default: 0, required: true })
+  amountOfQuestions: number;
 }
 export const SurveySchema = SchemaFactory.createForClass(Survey);

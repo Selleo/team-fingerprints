@@ -30,6 +30,29 @@ export class SurveyResponseService {
       .exec();
   }
 
+  async changeAnswer(
+    userId: string,
+    surveyId: string,
+    { value, questionId }: QuestionResponseDto,
+  ) {
+    return await this.userModel
+      .updateOne(
+        { _id: userId },
+        {
+          $set: {
+            'surveysResponses.$[survey].responses.$[question].value': value,
+          },
+        },
+        {
+          arrayFilters: [
+            { 'survey.surveyId': surveyId },
+            { 'question.questionId': questionId },
+          ],
+        },
+      )
+      .exec();
+  }
+
   async saveUserSurveyRespone(
     userId: string,
     surveyId: string,

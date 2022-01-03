@@ -1,6 +1,10 @@
 import { SegmentedControl } from "@mantine/core";
+import axios from "axios";
+import { toNumber } from "lodash";
 import { useState } from "react";
-import { Question } from "../../../types/models";
+import { useMutation } from "react-query";
+import useUser from "../../../hooks/useUser";
+import { Answer, Question } from "../../../types/models";
 
 const OPTIONS = [
   { value: "1", label: "no" },
@@ -10,16 +14,44 @@ const OPTIONS = [
   { value: "5", label: "yes" },
 ];
 
-export default function QuestionResponse({ item }: { item: Question }) {
-  const [value, setValue] = useState("none");
+export default function QuestionResponse({
+  question,
+  answer,
+  surveyId,
+  refetch,
+}: {
+  question: Question;
+  answer?: number;
+  surveyId: string;
+  refetch: () => void;
+}) {
+  const { user } = useUser();
+  const [value, setValue] = useState<string>(
+    answer?.toString() || "none"
+  );
+
+  const responseMutation = useMutation(
+    async (surveyResponse: Answer) => {
+      return axios.post(
+        `/survey-response/${user._id}/surveyId/${surveyId}`,
+        surveyResponse
+      );
+    },
+    {
+      onSuccess: () => {
+        refetch()
+      },
+    }
+  );
 
   const setAndSaveNewValue = (val: string) => {
     setValue(val);
+    responseMutation.mutate({ questionId: question._id, value: toNumber(val) });
   };
 
   return (
     <>
-      <h3>{item.title}</h3>
+      <h3>{question.title}</h3>
       <SegmentedControl
         onChange={(val) => setAndSaveNewValue(val)}
         value={value}

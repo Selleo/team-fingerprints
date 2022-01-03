@@ -25,7 +25,7 @@ export class ApiKeyGuard implements CanActivate {
     const isPublic = this.reflector.get(IS_PUBLIC_KEY, context.getHandler());
     if (isPublic) return true;
     const AUTH0_DOMAIN = this.configService.get<string>('AUTH0_DOMAIN');
-    const AUTH0_AUDIENCE = this.configService.get<string>('AUTH0_AUDIENCE');
+    // const AUTH0_AUDIENCE = this.configService.get<string>('AUTH0_AUDIENCE');
 
     const checkJwt = promisify(
       jwt({
@@ -35,7 +35,7 @@ export class ApiKeyGuard implements CanActivate {
           jwksRequestsPerMinute: 5,
           jwksUri: `${AUTH0_DOMAIN}.well-known/jwks.json`,
         }),
-        audience: AUTH0_AUDIENCE,
+        // audience: AUTH0_AUDIENCE,
         issuer: AUTH0_DOMAIN,
         algorithms: ['RS256'],
       }),

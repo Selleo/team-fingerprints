@@ -1,7 +1,7 @@
-import { IsDefined, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class ChangeRoleDto {
-  @IsDefined()
+  @IsNotEmpty()
   @IsString()
   role: string;
 }

@@ -6,10 +6,7 @@ export class QuestionResponse {
   questionId: string;
 
   @Prop({ required: true })
-  value: string;
-
-  @Prop({ required: true })
-  primary: boolean;
+  value: number;
 }
 export const QuestionResponseSchema =
   SchemaFactory.createForClass(QuestionResponse);

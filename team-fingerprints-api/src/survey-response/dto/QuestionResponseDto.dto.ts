@@ -1,7 +1,7 @@
 import {
-  IsDefined,
   IsInt,
   IsMongoId,
+  IsNotEmpty,
   IsString,
   Max,
   Min,
@@ -10,12 +10,12 @@ import {
 export class QuestionResponseDto {
   @IsString()
   @IsMongoId()
-  @IsDefined()
+  @IsNotEmpty()
   readonly questionId: string;
 
   @IsInt()
   @Min(1)
   @Max(5)
-  @IsDefined()
+  @IsNotEmpty()
   readonly value: string;
 }

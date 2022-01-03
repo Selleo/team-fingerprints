@@ -30,7 +30,8 @@ export class QuestionController {
   @Delete('/:questionId')
   async removeQuestion(
     @Param('questionId', ValidateObjectId) questionId: string,
+    @Param('surveyId', ValidateObjectId) surveyId: string,
   ) {
-    return await this.questionService.removeQuestion(questionId);
+    return await this.questionService.removeQuestion(surveyId, questionId);
   }
 }

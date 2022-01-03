@@ -3,7 +3,6 @@ import axios from "axios";
 import { toNumber } from "lodash";
 import { useState } from "react";
 import { useMutation } from "react-query";
-import { queryClient } from "../../../App";
 import useUser from "../../../hooks/useUser";
 import { Answer, Question } from "../../../types/models";
 
@@ -19,14 +18,16 @@ export default function QuestionResponse({
   question,
   answer,
   surveyId,
+  refetch,
 }: {
   question: Question;
-  answer?: Answer;
+  answer?: number;
   surveyId: string;
+  refetch: () => void;
 }) {
   const { user } = useUser();
   const [value, setValue] = useState<string>(
-    answer?.value.toString() || "none"
+    answer?.toString() || "none"
   );
 
   const responseMutation = useMutation(
@@ -38,7 +39,7 @@ export default function QuestionResponse({
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["surveyOne", "surveyResponseOne"]);
+        refetch()
       },
     }
   );

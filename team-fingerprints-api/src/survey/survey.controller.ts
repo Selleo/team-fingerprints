@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/common/decorators/public.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
 import { UpdateSurveyDto } from './dto/UpdateSurveyDto.dto';
@@ -18,6 +19,7 @@ import { SurveyService } from './survey.service';
 export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
+  @Public()
   @Get()
   async getSurveysAll() {
     return await this.surveyService.getSurveysAll();

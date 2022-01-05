@@ -2,6 +2,8 @@ import axios from "axios";
 import { isEmpty } from "lodash";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+axios.defaults.headers.common["Authorization"] =
+  "Bearer safdaifEUJIFGIWYUEFCCVWBevcfvq";
 
 const applyDefaultAPIVersioning = (url: string | undefined): string => {
   if (!url) {

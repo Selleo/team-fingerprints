@@ -13,8 +13,8 @@ import { CompanyModule } from './company/company.module';
 import { TeamModule } from './company/team/team.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { routes } from './routes';
-import { CommonModule } from './common/common.module';
 import { SurveySummarizeModule } from './survey-summarize/survey-summarize.module';
+import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
 
 const envValidaion = Joi.object({
@@ -56,8 +56,8 @@ const ENV = process.env.NODE_ENV;
     SurveyRresponseModule,
     CompanyModule,
     TeamModule,
-    CommonModule,
     SurveySummarizeModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

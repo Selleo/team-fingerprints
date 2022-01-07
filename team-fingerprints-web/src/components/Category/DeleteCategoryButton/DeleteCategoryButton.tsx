@@ -13,7 +13,7 @@ const DeleteCategoryButton = ({
 }) => {
   const mutation = useMutation(
     async () => {
-      return axios.delete(`/survey/${surveyId}/category/${categoryId}`);
+      return axios.delete(`/surveys/${surveyId}/categories/${categoryId}`);
     },
     {
       onSuccess: () => {

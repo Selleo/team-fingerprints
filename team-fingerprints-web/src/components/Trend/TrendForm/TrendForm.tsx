@@ -29,7 +29,7 @@ const TrendForm = ({
   const updateMutation = useMutation(
     async (trend: Partial<Trend>) => {
       return axios.patch(
-        `/survey/${surveyId}/category/${categoryId}/trend/${trend._id}`,
+        `/surveys/${surveyId}/categories/${categoryId}/trends/${trend._id}`,
         trend
       );
     },
@@ -41,7 +41,7 @@ const TrendForm = ({
   const createMutation = useMutation(
     async (newTrend: Partial<Trend>) => {
       return axios.post(
-        `/survey/${surveyId}/category/${categoryId}/trend`,
+        `/surveys/${surveyId}/categories/${categoryId}/trends`,
         newTrend
       );
     },

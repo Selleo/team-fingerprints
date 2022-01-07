@@ -31,7 +31,7 @@ const CreateQuestionForm = ({
   const createMutation = useMutation(
     async (newQuestion: Partial<Question>) => {
       return axios.post(
-        `/survey/${surveyId}/category/${categoryId}/trend/${trendId}/question`,
+        `/surveys/${surveyId}/categories/${categoryId}/trends/${trendId}/questions`,
         newQuestion
       );
     },
@@ -43,7 +43,7 @@ const CreateQuestionForm = ({
   const updateMutation = useMutation(
     async (question: Partial<Question>) => {
       return axios.patch(
-        `/survey/${surveyId}/category/${categoryId}/trend/${trendId}/question/${question._id}`,
+        `/surveys/${surveyId}/categories/${categoryId}/trends/${trendId}/questions/${question._id}`,
         question
       );
     },

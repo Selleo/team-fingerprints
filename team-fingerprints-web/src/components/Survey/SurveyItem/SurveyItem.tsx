@@ -13,7 +13,7 @@ const SurveyItem = ({ item }: { item: Survey }) => {
 
   const deleteMutation = useMutation(
     (surveyId: string) => {
-      return axios.delete(`/survey/${surveyId}`);
+      return axios.delete(`/surveys/${surveyId}`);
     },
     {
       onSuccess: () => {

@@ -5,5 +5,5 @@ import { QuestionAnswerDto } from './QuestionAnswerDto.dto';
 export class UserSurveyAnswerDto {
   @Type(() => QuestionAnswerDto)
   @ValidateNested()
-  readonly response: QuestionAnswerDto;
+  readonly answer: QuestionAnswerDto;
 }

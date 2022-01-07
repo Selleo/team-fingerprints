@@ -40,7 +40,7 @@ export class SurveyAnswerService {
         { _id: userId },
         {
           $set: {
-            'surveysAnswers.$[survey].responses.$[question].value': value,
+            'surveysAnswers.$[survey].answers.$[question].value': value,
           },
         },
         {
@@ -53,7 +53,7 @@ export class SurveyAnswerService {
       .exec();
   }
 
-  async saveUserSurveyRespone(
+  async saveUserSurveyAnswer(
     userId: string,
     surveyId: string,
     questionAnswerData: QuestionAnswerDto,
@@ -77,9 +77,9 @@ export class SurveyAnswerService {
         survey = await this.getUserAnswers(userId, surveyId);
       }
 
-      const [surveyResponses] = survey.surveysAnswers;
+      const [surveyAnswers] = survey.surveysAnswers;
       if (
-        surveyResponses.responses.find(
+        surveyAnswers.answers.find(
           (el) => el.questionId === questionAnswerData.questionId,
         )
       ) {
@@ -93,7 +93,7 @@ export class SurveyAnswerService {
           { _id: userId, 'surveysAnswers.surveyId': surveyId },
           {
             $push: {
-              'surveysAnswers.$.responses': questionAnswerData,
+              'surveysAnswers.$.answers': questionAnswerData,
             },
           },
         )

@@ -25,7 +25,7 @@ export class SurveyAnswerController {
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() surveyAnswerData: QuestionAnswerDto,
   ) {
-    return await this.surveyAnswerService.saveUserSurveyRespone(
+    return await this.surveyAnswerService.saveUserSurveyAnswer(
       userId,
       surveyId,
       surveyAnswerData,

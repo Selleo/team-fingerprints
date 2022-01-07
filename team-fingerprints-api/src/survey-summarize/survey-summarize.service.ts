@@ -19,7 +19,7 @@ export class SurveySummarizeService {
       )
       .exec();
     const [surveysAnswers] = userAnswers.surveysAnswers;
-    const { responses } = surveysAnswers;
+    const { answers } = surveysAnswers;
 
     const survey = await this.surveyModel.findById({ _id: surveyId });
     const categories = survey.categories;
@@ -33,6 +33,6 @@ export class SurveySummarizeService {
       });
     });
 
-    return { questions, responses };
+    return { questions, answers };
   }
 }

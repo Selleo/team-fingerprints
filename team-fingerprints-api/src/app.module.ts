@@ -15,6 +15,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { routes } from './routes';
 import { SurveySummarizeModule } from './survey-summarize/survey-summarize.module';
 import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
 import * as Joi from 'joi';
 
 const envValidaion = Joi.object({
@@ -58,6 +59,7 @@ const ENV = process.env.NODE_ENV;
     TeamModule,
     SurveySummarizeModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

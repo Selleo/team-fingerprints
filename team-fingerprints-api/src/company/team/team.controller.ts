@@ -13,7 +13,7 @@ import { CreateTeamDto } from './dto/CreateTeamDto.dto';
 import { UpdateTeamDto } from './dto/UpdateTeamDto.dto';
 import { TeamService } from './team.service';
 
-@ApiTags('team')
+@ApiTags('teams')
 @Controller({ version: '1' })
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}

@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SurveySummarizeModule } from 'src/survey-summarize/survey-summarize.module';
 import { User, UserSchema } from 'src/users/entities/user.entity';
-import { SurveyResponseController } from './survey-response.controller';
-import { SurveyResponseService } from './survey-response.service';
+import { SurveyAnswerController } from './survey-answer.controller';
+import { SurveyAnswerService } from './survey-answer.service';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { SurveyResponseService } from './survey-response.service';
       },
     ]),
   ],
-  controllers: [SurveyResponseController],
-  providers: [SurveyResponseService],
+  controllers: [SurveyAnswerController],
+  providers: [SurveyAnswerService],
 })
-export class SurveyRresponseModule {}
+export class SurveyAnswerModule {}

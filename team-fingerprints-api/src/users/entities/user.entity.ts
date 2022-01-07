@@ -2,9 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { UserRole } from '../Roles/UserRoles.enum';
 import {
-  UserSurveyResponseSchema,
-  UserSurveyResponse,
-} from './userSurveyResponse.entity';
+  UserSurveyAnswerSchema,
+  UserSurveyAnswer,
+} from './userSurveyAnswer.entity';
 
 @Schema({ autoIndex: true, timestamps: true })
 export class User extends Document {
@@ -26,8 +26,8 @@ export class User extends Document {
   @Prop({ default: '' })
   url?: string;
 
-  @Prop({ type: [UserSurveyResponseSchema], default: [], required: true })
-  surveysResponses: UserSurveyResponse[];
+  @Prop({ type: [UserSurveyAnswerSchema], default: [], required: true })
+  surveysAnswers: UserSurveyAnswer[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

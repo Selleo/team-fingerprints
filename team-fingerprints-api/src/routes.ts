@@ -8,19 +8,19 @@ import { SurveyModule } from './survey/survey.module';
 
 export const routes: Routes = [
   {
-    path: 'survey',
+    path: 'surveys',
     module: SurveyModule,
     children: [
       {
-        path: '/:surveyId/category',
+        path: '/:surveyId/categories',
         module: CategoryModule,
         children: [
           {
-            path: '/:categoryId/trend',
+            path: '/:categoryId/trends',
             module: TrendModule,
             children: [
               {
-                path: '/:trendId/question/',
+                path: '/:trendId/questions/',
                 module: QuestionModule,
               },
             ],
@@ -30,11 +30,11 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'company',
+    path: 'companies',
     module: CompanyModule,
     children: [
       {
-        path: '/:companyId/team',
+        path: '/:companyId/teams',
         module: TeamModule,
       },
     ],

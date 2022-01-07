@@ -8,10 +8,10 @@ import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
 import { User } from 'src/users/entities/user.entity';
-import { QuestionResponseDto } from './dto/QuestionResponseDto.dto';
+import { QuestionAnswerDto } from './dto/QuestionAnswerDto.dto';
 
 @Injectable()
-export class SurveyResponseService {
+export class SurveyAnswerService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -22,9 +22,9 @@ export class SurveyResponseService {
     // await this.surveySummarizeService.countPoints(userId, surveyId);
     return await this.userModel
       .findOne(
-        { _id: userId, 'surveysResponses.surveyId': surveyId },
+        { _id: userId, 'surveysAnswers.surveyId': surveyId },
         {
-          'surveysResponses.$': 1,
+          'surveysAnswers.$': 1,
         },
       )
       .exec();
@@ -33,14 +33,14 @@ export class SurveyResponseService {
   async changeAnswer(
     userId: string,
     surveyId: string,
-    { value, questionId }: QuestionResponseDto,
+    { value, questionId }: QuestionAnswerDto,
   ) {
     return await this.userModel
       .updateOne(
         { _id: userId },
         {
           $set: {
-            'surveysResponses.$[survey].responses.$[question].value': value,
+            'surveysAnswers.$[survey].responses.$[question].value': value,
           },
         },
         {
@@ -56,7 +56,7 @@ export class SurveyResponseService {
   async saveUserSurveyRespone(
     userId: string,
     surveyId: string,
-    questionResponseData: QuestionResponseDto,
+    questionAnswerData: QuestionAnswerDto,
   ) {
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
@@ -68,7 +68,7 @@ export class SurveyResponseService {
             { _id: userId },
             {
               $push: {
-                surveysResponses: { questionResponseData, surveyId },
+                surveysAnswers: { questionAnswerData, surveyId },
               },
             },
           )
@@ -77,10 +77,10 @@ export class SurveyResponseService {
         survey = await this.getUserAnswers(userId, surveyId);
       }
 
-      const [surveyResponses] = survey.surveysResponses;
+      const [surveyResponses] = survey.surveysAnswers;
       if (
         surveyResponses.responses.find(
-          (el) => el.questionId === questionResponseData.questionId,
+          (el) => el.questionId === questionAnswerData.questionId,
         )
       ) {
         throw new BadRequestException(
@@ -90,10 +90,10 @@ export class SurveyResponseService {
 
       const newAnswer = await this.userModel
         .updateOne(
-          { _id: userId, 'surveysResponses.surveyId': surveyId },
+          { _id: userId, 'surveysAnswers.surveyId': surveyId },
           {
             $push: {
-              'surveysResponses.$.responses': questionResponseData,
+              'surveysAnswers.$.responses': questionAnswerData,
             },
           },
         )
@@ -106,9 +106,9 @@ export class SurveyResponseService {
 
       await this.userModel
         .updateOne(
-          { _id: userId, 'surveysResponses.surveyId': surveyId },
+          { _id: userId, 'surveysAnswers.surveyId': surveyId },
           {
-            $inc: { 'surveysResponses.$.amountOfAnswers': 1 },
+            $inc: { 'surveysAnswers.$.amountOfAnswers': 1 },
           },
         )
         .session(session)

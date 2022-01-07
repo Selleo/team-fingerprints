@@ -8,7 +8,7 @@ import { QuestionModule } from './survey/category/trend/question/question.module
 import { TrendModule } from './survey/category/trend/trend.module';
 import { SurveyModule } from './survey/survey.module';
 import { UsersModule } from './users/users.module';
-import { SurveyRresponseModule } from './survey-response/survey-response.module';
+import { SurveyAnswerModule } from './survey-answer/survey-answer.module';
 import { CompanyModule } from './company/company.module';
 import { TeamModule } from './company/team/team.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -54,7 +54,7 @@ const ENV = process.env.NODE_ENV;
     TrendModule,
     QuestionModule,
     UsersModule,
-    SurveyRresponseModule,
+    SurveyAnswerModule,
     CompanyModule,
     TeamModule,
     SurveySummarizeModule,

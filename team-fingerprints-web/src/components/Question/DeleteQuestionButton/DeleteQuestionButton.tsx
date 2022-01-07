@@ -18,7 +18,7 @@ const DeleteQuestionButton = ({
   const mutation = useMutation(
     async () => {
       return axios.delete(
-        `/survey/${surveyId}/category/${categoryId}/trend/${trendId}/question/${questionId}`
+        `/surveys/${surveyId}/categories/${categoryId}/trends/${trendId}/questions/${questionId}`
       );
     },
     {

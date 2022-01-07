@@ -16,7 +16,7 @@ const Responses = () => {
   const { isLoading, error, data } = useQuery<Survey[]>(
     "surveysAll",
     async () => {
-      const response = await axios.get<Survey[]>("/survey");
+      const response = await axios.get<Survey[]>("/surveys");
       return response.data;
     }
   );

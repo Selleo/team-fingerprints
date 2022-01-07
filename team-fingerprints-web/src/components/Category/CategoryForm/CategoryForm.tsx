@@ -26,7 +26,7 @@ const CategoryForm = ({
 
   const createMutation = useMutation(
     async (newCategory: Partial<Category>) => {
-      return axios.post(`/survey/${surveyId}/category`, newCategory);
+      return axios.post(`/surveys/${surveyId}/categories`, newCategory);
     },
     {
       onSuccess,
@@ -36,7 +36,7 @@ const CategoryForm = ({
   const updateMutation = useMutation(
     async (category: Partial<Category>) => {
       return axios.patch(
-        `/survey/${surveyId}/category/${category._id}`,
+        `/surveys/${surveyId}/categories/${category._id}`,
         category
       );
     },

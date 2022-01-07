@@ -28,7 +28,7 @@ function Details() {
     error,
     data: survey,
   } = useQuery<SurveyDetails, Error>("surveyOne", async () => {
-    const response = await axios.get<SurveyDetails>(`/survey/${params.id}`);
+    const response = await axios.get<SurveyDetails>(`/surveys/${params.id}`);
     return response.data;
   });
 

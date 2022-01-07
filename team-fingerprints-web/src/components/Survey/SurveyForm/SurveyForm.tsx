@@ -23,7 +23,7 @@ const SurveyForm = ({
 
   const createMutation = useMutation(
     (newSurvey: Partial<Survey>) => {
-      return axios.post<Partial<Survey>>("/survey", newSurvey).then(onClose);
+      return axios.post<Partial<Survey>>("/surveys", newSurvey).then(onClose);
     },
     {
       onSuccess,

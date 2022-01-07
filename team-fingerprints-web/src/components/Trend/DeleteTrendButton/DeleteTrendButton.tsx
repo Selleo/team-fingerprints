@@ -16,7 +16,7 @@ const DeleteTrendButton = ({
   const mutation = useMutation(
     async () => {
       return axios.delete(
-        `/survey/${surveyId}/category/${categoryId}/trend/${trendId}`
+        `/surveys/${surveyId}/categories/${categoryId}/trends/${trendId}`
       );
     },
     {

@@ -2,13 +2,13 @@ import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { QuestionResponseDto } from './dto/QuestionResponseDto.dto';
-import { SurveyResponseService } from './survey-response.service';
+import { QuestionAnswerDto } from './dto/QuestionAnswerDto.dto';
+import { SurveyAnswerService } from './survey-answer.service';
 
-@ApiTags('survey-response')
-@Controller({ path: 'survey-response', version: '1' })
-export class SurveyResponseController {
-  constructor(private readonly surveyResponseService: SurveyResponseService) {}
+@ApiTags('survey-answers')
+@Controller({ path: 'survey-answers', version: '1' })
+export class SurveyAnswerController {
+  constructor(private readonly surveyAnswerService: SurveyAnswerService) {}
 
   @Public()
   @Get('/:userId/surveyId/:surveyId')
@@ -16,19 +16,19 @@ export class SurveyResponseController {
     @Param('userId', ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
   ) {
-    return await this.surveyResponseService.getUserAnswers(userId, surveyId);
+    return await this.surveyAnswerService.getUserAnswers(userId, surveyId);
   }
 
   @Post('/:userId/surveyId/:surveyId')
-  async saveUserSurveyRespone(
+  async saveUserSurveyAnswer(
     @Param('userId', ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
-    @Body() surveyResponseData: QuestionResponseDto,
+    @Body() surveyAnswerData: QuestionAnswerDto,
   ) {
-    return await this.surveyResponseService.saveUserSurveyRespone(
+    return await this.surveyAnswerService.saveUserSurveyAnswer(
       userId,
       surveyId,
-      surveyResponseData,
+      surveyAnswerData,
     );
   }
 
@@ -36,12 +36,12 @@ export class SurveyResponseController {
   async changeAnswer(
     @Param('userId', ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
-    @Body() updateResponseData: QuestionResponseDto,
+    @Body() updateAnswerData: QuestionAnswerDto,
   ) {
-    return await this.surveyResponseService.changeAnswer(
+    return await this.surveyAnswerService.changeAnswer(
       userId,
       surveyId,
-      updateResponseData,
+      updateAnswerData,
     );
   }
 }

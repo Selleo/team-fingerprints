@@ -14,12 +14,12 @@ export class SurveySummarizeService {
   async countPoints(userId: string, surveyId: string) {
     const userAnswers = await this.userModel
       .findOne(
-        { _id: userId, 'surveysResponses.surveyId': surveyId },
-        { surveysResponses: 1 },
+        { _id: userId, 'surveysAnswers.surveyId': surveyId },
+        { surveysAnswers: 1 },
       )
       .exec();
-    const [surveysResponses] = userAnswers.surveysResponses;
-    const { responses } = surveysResponses;
+    const [surveysAnswers] = userAnswers.surveysAnswers;
+    const { answers } = surveysAnswers;
 
     const survey = await this.surveyModel.findById({ _id: surveyId });
     const categories = survey.categories;
@@ -33,6 +33,6 @@ export class SurveySummarizeService {
       });
     });
 
-    return { questions, responses };
+    return { questions, answers };
   }
 }

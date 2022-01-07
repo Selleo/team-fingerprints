@@ -7,7 +7,7 @@ import {
   Min,
 } from 'class-validator';
 
-export class QuestionResponseDto {
+export class QuestionAnswerDto {
   @IsString()
   @IsMongoId()
   @IsNotEmpty()

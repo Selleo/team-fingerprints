@@ -13,7 +13,7 @@ import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/CreateCompanyDto.dto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto.dto';
 
-@ApiTags('company')
+@ApiTags('companies')
 @Controller({ version: '1' })
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}

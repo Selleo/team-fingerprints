@@ -31,7 +31,7 @@ export default function QuestionResponse({
   const responseMutation = useMutation(
     async (surveyResponse: Answer) => {
       return axios.post(
-        `/survey-responses/${user._id}/surveyId/${surveyId}`,
+        `/survey-responses/${user?._id}/surveyId/${surveyId}`,
         surveyResponse
       );
     },

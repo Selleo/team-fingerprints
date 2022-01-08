@@ -30,7 +30,7 @@ export default function Edit() {
     refetch,
   } = useQuery<any, Error>("surveyResponseOne", async () => {
     const response = await axios.get<any>(
-      `/survey-responses/${user._id}/surveyId/${params.surveyId}`
+      `/survey-responses/${user?._id}/surveyId/${params.surveyId}`
     );
     return response.data;
   });

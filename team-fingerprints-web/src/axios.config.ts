@@ -19,10 +19,10 @@ const applyDefaultAPIVersioning = (url: string | undefined): string => {
 
 if (isEmpty((axios.interceptors.request as any).handlers)) {
   axios.interceptors.request.use(
-    (config) => {
-      // config.headers = {
-      //   Authorization: tokensStore.accessToken,
-      // };
+    (config: any) => {
+      const token = localStorage.getItem("token");
+      console.log("Jest token", !!token);
+      config.headers.Authorization = `Bearer ${token}`;
       config.url = applyDefaultAPIVersioning(config.url);
       return config;
     },

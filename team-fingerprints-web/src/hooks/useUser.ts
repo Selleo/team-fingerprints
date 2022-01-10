@@ -1,15 +1,9 @@
-import { useState } from "react";
-import { User } from "../types/models";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const useUser = () => {
-  const [user, setUser] = useState<User>({
-    _id: "61cec1c259f5097fd2836abe",
-    firstName: "Test",
-    lastName: "User",
-    email: "test@selleo.com",
-  });
+  const { user } = useAuth0();
 
-  return { user, setUser };
+  return { user };
 };
 
 export default useUser;

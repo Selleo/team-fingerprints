@@ -5,15 +5,19 @@ import {
   MediaQuery,
   Burger,
   Title,
+  Button,
 } from "@mantine/core";
 import { useState } from "react";
 import { useStyles } from "./styles";
 import DarkMoreToogle from "../DarkModeToogle";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const AppHeader = () => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const { classes } = useStyles();
+
+  const { loginWithRedirect, isAuthenticated, logout, user } = useAuth0();
 
   return (
     <Header height={70} padding="md">
@@ -31,6 +35,26 @@ const AppHeader = () => {
 
         <div className={classes.flex1}>
           <Title order={2}>Team Fingerprints Admin</Title>
+        </div>
+        {user?.email && (
+          <div className={classes.flex0}>
+            <strong>{user?.email}</strong>
+          </div>
+        )}
+        <div className={classes.loginButton}>
+          {isAuthenticated ? (
+            <Button
+              onClick={() =>
+                logout({
+                  returnTo: window.location.origin,
+                })
+              }
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button onClick={() => loginWithRedirect()}>Login</Button>
+          )}
         </div>
         <div className={classes.flex0}>
           <DarkMoreToogle />

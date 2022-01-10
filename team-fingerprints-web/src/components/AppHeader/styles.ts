@@ -7,6 +7,13 @@ export const useStyles = createStyles((theme) => ({
   flex0: {
     flex: 0,
   },
+  loginButton: {
+    flex: 0,
+    marginRight: "10px",
+    marginLeft: "10px",
+    display: "flex",
+    flexDirection: "row",
+  },
   flexWrapper: {
     display: "flex",
     alignItems: "center",

@@ -11,17 +11,13 @@ export class SurveyAnswerController {
   constructor(private readonly surveyAnswerService: SurveyAnswerService) {}
 
   @Public()
-  @Get('/:userId/surveyId/:surveyId')
-  async getUserAnswers(
-    @Param('userId', ValidateObjectId) userId: string,
-    @Param('surveyId', ValidateObjectId) surveyId: string,
-  ) {
+  @Get(':surveyId')
+  async getUserAnswers(@Param('surveyId', ValidateObjectId) surveyId: string) {
     return await this.surveyAnswerService.getUserAnswers(userId, surveyId);
   }
 
-  @Post('/:userId/surveyId/:surveyId')
+  @Post(':surveyId')
   async saveUserSurveyAnswer(
-    @Param('userId', ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() surveyAnswerData: QuestionAnswerDto,
   ) {
@@ -32,9 +28,8 @@ export class SurveyAnswerController {
     );
   }
 
-  @Patch('/:userId/surveyId/:surveyId')
+  @Patch(':surveyId')
   async changeAnswer(
-    @Param('userId', ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() updateAnswerData: QuestionAnswerDto,
   ) {

@@ -25,15 +25,11 @@ export default function QuestionResponse({
   surveyId: string;
   refetch: () => void;
 }) {
-  const { user } = useUser();
   const [value, setValue] = useState<string>(answer?.toString() || "none");
 
   const responseMutation = useMutation(
     async (surveyResponse: Answer) => {
-      return axios.post(
-        `/survey-responses/${user?._id}/surveyId/${surveyId}`,
-        surveyResponse
-      );
+      return axios.post(`/survey-responses/${surveyId}`, surveyResponse);
     },
     {
       onSuccess: () => {

@@ -9,7 +9,9 @@ describe('SurveySummarizeController', () => {
       controllers: [SurveySummarizeController],
     }).compile();
 
-    controller = module.get<SurveySummarizeController>(SurveySummarizeController);
+    controller = module.get<SurveySummarizeController>(
+      SurveySummarizeController,
+    );
   });
 
   it('should be defined', () => {

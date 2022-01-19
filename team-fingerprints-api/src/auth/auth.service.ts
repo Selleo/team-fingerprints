@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class AuthService {}
+export class AuthService {
+  async getProfile(userId: string) {
+    return userId;
+  }
+}

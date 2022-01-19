@@ -13,6 +13,10 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
+  async getUserByAuthId(authId: string) {
+    return await this.userModel.findOne({ authId });
+  }
+
   async getUser(userId: string): Promise<User> {
     return await this.userModel.findOne(
       { _id: userId },

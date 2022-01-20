@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import { UsersService } from 'src/users/users.service';
 import { ConfigService } from '@nestjs/config';
 import * as request from 'request';
+import { User } from 'src/users/entities/user.entity';
 
 dotenv.config();
 
@@ -40,7 +41,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: authPayload) {
+  async validate(payload: authPayload): Promise<User> {
     const options = (id: string) => ({
       method: 'GET',
       url: `https://dev-llkte41m.us.auth0.com/api/v2/users/${id}`,
@@ -52,13 +53,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
 
     const { sub } = payload;
-
-    const user = await this.userService.getUserByAuthId(sub);
-    if (user) return user;
-    else if (!user) {
-      let newUser = undefined;
-      request(options(sub), async (err, res, body) => {
-        if (err) return new BadRequestException();
+    let user: User = await this.userService.getUserByAuthId(sub);
+    if (user) {
+      return user;
+    } else {
+      await request(options(sub), async (err, res, body) => {
+        if (err) {
+          return new BadRequestException();
+        }
         const {
           email,
           family_name: firstName,
@@ -66,7 +68,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           picture,
           pictureUrl,
         } = JSON.parse(body);
-        newUser = await this.userService.createUser({
+        user = await this.userService.createUser({
           authId: sub,
           email,
           pictureUrl: pictureUrl || picture || undefined,
@@ -74,7 +76,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           lastName,
         });
       });
-      return await newUser.save();
-    } else return new BadRequestException('sth went wrong');
+    }
+    return user;
   }
 }

@@ -5,6 +5,7 @@ import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { QuestionAnswerDto } from './dto/QuestionAnswerDto.dto';
 import { SurveyAnswerService } from './survey-answer.service';
 
+const userId = '121fdsd1';
 @ApiTags('survey-answers')
 @Controller({ path: 'survey-answers', version: '1' })
 export class SurveyAnswerController {

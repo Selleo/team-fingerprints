@@ -8,14 +8,20 @@ import {
 
 @Schema({ autoIndex: true, timestamps: true })
 export class User extends Document {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
+  authId: string;
+
+  @Prop()
   firstName: string;
 
-  @Prop({ required: true })
+  @Prop()
   lastName: string;
 
   @Prop({ required: true, unique: true })
   email: string;
+
+  @Prop()
+  pictureUrl?: string;
 
   @Prop({ default: UserRole.USER, required: true })
   role: UserRole;

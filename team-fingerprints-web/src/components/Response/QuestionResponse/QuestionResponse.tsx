@@ -29,7 +29,7 @@ export default function QuestionResponse({
 
   const responseMutation = useMutation(
     async (surveyResponse: Answer) => {
-      return axios.post(`/survey-responses/${surveyId}`, surveyResponse);
+      return axios.post(`/survey-answers/${surveyId}`, surveyResponse);
     },
     {
       onSuccess: () => {

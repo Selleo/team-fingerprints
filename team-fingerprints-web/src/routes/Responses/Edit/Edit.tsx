@@ -45,7 +45,7 @@ export default function Edit() {
     return <span>Error loading survey response</span>;
   }
 
-  const allResponses = surveyResponse?.surveysResponses?.[0].responses;
+  const allResponses = surveyResponse?.surveysAnswers?.[0].answers;
 
   const questions = flatMapDeep(
     survey?.categories.map((category) =>
@@ -56,7 +56,7 @@ export default function Edit() {
   const questionsWithAnswers = questions.map((question) => {
     return {
       question,
-      answer: get(find(allResponses, { questionId: question._id }), "value"),
+      answer: find(allResponses, { questionId: question._id }),
     };
   });
 
@@ -72,7 +72,7 @@ export default function Edit() {
           question={questionsWithAnswer.question}
           answer={
             questionsWithAnswer.answer
-              ? toNumber(questionsWithAnswer.answer)
+              ? toNumber(questionsWithAnswer.answer.value)
               : undefined
           }
         />

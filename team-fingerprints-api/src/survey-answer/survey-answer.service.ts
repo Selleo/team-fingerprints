@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
 import { User } from 'src/users/entities/user.entity';
 import { QuestionAnswerDto } from './dto/QuestionAnswerDto.dto';
 
@@ -15,11 +10,9 @@ export class SurveyAnswerService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
-    private readonly surveySummarizeService: SurveySummarizeService,
   ) {}
 
   async getUserAnswers(userId: string, surveyId: string) {
-    // await this.surveySummarizeService.countPoints(userId, surveyId);
     return await this.userModel
       .findOne(
         { _id: userId, 'surveysAnswers.surveyId': surveyId },
@@ -30,7 +23,7 @@ export class SurveyAnswerService {
       .exec();
   }
 
-  async changeAnswer(
+  private async changeAnswer(
     userId: string,
     surveyId: string,
     { value, questionId }: QuestionAnswerDto,
@@ -77,15 +70,14 @@ export class SurveyAnswerService {
         survey = await this.getUserAnswers(userId, surveyId);
       }
 
-      const [surveyAnswers] = survey.surveysAnswers;
+      const [surveyAnswers] = survey?.surveysAnswers || [];
+
       if (
-        surveyAnswers.answers.find(
+        surveyAnswers?.answers?.find?.(
           (el) => el.questionId === questionAnswerData.questionId,
         )
       ) {
-        throw new BadRequestException(
-          'Can not answer more than once per question',
-        );
+        return this.changeAnswer(userId, surveyId, questionAnswerData);
       }
 
       const newAnswer = await this.userModel

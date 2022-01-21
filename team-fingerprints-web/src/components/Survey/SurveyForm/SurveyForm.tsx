@@ -33,7 +33,7 @@ const SurveyForm = ({
   const updateMutation = useMutation(
     (survey: Partial<Survey>) => {
       return axios
-        .patch<Partial<Survey>>(`/survey/${survey._id}`, survey)
+        .patch<Partial<Survey>>(`/surveys/${survey._id}`, survey)
         .then(onClose);
     },
     {

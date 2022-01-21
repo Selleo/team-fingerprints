@@ -21,7 +21,6 @@ if (isEmpty((axios.interceptors.request as any).handlers)) {
   axios.interceptors.request.use(
     (config: any) => {
       const token = localStorage.getItem("token");
-      console.log("Jest token", !!token);
       config.headers.Authorization = `Bearer ${token}`;
       config.url = applyDefaultAPIVersioning(config.url);
       return config;

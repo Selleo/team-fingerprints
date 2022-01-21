@@ -3,7 +3,6 @@ import axios from "axios";
 import { toNumber } from "lodash";
 import { useState } from "react";
 import { useMutation } from "react-query";
-import useUser from "../../../hooks/useUser";
 import { Answer, Question } from "../../../types/models";
 
 const OPTIONS = [
@@ -19,11 +18,13 @@ export default function QuestionResponse({
   answer,
   surveyId,
   refetch,
+  disabled = false,
 }: {
   question: Question;
   answer?: number;
   surveyId: string;
   refetch: () => void;
+  disabled: boolean;
 }) {
   const [value, setValue] = useState<string>(answer?.toString() || "none");
 
@@ -47,10 +48,10 @@ export default function QuestionResponse({
     <>
       <h3>{question.title}</h3>
       <SegmentedControl
-        onChange={(val) => setAndSaveNewValue(val)}
+        onChange={(val) => !disabled && setAndSaveNewValue(val)}
         value={value}
         fullWidth
-        color="blue"
+        color={disabled ? "yellow" : "blue"}
         data={OPTIONS}
       />
     </>

@@ -162,11 +162,11 @@ export class SurveyAnswerService {
       .findOne({ _id: userId, 'surveysAnswers.surveyId': surveyId })
       .exec();
 
-    const userAnswers = userAnswersAll.surveysAnswers.find(
+    const userAnswers = userAnswersAll?.surveysAnswers?.find?.(
       (el) => el.surveyId === surveyId,
     );
 
-    const result = userAnswers.completeStatus;
+    const result = userAnswers?.completeStatus;
     return result === SurveyCompleteStatus.FINISHED;
   }
 
@@ -189,7 +189,7 @@ export class SurveyAnswerService {
 
   async finishSurvey(userId: string, surveyId: string) {
     const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
-    if (!isFinished) return await this.getSurveyResult(userId, surveyId);
+    if (isFinished) return await this.getSurveyResult(userId, surveyId);
     await this.changeSurvayCompleteStatusToFinished(userId, surveyId);
     const calculatedAnswers = await this.surveySummarizeService.countPoints(
       userId,

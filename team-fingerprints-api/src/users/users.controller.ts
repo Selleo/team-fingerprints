@@ -1,14 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
+import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { ChangeRoleDto } from './dto/ChangeUseroleDto.dto';
 import { CreateUserDto } from './dto/CreateUserDto.dto';
 import { UpdateUserDto } from './dto/UpdateUserDto.dto';
@@ -21,7 +14,9 @@ export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get()
-  async getUser(@CurrentUserId() userId: string): Promise<User> {
+  async getUser(
+    @CurrentUserId(ValidateObjectId) userId: string,
+  ): Promise<User> {
     return await this.userService.getUser(userId);
   }
 
@@ -37,20 +32,20 @@ export class UsersController {
 
   @Patch()
   async updateUser(
-    @CurrentUserId() userId: string,
+    @CurrentUserId(ValidateObjectId) userId: string,
     @Body() updateUserData: UpdateUserDto,
   ) {
     return await this.userService.updateUser(userId, updateUserData);
   }
 
   @Delete()
-  async removeUser(@CurrentUserId() userId: string) {
+  async removeUser(@CurrentUserId(ValidateObjectId) userId: string) {
     return await this.userService.removeUser(userId);
   }
 
   @Patch('/role')
   async changeUserRole(
-    @CurrentUserId() userId: string,
+    @CurrentUserId(ValidateObjectId) userId: string,
     @Body() role: ChangeRoleDto,
   ) {
     return await this.userService.changeUserRole(userId, role);

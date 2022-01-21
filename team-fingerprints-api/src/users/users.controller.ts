@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ChangeRoleDto } from './dto/ChangeUseroleDto.dto';
 import { CreateUserDto } from './dto/CreateUserDto.dto';
 import { UpdateUserDto } from './dto/UpdateUserDto.dto';
@@ -19,37 +20,37 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Get('/:userId')
-  async getUser(@Param('userId') userId: string): Promise<User> {
+  @Get()
+  async getUser(@CurrentUserId() userId: string): Promise<User> {
     return await this.userService.getUser(userId);
   }
 
-  @Get('/')
+  @Get()
   async getUsersAll(): Promise<User[]> {
     return await this.userService.getUsersAll();
   }
 
-  @Post('/')
+  @Post()
   async createUser(@Body() newUserData: CreateUserDto): Promise<User> {
     return await this.userService.createUser(newUserData);
   }
 
-  @Patch('/:userId')
+  @Patch()
   async updateUser(
-    @Param('userId') userId: string,
+    @CurrentUserId() userId: string,
     @Body() updateUserData: UpdateUserDto,
   ) {
     return await this.userService.updateUser(userId, updateUserData);
   }
 
-  @Delete('/:userId')
-  async removeUser(@Param('userId') userId: string) {
+  @Delete()
+  async removeUser(@CurrentUserId() userId: string) {
     return await this.userService.removeUser(userId);
   }
 
-  @Patch('/role/:userId')
+  @Patch('/role')
   async changeUserRole(
-    @Param('userId') userId: string,
+    @CurrentUserId() userId: string,
     @Body() role: ChangeRoleDto,
   ) {
     return await this.userService.changeUserRole(userId, role);

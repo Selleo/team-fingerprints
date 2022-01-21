@@ -74,7 +74,9 @@ const CreateQuestionForm = ({
         onChange={(event) => {
           handleChange("primary")(event);
         }}
-        label="primary"
+        label={`Positive answer to question indicade aswer ${
+          values.primary ? "primary" : "secondary"
+        }`}
       ></Switch>
 
       <Button className={classes.submitButton} type="submit">

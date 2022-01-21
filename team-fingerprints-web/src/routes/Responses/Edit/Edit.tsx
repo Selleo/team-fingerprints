@@ -1,39 +1,123 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
 import { SurveyDetails } from "../../../types/models";
-import { useQuery } from "react-query";
-import { find, flatMapDeep, get, size, toNumber } from "lodash";
-import { Button } from "@mantine/core";
+import { useMutation, useQuery } from "react-query";
+import { find, flatMapDeep, size, toNumber } from "lodash";
+import { Button, Group, SegmentedControl } from "@mantine/core";
 import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
-import useUser from "../../../hooks/useUser";
 
 export default function Edit() {
-  const { user } = useUser();
+  const [mode, setMode] = useState("result");
   const params = useParams();
   const {
     isLoading: isLoadingSurvey,
     error: errorLoadingSurvey,
     data: survey,
-  } = useQuery<SurveyDetails, Error>("surveyOne", async () => {
-    const response = await axios.get<SurveyDetails>(
-      `/surveys/${params.surveyId}`
+  } = useQuery<SurveyDetails, Error>(
+    `surveyOne-${params.surveyId}`,
+    async () => {
+      const response = await axios.get<SurveyDetails>(
+        `/surveys/${params.surveyId}`
+      );
+      return response.data;
+    }
+  );
+
+  const {
+    isLoading: isLoadingSurveyFinished,
+    data: surveyFinished,
+    refetch: refetchIsFinished,
+  } = useQuery<any, Error>(`surveyFinishedOne-${params.surveyId}`, async () => {
+    const response = await axios.get<any>(
+      `/survey-answers/${params.surveyId}/finish`
     );
     return response.data;
   });
+
+  const finishSurvey = useMutation(
+    async () => {
+      return axios.post(`/survey-answers/${params.surveyId}/finish`);
+    },
+    {
+      onSuccess: () => refetchIsFinished(),
+    }
+  );
+
+  const surveyIsFinished = surveyFinished?.status !== 400;
 
   const {
     isLoading: isLoadingSurveyResponse,
     error: errorLoadingSurveyResponse,
     data: surveyResponse,
     refetch,
-  } = useQuery<any, Error>("surveyResponseOne", async () => {
+  } = useQuery<any, Error>(`surveyResponseOne-${params.surveyId}`, async () => {
     const response = await axios.get<any>(`/survey-answers/${params.surveyId}`);
     return response.data;
   });
 
-  if (isLoadingSurvey || isLoadingSurveyResponse) {
+  const questions = flatMapDeep(
+    survey?.categories.map((category) =>
+      category.trends.map((trend) => trend.questions)
+    )
+  );
+
+  const allResponses = surveyResponse?.surveysAnswers?.[0].answers;
+
+  const questionsWithAnswers = questions.map((question) => {
+    return {
+      question,
+      answer: find(allResponses, { questionId: question._id }),
+    };
+  });
+
+  const buttonActive = size(questions) === size(allResponses);
+
+  const renderContent = useMemo(
+    () =>
+      surveyIsFinished && mode === "result" ? (
+        JSON.stringify(surveyFinished)
+      ) : (
+        <>
+          {questionsWithAnswers.map((questionsWithAnswer) => (
+            <QuestionResponse
+              disabled={surveyIsFinished}
+              refetch={refetch}
+              surveyId={params.surveyId || ""}
+              question={questionsWithAnswer.question}
+              answer={
+                questionsWithAnswer.answer
+                  ? toNumber(questionsWithAnswer.answer.value)
+                  : undefined
+              }
+            />
+          ))}
+          {!surveyIsFinished && (
+            <Button
+              onClick={() => finishSurvey.mutate()}
+              disabled={!buttonActive}
+              fullWidth
+              color="green"
+              style={{ marginBottom: "20px", marginTop: "10px" }}
+            >
+              Submit responses
+            </Button>
+          )}
+        </>
+      ),
+    [
+      buttonActive,
+      finishSurvey,
+      mode,
+      params.surveyId,
+      questionsWithAnswers,
+      refetch,
+      surveyIsFinished,
+    ]
+  );
+
+  if (isLoadingSurvey || isLoadingSurveyResponse || isLoadingSurveyFinished) {
     return <span>Loading survey</span>;
   }
 
@@ -45,46 +129,23 @@ export default function Edit() {
     return <span>Error loading survey response</span>;
   }
 
-  const allResponses = surveyResponse?.surveysAnswers?.[0].answers;
-
-  const questions = flatMapDeep(
-    survey?.categories.map((category) =>
-      category.trends.map((trend) => trend.questions)
-    )
-  );
-
-  const questionsWithAnswers = questions.map((question) => {
-    return {
-      question,
-      answer: find(allResponses, { questionId: question._id }),
-    };
-  });
-
-  const buttonActive = size(questions) === size(allResponses);
-
   return (
     <>
-      <h1>{survey?.title}</h1>
-      {questionsWithAnswers.map((questionsWithAnswer) => (
-        <QuestionResponse
-          refetch={refetch}
-          surveyId={params.surveyId || ""}
-          question={questionsWithAnswer.question}
-          answer={
-            questionsWithAnswer.answer
-              ? toNumber(questionsWithAnswer.answer.value)
-              : undefined
-          }
-        />
-      ))}
-      <Button
-        disabled={!buttonActive}
-        fullWidth
-        color="green"
-        style={{ marginBottom: "20px", marginTop: "10px" }}
-      >
-        Submit responses
-      </Button>
+      <Group style={{ justifyContent: "space-between" }}>
+        <h1>{survey?.title}</h1>
+        {surveyIsFinished && (
+          <SegmentedControl
+            color="green"
+            data={[
+              { value: "result", label: "Result" },
+              { value: "surveyEdit", label: "Show Survery" },
+            ]}
+            value={mode}
+            onChange={setMode}
+          />
+        )}
+      </Group>
+      {renderContent}
     </>
   );
 }

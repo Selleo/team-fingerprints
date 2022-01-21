@@ -12,7 +12,7 @@ export class SurveyAnswerController {
 
   @Get(':surveyId')
   async getUserAnswers(
-    @CurrentUserId() userId: any,
+    @CurrentUserId(ValidateObjectId) userId: any,
     @Param('surveyId', ValidateObjectId) surveyId: string,
   ) {
     return await this.surveyAnswerService.getUserAnswers(userId, surveyId);
@@ -20,7 +20,7 @@ export class SurveyAnswerController {
 
   @Post(':surveyId')
   async saveUserSurveyAnswer(
-    @CurrentUserId() userId: string,
+    @CurrentUserId(ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() surveyAnswerData: QuestionAnswerDto,
   ) {
@@ -29,5 +29,21 @@ export class SurveyAnswerController {
       surveyId,
       surveyAnswerData,
     );
+  }
+
+  @Get(':surveyId/finish')
+  async getSurveyResult(
+    @CurrentUserId(ValidateObjectId) userId: string,
+    @Param('surveyId', ValidateObjectId) surveyId: string,
+  ) {
+    return await this.surveyAnswerService.getSurveyResult(userId, surveyId);
+  }
+
+  @Post(':surveyId/finish')
+  async finishSurvey(
+    @CurrentUserId(ValidateObjectId) userId: string,
+    @Param('surveyId', ValidateObjectId) surveyId: string,
+  ) {
+    return await this.surveyAnswerService.finishSurvey(userId, surveyId);
   }
 }

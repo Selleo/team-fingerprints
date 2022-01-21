@@ -12,15 +12,15 @@ export class SurveySummarizeService {
   ) {}
 
   async countPoints(userId: string, surveyId: string) {
-    const userAnswers = await this.userModel
-      .findOne(
-        { _id: userId, 'surveysAnswers.surveyId': surveyId },
-        { surveysAnswers: 1 },
-      )
+    const userAnswersAll = await this.userModel
+      .findOne({ _id: userId, 'surveysAnswers.surveyId': surveyId })
       .exec();
 
-    const [surveysAnswers] = userAnswers.surveysAnswers;
-    const { answers } = surveysAnswers;
+    const userAnswers = userAnswersAll.surveysAnswers.find(
+      (el) => el.surveyId === surveyId,
+    );
+
+    const { answers } = userAnswers;
 
     const survey = await this.surveyModel.findById({ _id: surveyId });
     if (!survey) return new InternalServerErrorException();
@@ -37,7 +37,7 @@ export class SurveySummarizeService {
 
     if (
       answers.length !== questions.length ||
-      surveysAnswers.amountOfAnswers !== survey.amountOfQuestions
+      userAnswers.amountOfAnswers !== survey.amountOfQuestions
     ) {
       throw new InternalServerErrorException();
     }
@@ -60,12 +60,21 @@ export class SurveySummarizeService {
             }
           });
         });
-        avgTrends.push({
-          trendId: trend._id.toString(),
-          avgTrendAnswer: trendCount / trend.questions.length,
-        });
+        const avgTrendAnswer = trendCount / trend.questions.length;
+        if (avgTrendAnswer) {
+          avgTrends.push({
+            trendId: trend._id.toString(),
+            trendPrimary: trend.primary,
+            trendSecondary: trend.secondary,
+            avgTrendAnswer,
+          });
+        }
       });
-      summary.push({ categoryId: category._id.toString(), avgTrends });
+      summary.push({
+        categoryId: category._id.toString(),
+        categoryTitle: category.title,
+        avgTrends,
+      });
     });
 
     return summary;

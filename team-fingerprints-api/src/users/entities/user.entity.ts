@@ -8,6 +8,8 @@ import {
 
 @Schema({ autoIndex: true, timestamps: true })
 export class User extends Document {
+  _id?: string;
+
   @Prop({ required: true, unique: true })
   authId: string;
 

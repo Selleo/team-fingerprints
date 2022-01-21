@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -41,7 +41,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: authPayload): Promise<User> {
+  async validate(payload: authPayload): Promise<User | HttpException> {
     const options = (id: string) => ({
       method: 'GET',
       url: `https://dev-llkte41m.us.auth0.com/api/v2/users/${id}`,
@@ -76,6 +76,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           lastName,
         });
       });
+      if (!user) return new BadRequestException();
     }
     return user;
   }

@@ -32,7 +32,7 @@ export class User extends Document {
   team?: string;
 
   @Prop({ default: '' })
-  url?: string;
+  companyId?: string;
 
   @Prop({ type: [UserSurveyAnswerSchema], default: [], required: true })
   surveysAnswers: UserSurveyAnswer[];

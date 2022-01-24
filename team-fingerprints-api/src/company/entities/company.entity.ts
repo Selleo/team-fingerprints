@@ -4,6 +4,8 @@ import { Team, TeamSchema } from './team.entity';
 
 @Schema({ autoIndex: true, timestamps: true })
 export class Company extends Document {
+  _id?: string;
+
   @Prop()
   name?: string;
 

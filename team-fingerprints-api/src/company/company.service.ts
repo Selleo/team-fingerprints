@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { UserRole } from 'src/users/user.type';
+import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto } from './dto/CreateCompanyDto.dto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto.dto';
 import { Company } from './entities/Company.entity';
@@ -9,21 +11,28 @@ import { Company } from './entities/Company.entity';
 export class CompanyService {
   constructor(
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+    private readonly usersService: UsersService,
   ) {}
   async getCompaneis() {
     return await this.companyModel.find({}).exec();
   }
 
-  async getCompany(companyId: string) {
-    return await this.companyModel.findOne({ _id: companyId }).exec();
+  async getCompany(adminId: string, companyId: string) {
+    return await this.companyModel.findOne({ _id: companyId, adminId }).exec();
   }
 
-  async createCompany({ name, description }: CreateCompanyDto) {
-    return await this.companyModel.create({
+  async createCompany(userId: string, { name, description }: CreateCompanyDto) {
+    await this.usersService.changeUserRole(userId, UserRole.COMPANY_ADMIN);
+    const newCompany = await this.companyModel.create({
       name,
       description,
-      adminId: '61c59becd19b89a4b96a343e',
+      adminId: userId,
     });
+    await this.usersService.updateUser(userId, {
+      companyId: newCompany?._id,
+    });
+
+    return newCompany;
   }
 
   async updateCompany(companyId: string, body: UpdateCompanyDto) {

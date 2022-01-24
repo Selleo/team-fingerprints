@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { RoleGuard } from 'src/common/decorators/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { UserRole } from 'src/users/user.type';
@@ -37,8 +38,9 @@ export class TeamController {
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() body: CreateTeamDto,
+    @CurrentUserId(ValidateObjectId) userId: string,
   ) {
-    return await this.teamService.createTeam(companyId, body);
+    return await this.teamService.createTeam(userId, companyId, body);
   }
 
   @Patch('/:teamId')
@@ -48,6 +50,35 @@ export class TeamController {
     @Body() body: UpdateTeamDto,
   ) {
     return await this.teamService.updateTeam(teamId, body);
+  }
+
+  @Patch('/:teamId/leader')
+  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN, UserRole.TEAM_LEADER]))
+  async assignTeamLeader(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+    @CurrentUserId(ValidateObjectId) userId: string,
+    @Body('leaderEmail') leaderEmail: string,
+  ) {
+    return await this.teamService.assignTeamLeader(
+      companyId,
+      teamId,
+      leaderEmail,
+    );
+  }
+
+  @Patch('/:teamId/member')
+  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN, UserRole.TEAM_LEADER]))
+  async addMemberToTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+    @Body('memberEmail') memberEmail: string,
+  ) {
+    return await this.teamService.addMemberToTeam(
+      companyId,
+      teamId,
+      memberEmail,
+    );
   }
 
   @Delete('/:teamId')

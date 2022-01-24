@@ -4,20 +4,20 @@ import { Team, TeamSchema } from './team.entity';
 
 @Schema({ autoIndex: true, timestamps: true })
 export class Company extends Document {
-  @Prop({ required: true })
-  name: string;
+  @Prop()
+  name?: string;
 
   @Prop()
-  description: string;
+  description?: string;
 
   @Prop()
-  logo: string;
+  logo?: string;
 
   @Prop({ type: [TeamSchema], default: [], required: true })
   teams: Team[];
 
   @Prop({ required: true, default: [] })
-  adminIs: string[];
+  adminId: string[];
 
   @Prop({ required: true, default: [] })
   surves: string[];

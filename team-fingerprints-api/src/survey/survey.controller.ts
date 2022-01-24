@@ -6,9 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { RoleGuard } from 'src/common/decorators/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { UserRole } from 'src/users/user.type';
 import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
 import { UpdateSurveyDto } from './dto/UpdateSurveyDto.dto';
 import { SurveyService } from './survey.service';
@@ -19,6 +22,7 @@ export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
   @Get()
+  @UseGuards(RoleGuard([UserRole.USER]))
   async getSurveysAll() {
     return await this.surveyService.getSurveysAll();
   }

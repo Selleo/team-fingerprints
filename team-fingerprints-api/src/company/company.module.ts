@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RoleModule } from 'src/role/role.module';
 import { UsersModule } from 'src/users/users.module';
 import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
@@ -16,6 +17,7 @@ import { TeamModule } from './team/team.module';
       },
     ]),
     TeamModule,
+    RoleModule,
   ],
   controllers: [CompanyController],
   providers: [CompanyService],

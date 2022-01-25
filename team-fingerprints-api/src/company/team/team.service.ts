@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
@@ -63,6 +68,7 @@ export class TeamService {
             'teams.$.teamLeader': teamLeader,
           },
         },
+        { new: true },
       )
       .exec();
   }
@@ -76,6 +82,7 @@ export class TeamService {
             teams: { _id: teamId },
           },
         },
+        { new: true },
       )
       .exec();
   }
@@ -84,31 +91,30 @@ export class TeamService {
     companyId: string,
     teamId: string,
     leaderEmail: string,
+    isTeamMember: boolean,
   ) {
     const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
+    if (!leaderCandidate) return new NotFoundException();
+
     const leaderCandidateId = leaderCandidate?._id.toString();
     const team = await this.getTeam(teamId);
-    if (team.members.find((el) => el === leaderCandidateId))
-      return new ForbiddenException();
+    if (!team) return new NotFoundException();
 
-    return await this.teamModel.findOneAndUpdate(
-      { _id: companyId, 'teams._id': teamId },
-      {
-        $set: {
-          'teams.$.teamLeader': leaderCandidateId,
-        },
-        $push: {
-          'teams.$.members': leaderCandidateId,
-        },
-      },
-      {
-        arrayFilters: [
-          {
-            team: teamId,
+    const teamWithLeader = await this.teamModel
+      .findOneAndUpdate(
+        { _id: companyId, 'teams._id': teamId },
+        {
+          $set: {
+            'teams.$.teamLeader': leaderCandidateId,
           },
-        ],
-      },
-    );
+        },
+        { new: true },
+      )
+      .exec();
+    if (!teamWithLeader) return new InternalServerErrorException();
+    if (!team.members.find((el) => el === leaderCandidateId) && isTeamMember)
+      return await this.addMemberToTeam(companyId, teamId, leaderEmail);
+    return teamWithLeader;
   }
 
   async addMemberToTeam(
@@ -117,25 +123,57 @@ export class TeamService {
     memberEmail: string,
   ) {
     const newMember = await this.usersService.getUserByEmail(memberEmail);
+    if (!newMember) return new NotFoundException();
+
     const newMemberId = newMember?._id.toString();
     const team = await this.getTeam(teamId);
+    if (!team) return new NotFoundException();
+
     if (team.members.find((el) => el === newMemberId))
       return new ForbiddenException();
 
-    return await this.teamModel.findOneAndUpdate(
-      { _id: companyId, 'teams._id': teamId },
-      {
-        $push: {
-          'teams.$.members': newMemberId,
-        },
-      },
-      {
-        arrayFilters: [
-          {
-            team: teamId,
+    const teamWithNewMember = await this.teamModel
+      .findOneAndUpdate(
+        { _id: companyId, 'teams._id': teamId },
+        {
+          $push: {
+            'teams.$.members': newMemberId,
           },
-        ],
-      },
-    );
+        },
+        { new: true },
+      )
+      .exec();
+    if (!teamWithNewMember) return new InternalServerErrorException();
+    return teamWithNewMember;
+  }
+
+  async removeMemberFromTeam(
+    companyId: string,
+    teamId: string,
+    memberEmail: string,
+  ) {
+    const memberToRemove = await this.usersService.getUserByEmail(memberEmail);
+    if (!memberToRemove) return new NotFoundException();
+
+    const memberToRemoveId = memberToRemove?._id.toString();
+    const team = await this.getTeam(teamId);
+    if (!team) return new NotFoundException();
+
+    if (!team.members.find((el) => el === memberToRemoveId))
+      return new NotFoundException();
+
+    const teamWithoutRemovedMember = await this.teamModel
+      .findOneAndUpdate(
+        { _id: companyId, 'teams._id': teamId },
+        {
+          $pull: {
+            'teams.$.members': memberToRemoveId,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+    if (!teamWithoutRemovedMember) return new InternalServerErrorException();
+    return teamWithoutRemovedMember;
   }
 }

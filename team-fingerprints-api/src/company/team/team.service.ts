@@ -94,7 +94,6 @@ export class TeamService {
     companyId: string,
     teamId: string,
     leaderEmail: string,
-    isTeamMember: boolean,
   ): Promise<Company | HttpException> {
     const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
     if (!leaderCandidate) return new NotFoundException();
@@ -116,7 +115,7 @@ export class TeamService {
       .exec();
     if (!teamWithLeader) return new InternalServerErrorException();
     const { members } = team as Team;
-    if (!members.find((el) => el === leaderCandidateId) && isTeamMember)
+    if (!members.find((el) => el === leaderCandidateId))
       return await this.addMemberToTeam(companyId, teamId, leaderEmail);
     return teamWithLeader;
   }

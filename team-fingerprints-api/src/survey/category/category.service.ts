@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Survey } from '../entities/survey.entity';
@@ -17,7 +17,7 @@ export class CategoryService {
   async createCategory(
     { surveyId }: CategoryParamsDto,
     { title }: CreateCategoryDto,
-  ) {
+  ): Promise<Survey | HttpException> {
     const surveyExists = await this.surveyService.getSurvey(surveyId);
     if (!surveyExists) return new NotFoundException();
     surveyExists.categories.push({ title });
@@ -27,8 +27,8 @@ export class CategoryService {
   async updateCategory(
     { surveyId, categoryId }: CategoryParamsDto,
     { title }: UpdateCategoryDto,
-  ) {
-    return await this.surveyModel.updateOne(
+  ): Promise<Survey> {
+    return await this.surveyModel.findByIdAndUpdate(
       {
         _id: surveyId,
         'categories._id': categoryId,
@@ -38,11 +38,12 @@ export class CategoryService {
           'categories.$.title': title,
         },
       },
+      { new: true },
     );
   }
 
-  async removeCategory(categoryId: string) {
-    return await this.surveyModel.updateOne(
+  async removeCategory(categoryId: string): Promise<Survey> {
+    return await this.surveyModel.findByIdAndUpdate(
       {
         'categories._id': categoryId,
       },
@@ -51,6 +52,7 @@ export class CategoryService {
           categories: { _id: categoryId },
         },
       },
+      { new: true },
     );
   }
 }

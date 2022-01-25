@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  HttpException,
   Param,
   Patch,
   Post,
@@ -11,6 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/common/decorators/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { UserRole } from 'src/users/user.type';
+import { Survey } from '../entities/survey.entity';
 import { CategoryService } from './category.service';
 import { CategoryParamsDto } from './dto/CategoryParamsDto.dto';
 import { CreateCategoryDto } from './dto/CreateCategoryDto.dto';
@@ -26,7 +28,7 @@ export class CategoryController {
   async createCategory(
     @Param() params: CategoryParamsDto,
     @Body() body: CreateCategoryDto,
-  ) {
+  ): Promise<Survey | HttpException> {
     return await this.categoryService.createCategory(params, body);
   }
 
@@ -35,7 +37,7 @@ export class CategoryController {
   async updateCateory(
     @Param() params: CategoryParamsDto,
     @Body() body: UpdateCategoryDto,
-  ) {
+  ): Promise<Survey> {
     return await this.categoryService.updateCategory(params, body);
   }
 
@@ -43,7 +45,7 @@ export class CategoryController {
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
   async removeCategory(
     @Param('categoryId', ValidateObjectId) categoryId: string,
-  ) {
+  ): Promise<Survey> {
     return this.categoryService.removeCategory(categoryId);
   }
 }

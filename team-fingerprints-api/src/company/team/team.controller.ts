@@ -52,29 +52,41 @@ export class TeamController {
     return await this.teamService.updateTeam(teamId, body);
   }
 
-  @Patch('/:teamId/leader')
+  @Post('/:teamId/leader')
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN, UserRole.TEAM_LEADER]))
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @CurrentUserId(ValidateObjectId) userId: string,
-    @Body('leaderEmail') leaderEmail: string,
+    @Body('email') email: string,
+    @Body('isTeamMember') isTeamMember: boolean,
   ) {
     return await this.teamService.assignTeamLeader(
       companyId,
       teamId,
-      leaderEmail,
+      email,
+      isTeamMember,
     );
   }
 
-  @Patch('/:teamId/member')
+  @Post('/:teamId/member')
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN, UserRole.TEAM_LEADER]))
   async addMemberToTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('memberEmail') memberEmail: string,
+    @Body('email') email: string,
   ) {
-    return await this.teamService.addMemberToTeam(
+    return await this.teamService.addMemberToTeam(companyId, teamId, email);
+  }
+
+  @Delete('/:teamId/member')
+  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN, UserRole.TEAM_LEADER]))
+  async removeMemberFromTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+    @Body('email') memberEmail: string,
+  ) {
+    return await this.teamService.removeMemberFromTeam(
       companyId,
       teamId,
       memberEmail,

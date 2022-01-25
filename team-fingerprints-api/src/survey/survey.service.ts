@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
 import { UpdateSurveyDto } from './dto/UpdateSurveyDto.dto';
+import { UserRole } from 'src/users/user.type';
 
 @Injectable()
 export class SurveyService {
@@ -11,21 +12,33 @@ export class SurveyService {
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
   ) {}
 
-  async getSurveysAll() {
+  async getSurveysByRole(role: UserRole): Promise<Survey[]> {
+    if (role === UserRole.ADMIN || role === UserRole.COMPANY_ADMIN) {
+      return await this.surveyModel.find({}).exec();
+    }
+    return await this.surveyModel.find({ isPublic: true }).exec();
+  }
+
+  async getSurvey(
+    surveyId: string,
+    role: UserRole = UserRole.USER,
+  ): Promise<Survey> {
+    if (role === UserRole.ADMIN || role === UserRole.COMPANY_ADMIN) {
+      return await this.surveyModel.findById({ _id: surveyId }).exec();
+    }
     return await this.surveyModel
-      .find({}, { _id: 1, isPublic: 1, title: 1 })
+      .findById({ _id: surveyId, isPublic: true })
       .exec();
   }
 
-  async getSurvey(surveyId: string) {
-    return await this.surveyModel.findById({ _id: surveyId }).exec();
-  }
-
-  async createSurvey({ title }: CreateSurveyDto) {
+  async createSurvey({ title }: CreateSurveyDto): Promise<Survey> {
     return await this.surveyModel.create({ title });
   }
 
-  async updateSurvey(surveyId: string, { title, isPublic }: UpdateSurveyDto) {
+  async updateSurvey(
+    surveyId: string,
+    { title, isPublic }: UpdateSurveyDto,
+  ): Promise<Survey> {
     return await this.surveyModel
       .findByIdAndUpdate(
         { _id: surveyId },
@@ -35,11 +48,14 @@ export class SurveyService {
             isPublic,
           },
         },
+        { new: true },
       )
       .exec();
   }
 
-  async removeSurvey(surveyId: string) {
-    return await this.surveyModel.deleteOne({ _id: surveyId }).exec();
+  async removeSurvey(surveyId: string): Promise<Survey> {
+    return await this.surveyModel
+      .findOneAndDelete({ _id: surveyId }, { new: true })
+      .exec();
   }
 }

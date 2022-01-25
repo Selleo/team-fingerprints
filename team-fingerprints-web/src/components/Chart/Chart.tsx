@@ -13,7 +13,7 @@ interface IProps {
   data: any;
 }
 
-const ROW_HEIGHT_PX = 120;
+const ROW_HEIGHT_PX = 60;
 
 type TrendResults = {
   avgTrendAnswer: number;

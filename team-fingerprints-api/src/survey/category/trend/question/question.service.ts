@@ -17,7 +17,7 @@ export class QuestionService {
   async createQuestion(
     { surveyId, categoryId, trendId }: QuestionParamsDto,
     { title, primary }: CreateQuestionDto,
-  ) {
+  ): Promise<void> {
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
       const newQuestion = await this.surveyModel
@@ -64,8 +64,8 @@ export class QuestionService {
   async updateQuestion(
     { surveyId, categoryId, trendId, questionId }: QuestionParamsDto,
     { title, primary }: UpdateQuestionDto,
-  ) {
-    return await this.surveyModel.updateOne(
+  ): Promise<Survey> {
+    return await this.surveyModel.findOneAndUpdate(
       {
         _id: surveyId,
       },
@@ -83,15 +83,16 @@ export class QuestionService {
           { 'trend._id': trendId },
           { 'category._id': categoryId },
         ],
+        new: true,
       },
     );
   }
 
-  async removeQuestion(surveyId: string, questionId: string) {
+  async removeQuestion(surveyId: string, questionId: string): Promise<void> {
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
       const removedQuestion = await this.surveyModel
-        .updateOne(
+        .findOneAndUpdate(
           {
             'categories.trends.questions._id': questionId,
           },
@@ -99,6 +100,9 @@ export class QuestionService {
             $pull: {
               'categories.$.trends.$[].questions': { _id: questionId },
             },
+          },
+          {
+            new: true,
           },
         )
         .session(session)
@@ -109,13 +113,14 @@ export class QuestionService {
       }
 
       await this.surveyModel
-        .updateOne(
+        .findOneAndUpdate(
           { _id: surveyId },
           {
             $inc: { amountOfQuestions: -1 },
           },
           {
             session,
+            new: true,
           },
         )
         .exec();

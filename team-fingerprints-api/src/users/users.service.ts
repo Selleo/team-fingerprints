@@ -12,11 +12,11 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async getUserByAuthId(authId: string) {
+  async getUserByAuthId(authId: string): Promise<User> {
     return await this.userModel.findOne({ authId });
   }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<User> {
     return await this.userModel.findOne({ email });
   }
 
@@ -53,15 +53,19 @@ export class UsersService {
     return await user.save();
   }
 
-  async updateUser(userId: string, updateUserData: UpdateUserDto) {
-    return await this.userModel.updateOne(
+  async updateUser(
+    userId: string,
+    updateUserData: UpdateUserDto,
+  ): Promise<User> {
+    return await this.userModel.findOneAndUpdate(
       { _id: userId },
       { $set: updateUserData },
+      { new: true },
     );
   }
 
-  async removeUser(userId: string) {
-    return await this.userModel.deleteOne({ _id: userId });
+  async removeUser(userId: string): Promise<User> {
+    return await this.userModel.findOneAndDelete({ _id: userId });
   }
 
   async changeUserRole(userId: string, role: UserRole) {

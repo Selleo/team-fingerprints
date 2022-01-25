@@ -13,15 +13,18 @@ export class CompanyService {
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
     private readonly usersService: UsersService,
   ) {}
-  async getCompaneis() {
+  async getCompaneis(): Promise<Company[]> {
     return await this.companyModel.find({}).exec();
   }
 
-  async getCompany(adminId: string, companyId: string) {
+  async getCompany(adminId: string, companyId: string): Promise<Company> {
     return await this.companyModel.findOne({ _id: companyId, adminId }).exec();
   }
 
-  async createCompany(userId: string, { name, description }: CreateCompanyDto) {
+  async createCompany(
+    userId: string,
+    { name, description }: CreateCompanyDto,
+  ): Promise<Company> {
     await this.usersService.changeUserRole(userId, UserRole.COMPANY_ADMIN);
     const newCompany = await this.companyModel.create({
       name,
@@ -35,13 +38,18 @@ export class CompanyService {
     return newCompany;
   }
 
-  async updateCompany(companyId: string, body: UpdateCompanyDto) {
+  async updateCompany(
+    companyId: string,
+    body: UpdateCompanyDto,
+  ): Promise<Company> {
     return await this.companyModel
-      .findOneAndUpdate({ _id: companyId }, body)
+      .findOneAndUpdate({ _id: companyId }, body, { new: true })
       .exec();
   }
 
-  async removeCompany(companyId: string) {
-    return await this.companyModel.findOneAndDelete({ _id: companyId }).exec();
+  async removeCompany(companyId: string): Promise<Company> {
+    return await this.companyModel
+      .findOneAndDelete({ _id: companyId }, { new: true })
+      .exec();
   }
 }

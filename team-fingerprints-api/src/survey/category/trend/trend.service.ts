@@ -15,8 +15,8 @@ export class TrendService {
   async createTrend(
     { surveyId, categoryId }: TrendParamsDto,
     { primary, secondary }: CreateTrendDto,
-  ) {
-    return await this.surveyModel.updateOne(
+  ): Promise<Survey> {
+    return await this.surveyModel.findOneAndUpdate(
       {
         _id: surveyId,
         'categories._id': categoryId,
@@ -29,14 +29,15 @@ export class TrendService {
           },
         },
       },
+      { new: true },
     );
   }
 
   async updateTrend(
     { surveyId, categoryId, trendId }: TrendParamsDto,
     { primary, secondary }: UpdateTrendDto,
-  ) {
-    return await this.surveyModel.updateOne(
+  ): Promise<Survey> {
+    return await this.surveyModel.findOneAndUpdate(
       {
         _id: surveyId,
       },
@@ -53,12 +54,13 @@ export class TrendService {
           },
           { 'category._id': categoryId },
         ],
+        new: true,
       },
     );
   }
 
-  async removeTrend(trendId: string) {
-    return await this.surveyModel.updateOne(
+  async removeTrend(trendId: string): Promise<Survey> {
+    return await this.surveyModel.findOneAndUpdate(
       {
         'categories.trends._id': trendId,
       },
@@ -67,6 +69,7 @@ export class TrendService {
           'categories.$[].trends': { _id: trendId },
         },
       },
+      { new: true },
     );
   }
 }

@@ -9,12 +9,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
+import { CurrentUserRole } from 'src/common/decorators/currentUserRole.decorator';
 import { RoleGuard } from 'src/common/decorators/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { UserRole } from 'src/users/user.type';
 import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
 import { UpdateSurveyDto } from './dto/UpdateSurveyDto.dto';
+import { Survey } from './entities/survey.entity';
 import { SurveyService } from './survey.service';
 
 @ApiTags('surveys')
@@ -23,24 +24,21 @@ export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
   @Get()
-  async getSurveysAll(@CurrentUserId() userId: string) {
-    return await this.surveyService.getSurveysAll();
+  async getSurveysByRole(@CurrentUserRole() role: UserRole): Promise<Survey[]> {
+    return await this.surveyService.getSurveysByRole(role);
   }
 
   @Get('/:surveyId')
   async getSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
-    @CurrentUserId() userId: string,
-  ) {
-    return this.surveyService.getSurvey(surveyId);
+    @CurrentUserRole() role: UserRole,
+  ): Promise<Survey> {
+    return this.surveyService.getSurvey(surveyId, role);
   }
 
   @Post()
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
-  async createSurvey(
-    @Body() body: CreateSurveyDto,
-    @CurrentUserId() userId: string,
-  ) {
+  async createSurvey(@Body() body: CreateSurveyDto): Promise<Survey> {
     return await this.surveyService.createSurvey(body);
   }
 
@@ -49,8 +47,7 @@ export class SurveyController {
   async updateSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() body: UpdateSurveyDto,
-    @CurrentUserId() userId: string,
-  ) {
+  ): Promise<Survey> {
     return await this.surveyService.updateSurvey(surveyId, body);
   }
 
@@ -58,8 +55,7 @@ export class SurveyController {
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
   async removeSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
-    @CurrentUserId() userId: string,
-  ) {
+  ): Promise<Survey> {
     return this.surveyService.removeSurvey(surveyId);
   }
 }

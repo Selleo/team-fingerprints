@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  ForbiddenException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -19,7 +21,7 @@ export class SurveyAnswerService {
     private readonly surveySummarizeService: SurveySummarizeService,
   ) {}
 
-  async getUserAnswers(userId: string, surveyId: string) {
+  async getUserAnswers(userId: string, surveyId: string): Promise<User> {
     return await this.userModel
       .findOne(
         { _id: userId, 'surveysAnswers.surveyId': surveyId },
@@ -34,9 +36,12 @@ export class SurveyAnswerService {
     userId: string,
     surveyId: string,
     { value, questionId }: QuestionAnswerDto,
-  ) {
+  ): Promise<User | HttpException> {
+    if (await this.checkIfSurveyIsFinished(userId, surveyId))
+      return new ForbiddenException();
+
     return await this.userModel
-      .updateOne(
+      .findOneAndUpdate(
         { _id: userId },
         {
           $set: {
@@ -48,6 +53,7 @@ export class SurveyAnswerService {
             { 'survey.surveyId': surveyId },
             { 'question.questionId': questionId },
           ],
+          new: true,
         },
       )
       .exec();
@@ -58,6 +64,9 @@ export class SurveyAnswerService {
     surveyId: string,
     questionAnswerData: QuestionAnswerDto,
   ) {
+    if (await this.checkIfSurveyIsFinished(userId, surveyId))
+      return new ForbiddenException();
+
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
       let survey = await this.getUserAnswers(userId, surveyId);
@@ -137,37 +146,16 @@ export class SurveyAnswerService {
       .exec();
   }
 
-  private async changeSurvayCompleteStatusToFinished(
-    userId: string,
-    surveyId: string,
-  ) {
-    return await this.userModel
-      .updateOne(
-        { _id: userId },
-        {
-          $set: {
-            'surveysAnswers.$[survey].completeStatus':
-              SurveyCompleteStatus.FINISHED,
-          },
-        },
-        {
-          arrayFilters: [{ 'survey.surveyId': surveyId }],
-        },
-      )
-      .exec();
-  }
-
-  async checkIfSurveyIsFinished(userId: string, surveyId: string) {
-    const userAnswersAll = await this.userModel
-      .findOne({ _id: userId, 'surveysAnswers.surveyId': surveyId })
-      .exec();
-
-    const userAnswers = userAnswersAll?.surveysAnswers?.find?.(
-      (el) => el.surveyId === surveyId,
+  async finishSurvey(userId: string, surveyId: string) {
+    const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
+    if (isFinished) return await this.getSurveyResult(userId, surveyId);
+    await this.changeSurvayCompleteStatusToFinished(userId, surveyId);
+    const calculatedAnswers = await this.surveySummarizeService.countPoints(
+      userId,
+      surveyId,
     );
-
-    const result = userAnswers?.completeStatus;
-    return result === SurveyCompleteStatus.FINISHED;
+    await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
+    return await this.getSurveyResult(userId, surveyId);
   }
 
   async getSurveyResult(userId: string, surveyId: string) {
@@ -187,15 +175,36 @@ export class SurveyAnswerService {
     return result;
   }
 
-  async finishSurvey(userId: string, surveyId: string) {
-    const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
-    if (isFinished) return await this.getSurveyResult(userId, surveyId);
-    await this.changeSurvayCompleteStatusToFinished(userId, surveyId);
-    const calculatedAnswers = await this.surveySummarizeService.countPoints(
-      userId,
-      surveyId,
+  async checkIfSurveyIsFinished(userId: string, surveyId: string) {
+    const userAnswersAll = await this.userModel
+      .findOne({ _id: userId, 'surveysAnswers.surveyId': surveyId })
+      .exec();
+
+    const userAnswers = userAnswersAll?.surveysAnswers?.find?.(
+      (el) => el.surveyId === surveyId,
     );
-    await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
-    return await this.getSurveyResult(userId, surveyId);
+
+    const result = userAnswers?.completeStatus;
+    return result === SurveyCompleteStatus.FINISHED;
+  }
+
+  private async changeSurvayCompleteStatusToFinished(
+    userId: string,
+    surveyId: string,
+  ) {
+    return await this.userModel
+      .updateOne(
+        { _id: userId },
+        {
+          $set: {
+            'surveysAnswers.$[survey].completeStatus':
+              SurveyCompleteStatus.FINISHED,
+          },
+        },
+        {
+          arrayFilters: [{ 'survey.surveyId': surveyId }],
+        },
+      )
+      .exec();
   }
 }

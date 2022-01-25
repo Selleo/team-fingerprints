@@ -26,7 +26,7 @@ export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
   @Get()
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async getTeamsAll(): Promise<Company[]> {
     return await this.teamService.getTeamsAll();
   }
@@ -58,20 +58,13 @@ export class TeamController {
   }
 
   @Post('/:teamId/leader')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @CurrentUserId(ValidateObjectId) userId: string,
     @Body('email') email: string,
-    @Body('isTeamMember') isTeamMember: boolean,
   ): Promise<Company | HttpException> {
-    return await this.teamService.assignTeamLeader(
-      companyId,
-      teamId,
-      email,
-      isTeamMember,
-    );
+    return await this.teamService.assignTeamLeader(companyId, teamId, email);
   }
 
   @Post('/:teamId/member')

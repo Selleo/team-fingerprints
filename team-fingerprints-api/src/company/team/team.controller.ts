@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Param,
   Patch,
   Post,
@@ -13,6 +14,8 @@ import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { RoleGuard } from 'src/common/decorators/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { UserRole } from 'src/users/user.type';
+import { Company } from '../entities/Company.entity';
+import { Team } from '../entities/team.entity';
 import { CreateTeamDto } from './dto/CreateTeamDto.dto';
 import { UpdateTeamDto } from './dto/UpdateTeamDto.dto';
 import { TeamService } from './team.service';
@@ -24,12 +27,14 @@ export class TeamController {
 
   @Get()
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN, UserRole.TEAM_LEADER]))
-  async getTeamsAll() {
+  async getTeamsAll(): Promise<Company[]> {
     return await this.teamService.getTeamsAll();
   }
 
   @Get('/:teamId')
-  async getTeam(@Param('teamId', ValidateObjectId) teamId: string) {
+  async getTeam(
+    @Param('teamId', ValidateObjectId) teamId: string,
+  ): Promise<Team | HttpException> {
     return await this.teamService.getTeam(teamId);
   }
 
@@ -39,7 +44,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() body: CreateTeamDto,
     @CurrentUserId(ValidateObjectId) userId: string,
-  ) {
+  ): Promise<Company> {
     return await this.teamService.createTeam(userId, companyId, body);
   }
 
@@ -48,7 +53,7 @@ export class TeamController {
   async updateTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() body: UpdateTeamDto,
-  ) {
+  ): Promise<Company> {
     return await this.teamService.updateTeam(teamId, body);
   }
 
@@ -60,7 +65,7 @@ export class TeamController {
     @CurrentUserId(ValidateObjectId) userId: string,
     @Body('email') email: string,
     @Body('isTeamMember') isTeamMember: boolean,
-  ) {
+  ): Promise<Company | HttpException> {
     return await this.teamService.assignTeamLeader(
       companyId,
       teamId,
@@ -75,7 +80,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('email') email: string,
-  ) {
+  ): Promise<Company | HttpException> {
     return await this.teamService.addMemberToTeam(companyId, teamId, email);
   }
 
@@ -85,7 +90,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('email') memberEmail: string,
-  ) {
+  ): Promise<Company | HttpException> {
     return await this.teamService.removeMemberFromTeam(
       companyId,
       teamId,
@@ -95,7 +100,9 @@ export class TeamController {
 
   @Delete('/:teamId')
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
-  async removeTeam(@Param('teamId', ValidateObjectId) teamId: string) {
+  async removeTeam(
+    @Param('teamId', ValidateObjectId) teamId: string,
+  ): Promise<Company | HttpException> {
     return await this.teamService.removeTeam(teamId);
   }
 }

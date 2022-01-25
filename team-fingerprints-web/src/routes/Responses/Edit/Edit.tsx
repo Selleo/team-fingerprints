@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "react-query";
 import { find, flatMapDeep, size, toNumber } from "lodash";
 import { Button, Group, SegmentedControl } from "@mantine/core";
 import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
+import Chart from "../../../components/Chart";
 
 export default function Edit() {
   const [mode, setMode] = useState("result");
@@ -77,7 +78,7 @@ export default function Edit() {
   const renderContent = useMemo(
     () =>
       surveyIsFinished && mode === "result" ? (
-        JSON.stringify(surveyFinished)
+        <Chart data={surveyFinished} />
       ) : (
         <>
           {questionsWithAnswers.map((questionsWithAnswer) => (

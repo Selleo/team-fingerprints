@@ -1,10 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/CreateUserDto.dto';
 import { UpdateUserDto } from './dto/UpdateUserDto.dto';
 import { User } from './entities/user.entity';
-import { UserRole } from './user.type';
 
 @Injectable()
 export class UsersService {
@@ -66,12 +65,5 @@ export class UsersService {
 
   async removeUser(userId: string): Promise<User> {
     return await this.userModel.findOneAndDelete({ _id: userId });
-  }
-
-  async changeUserRole(userId: string, role: UserRole) {
-    if (role.toString() in UserRole) {
-      return await this.userModel.updateOne({ _id: userId }, { role });
-    }
-    return new BadRequestException();
   }
 }

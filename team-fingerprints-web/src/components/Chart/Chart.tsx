@@ -39,8 +39,8 @@ const Chart: FC<IProps> = ({ data }: { data: CategoryResults[] }) => {
 
   // responsive width and height
   useEffect(() => {
-    setWidth(ref.current.clientWidth);
-    setHeight(ref.current.clientHeight);
+    setWidth(ref.current?.clientWidth);
+    setHeight(ref.current?.clientHeight);
   }, []);
 
   const displayWidth = Math.floor(pixelRatio * width);
@@ -63,7 +63,10 @@ const Chart: FC<IProps> = ({ data }: { data: CategoryResults[] }) => {
 
   useLayoutEffect(() => {
     const dotsPositions: { x: number; y: number }[] = [];
-    const ctx = canvas.current.getContext("2d");
+    const ctx = canvas.current?.getContext?.("2d");
+    if (!ctx) {
+      return;
+    }
     times(numberOfRows, (time) => {
       const positionOfLine = rowHeight / 2 + time * rowHeight;
       ctx.beginPath();
@@ -75,7 +78,7 @@ const Chart: FC<IProps> = ({ data }: { data: CategoryResults[] }) => {
 
       ctx.beginPath();
       const result = mappedTrends[time];
-      const dotPosition = (displayWidth / 5) * (result.avgTrendAnswer - 1);
+      const dotPosition = (displayWidth / 4) * (result.avgTrendAnswer - 1);
       ctx.arc(dotPosition, positionOfLine, 5, 0, 2 * Math.PI, true);
       dotsPositions.push({ x: dotPosition, y: positionOfLine });
       ctx.lineWidth = 2;

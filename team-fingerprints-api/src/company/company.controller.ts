@@ -16,6 +16,7 @@ import { UserRole } from 'src/users/user.type';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/CreateCompanyDto.dto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto.dto';
+import { Company } from './entities/Company.entity';
 
 @ApiTags('companies')
 @Controller({ version: '1' })
@@ -24,7 +25,7 @@ export class CompanyController {
 
   @Get()
   @UseGuards(RoleGuard())
-  async getCompanies() {
+  async getCompanies(): Promise<Company[]> {
     return await this.companyService.getCompaneis();
   }
 
@@ -32,16 +33,13 @@ export class CompanyController {
   async getCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @CurrentUserId(ValidateObjectId) userId: string,
-  ) {
+  ): Promise<Company> {
     return await this.companyService.getCompany(userId, companyId);
   }
 
   @Post()
   @UseGuards(RoleGuard([UserRole.USER]))
-  async createCompany(
-    @Body() companyDto: CreateCompanyDto,
-    @CurrentUserId(ValidateObjectId) userId: string,
-  ) {
+  async createCompany(@Body() companyDto: CreateCompanyDto): Promise<Company> {
     return await this.companyService.createCompany(
       '61e971c6742c91d5a3907b40',
       companyDto,
@@ -53,13 +51,15 @@ export class CompanyController {
   async updateCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() body: UpdateCompanyDto,
-  ) {
+  ): Promise<Company> {
     return await this.companyService.updateCompany(companyId, body);
   }
 
   @Delete('/:companyId')
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
-  async removeCompany(@Param('companyId', ValidateObjectId) companyId: string) {
+  async removeCompany(
+    @Param('companyId', ValidateObjectId) companyId: string,
+  ): Promise<Company> {
     return await this.companyService.removeCompany(companyId);
   }
 }

@@ -31,9 +31,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
-  async getUsersAll(
-    @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<User[]> {
+  async getUsersAll(): Promise<User[]> {
     return await this.userService.getUsersAll();
   }
 
@@ -46,13 +44,15 @@ export class UsersController {
   async updateUser(
     @CurrentUserId(ValidateObjectId) userId: string,
     @Body() updateUserData: UpdateUserDto,
-  ) {
+  ): Promise<User> {
     return await this.userService.updateUser(userId, updateUserData);
   }
 
   @Delete()
   @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
-  async removeUser(@CurrentUserId(ValidateObjectId) userId: string) {
+  async removeUser(
+    @CurrentUserId(ValidateObjectId) userId: string,
+  ): Promise<User> {
     return await this.userService.removeUser(userId);
   }
 

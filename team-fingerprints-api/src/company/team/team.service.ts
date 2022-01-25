@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  HttpException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -19,17 +20,19 @@ export class TeamService {
     private readonly usersService: UsersService,
   ) {}
 
-  async getTeamsAll() {
+  async getTeamsAll(): Promise<Company[]> {
     return await this.teamModel.find({}, { teams: 1 }).exec();
   }
 
-  async getTeam(teamId: string): Promise<Team> {
+  async getTeam(teamId: string): Promise<Team | HttpException> {
     const teams: Company = await this.teamModel
       .findOne({ 'teams.$': teamId }, { teams: 1 })
       .exec();
-    return teams.teams.find(
+    const team = teams.teams.find(
       (team) => team?._id.toString() === teamId.toString(),
     );
+    if (!team) return new NotFoundException();
+    return team;
   }
 
   async createTeam(
@@ -92,7 +95,7 @@ export class TeamService {
     teamId: string,
     leaderEmail: string,
     isTeamMember: boolean,
-  ) {
+  ): Promise<Company | HttpException> {
     const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
     if (!leaderCandidate) return new NotFoundException();
 
@@ -112,7 +115,8 @@ export class TeamService {
       )
       .exec();
     if (!teamWithLeader) return new InternalServerErrorException();
-    if (!team.members.find((el) => el === leaderCandidateId) && isTeamMember)
+    const { members } = team as Team;
+    if (!members.find((el) => el === leaderCandidateId) && isTeamMember)
       return await this.addMemberToTeam(companyId, teamId, leaderEmail);
     return teamWithLeader;
   }
@@ -121,15 +125,16 @@ export class TeamService {
     companyId: string,
     teamId: string,
     memberEmail: string,
-  ) {
+  ): Promise<Company | HttpException> {
     const newMember = await this.usersService.getUserByEmail(memberEmail);
     if (!newMember) return new NotFoundException();
 
     const newMemberId = newMember?._id.toString();
     const team = await this.getTeam(teamId);
     if (!team) return new NotFoundException();
+    const { members } = team as Team;
 
-    if (team.members.find((el) => el === newMemberId))
+    if (members.find((el) => el === newMemberId))
       return new ForbiddenException();
 
     const teamWithNewMember = await this.teamModel
@@ -151,15 +156,16 @@ export class TeamService {
     companyId: string,
     teamId: string,
     memberEmail: string,
-  ) {
+  ): Promise<Company | HttpException> {
     const memberToRemove = await this.usersService.getUserByEmail(memberEmail);
     if (!memberToRemove) return new NotFoundException();
 
     const memberToRemoveId = memberToRemove?._id.toString();
     const team = await this.getTeam(teamId);
     if (!team) return new NotFoundException();
+    const { members } = team as Team;
 
-    if (!team.members.find((el) => el === memberToRemoveId))
+    if (!members.find((el) => el === memberToRemoveId))
       return new NotFoundException();
 
     const teamWithoutRemovedMember = await this.teamModel

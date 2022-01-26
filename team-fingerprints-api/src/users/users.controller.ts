@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Patch,
   Post,
   UseGuards,
@@ -36,7 +37,9 @@ export class UsersController {
   }
 
   @Post()
-  async createUser(@Body() newUserData: CreateUserDto): Promise<User> {
+  async createUser(
+    @Body() newUserData: CreateUserDto,
+  ): Promise<User | HttpException> {
     return await this.userService.createUser(newUserData);
   }
 

@@ -3,18 +3,17 @@ import { IsOptional, IsString, IsNotEmpty, IsDefined } from 'class-validator';
 export class CreateTeamDto {
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
-  readonly name?: string;
+  readonly name: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsDefined()
   @IsOptional()
   readonly description?: string;
 }
 
 export class UpdateTeamDto {
   @IsString()
-  @IsNotEmpty()
+  @IsDefined()
   @IsOptional()
   readonly name?: string;
 

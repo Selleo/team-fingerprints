@@ -34,6 +34,17 @@ export class TeamService {
     return team;
   }
 
+  async getTeamByUserEmail(email: string): Promise<Team | HttpException> {
+    const teams: Company = await this.teamModel
+      .findOne({ 'teams.emailWhitelist': email }, { teams: 1 })
+      .exec();
+    const team = teams.teams.find((team) =>
+      team.emailWhitelist.find((member) => member === email),
+    );
+    if (!team) return new NotFoundException();
+    return team;
+  }
+
   async createTeam(
     userId: string,
     companyId: string,
@@ -113,22 +124,65 @@ export class TeamService {
       .exec();
     if (!teamWithLeader) return new InternalServerErrorException();
     const { members } = team as Team;
-    if (!members.find((el) => el === leaderCandidateId))
-      return await this.addMemberToTeam(companyId, teamId, leaderEmail);
+    if (!members.includes(leaderCandidateId)) {
+      await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
+      await this.addMemberToTeamByEmail(leaderEmail);
+    }
+
     return teamWithLeader;
   }
 
-  async addMemberToTeam(
+  async isUserInAnyTeamWhitelist(
+    teamId: string,
+    email: string,
+  ): Promise<boolean> {
+    const team = await this.getTeam(teamId);
+    if (!team) return false;
+    const { emailWhitelist } = team as Team;
+
+    return emailWhitelist.find((el) => el === email) ? true : false;
+  }
+
+  async addUserToTeamWhitelist(
     companyId: string,
     teamId: string,
-    memberEmail: string,
+    email: string,
   ): Promise<Company | HttpException> {
-    const newMember = await this.usersService.getUserByEmail(memberEmail);
+    if (await this.isUserInAnyTeamWhitelist(teamId, email)) {
+      return new ForbiddenException(
+        `This email already exists in whitelist for chosen team`,
+      );
+    }
+
+    return await this.teamModel
+      .findOneAndUpdate(
+        { _id: companyId, 'teams._id': teamId },
+        {
+          $push: {
+            'teams.$.emailWhitelist': email,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async addMemberToTeamByEmail(
+    email: string,
+  ): Promise<Company | HttpException> {
+    const team: any = await this.getTeamByUserEmail(email);
+    const teamId = team._id.toString();
+
+    if (!(await this.isUserInAnyTeamWhitelist(teamId, email))) {
+      return new NotFoundException();
+    }
+
+    const newMember = await this.usersService.getUserByEmail(email);
     if (!newMember) return new NotFoundException();
 
     const newMemberId = newMember?._id.toString();
-    const team = await this.getTeam(teamId);
     if (!team) return new NotFoundException();
+
     const { members } = team as Team;
 
     if (members.find((el) => el === newMemberId))
@@ -136,7 +190,7 @@ export class TeamService {
 
     const teamWithNewMember = await this.teamModel
       .findOneAndUpdate(
-        { _id: companyId, 'teams._id': teamId },
+        { 'teams._id': teamId },
         {
           $push: {
             'teams.$.members': newMemberId,

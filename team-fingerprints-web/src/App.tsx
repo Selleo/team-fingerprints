@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import TokenSetup from "./components/TokenSetup";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 export const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => {
             </BrowserRouter>
           </MantineProvider>
         </ColorSchemeProvider>
+        <ReactQueryDevtools />
       </QueryClientProvider>
     </Auth0Provider>
   );

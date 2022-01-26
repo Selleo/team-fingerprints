@@ -17,7 +17,7 @@ export default function Edit() {
     error: errorLoadingSurvey,
     data: survey,
   } = useQuery<SurveyDetails, Error>(
-    `surveyOne-${params.surveyId}`,
+    `surveyOne${params.surveyId}`,
     async () => {
       const response = await axios.get<SurveyDetails>(
         `/surveys/${params.surveyId}`

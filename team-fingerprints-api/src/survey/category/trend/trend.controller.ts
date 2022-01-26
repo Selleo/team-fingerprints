@@ -8,10 +8,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RoleGuard } from 'src/common/decorators/role.guard';
+import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { Role } from 'src/role/role.type';
 import { Survey } from 'src/survey/entities/survey.entity';
-import { UserRole } from 'src/users/user.type';
 import { CreateTrendDto } from './dto/CreateTrendDto.dto';
 import { TrendParamsDto } from './dto/TrendParamsDto.dto';
 import { UpdateTrendDto } from './dto/UpdateTrendDto.dto';
@@ -23,7 +23,7 @@ export class TrendController {
   constructor(private readonly trendService: TrendService) {}
 
   @Post('/')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async createTrend(
     @Param() params: TrendParamsDto,
     @Body() body: CreateTrendDto,
@@ -32,7 +32,7 @@ export class TrendController {
   }
 
   @Patch('/:trendId')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async updateTrend(
     @Param() params: TrendParamsDto,
     @Body() body: UpdateTrendDto,
@@ -41,7 +41,7 @@ export class TrendController {
   }
 
   @Delete('/:trendId')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async removeTrend(
     @Param('trendId', ValidateObjectId) trendId: string,
   ): Promise<Survey> {

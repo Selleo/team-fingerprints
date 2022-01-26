@@ -1,5 +1,4 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { SurveysResult, SurveysResultSchema } from './surveyResult.entity';
 
 @Schema()
 export class Team {

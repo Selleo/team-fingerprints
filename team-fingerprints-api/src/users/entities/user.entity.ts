@@ -29,10 +29,7 @@ export class User extends Document {
   role: Role;
 
   @Prop({ default: '' })
-  team?: string;
-
-  @Prop({ default: '' })
-  companyId?: string;
+  companyId: string;
 
   @Prop({ type: [UserSurveyAnswerSchema], default: [], required: true })
   surveysAnswers: UserSurveyAnswer[];

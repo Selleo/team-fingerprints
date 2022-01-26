@@ -1,4 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
@@ -25,17 +32,26 @@ export class CompanyService {
   async createCompany(
     userId: string,
     { name, description, domain }: CreateCompanyDto,
-  ): Promise<Company> {
-    await this.roleService.changeUserRole(userId, Role.COMPANY_ADMIN);
+  ): Promise<Company | HttpException> {
+    if (await this.isDomainTaken(domain)) {
+      return new ForbiddenException(`Domain ${domain} is already taken.`);
+    }
+
+    const { email } = await this.usersService.getUser(userId);
+
     const newCompany = await this.companyModel.create({
       name,
       description,
       domain,
       adminId: userId,
+      members: [userId],
+      emailWhitelist: [email],
     });
     await this.usersService.updateUser(userId, {
       companyId: newCompany?._id,
     });
+
+    await this.roleService.changeUserRole(userId, Role.COMPANY_ADMIN);
 
     return newCompany;
   }
@@ -58,5 +74,63 @@ export class CompanyService {
   async isDomainTaken(domain: string): Promise<boolean> {
     const companyByDomain = await this.companyModel.findOne({ domain }).exec();
     return companyByDomain ? true : false;
+  }
+
+  async isUserInAnyCompanyWhitelist(email: string): Promise<Company | boolean> {
+    const user = await this.companyModel.findOne({ emailWhitelist: email });
+    return user ? user : false;
+  }
+
+  async addUserToCompanyWhitelist(
+    company: string,
+    email: string,
+    currentUser: string,
+  ): Promise<Company | HttpException> {
+    if (await this.isUserInAnyCompanyWhitelist(email)) {
+      return new ForbiddenException();
+    }
+
+    const { companyId } = await this.usersService.getUser(currentUser);
+    console.log({ company, companyId });
+    if (companyId && companyId !== company) return new UnauthorizedException();
+
+    return await this.companyModel.findOneAndUpdate(
+      { _id: companyId },
+      { $push: { emailWhitelist: email } },
+      { new: true },
+    );
+  }
+
+  async addMemberToCompanyByEmail(
+    email: string,
+  ): Promise<Company | HttpException> {
+    if (!(await this.isUserInAnyCompanyWhitelist(email))) {
+      return new NotFoundException();
+    }
+
+    const newMember = await this.usersService.getUserByEmail(email);
+    if (!newMember) return new NotFoundException();
+
+    const newMemberId = newMember?._id.toString();
+    const company = await this.companyModel.findOne({
+      emailWhitelist: email,
+    });
+    if (!company) return new NotFoundException();
+
+    const { members } = company;
+
+    if (members.find((el) => el === newMemberId)) {
+      return new ForbiddenException();
+    }
+
+    const companyWithNewMember = await this.companyModel
+      .findOneAndUpdate(
+        { _id: company._id },
+        { $push: { members: newMemberId } },
+        { new: true },
+      )
+      .exec();
+    if (!companyWithNewMember) return new InternalServerErrorException();
+    return companyWithNewMember;
   }
 }

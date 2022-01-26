@@ -24,12 +24,13 @@ export class CompanyService {
 
   async createCompany(
     userId: string,
-    { name, description }: CreateCompanyDto,
+    { name, description, domain }: CreateCompanyDto,
   ): Promise<Company> {
     await this.roleService.changeUserRole(userId, Role.COMPANY_ADMIN);
     const newCompany = await this.companyModel.create({
       name,
       description,
+      domain,
       adminId: userId,
     });
     await this.usersService.updateUser(userId, {
@@ -52,5 +53,10 @@ export class CompanyService {
     return await this.companyModel
       .findOneAndDelete({ _id: companyId }, { new: true })
       .exec();
+  }
+
+  async isDomainTaken(domain: string): Promise<boolean> {
+    const companyByDomain = await this.companyModel.findOne({ domain }).exec();
+    return companyByDomain ? true : false;
   }
 }

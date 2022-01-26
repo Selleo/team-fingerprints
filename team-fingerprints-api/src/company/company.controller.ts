@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Param,
   Patch,
   Post,
@@ -28,7 +29,7 @@ export class CompanyController {
     return await this.companyService.getCompaneis();
   }
 
-  @Get('/:companyId')
+  @Get(':companyId')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async getCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -42,11 +43,11 @@ export class CompanyController {
   async createCompany(
     @Body() companyDto: CreateCompanyDto,
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<Company> {
+  ): Promise<Company | HttpException> {
     return await this.companyService.createCompany(userId, companyDto);
   }
 
-  @Patch('/:companyId')
+  @Patch(':companyId')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async updateCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -55,11 +56,25 @@ export class CompanyController {
     return await this.companyService.updateCompany(companyId, companyDto);
   }
 
-  @Delete('/:companyId')
+  @Delete(':companyId')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async removeCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
   ): Promise<Company> {
     return await this.companyService.removeCompany(companyId);
+  }
+
+  @Post(':companyId/member')
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  async addUserToCompanyWhitelist(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Body('email') email: string,
+    @CurrentUserId(ValidateObjectId) userId: string,
+  ): Promise<Company | HttpException> {
+    return await this.companyService.addUserToCompanyWhitelist(
+      companyId,
+      email,
+      userId,
+    );
   }
 }

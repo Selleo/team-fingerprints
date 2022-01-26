@@ -8,15 +8,15 @@ export class Team {
   name: string;
 
   @Prop()
-  description: string;
+  description?: string;
 
-  @Prop({ default: [], unique: true })
-  members: string[];
+  @Prop({ default: [], unique: true, type: [String] })
+  members?: string[];
 
   @Prop({ default: [] })
-  emailWhitelist: string[];
+  emailWhitelist?: string[];
 
   @Prop()
-  teamLeader: string;
+  teamLeader?: string;
 }
 export const TeamSchema = SchemaFactory.createForClass(Team);

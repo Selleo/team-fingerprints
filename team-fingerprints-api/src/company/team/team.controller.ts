@@ -16,8 +16,8 @@ import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
 import { Company } from '../entities/Company.entity';
 import { Team } from '../entities/team.entity';
-import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 import { TeamService } from './team.service';
+import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 
 @ApiTags('teams')
 @Controller({ version: '1' })
@@ -69,12 +69,16 @@ export class TeamController {
 
   @Post('/:teamId/member')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
-  async addMemberToTeam(
+  async addUserToTeamWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('email') email: string,
   ): Promise<Company | HttpException> {
-    return await this.teamService.addMemberToTeam(companyId, teamId, email);
+    return await this.teamService.addUserToTeamWhitelist(
+      companyId,
+      teamId,
+      email,
+    );
   }
 
   @Delete('/:teamId/member')

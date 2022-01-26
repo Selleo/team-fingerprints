@@ -12,9 +12,11 @@ import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
 import { Survey } from 'src/survey/entities/survey.entity';
-import { CreateQuestionDto } from './dto/CreateQuestionDto.dto';
-import { QuestionParamsDto } from './dto/QuestionParamsDto.dto';
-import { UpdateQuestionDto } from './dto/UpdateQuestionDto.dto';
+import {
+  CreateQuestionDto,
+  QuestionParamsDto,
+  UpdateQuestionDto,
+} from './dto/question.dto';
 import { QuestionService } from './question.service';
 
 @ApiTags('questions')
@@ -23,25 +25,25 @@ export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @Post('/')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.SUPER_ADMIN]))
   async createQuestion(
     @Param() params: QuestionParamsDto,
-    @Body() body: CreateQuestionDto,
+    @Body() questionDto: CreateQuestionDto,
   ): Promise<void> {
-    return await this.questionService.createQuestion(params, body);
+    return await this.questionService.createQuestion(params, questionDto);
   }
 
   @Patch('/:questionId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.SUPER_ADMIN]))
   async updateQuestion(
     @Param() params: QuestionParamsDto,
-    @Body() body: UpdateQuestionDto,
+    @Body() questionDto: UpdateQuestionDto,
   ): Promise<Survey> {
-    return await this.questionService.updateQuestion(params, body);
+    return await this.questionService.updateQuestion(params, questionDto);
   }
 
   @Delete('/:questionId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.SUPER_ADMIN]))
   async removeQuestion(
     @Param('questionId', ValidateObjectId) questionId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,

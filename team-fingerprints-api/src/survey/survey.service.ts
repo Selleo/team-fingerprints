@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Survey } from './entities/survey.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateSurveyDto } from './dto/CreateSurveyDto.dto';
-import { UpdateSurveyDto } from './dto/UpdateSurveyDto.dto';
 import { Role } from 'src/role/role.type';
+import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 
 @Injectable()
 export class SurveyService {
@@ -13,14 +12,14 @@ export class SurveyService {
   ) {}
 
   async getSurveysByRole(role: Role): Promise<Survey[]> {
-    if (role === Role.SUPER_ADMIN || role === Role.COMPANY_ADMIN) {
+    if (role === Role.SUPER_ADMIN) {
       return await this.surveyModel.find({}).exec();
     }
     return await this.surveyModel.find({ isPublic: true }).exec();
   }
 
   async getSurvey(surveyId: string, role: Role = Role.USER): Promise<Survey> {
-    if (role === Role.SUPER_ADMIN || role === Role.COMPANY_ADMIN) {
+    if (role === Role.SUPER_ADMIN) {
       return await this.surveyModel.findById({ _id: surveyId }).exec();
     }
     return await this.surveyModel

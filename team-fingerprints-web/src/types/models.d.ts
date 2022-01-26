@@ -34,6 +34,13 @@ export type User = {
   email: string;
 };
 
+export type Company = {
+  _id: string;
+  name: string;
+  description: string;
+  domain: string;
+};
+
 export type Answer = {
   questionId: string;
   value: number;

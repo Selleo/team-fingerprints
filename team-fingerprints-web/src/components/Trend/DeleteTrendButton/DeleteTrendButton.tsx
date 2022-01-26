@@ -21,7 +21,7 @@ const DeleteTrendButton = ({
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["surveyOne"]);
+        queryClient.invalidateQueries("surveyOne" + surveyId);
       },
     }
   );

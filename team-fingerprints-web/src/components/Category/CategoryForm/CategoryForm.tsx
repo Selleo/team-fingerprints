@@ -21,7 +21,7 @@ const CategoryForm = ({
 
   const onSuccess = () => {
     onClose();
-    queryClient.invalidateQueries(["surveyOne"]);
+    queryClient.invalidateQueries("surveyOne" + surveyId);
   };
 
   const createMutation = useMutation(

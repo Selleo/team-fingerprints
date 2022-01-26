@@ -23,7 +23,7 @@ const DeleteQuestionButton = ({
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["surveyOne"]);
+        queryClient.invalidateQueries("surveyOne" + surveyId);
       },
     }
   );

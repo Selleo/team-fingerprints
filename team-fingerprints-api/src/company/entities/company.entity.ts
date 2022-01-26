@@ -25,7 +25,7 @@ export class Company extends Document {
   emailWhitelist: string[];
 
   @Prop({ default: [] })
-  users: string[];
+  members: string[];
 }
 
 export const CompanySchema = SchemaFactory.createForClass(Company);

@@ -19,8 +19,5 @@ export class Team {
 
   @Prop()
   teamLeader: string;
-
-  @Prop({ type: [SurveysResultSchema] })
-  surveyResults: SurveysResult[];
 }
 export const TeamSchema = SchemaFactory.createForClass(Team);

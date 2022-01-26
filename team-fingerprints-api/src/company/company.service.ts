@@ -36,8 +36,12 @@ export class CompanyService {
     if (await this.isDomainTaken(domain)) {
       return new ForbiddenException(`Domain ${domain} is already taken.`);
     }
-
     const { email } = await this.usersService.getUser(userId);
+    if (!email) return new NotFoundException();
+
+    if (await this.isUserInAnyCompanyWhitelist(email)) {
+      return new ForbiddenException(`You already belong to ${domain} company.`);
+    }
 
     const newCompany = await this.companyModel.create({
       name,
@@ -77,8 +81,8 @@ export class CompanyService {
   }
 
   async isUserInAnyCompanyWhitelist(email: string): Promise<Company | boolean> {
-    const user = await this.companyModel.findOne({ emailWhitelist: email });
-    return user ? user : false;
+    const company = await this.companyModel.findOne({ emailWhitelist: email });
+    return company ? company : false;
   }
 
   async addUserToCompanyWhitelist(
@@ -91,7 +95,6 @@ export class CompanyService {
     }
 
     const { companyId } = await this.usersService.getUser(currentUser);
-    console.log({ company, companyId });
     if (companyId && companyId !== company) return new UnauthorizedException();
 
     return await this.companyModel.findOneAndUpdate(

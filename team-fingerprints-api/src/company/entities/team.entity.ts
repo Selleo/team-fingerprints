@@ -1,5 +1,4 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { SurveysResult, SurveysResultSchema } from './surveyResult.entity';
 
 @Schema()
 export class Team {
@@ -19,8 +18,5 @@ export class Team {
 
   @Prop()
   teamLeader: string;
-
-  @Prop({ type: [SurveysResultSchema] })
-  surveyResults: SurveysResult[];
 }
 export const TeamSchema = SchemaFactory.createForClass(Team);

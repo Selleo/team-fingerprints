@@ -20,31 +20,11 @@ export class UsersService {
   }
 
   async getUser(userId: string): Promise<User> {
-    return await this.userModel.findOne(
-      { _id: userId },
-      {
-        _id: 1,
-        url: 1,
-        role: 1,
-        email: 1,
-        lastName: 1,
-        firstName: 1,
-      },
-    );
+    return await this.userModel.findOne({ _id: userId });
   }
 
   async getUsersAll(): Promise<User[]> {
-    return await this.userModel.find(
-      {},
-      {
-        _id: 1,
-        url: 1,
-        role: 1,
-        email: 1,
-        lastName: 1,
-        firstName: 1,
-      },
-    );
+    return await this.userModel.find({});
   }
 
   async createUser(newUserData: CreateUserDto): Promise<User> {

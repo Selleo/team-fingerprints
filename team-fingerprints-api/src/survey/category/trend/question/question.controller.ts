@@ -8,10 +8,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RoleGuard } from 'src/common/decorators/role.guard';
+import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { Role } from 'src/role/role.type';
 import { Survey } from 'src/survey/entities/survey.entity';
-import { UserRole } from 'src/users/user.type';
 import { CreateQuestionDto } from './dto/CreateQuestionDto.dto';
 import { QuestionParamsDto } from './dto/QuestionParamsDto.dto';
 import { UpdateQuestionDto } from './dto/UpdateQuestionDto.dto';
@@ -23,7 +23,7 @@ export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @Post('/')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async createQuestion(
     @Param() params: QuestionParamsDto,
     @Body() body: CreateQuestionDto,
@@ -32,7 +32,7 @@ export class QuestionController {
   }
 
   @Patch('/:questionId')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async updateQuestion(
     @Param() params: QuestionParamsDto,
     @Body() body: UpdateQuestionDto,
@@ -41,7 +41,7 @@ export class QuestionController {
   }
 
   @Delete('/:questionId')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async removeQuestion(
     @Param('questionId', ValidateObjectId) questionId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,

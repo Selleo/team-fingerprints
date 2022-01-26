@@ -9,12 +9,12 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
-import { RoleGuard } from 'src/common/decorators/role.guard';
+import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { Role } from 'src/role/role.type';
 import { CreateUserDto } from './dto/CreateUserDto.dto';
 import { UpdateUserDto } from './dto/UpdateUserDto.dto';
 import { User } from './entities/user.entity';
-import { UserRole } from './user.type';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
@@ -30,7 +30,7 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async getUsersAll(): Promise<User[]> {
     return await this.userService.getUsersAll();
   }
@@ -49,18 +49,10 @@ export class UsersController {
   }
 
   @Delete()
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async removeUser(
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<User> {
     return await this.userService.removeUser(userId);
-  }
-
-  @UseGuards(RoleGuard())
-  async changeUserRole(
-    @CurrentUserId(ValidateObjectId) userId: string,
-    @Body() role: UserRole,
-  ) {
-    return await this.userService.changeUserRole(userId, role);
   }
 }

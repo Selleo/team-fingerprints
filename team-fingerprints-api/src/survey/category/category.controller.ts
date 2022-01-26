@@ -9,9 +9,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RoleGuard } from 'src/common/decorators/role.guard';
+import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { UserRole } from 'src/users/user.type';
+import { Role } from 'src/role/role.type';
 import { Survey } from '../entities/survey.entity';
 import { CategoryService } from './category.service';
 import { CategoryParamsDto } from './dto/CategoryParamsDto.dto';
@@ -24,7 +24,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async createCategory(
     @Param() params: CategoryParamsDto,
     @Body() body: CreateCategoryDto,
@@ -33,7 +33,7 @@ export class CategoryController {
   }
 
   @Patch('/:categoryId')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async updateCateory(
     @Param() params: CategoryParamsDto,
     @Body() body: UpdateCategoryDto,
@@ -42,7 +42,7 @@ export class CategoryController {
   }
 
   @Delete('/:categoryId')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async removeCategory(
     @Param('categoryId', ValidateObjectId) categoryId: string,
   ): Promise<Survey> {

@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
-import { RoleGuard } from 'src/common/decorators/role.guard';
+import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { UserRole } from 'src/users/user.type';
+import { Role } from 'src/role/role.type';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/CreateCompanyDto.dto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto.dto';
@@ -38,7 +38,7 @@ export class CompanyController {
   }
 
   @Post()
-  @UseGuards(RoleGuard([UserRole.USER]))
+  @UseGuards(RoleGuard([Role.USER]))
   async createCompany(@Body() companyDto: CreateCompanyDto): Promise<Company> {
     return await this.companyService.createCompany(
       '61e971c6742c91d5a3907b40',
@@ -47,7 +47,7 @@ export class CompanyController {
   }
 
   @Patch('/:companyId')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async updateCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() body: UpdateCompanyDto,
@@ -56,7 +56,7 @@ export class CompanyController {
   }
 
   @Delete('/:companyId')
-  @UseGuards(RoleGuard([UserRole.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async removeCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
   ): Promise<Company> {

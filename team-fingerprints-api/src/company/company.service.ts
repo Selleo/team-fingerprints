@@ -4,8 +4,7 @@ import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
-import { CreateCompanyDto } from './dto/CreateCompanyDto.dto';
-import { UpdateCompanyDto } from './dto/UpdateCompanyDto.dto';
+import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './entities/Company.entity';
 
 @Injectable()
@@ -42,10 +41,10 @@ export class CompanyService {
 
   async updateCompany(
     companyId: string,
-    body: UpdateCompanyDto,
+    companyDto: UpdateCompanyDto,
   ): Promise<Company> {
     return await this.companyModel
-      .findOneAndUpdate({ _id: companyId }, body, { new: true })
+      .findOneAndUpdate({ _id: companyId }, companyDto, { new: true })
       .exec();
   }
 

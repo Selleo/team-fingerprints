@@ -10,8 +10,7 @@ import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
 import { Company } from '../entities/Company.entity';
 import { Team } from '../entities/team.entity';
-import { CreateTeamDto } from './dto/CreateTeamDto.dto';
-import { UpdateTeamDto } from './dto/UpdateTeamDto.dto';
+import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 
 @Injectable()
 export class TeamService {
@@ -55,20 +54,19 @@ export class TeamService {
 
   async updateTeam(
     teamId: string,
-    { name, description, members, emailWhitelist, teamLeader }: UpdateTeamDto,
+    companyId: string,
+    { name, description }: UpdateTeamDto,
   ): Promise<Company> {
     return await this.teamModel
       .findOneAndUpdate(
         {
+          _id: companyId,
           'teams._id': teamId,
         },
         {
           $set: {
             'teams.$.name': name,
             'teams.$.description': description,
-            'teams.$.members': members,
-            'teams.$.emailWhitelist': emailWhitelist,
-            'teams.$.teamLeader': teamLeader,
           },
         },
         { new: true },

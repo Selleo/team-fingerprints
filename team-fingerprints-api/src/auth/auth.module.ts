@@ -8,12 +8,14 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { CompanyModule } from 'src/company/company.module';
+import { TeamModule } from 'src/company/team/team.module';
 
 @Module({
   imports: [
     forwardRef(() => ConfigModule),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
+    forwardRef(() => TeamModule),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   providers: [

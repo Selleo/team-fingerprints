@@ -27,7 +27,7 @@ function Details() {
     isLoading,
     error,
     data: survey,
-  } = useQuery<SurveyDetails, Error>(`surveyOne-${params.id}`, async () => {
+  } = useQuery<SurveyDetails, Error>(`surveyOne${params.id}`, async () => {
     const response = await axios.get<SurveyDetails>(`/surveys/${params.id}`);
     return response.data;
   });

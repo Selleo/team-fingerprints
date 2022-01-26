@@ -80,9 +80,16 @@ export class CompanyService {
     return companyByDomain ? true : false;
   }
 
-  async isUserInAnyCompanyWhitelist(email: string): Promise<Company | boolean> {
+  async isUserInAnyCompanyWhitelist(email: string): Promise<Company> {
     const company = await this.companyModel.findOne({ emailWhitelist: email });
-    return company ? company : false;
+    return company;
+  }
+
+  async isUserInCompanyDomain(email: string): Promise<Company> {
+    const company = await this.companyModel.findOne({
+      domain: email.split('@')[1],
+    });
+    return company;
   }
 
   async addUserToCompanyWhitelist(
@@ -107,7 +114,11 @@ export class CompanyService {
   async addMemberToCompanyByEmail(
     email: string,
   ): Promise<Company | HttpException> {
-    if (!(await this.isUserInAnyCompanyWhitelist(email))) {
+    const destinationCompnay =
+      (await this.isUserInAnyCompanyWhitelist(email)) ||
+      (await this.isUserInCompanyDomain(email));
+
+    if (!destinationCompnay) {
       return new NotFoundException();
     }
 
@@ -115,12 +126,8 @@ export class CompanyService {
     if (!newMember) return new NotFoundException();
 
     const newMemberId = newMember?._id.toString();
-    const company = await this.companyModel.findOne({
-      emailWhitelist: email,
-    });
-    if (!company) return new NotFoundException();
 
-    const { members } = company;
+    const members = destinationCompnay.members || [];
 
     if (members.find((el) => el === newMemberId)) {
       return new ForbiddenException();
@@ -128,7 +135,7 @@ export class CompanyService {
 
     const companyWithNewMember = await this.companyModel
       .findOneAndUpdate(
-        { _id: company._id },
+        { _id: destinationCompnay._id },
         { $push: { members: newMemberId } },
         { new: true },
       )

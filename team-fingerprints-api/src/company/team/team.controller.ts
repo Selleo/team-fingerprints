@@ -16,8 +16,7 @@ import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
 import { Company } from '../entities/Company.entity';
 import { Team } from '../entities/team.entity';
-import { CreateTeamDto } from './dto/CreateTeamDto.dto';
-import { UpdateTeamDto } from './dto/UpdateTeamDto.dto';
+import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 import { TeamService } from './team.service';
 
 @ApiTags('teams')
@@ -42,19 +41,20 @@ export class TeamController {
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
-    @Body() body: CreateTeamDto,
+    @Body() teamDto: CreateTeamDto,
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<Company> {
-    return await this.teamService.createTeam(userId, companyId, body);
+    return await this.teamService.createTeam(userId, companyId, teamDto);
   }
 
   @Patch('/:teamId')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
   async updateTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body() body: UpdateTeamDto,
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Body() teamDto: UpdateTeamDto,
   ): Promise<Company> {
-    return await this.teamService.updateTeam(teamId, body);
+    return await this.teamService.updateTeam(companyId, teamId, teamDto);
   }
 
   @Post('/:teamId/leader')

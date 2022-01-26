@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Survey } from 'src/survey/entities/survey.entity';
-import { CreateTrendDto } from './dto/CreateTrendDto.dto';
-import { TrendParamsDto } from './dto/TrendParamsDto.dto';
-import { UpdateTrendDto } from './dto/UpdateTrendDto.dto';
+import {
+  CreateTrendDto,
+  TrendParamsDto,
+  UpdateTrendDto,
+} from './dto/trend.dto';
 
 @Injectable()
 export class TrendService {

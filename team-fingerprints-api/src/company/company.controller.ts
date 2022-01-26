@@ -14,8 +14,7 @@ import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
 import { CompanyService } from './company.service';
-import { CreateCompanyDto } from './dto/CreateCompanyDto.dto';
-import { UpdateCompanyDto } from './dto/UpdateCompanyDto.dto';
+import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './entities/Company.entity';
 
 @ApiTags('companies')
@@ -30,6 +29,7 @@ export class CompanyController {
   }
 
   @Get('/:companyId')
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async getCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @CurrentUserId(ValidateObjectId) userId: string,
@@ -39,20 +39,20 @@ export class CompanyController {
 
   @Post()
   @UseGuards(RoleGuard([Role.USER]))
-  async createCompany(@Body() companyDto: CreateCompanyDto): Promise<Company> {
-    return await this.companyService.createCompany(
-      '61e971c6742c91d5a3907b40',
-      companyDto,
-    );
+  async createCompany(
+    @Body() companyDto: CreateCompanyDto,
+    @CurrentUserId(ValidateObjectId) userId: string,
+  ): Promise<Company> {
+    return await this.companyService.createCompany(userId, companyDto);
   }
 
   @Patch('/:companyId')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async updateCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
-    @Body() body: UpdateCompanyDto,
+    @Body() companyDto: UpdateCompanyDto,
   ): Promise<Company> {
-    return await this.companyService.updateCompany(companyId, body);
+    return await this.companyService.updateCompany(companyId, companyDto);
   }
 
   @Delete('/:companyId')

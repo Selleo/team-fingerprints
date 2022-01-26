@@ -12,22 +12,16 @@ export class Company extends Document {
   @Prop()
   description?: string;
 
-  @Prop()
-  logo?: string;
-
   @Prop({ type: [TeamSchema], default: [], required: true })
   teams: Team[];
 
   @Prop({ required: true, default: [] })
   adminId: string[];
 
-  @Prop({ required: true, default: [] })
-  surves: string[];
+  @Prop({ default: '', required: true, unique: true })
+  domain: string;
 
-  @Prop({ default: [] })
-  emailDomain: string[];
-
-  @Prop({ default: [] })
+  @Prop({ default: [], unique: true, type: [String] })
   emailWhitelist: string[];
 
   @Prop({ default: [] })

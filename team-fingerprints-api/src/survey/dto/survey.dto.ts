@@ -1,4 +1,10 @@
-import { IsString, IsBoolean, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, IsBoolean, IsOptional } from 'class-validator';
+
+export class CreateSurveyDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly title: string;
+}
 
 export class UpdateSurveyDto {
   @IsString()

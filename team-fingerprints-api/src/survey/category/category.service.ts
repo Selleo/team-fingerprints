@@ -8,7 +8,6 @@ import {
   CreateCategoryDto,
   UpdateCategoryDto,
 } from './dto/category.dto';
-import * as mongoose from 'mongoose';
 
 @Injectable()
 export class CategoryService {

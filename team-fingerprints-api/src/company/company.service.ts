@@ -29,6 +29,10 @@ export class CompanyService {
     return await this.companyModel.findOne({ _id: companyId, adminId }).exec();
   }
 
+  async getCompanyByUserEmail(email: string): Promise<Company> {
+    return await this.companyModel.findOne({ emailWhitelist: email }).exec();
+  }
+
   async createCompany(
     userId: string,
     { name, description, domain }: CreateCompanyDto,

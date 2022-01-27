@@ -6,11 +6,13 @@ import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
 import { Company, CompanySchema } from './entities/Company.entity';
 import { CompanyMembersService } from './company-members.service';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     forwardRef(() => RoleModule),
+    forwardRef(() => TeamModule),
     MongooseModule.forFeature([
       {
         name: Company.name,

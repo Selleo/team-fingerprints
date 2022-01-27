@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal } from "@mantine/core";
-import { useMutation } from "react-query";
-import { queryClient } from "../../../App";
 import { Company } from "../../../types/models";
-import axios from "axios";
 import CompanyForm from "../CompanyForm";
 
 const CompanyItem = ({ item }: { item: Company }) => {

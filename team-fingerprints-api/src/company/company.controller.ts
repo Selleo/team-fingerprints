@@ -79,4 +79,9 @@ export class CompanyController {
       email,
     );
   }
+
+  @Delete(':companyId/member')
+  async removeCompanyMemberByEmail(@Body('email') email: string) {
+    return await this.companyMembersService.removeCompanyMemberByEmail(email);
+  }
 }

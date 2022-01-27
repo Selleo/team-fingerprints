@@ -8,13 +8,20 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
+import { CompanyService } from './company.service';
 import { Company } from './entities/Company.entity';
+import { Team } from './entities/team.entity';
+import { TeamMembersService } from './team/team-members.service';
+import { TeamService } from './team/team.service';
 
 @Injectable()
 export class CompanyMembersService {
   constructor(
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
     private readonly usersService: UsersService,
+    private readonly companyService: CompanyService,
+    private readonly teamMembersService: TeamMembersService,
+    private readonly teamService: TeamService,
   ) {}
 
   async isUserInAnyCompanyWhitelist(email: string): Promise<Company> {
@@ -74,5 +81,39 @@ export class CompanyMembersService {
       .exec();
     if (!companyWithNewMember) return new InternalServerErrorException();
     return companyWithNewMember;
+  }
+
+  async removeCompanyMemberByEmail(email: string) {
+    if (!(await this.isUserInAnyCompanyWhitelist(email)))
+      return new NotFoundException();
+
+    const company = await this.companyService.getCompanyByUserEmail(email);
+    const user = await this.usersService.getUserByEmail(email);
+    if (!company || !user) return new NotFoundException();
+
+    const team: Team = await this.teamService.getTeamByUserEmail(email);
+    if (!team) return new NotFoundException();
+    console.log(team._id);
+
+    const userId = user?._id.toString();
+
+    await this.teamMembersService.removeMemberFromTeam(
+      company._id,
+      team?._id,
+      email,
+    );
+
+    return await this.companyModel.findOneAndUpdate(
+      { _id: company._id },
+      {
+        $pull: {
+          members: userId,
+          emailWhitelist: email,
+        },
+      },
+      {
+        new: true,
+      },
+    );
   }
 }

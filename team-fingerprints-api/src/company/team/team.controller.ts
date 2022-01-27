@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
@@ -48,9 +47,8 @@ export class TeamController {
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() teamDto: CreateTeamDto,
-    @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<Company> {
-    return await this.teamService.createTeam(userId, companyId, teamDto);
+    return await this.teamService.createTeam(companyId, teamDto);
   }
 
   @Patch('/:teamId')

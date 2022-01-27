@@ -1,16 +1,16 @@
 import {
   Header,
-  Text,
   useMantineTheme,
   MediaQuery,
   Burger,
   Title,
   Button,
 } from "@mantine/core";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useStyles } from "./styles";
 import DarkMoreToogle from "../DarkModeToogle";
 import { useAuth0 } from "@auth0/auth0-react";
+import { ProfileContext } from "../../routes";
 
 const AppHeader = () => {
   const theme = useMantineTheme();
@@ -18,6 +18,7 @@ const AppHeader = () => {
   const { classes } = useStyles();
 
   const { loginWithRedirect, isAuthenticated, logout, user } = useAuth0();
+  const { profile } = useContext(ProfileContext);
 
   return (
     <Header height={70} padding="md">
@@ -39,6 +40,7 @@ const AppHeader = () => {
         {user?.email && (
           <div className={classes.flex0}>
             <strong>{user?.email}</strong>
+            <strong> {profile?.role}</strong>
           </div>
         )}
         <div className={classes.loginButton}>

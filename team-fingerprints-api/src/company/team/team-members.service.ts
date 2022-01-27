@@ -161,6 +161,7 @@ export class TeamMembersService {
         {
           $pull: {
             'teams.$.members': memberToRemoveId,
+            'teams.$.emailWhitelist': memberEmail,
           },
         },
         { new: true },

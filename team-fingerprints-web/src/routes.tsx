@@ -10,20 +10,27 @@ import Responses from "./routes/Responses";
 import ResponseEdit from "./routes/Responses/Edit";
 import Users from "./routes/Users";
 import Companies from "./routes/Companies";
+import CompaniesNew from "./routes/Companies/New";
+
+import useUser from "./hooks/useUser";
 
 const AppRoutes = () => {
+  const { profile } = useUser();
+  const shouldSeeNav = profile?.role === "SUPER_ADMIN";
+
   return (
     <AppShell
       // navbarOffsetBreakpoint controls when navbar should no longer be offset with padding-left
       navbarOffsetBreakpoint="sm"
       fixed
-      navbar={<AppNavBar />}
+      navbar={shouldSeeNav ? <AppNavBar /> : undefined}
       header={<AppHeader />}
     >
       <Routes>
-        <Route path="/" element={<MainRoute />} />
+        <Route path="/" element={<Surveys />} />
         <Route path="surveys" element={<Surveys />} />
         <Route path="companies" element={<Companies />} />
+        <Route path="companies/new" element={<CompaniesNew />} />
 
         <Route path="users" element={<Users />} />
 

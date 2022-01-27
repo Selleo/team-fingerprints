@@ -52,3 +52,7 @@ export type SurveyResponse = {
 };
 
 export type SurveyDetails = Survey & { categories: Category[] };
+
+export type role = "SUPER_ADMIN" | "COMPANY_ADMIN" | "TEAM_LEADER" | "USER";
+
+export type Profile = { canCreateTeam: boolean; role: role };

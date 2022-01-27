@@ -8,6 +8,8 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MailService } from 'src/mail/mail.service';
+import { RoleService } from 'src/role/role.service';
+import { Role } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import { Company } from '../entities/Company.entity';
 import { Team } from '../entities/team.entity';
@@ -20,6 +22,7 @@ export class TeamMembersService {
     private readonly usersService: UsersService,
     private readonly teamService: TeamService,
     private readonly mailService: MailService,
+    private readonly roleService: RoleService,
   ) {}
 
   async assignTeamLeader(
@@ -51,8 +54,45 @@ export class TeamMembersService {
       await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
       await this.addMemberToTeamByEmail(leaderEmail);
     }
-
+    await this.roleService.changeUserRole(leaderCandidateId, Role.TEAM_LEADER);
     return teamWithLeader;
+  }
+
+  async isTeamLeaderByEmail(email: string) {
+    const user = await this.usersService.getUserByEmail(email);
+    const { teamLeader, _id }: Team = await this.teamService.getTeamByUserEmail(
+      email,
+    );
+
+    if (teamLeader === user._id.toString() && user.role === Role.TEAM_LEADER) {
+      return { leaderId: user._id, teamId: _id };
+    }
+    return false;
+  }
+
+  async removeTeamLeaderByEmail(
+    email: string,
+    teamId: string,
+    companyId: string,
+  ) {
+    const leader = await this.isTeamLeaderByEmail(email);
+    if (!leader) return new ForbiddenException();
+    return await this.removeTeamLeader(leader.leaderId, teamId, companyId);
+  }
+
+  async removeTeamLeader(leaderId: string, teamId: string, companyId: string) {
+    await this.roleService.changeUserRole(leaderId, Role.USER);
+    return await this.teamModel
+      .findOneAndUpdate(
+        { _id: companyId, 'teams._id': teamId },
+        {
+          $unset: {
+            'teams.$.teamLeader': leaderId,
+          },
+        },
+        { new: true },
+      )
+      .exec();
   }
 
   async isUserInAnyTeamWhitelist(email: string): Promise<boolean> {
@@ -155,6 +195,12 @@ export class TeamMembersService {
     if (!members.find((el) => el === memberToRemoveId))
       return new NotFoundException();
 
+    const leader = await this.isTeamLeaderByEmail(memberEmail);
+    if (leader) {
+      console.log(leader);
+      await this.removeTeamLeader(leader.leaderId, leader.teamId, companyId);
+    }
+
     const teamWithoutRemovedMember = await this.teamModel
       .findOneAndUpdate(
         { _id: companyId, 'teams._id': teamId },
@@ -167,6 +213,7 @@ export class TeamMembersService {
         { new: true },
       )
       .exec();
+
     if (!teamWithoutRemovedMember) return new InternalServerErrorException();
     return teamWithoutRemovedMember;
   }

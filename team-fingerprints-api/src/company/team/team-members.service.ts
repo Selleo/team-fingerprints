@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/users/users.service';
 import { Company } from '../entities/Company.entity';
 import { Team } from '../entities/team.entity';
@@ -18,6 +19,7 @@ export class TeamMembersService {
     @InjectModel(Company.name) private readonly teamModel: Model<Company>,
     private readonly usersService: UsersService,
     private readonly teamService: TeamService,
+    private readonly mailService: MailService,
   ) {}
 
   async assignTeamLeader(
@@ -53,11 +55,9 @@ export class TeamMembersService {
     return teamWithLeader;
   }
 
-  async isUserInAnyTeamWhitelist(
-    teamId: string,
-    email: string,
-  ): Promise<boolean> {
-    const team = await this.teamService.getTeamByUserEmail(teamId);
+  async isUserInAnyTeamWhitelist(email: string): Promise<boolean> {
+    const team = await this.teamService.getTeamByUserEmail(email);
+
     if (!team) return false;
     const { emailWhitelist } = team as Team;
 
@@ -69,11 +69,25 @@ export class TeamMembersService {
     teamId: string,
     email: string,
   ): Promise<Company | HttpException> {
-    if (await this.isUserInAnyTeamWhitelist(teamId, email)) {
+    if (await this.isUserInAnyTeamWhitelist(email)) {
       return new ForbiddenException(
         `This email already exists in whitelist for chosen team`,
       );
     }
+
+    const message = (email: string) => `
+      <html>
+        <body>
+          <h3>Team invitation for ${email}</h3>
+        </body>
+      </html>
+    `;
+
+    await this.mailService.sendMail(
+      email,
+      `Team invitation for ${email}`,
+      message(email),
+    );
 
     return await this.teamModel
       .findOneAndUpdate(
@@ -95,7 +109,7 @@ export class TeamMembersService {
     if (!team) return new NotFoundException();
     const teamId = team?._id?.toString();
 
-    if (!(await this.isUserInAnyTeamWhitelist(teamId, email))) {
+    if (!(await this.isUserInAnyTeamWhitelist(email))) {
       return new NotFoundException();
     }
 

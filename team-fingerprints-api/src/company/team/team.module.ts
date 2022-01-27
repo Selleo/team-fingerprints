@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from 'src/users/users.module';
 import { Company, CompanySchema } from '../entities/Company.entity';
+import { TeamMembersService } from './team-members.service';
 import { TeamController } from './team.controller';
 import { TeamService } from './team.service';
 
@@ -17,7 +18,7 @@ import { TeamService } from './team.service';
     ]),
   ],
   controllers: [TeamController],
-  providers: [TeamService],
-  exports: [TeamService],
+  providers: [TeamService, TeamMembersService],
+  exports: [TeamService, TeamMembersService],
 })
 export class TeamModule {}

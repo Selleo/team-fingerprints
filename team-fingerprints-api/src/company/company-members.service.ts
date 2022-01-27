@@ -4,11 +4,9 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RoleService } from 'src/role/role.service';
 import { UsersService } from 'src/users/users.service';
 import { Company } from './entities/Company.entity';
 
@@ -17,7 +15,6 @@ export class CompanyMembersService {
   constructor(
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
     private readonly usersService: UsersService,
-    private readonly roleService: RoleService,
   ) {}
 
   async isUserInAnyCompanyWhitelist(email: string): Promise<Company> {
@@ -33,16 +30,12 @@ export class CompanyMembersService {
   }
 
   async addUserToCompanyWhitelist(
-    company: string,
+    companyId: string,
     email: string,
-    currentUser: string,
   ): Promise<Company | HttpException> {
     if (await this.isUserInAnyCompanyWhitelist(email)) {
       return new ForbiddenException();
     }
-
-    const { companyId } = await this.usersService.getUser(currentUser);
-    if (companyId && companyId !== company) return new UnauthorizedException();
 
     return await this.companyModel.findOneAndUpdate(
       { _id: companyId },
@@ -57,6 +50,10 @@ export class CompanyMembersService {
     const destinationCompnay =
       (await this.isUserInAnyCompanyWhitelist(email)) ||
       (await this.isUserInCompanyDomain(email));
+
+    if (await this.isUserInCompanyDomain(email)) {
+      await this.addUserToCompanyWhitelist(destinationCompnay?._id, email);
+    }
 
     if (!destinationCompnay) {
       return new NotFoundException();

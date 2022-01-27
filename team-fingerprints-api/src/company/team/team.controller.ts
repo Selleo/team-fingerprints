@@ -19,6 +19,7 @@ import { Team } from '../entities/team.entity';
 import { TeamService } from './team.service';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 import { TeamMembersService } from './team-members.service';
+import { CompanyMembersService } from '../company-members.service';
 
 @ApiTags('teams')
 @Controller({ version: '1' })
@@ -26,6 +27,7 @@ export class TeamController {
   constructor(
     private readonly teamService: TeamService,
     private readonly teamMembersService: TeamMembersService,
+    private readonly companyMembersService: CompanyMembersService,
   ) {}
 
   @Get()
@@ -82,6 +84,10 @@ export class TeamController {
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('email') email: string,
   ): Promise<Company | HttpException> {
+    await this.companyMembersService.addUserToCompanyWhitelist(
+      companyId,
+      email,
+    );
     return await this.teamMembersService.addUserToTeamWhitelist(
       companyId,
       teamId,

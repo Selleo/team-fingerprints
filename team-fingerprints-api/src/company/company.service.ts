@@ -9,7 +9,6 @@ import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
-import { CompanyMembersService } from './company-members.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './entities/Company.entity';
 
@@ -19,7 +18,6 @@ export class CompanyService {
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
     private readonly usersService: UsersService,
     private readonly roleService: RoleService,
-    private readonly companyMembersService: CompanyMembersService,
   ) {}
   async getCompaneis(): Promise<Company[]> {
     return await this.companyModel.find({}).exec();
@@ -43,7 +41,7 @@ export class CompanyService {
     const { email } = await this.usersService.getUser(userId);
     if (!email) return new NotFoundException();
 
-    if (await this.companyMembersService.isUserInAnyCompanyWhitelist(email)) {
+    if (await this.getCompanyByUserEmail(email)) {
       return new ForbiddenException(`You already belong to ${domain} company.`);
     }
 

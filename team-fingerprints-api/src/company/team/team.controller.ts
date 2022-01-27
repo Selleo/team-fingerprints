@@ -18,11 +18,15 @@ import { Company } from '../entities/Company.entity';
 import { Team } from '../entities/team.entity';
 import { TeamService } from './team.service';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
+import { TeamMembersService } from './team-members.service';
 
 @ApiTags('teams')
 @Controller({ version: '1' })
 export class TeamController {
-  constructor(private readonly teamService: TeamService) {}
+  constructor(
+    private readonly teamService: TeamService,
+    private readonly teamMembersService: TeamMembersService,
+  ) {}
 
   @Get()
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
@@ -64,7 +68,11 @@ export class TeamController {
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('email') email: string,
   ): Promise<Company | HttpException> {
-    return await this.teamService.assignTeamLeader(companyId, teamId, email);
+    return await this.teamMembersService.assignTeamLeader(
+      companyId,
+      teamId,
+      email,
+    );
   }
 
   @Post('/:teamId/member')
@@ -74,7 +82,7 @@ export class TeamController {
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('email') email: string,
   ): Promise<Company | HttpException> {
-    return await this.teamService.addUserToTeamWhitelist(
+    return await this.teamMembersService.addUserToTeamWhitelist(
       companyId,
       teamId,
       email,
@@ -88,7 +96,7 @@ export class TeamController {
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('email') memberEmail: string,
   ): Promise<Company | HttpException> {
-    return await this.teamService.removeMemberFromTeam(
+    return await this.teamMembersService.removeMemberFromTeam(
       companyId,
       teamId,
       memberEmail,

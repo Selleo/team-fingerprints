@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import * as request from 'request';
 import { User } from 'src/users/entities/user.entity';
 import { CompanyService } from 'src/company/company.service';
-import { TeamService } from 'src/company/team/team.service';
+import { TeamMembersService } from 'src/company/team/team-members.service';
 
 dotenv.config();
 
@@ -28,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly userService: UsersService,
     private readonly configService: ConfigService,
     private readonly companyService: CompanyService,
-    private readonly teamService: TeamService,
+    private readonly teamMembersService: TeamMembersService,
   ) {
     super({
       secretOrKeyProvider: passportJwtSecret({
@@ -60,7 +60,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     let user: User = await this.userService.getUserByAuthId(sub);
     if (user) {
       await this.companyService.addMemberToCompanyByEmail(user.email);
-      await this.teamService.addMemberToTeamByEmail(user.email);
+      await this.teamMembersService.addMemberToTeamByEmail(user.email);
       return user;
     } else {
       await request(options(sub), async (err, res, body) => {
@@ -85,7 +85,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       if (!user) return new BadRequestException();
     }
     await this.companyService.addMemberToCompanyByEmail(user.email);
-    await this.teamService.addMemberToTeamByEmail(user.email);
+    await this.teamMembersService.addMemberToTeamByEmail(user.email);
     return user;
   }
 }

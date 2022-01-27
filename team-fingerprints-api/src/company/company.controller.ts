@@ -17,11 +17,15 @@ import { Role } from 'src/role/role.type';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './entities/Company.entity';
+import { CompanyMembersService } from './company-members.service';
 
 @ApiTags('companies')
 @Controller({ version: '1' })
 export class CompanyController {
-  constructor(private readonly companyService: CompanyService) {}
+  constructor(
+    private readonly companyService: CompanyService,
+    private readonly companyMembersService: CompanyMembersService,
+  ) {}
 
   @Get()
   @UseGuards(RoleGuard())
@@ -71,7 +75,7 @@ export class CompanyController {
     @Body('email') email: string,
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<Company | HttpException> {
-    return await this.companyService.addUserToCompanyWhitelist(
+    return await this.companyMembersService.addUserToCompanyWhitelist(
       companyId,
       email,
       userId,

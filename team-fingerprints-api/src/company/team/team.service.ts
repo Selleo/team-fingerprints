@@ -36,15 +36,10 @@ export class TeamService {
       team.emailWhitelist.find((member) => member === email),
     );
     if (!team) return;
-
     return team;
   }
 
-  async createTeam(
-    userId: string,
-    companyId: string,
-    team: CreateTeamDto,
-  ): Promise<Company> {
+  async createTeam(companyId: string, team: CreateTeamDto): Promise<Company> {
     return await this.teamModel
       .findOneAndUpdate(
         { _id: companyId },

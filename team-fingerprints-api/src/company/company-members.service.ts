@@ -18,15 +18,13 @@ export class CompanyMembersService {
   ) {}
 
   async isUserInAnyCompanyWhitelist(email: string): Promise<Company> {
-    const company = await this.companyModel.findOne({ emailWhitelist: email });
-    return company;
+    return await this.companyModel.findOne({ emailWhitelist: email });
   }
 
   async isUserInCompanyDomain(email: string): Promise<Company> {
-    const company = await this.companyModel.findOne({
+    return await this.companyModel.findOne({
       domain: email.split('@')[1],
     });
-    return company;
   }
 
   async addUserToCompanyWhitelist(
@@ -55,15 +53,12 @@ export class CompanyMembersService {
       await this.addUserToCompanyWhitelist(destinationCompnay?._id, email);
     }
 
-    if (!destinationCompnay) {
-      return new NotFoundException();
-    }
+    if (!destinationCompnay) return new NotFoundException();
 
     const newMember = await this.usersService.getUserByEmail(email);
     if (!newMember) return new NotFoundException();
 
     const newMemberId = newMember?._id.toString();
-
     const members = destinationCompnay.members || [];
 
     if (members.find((el) => el === newMemberId)) {

@@ -30,7 +30,7 @@ export class CategoryService {
     { surveyId, categoryId }: CategoryParamsDto,
     { title }: UpdateCategoryDto,
   ): Promise<Survey> {
-    return await this.surveyModel.findByIdAndUpdate(
+    return await this.surveyModel.findOneAndUpdate(
       {
         _id: surveyId,
         'categories._id': categoryId,
@@ -45,7 +45,7 @@ export class CategoryService {
   }
 
   async removeCategory(categoryId: string): Promise<Survey> {
-    return await this.surveyModel.findByIdAndUpdate(
+    return await this.surveyModel.findOneAndUpdate(
       {
         'categories._id': categoryId,
       },

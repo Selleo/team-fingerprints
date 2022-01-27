@@ -91,17 +91,16 @@ export class CompanyMembersService {
     const user = await this.usersService.getUserByEmail(email);
     if (!company || !user) return new NotFoundException();
 
-    const team: Team = await this.teamService.getTeamByUserEmail(email);
-    if (!team) return new NotFoundException();
-    console.log(team._id);
-
     const userId = user?._id.toString();
 
-    await this.teamMembersService.removeMemberFromTeam(
-      company._id,
-      team?._id,
-      email,
-    );
+    const team: Team = await this.teamService.getTeamByUserEmail(email);
+    if (team) {
+      await this.teamMembersService.removeMemberFromTeam(
+        company._id,
+        team?._id,
+        email,
+      );
+    }
 
     return await this.companyModel.findOneAndUpdate(
       { _id: company._id },

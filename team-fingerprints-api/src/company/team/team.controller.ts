@@ -75,6 +75,20 @@ export class TeamController {
     );
   }
 
+  @Delete('/:teamId/leader')
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  async removeTeamLeader(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+    @Body('email') email: string,
+  ): Promise<Company | HttpException> {
+    return await this.teamMembersService.removeTeamLeaderByEmail(
+      email,
+      teamId,
+      companyId,
+    );
+  }
+
   @Post('/:teamId/member')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
   async addUserToTeamWhitelist(

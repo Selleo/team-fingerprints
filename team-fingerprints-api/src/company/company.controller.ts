@@ -73,12 +73,10 @@ export class CompanyController {
   async addUserToCompanyWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body('email') email: string,
-    @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<Company | HttpException> {
     return await this.companyMembersService.addUserToCompanyWhitelist(
       companyId,
       email,
-      userId,
     );
   }
 }

@@ -1,6 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MailModule } from 'src/mail/mail.module';
 import { UsersModule } from 'src/users/users.module';
+import { CompanyModule } from '../company.module';
 import { Company, CompanySchema } from '../entities/Company.entity';
 import { TeamMembersService } from './team-members.service';
 import { TeamController } from './team.controller';
@@ -10,6 +12,8 @@ import { TeamService } from './team.service';
   imports: [
     forwardRef(() => UsersModule),
     forwardRef(() => TeamModule),
+    forwardRef(() => CompanyModule),
+    MailModule,
     MongooseModule.forFeature([
       {
         name: Company.name,

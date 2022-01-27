@@ -58,7 +58,6 @@ export class CompanyService {
     });
 
     await this.roleService.changeUserRole(userId, Role.COMPANY_ADMIN);
-
     return newCompany;
   }
 

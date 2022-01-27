@@ -31,11 +31,12 @@ export class TeamService {
     const company: Company = await this.teamModel
       .findOne({ 'teams.emailWhitelist': email }, { teams: 1 })
       .exec();
-    if (!company) return new NotFoundException();
+    if (!company) return;
     const team = company.teams.find((team) =>
       team.emailWhitelist.find((member) => member === email),
     );
-    if (!team) return new NotFoundException();
+    if (!team) return;
+
     return team;
   }
 

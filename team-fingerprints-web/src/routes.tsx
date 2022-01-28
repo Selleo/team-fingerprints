@@ -18,7 +18,6 @@ import { createContext, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery } from "react-query";
 import axios from "axios";
-import { queryClient } from "./App";
 
 interface ProfileContextInterface {
   profile: Profile | undefined;
@@ -29,11 +28,11 @@ export const ProfileContext = createContext<ProfileContextInterface>(
 );
 
 const AppRoutes = () => {
-  const { user, isAuthenticated } = useAuth0();
+  const { user } = useAuth0();
   const navigate = useNavigate();
 
   const { data, refetch } = useQuery<Profile>(
-    "profileData",
+    `profileData${user?.sub}`,
     async () => {
       const response = await axios.get<Profile>("/auth/profile");
       return response.data;
@@ -45,22 +44,17 @@ const AppRoutes = () => {
   );
 
   useEffect(() => {
-    if (isAuthenticated) {
-      refetch().then((data) => {
-        if (data.data?.canCreateTeam) {
-          navigate("companies/new");
-          return;
-        }
-        if (data.data?.role === "COMPANY_ADMIN") {
-          navigate("companies/managment");
-          return;
-        }
-      });
-    }
-    return () => {
-      queryClient.invalidateQueries(["profileData"]);
-    };
-  }, [isAuthenticated]);
+    refetch().then((data) => {
+      if (data.data?.canCreateTeam) {
+        navigate("companies/new");
+        return;
+      }
+      if (data.data?.role === "COMPANY_ADMIN") {
+        navigate("companies/managment");
+        return;
+      }
+    });
+  }, []);
 
   const shouldSeeNav = data?.role === "SUPER_ADMIN";
 

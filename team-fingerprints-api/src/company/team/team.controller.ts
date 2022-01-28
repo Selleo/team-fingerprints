@@ -68,11 +68,23 @@ export class TeamController {
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('email') email: string,
   ): Promise<Company | HttpException> {
-    return await this.teamMembersService.assignTeamLeader(
+    const newLeader = await this.teamMembersService.assignTeamLeader(
       companyId,
       teamId,
       email,
     );
+    if (newLeader) {
+      await this.companyMembersService.addUserToCompanyWhitelist(
+        companyId,
+        email,
+      );
+      await this.teamMembersService.addUserToTeamWhitelist(
+        companyId,
+        teamId,
+        email,
+      );
+    }
+    return newLeader;
   }
 
   @Delete('/:teamId/leader')

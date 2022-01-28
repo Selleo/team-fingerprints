@@ -50,9 +50,10 @@ export class TeamMembersService {
       .exec();
     if (!teamWithLeader) return new InternalServerErrorException();
     const { members } = team as Team;
-    if (!members.includes(leaderCandidateId)) {
+    if (!members) {
       await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
-      await this.addMemberToTeamByEmail(leaderEmail);
+    } else if (!members.includes(leaderCandidateId)) {
+      await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
     }
     await this.roleService.changeUserRole(leaderCandidateId, Role.TEAM_LEADER);
     return teamWithLeader;
@@ -110,9 +111,7 @@ export class TeamMembersService {
     email: string,
   ): Promise<Company | HttpException> {
     if (await this.isUserInAnyTeamWhitelist(email)) {
-      return new ForbiddenException(
-        `This email already exists in whitelist for chosen team`,
-      );
+      return new ForbiddenException(`This email already exists in some team`);
     }
 
     const message = (email: string) => `

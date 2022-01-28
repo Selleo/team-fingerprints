@@ -17,7 +17,7 @@ const AppHeader = () => {
   const [opened, setOpened] = useState(false);
   const { classes } = useStyles();
 
-  const { loginWithRedirect, isAuthenticated, logout, user } = useAuth0();
+  const { logout, user } = useAuth0();
   const { profile } = useContext(ProfileContext);
 
   return (
@@ -44,19 +44,16 @@ const AppHeader = () => {
           </div>
         )}
         <div className={classes.loginButton}>
-          {isAuthenticated ? (
-            <Button
-              onClick={() =>
-                logout({
-                  returnTo: window.location.origin,
-                })
-              }
-            >
-              Logout
-            </Button>
-          ) : (
-            <Button onClick={() => loginWithRedirect()}>Login</Button>
-          )}
+          <Button
+            onClick={() => {
+              logout({
+                returnTo: window.location.origin,
+              });
+              localStorage.removeItem("token");
+            }}
+          >
+            Logout
+          </Button>
         </div>
         <div className={classes.flex0}>
           <DarkMoreToogle />

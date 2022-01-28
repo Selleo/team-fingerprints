@@ -31,14 +31,6 @@ export class SurveyAnswerController {
     );
   }
 
-  @Get(':surveyId/finish')
-  async getSurveyResult(
-    @CurrentUserId(ValidateObjectId) userId: string,
-    @Param('surveyId', ValidateObjectId) surveyId: string,
-  ) {
-    return await this.surveyAnswerService.getSurveyResult(userId, surveyId);
-  }
-
   @Post(':surveyId/finish')
   async finishSurvey(
     @CurrentUserId(ValidateObjectId) userId: string,

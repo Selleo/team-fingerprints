@@ -38,6 +38,13 @@ export class TeamMembersService {
     return emailWhitelist?.find((el) => el === email) ? true : false;
   }
 
+  async getTeamMembers(teamId: string) {
+    const team: any = await this.teamService.getTeam(teamId);
+    if (!team) return new NotFoundException();
+    const { members } = team as Team;
+    return members ? members : [];
+  }
+
   async addUserToTeamWhitelist(
     companyId: string,
     teamId: string,
@@ -89,8 +96,6 @@ export class TeamMembersService {
     if (!newMember) return new NotFoundException();
 
     const newMemberId = newMember?._id.toString();
-    if (!team) return new NotFoundException();
-
     const { members } = team as Team;
 
     if (members.find((el) => el === newMemberId))
@@ -129,7 +134,6 @@ export class TeamMembersService {
 
     const leader = await this.isTeamLeaderByEmail(memberEmail);
     if (leader) {
-      console.log(leader);
       await this.removeTeamLeader(leader.leaderId, leader.teamId, companyId);
     }
 

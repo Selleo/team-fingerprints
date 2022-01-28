@@ -37,6 +37,8 @@ export class TeamMembersService {
     const team = await this.teamService.getTeam(teamId);
     if (!team) return new NotFoundException();
 
+    const currentLeader = await this.isLeaderInTeam(teamId);
+
     const teamWithLeader = await this.teamModel
       .findOneAndUpdate(
         { _id: companyId, 'teams._id': teamId },
@@ -56,6 +58,12 @@ export class TeamMembersService {
       await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
     }
     await this.roleService.changeUserRole(leaderCandidateId, Role.TEAM_LEADER);
+    if (currentLeader) {
+      await this.roleService.changeUserRole(
+        currentLeader.toString(),
+        Role.USER,
+      );
+    }
     return teamWithLeader;
   }
 
@@ -71,6 +79,12 @@ export class TeamMembersService {
     return false;
   }
 
+  async isLeaderInTeam(teamId: string): Promise<string | boolean> {
+    const team = await this.teamService.getTeam(teamId);
+    const { teamLeader } = team as Team;
+    return teamLeader ? teamLeader : false;
+  }
+
   async removeTeamLeaderByEmail(
     email: string,
     teamId: string,
@@ -83,7 +97,7 @@ export class TeamMembersService {
 
   async removeTeamLeader(leaderId: string, teamId: string, companyId: string) {
     await this.roleService.changeUserRole(leaderId, Role.USER);
-    return await this.teamModel
+    const team = await this.teamModel
       .findOneAndUpdate(
         { _id: companyId, 'teams._id': teamId },
         {
@@ -94,6 +108,8 @@ export class TeamMembersService {
         { new: true },
       )
       .exec();
+    if (!team) return new InternalServerErrorException();
+    await this.roleService.changeUserRole(leaderId, Role.USER);
   }
 
   async isUserInAnyTeamWhitelist(email: string): Promise<boolean> {

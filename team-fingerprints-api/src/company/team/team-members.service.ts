@@ -31,6 +31,10 @@ export class TeamMembersService {
     leaderEmail: string,
   ): Promise<Company | HttpException> {
     const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
+    if (leaderCandidate.role !== Role.USER)
+      return new ForbiddenException(
+        `User ${leaderEmail} can not be a team leader.`,
+      );
     if (!leaderCandidate) return new NotFoundException();
 
     const leaderCandidateId = leaderCandidate?._id.toString();

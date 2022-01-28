@@ -28,7 +28,7 @@ export class CompanyController {
   ) {}
 
   @Get()
-  @UseGuards(RoleGuard([Role.USER]))
+  @UseGuards(RoleGuard([Role.SUPER_ADMIN, Role.USER]))
   async getCompanies(): Promise<Company[]> {
     return await this.companyService.getCompaneis();
   }

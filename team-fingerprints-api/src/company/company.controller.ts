@@ -28,7 +28,7 @@ export class CompanyController {
   ) {}
 
   @Get()
-  @UseGuards(RoleGuard())
+  @UseGuards(RoleGuard([Role.USER]))
   async getCompanies(): Promise<Company[]> {
     return await this.companyService.getCompaneis();
   }

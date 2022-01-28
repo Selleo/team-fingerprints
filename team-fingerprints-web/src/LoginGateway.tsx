@@ -26,8 +26,7 @@ const LoginGateway = () => {
     >
       <MantineProvider theme={{ colorScheme: theme }} withGlobalStyles>
         {isAuthenticated && !isLoading ? (
-          <>
-            <TokenSetup />
+          <TokenSetup>
             <QueryClientProvider client={queryClient}>
               <BrowserRouter>
                 <AppRoutes />
@@ -35,7 +34,7 @@ const LoginGateway = () => {
 
               <ReactQueryDevtools />
             </QueryClientProvider>
-          </>
+          </TokenSetup>
         ) : (
           <Center style={{ width: "100%", height: "1000px" }}>
             <Button size="xl" onClick={() => loginWithRedirect()}>

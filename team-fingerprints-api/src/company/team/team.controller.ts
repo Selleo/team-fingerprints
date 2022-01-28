@@ -61,6 +61,46 @@ export class TeamController {
     return await this.teamService.updateTeam(companyId, teamId, teamDto);
   }
 
+  @Delete('/:teamId')
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  async removeTeam(
+    @Param('teamId', ValidateObjectId) teamId: string,
+  ): Promise<Company | HttpException> {
+    return await this.teamService.removeTeam(teamId);
+  }
+
+  @Post('/:teamId/member')
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  async addUserToTeamWhitelist(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+    @Body('email') email: string,
+  ): Promise<Company | HttpException> {
+    await this.companyMembersService.addUserToCompanyWhitelist(
+      companyId,
+      email,
+    );
+    return await this.teamMembersService.addUserToTeamWhitelist(
+      companyId,
+      teamId,
+      email,
+    );
+  }
+
+  @Delete('/:teamId/member')
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  async removeMemberFromTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+    @Body('email') memberEmail: string,
+  ): Promise<Company | HttpException> {
+    return await this.teamMembersService.removeMemberFromTeam(
+      companyId,
+      teamId,
+      memberEmail,
+    );
+  }
+
   @Post('/:teamId/leader')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async assignTeamLeader(
@@ -99,45 +139,5 @@ export class TeamController {
       teamId,
       companyId,
     );
-  }
-
-  @Post('/:teamId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
-  async addUserToTeamWhitelist(
-    @Param('companyId', ValidateObjectId) companyId: string,
-    @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('email') email: string,
-  ): Promise<Company | HttpException> {
-    await this.companyMembersService.addUserToCompanyWhitelist(
-      companyId,
-      email,
-    );
-    return await this.teamMembersService.addUserToTeamWhitelist(
-      companyId,
-      teamId,
-      email,
-    );
-  }
-
-  @Delete('/:teamId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
-  async removeMemberFromTeam(
-    @Param('companyId', ValidateObjectId) companyId: string,
-    @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('email') memberEmail: string,
-  ): Promise<Company | HttpException> {
-    return await this.teamMembersService.removeMemberFromTeam(
-      companyId,
-      teamId,
-      memberEmail,
-    );
-  }
-
-  @Delete('/:teamId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
-  async removeTeam(
-    @Param('teamId', ValidateObjectId) teamId: string,
-  ): Promise<Company | HttpException> {
-    return await this.teamService.removeTeam(teamId);
   }
 }

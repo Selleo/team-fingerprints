@@ -17,6 +17,7 @@ import { SurveySummarizeModule } from './survey-summarize/survey-summarize.modul
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import * as Joi from 'joi';
+import { SurveyResultModule } from './survey-result/survey-result.module';
 
 const envValidaion = Joi.object({
   NODE_ENV: Joi.string()
@@ -60,6 +61,7 @@ const ENV = process.env.NODE_ENV;
     SurveySummarizeModule,
     AuthModule,
     MailModule,
+    SurveyResultModule,
   ],
   controllers: [AppController],
   providers: [AppService],

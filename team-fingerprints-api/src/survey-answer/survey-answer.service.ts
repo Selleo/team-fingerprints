@@ -1,7 +1,8 @@
 import {
-  BadRequestException,
   ForbiddenException,
+  forwardRef,
   HttpException,
+  Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -12,12 +13,15 @@ import { User } from 'src/users/entities/user.entity';
 import { QuestionAnswerDto } from './dto/QuestionAnswerDto.dto';
 import { SurveyCompleteStatus } from './survey-answer.type';
 import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
+import { SurveyResultService } from 'src/survey-result/survey-result.service';
 
 @Injectable()
 export class SurveyAnswerService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
+    @Inject(forwardRef(() => SurveyResultService))
+    private readonly surveyResultService: SurveyResultService,
     private readonly surveySummarizeService: SurveySummarizeService,
   ) {}
 
@@ -148,31 +152,15 @@ export class SurveyAnswerService {
 
   async finishSurvey(userId: string, surveyId: string) {
     const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
-    if (isFinished) return await this.getSurveyResult(userId, surveyId);
+    if (isFinished)
+      return await this.surveyResultService.getSurveyResult(userId, surveyId);
     await this.changeSurvayCompleteStatusToFinished(userId, surveyId);
     const calculatedAnswers = await this.surveySummarizeService.countPoints(
       userId,
       surveyId,
     );
     await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
-    return await this.getSurveyResult(userId, surveyId);
-  }
-
-  async getSurveyResult(userId: string, surveyId: string) {
-    const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
-    if (!isFinished)
-      return new BadRequestException('Survey is not completed yet');
-
-    const userAnswersAll = await this.userModel
-      .findOne({ _id: userId, 'surveysAnswers.surveyId': surveyId })
-      .exec();
-
-    const userAnswers = userAnswersAll.surveysAnswers.find(
-      (el) => el.surveyId === surveyId,
-    );
-
-    const result = userAnswers.surveyResult;
-    return result;
+    return await this.surveyResultService.getSurveyResult(userId, surveyId);
   }
 
   async checkIfSurveyIsFinished(userId: string, surveyId: string) {

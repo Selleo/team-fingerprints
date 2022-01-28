@@ -25,103 +25,16 @@ export class TeamMembersService {
     private readonly roleService: RoleService,
   ) {}
 
-  async assignTeamLeader(
-    companyId: string,
-    teamId: string,
-    leaderEmail: string,
-  ): Promise<Company | HttpException> {
-    const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
-    if (leaderCandidate.role !== Role.USER)
-      return new ForbiddenException(
-        `User ${leaderEmail} can not be a team leader.`,
-      );
-    if (!leaderCandidate) return new NotFoundException();
-
-    const leaderCandidateId = leaderCandidate?._id.toString();
-    const team = await this.teamService.getTeam(teamId);
-    if (!team) return new NotFoundException();
-
-    const currentLeader = await this.isLeaderInTeam(teamId);
-
-    const teamWithLeader = await this.teamModel
-      .findOneAndUpdate(
-        { _id: companyId, 'teams._id': teamId },
-        {
-          $set: {
-            'teams.$.teamLeader': leaderCandidateId,
-          },
-        },
-        { new: true },
-      )
-      .exec();
-    if (!teamWithLeader) return new InternalServerErrorException();
-    const { members } = team as Team;
-    if (!members) {
-      await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
-    } else if (!members.includes(leaderCandidateId)) {
-      await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
-    }
-    await this.roleService.changeUserRole(leaderCandidateId, Role.TEAM_LEADER);
-    if (currentLeader) {
-      await this.roleService.changeUserRole(
-        currentLeader.toString(),
-        Role.USER,
-      );
-    }
-    return teamWithLeader;
-  }
-
-  async isTeamLeaderByEmail(email: string) {
-    const user = await this.usersService.getUserByEmail(email);
-    const { teamLeader, _id }: Team = await this.teamService.getTeamByUserEmail(
-      email,
-    );
-
-    if (teamLeader === user._id.toString() && user.role === Role.TEAM_LEADER) {
-      return { leaderId: user._id, teamId: _id };
-    }
-    return false;
-  }
-
   async isLeaderInTeam(teamId: string): Promise<string | boolean> {
     const team = await this.teamService.getTeam(teamId);
     const { teamLeader } = team as Team;
     return teamLeader ? teamLeader : false;
   }
 
-  async removeTeamLeaderByEmail(
-    email: string,
-    teamId: string,
-    companyId: string,
-  ) {
-    const leader = await this.isTeamLeaderByEmail(email);
-    if (!leader) return new ForbiddenException();
-    return await this.removeTeamLeader(leader.leaderId, teamId, companyId);
-  }
-
-  async removeTeamLeader(leaderId: string, teamId: string, companyId: string) {
-    await this.roleService.changeUserRole(leaderId, Role.USER);
-    const team = await this.teamModel
-      .findOneAndUpdate(
-        { _id: companyId, 'teams._id': teamId },
-        {
-          $unset: {
-            'teams.$.teamLeader': leaderId,
-          },
-        },
-        { new: true },
-      )
-      .exec();
-    if (!team) return new InternalServerErrorException();
-    await this.roleService.changeUserRole(leaderId, Role.USER);
-  }
-
   async isUserInAnyTeamWhitelist(email: string): Promise<boolean> {
     const team = await this.teamService.getTeamByUserEmail(email);
-
     if (!team) return false;
     const { emailWhitelist } = team as Team;
-
     return emailWhitelist?.find((el) => el === email) ? true : false;
   }
 
@@ -235,5 +148,106 @@ export class TeamMembersService {
 
     if (!teamWithoutRemovedMember) return new InternalServerErrorException();
     return teamWithoutRemovedMember;
+  }
+
+  async assignTeamLeader(
+    companyId: string,
+    teamId: string,
+    leaderEmail: string,
+  ): Promise<Company | HttpException> {
+    const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
+    if (leaderCandidate.role !== Role.USER)
+      return new ForbiddenException(
+        `User ${leaderEmail} can not be a team leader.`,
+      );
+    if (!leaderCandidate) return new NotFoundException();
+
+    const leaderCandidateId = leaderCandidate?._id.toString();
+    const team = await this.teamService.getTeam(teamId);
+    if (!team) return new NotFoundException();
+
+    const currentLeader = await this.isLeaderInTeam(teamId);
+
+    const teamWithLeader = await this.teamModel
+      .findOneAndUpdate(
+        { _id: companyId, 'teams._id': teamId },
+        {
+          $set: {
+            'teams.$.teamLeader': leaderCandidateId,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+    if (!teamWithLeader) return new InternalServerErrorException();
+    const { members } = team as Team;
+    if (!members) {
+      await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
+    } else if (!members.includes(leaderCandidateId)) {
+      await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
+    }
+    await this.roleService.changeUserRole(leaderCandidateId, Role.TEAM_LEADER);
+    if (currentLeader) {
+      await this.roleService.changeUserRole(
+        currentLeader.toString(),
+        Role.USER,
+      );
+    }
+
+    const message = (email: string) => `
+    <html>
+      <body>
+        <h3>You are a team leader now ${email}</h3>
+      </body>
+    </html>
+  `;
+
+    await this.mailService.sendMail(
+      leaderEmail,
+      `Team invitation for ${leaderEmail}`,
+      message(leaderEmail),
+    );
+
+    return teamWithLeader;
+  }
+
+  async removeTeamLeaderByEmail(
+    email: string,
+    teamId: string,
+    companyId: string,
+  ) {
+    const leader = await this.isTeamLeaderByEmail(email);
+    if (!leader) return new ForbiddenException();
+    return await this.removeTeamLeader(leader.leaderId, teamId, companyId);
+  }
+
+  async removeTeamLeader(leaderId: string, teamId: string, companyId: string) {
+    await this.roleService.changeUserRole(leaderId, Role.USER);
+    const team = await this.teamModel
+      .findOneAndUpdate(
+        { _id: companyId, 'teams._id': teamId },
+        {
+          $unset: {
+            'teams.$.teamLeader': leaderId,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+    if (!team) return new InternalServerErrorException();
+    await this.roleService.changeUserRole(leaderId, Role.USER);
+    return team;
+  }
+
+  async isTeamLeaderByEmail(email: string) {
+    const user = await this.usersService.getUserByEmail(email);
+    const { teamLeader, _id }: Team = await this.teamService.getTeamByUserEmail(
+      email,
+    );
+
+    if (teamLeader === user._id.toString() && user.role === Role.TEAM_LEADER) {
+      return { leaderId: user._id, teamId: _id };
+    }
+    return false;
   }
 }

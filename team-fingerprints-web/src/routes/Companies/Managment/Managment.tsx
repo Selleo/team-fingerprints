@@ -14,8 +14,6 @@ const CompaniesManagment = () => {
   const { classes } = useStyles();
   const [modalVisible, setModalVisible] = useState(false);
 
-  console.log(profile);
-
   const companyId = profile?.company?._id;
 
   const { isLoading, error, data } = useQuery<Company>(
@@ -25,8 +23,6 @@ const CompaniesManagment = () => {
       return response.data;
     }
   );
-
-  console.log(data);
 
   if (isLoading)
     return (

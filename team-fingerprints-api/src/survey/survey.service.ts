@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Survey } from './entities/survey.entity';
+import { Survey } from './models/survey.model';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role } from 'src/role/role.type';

@@ -1,14 +1,19 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { Question, QuestionSchema } from './question.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { TrendI } from '../interfaces/survey.interface';
+import { Question, QuestionSchema } from './question.model';
 
 @Schema()
-export class Trend {
+export class Trend implements TrendI {
+  @ApiProperty()
   @Prop({ required: true })
   primary: string;
 
+  @ApiProperty()
   @Prop({ required: true })
   secondary: string;
 
+  @ApiPropertyOptional()
   @Prop({ type: [QuestionSchema], default: [], required: true })
   questions?: Question[];
 }

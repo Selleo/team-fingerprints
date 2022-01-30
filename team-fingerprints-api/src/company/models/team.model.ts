@@ -10,10 +10,22 @@ export class Team {
   @Prop()
   description?: string;
 
-  @Prop({ default: [], unique: true, type: [String] })
+  @Prop({
+    default: [],
+    unique: true,
+    excludeIndexes: true,
+    type: [String],
+    required: true,
+  })
   members?: string[];
 
-  @Prop({ default: [] })
+  @Prop({
+    default: [],
+    excludeIndexes: true,
+    required: true,
+    type: [String],
+    unique: true,
+  })
   emailWhitelist?: string[];
 
   @Prop()

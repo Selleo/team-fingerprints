@@ -2,28 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CompanyMembersService } from 'src/company/company-members.service';
 import { CompanyService } from 'src/company/company.service';
-import { Team } from 'src/company/entities/team.entity';
+import { Team } from 'src/company/models/team.model';
 import { TeamMembersService } from 'src/company/team/team-members.service';
 import { TeamService } from 'src/company/team/team.service';
 import { Role } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import * as request from 'request';
-import { User } from 'src/users/entities/user.entity';
-
-export interface UserProfileI {
-  readonly role: Role;
-  readonly canCreateTeam: boolean;
-  readonly company: {
-    _id: string;
-    name: string;
-    description?: string | undefined;
-  };
-  readonly team: {
-    _id: string;
-    name: string;
-    description?: string | undefined;
-  };
-}
+import { User } from 'src/users/models/user.model';
+import { UserProfileI } from './interfaces/auth.interface';
 
 @Injectable()
 export class AuthService {

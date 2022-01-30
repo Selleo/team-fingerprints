@@ -11,7 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
-import { Survey } from 'src/survey/entities/survey.entity';
+import { Survey } from 'src/survey/models/survey.model';
 import {
   CreateQuestionDto,
   QuestionParamsDto,

@@ -2,13 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/users/models/user.model';
 
 @Injectable()
 export class SurveyResultService {
   constructor(
     private readonly surveyAnswerService: SurveyAnswerService,
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(User.name) private readonly User: Model<User>,
   ) {}
 
   async getSurveyResultForCurrentUser(userId: string, surveyId: string) {
@@ -19,9 +19,10 @@ export class SurveyResultService {
     if (!isFinished)
       return new BadRequestException('Survey is not completed yet');
 
-    const userAnswersAll = await this.userModel
-      .findOne({ _id: userId, 'surveysAnswers.surveyId': surveyId })
-      .exec();
+    const userAnswersAll = await this.User.findOne({
+      _id: userId,
+      'surveysAnswers.surveyId': surveyId,
+    }).exec();
 
     const userAnswers = userAnswersAll.surveysAnswers.find(
       (el) => el.surveyId === surveyId,

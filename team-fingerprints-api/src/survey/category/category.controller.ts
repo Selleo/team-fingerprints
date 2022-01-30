@@ -12,7 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
-import { Survey } from '../entities/survey.entity';
+import { Survey } from '../models/survey.model';
 import { CategoryService } from './category.service';
 import {
   CategoryParamsDto,

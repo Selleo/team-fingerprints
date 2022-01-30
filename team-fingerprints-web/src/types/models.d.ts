@@ -34,11 +34,20 @@ export type User = {
   email: string;
 };
 
+export type Team = {
+  _id: string;
+  name: string;
+  emailWhitelist: string[];
+  description: string;
+};
+
 export type Company = {
   _id: string;
   name: string;
   description: string;
   domain: string;
+  emailWhitelist: string[];
+  teams: Team[];
 };
 
 export type Answer = {

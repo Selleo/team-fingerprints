@@ -17,4 +17,8 @@ export const useStyles = createStyles((theme) => ({
   headerTitle: {
     flex: 1,
   },
+  teamButton: {
+    marginBottom: "10px",
+    marginRight: "10px",
+  },
 }));

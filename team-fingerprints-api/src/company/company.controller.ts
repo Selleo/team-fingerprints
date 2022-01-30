@@ -28,7 +28,7 @@ export class CompanyController {
   ) {}
 
   @Get()
-  @UseGuards(RoleGuard([Role.SUPER_ADMIN, Role.USER]))
+  @UseGuards(RoleGuard([Role.USER]))
   async getCompanies(): Promise<Company[]> {
     return await this.companyService.getCompaneis();
   }
@@ -43,7 +43,7 @@ export class CompanyController {
   }
 
   @Post()
-  @UseGuards(RoleGuard([Role.USER]))
+  @UseGuards(RoleGuard([Role.USER], false))
   async createCompany(
     @Body() companyDto: CreateCompanyDto,
     @CurrentUserId(ValidateObjectId) userId: string,
@@ -52,7 +52,7 @@ export class CompanyController {
   }
 
   @Patch(':companyId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async updateCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() companyDto: UpdateCompanyDto,
@@ -61,7 +61,7 @@ export class CompanyController {
   }
 
   @Delete(':companyId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async removeCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
   ): Promise<Company> {
@@ -69,7 +69,7 @@ export class CompanyController {
   }
 
   @Post(':companyId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async addUserToCompanyWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body('email') email: string,
@@ -80,6 +80,7 @@ export class CompanyController {
     );
   }
 
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   @Delete(':companyId/member')
   async removeCompanyMemberByEmail(@Body('email') email: string) {
     return await this.companyMembersService.removeCompanyMemberByEmail(email);

@@ -54,19 +54,19 @@ export class TeamMembersService {
       return new ForbiddenException(`This email already exists in some team`);
     }
 
-    const message = (email: string) => `
-      <html>
-        <body>
-          <h3>Team invitation for ${email}</h3>
-        </body>
-      </html>
-    `;
+    // const message = (email: string) => `
+    //   <html>
+    //     <body>
+    //       <h3>Team invitation for ${email}</h3>
+    //     </body>
+    //   </html>
+    // `;
 
-    await this.mailService.sendMail(
-      email,
-      `Team invitation for ${email}`,
-      message(email),
-    );
+    // await this.mailService.sendMail(
+    //   email,
+    //   `Team invitation for ${email}`,
+    //   message(email),
+    // );
 
     return await this.teamModel
       .findOneAndUpdate(
@@ -133,9 +133,6 @@ export class TeamMembersService {
       return new NotFoundException();
 
     const leader = await this.isTeamLeaderByEmail(memberEmail);
-    if (leader) {
-      await this.removeTeamLeader(leader.leaderId, leader.teamId, companyId);
-    }
 
     const teamWithoutRemovedMember = await this.teamModel
       .findOneAndUpdate(
@@ -151,6 +148,9 @@ export class TeamMembersService {
       .exec();
 
     if (!teamWithoutRemovedMember) return new InternalServerErrorException();
+    if (leader) {
+      await this.removeTeamLeader(leader.leaderId, leader.teamId, companyId);
+    }
     return teamWithoutRemovedMember;
   }
 
@@ -168,6 +168,7 @@ export class TeamMembersService {
 
     const leaderCandidateId = leaderCandidate?._id.toString();
     const team = await this.teamService.getTeam(teamId);
+
     if (!team) return new NotFoundException();
 
     const currentLeader = await this.isLeaderInTeam(teamId);
@@ -183,34 +184,39 @@ export class TeamMembersService {
         { new: true },
       )
       .exec();
+
     if (!teamWithLeader) return new InternalServerErrorException();
     const { members } = team as Team;
+
     if (!members) {
       await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
     } else if (!members.includes(leaderCandidateId)) {
       await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
     }
     await this.roleService.changeUserRole(leaderCandidateId, Role.TEAM_LEADER);
-    if (currentLeader) {
+    if (
+      currentLeader &&
+      currentLeader.toString() !== leaderCandidate._id.toString()
+    ) {
       await this.roleService.changeUserRole(
         currentLeader.toString(),
         Role.USER,
       );
     }
 
-    const message = (email: string) => `
-    <html>
-      <body>
-        <h3>You are a team leader now ${email}</h3>
-      </body>
-    </html>
-  `;
+    //   const message = (email: string) => `
+    //   <html>
+    //     <body>
+    //       <h3>You are a team leader now ${email}</h3>
+    //     </body>
+    //   </html>
+    // `;
 
-    await this.mailService.sendMail(
-      leaderEmail,
-      `Team invitation for ${leaderEmail}`,
-      message(leaderEmail),
-    );
+    //   await this.mailService.sendMail(
+    //     leaderEmail,
+    //     `Team invitation for ${leaderEmail}`,
+    //     message(leaderEmail),
+    //   );
 
     return teamWithLeader;
   }

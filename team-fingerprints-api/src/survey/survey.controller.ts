@@ -13,7 +13,7 @@ import { CurrentUserRole } from 'src/common/decorators/currentUserRole.decorator
 import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
-import { Survey } from './entities/survey.entity';
+import { Survey } from './models/survey.model';
 import { SurveyService } from './survey.service';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 

@@ -10,7 +10,7 @@ import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
-import { Company } from './entities/Company.entity';
+import { Company } from './models/company.model';
 
 @Injectable()
 export class CompanyService {

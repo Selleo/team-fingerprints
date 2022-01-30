@@ -13,10 +13,9 @@ import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
-import { CreateUserDto } from './dto/CreateUserDto.dto';
-import { UpdateUserDto } from './dto/UpdateUserDto.dto';
-import { User } from './entities/user.entity';
+import { User } from './models/user.model';
 import { UsersService } from './users.service';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 
 @ApiTags('users')
 @Controller({ path: 'users', version: '1' })

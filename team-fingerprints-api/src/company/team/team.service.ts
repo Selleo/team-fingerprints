@@ -17,7 +17,7 @@ export class TeamService {
 
   async getTeam(teamId: string): Promise<Team | HttpException> {
     const company: Company = await this.teamModel
-      .findOne({ 'teams.$': teamId }, { teams: 1 })
+      .findOne({ 'teams._id': teamId })
       .exec();
     if (!company) return new NotFoundException();
     const team = company.teams.find(

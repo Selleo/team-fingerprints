@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SurveyResultModule } from 'src/survey-result/survey-result.module';
 import { SurveySummarizeModule } from 'src/survey-summarize/survey-summarize.module';
-import { User, UserSchema } from 'src/users/entities/user.entity';
+import { User, UserSchema } from 'src/users/models/user.model';
 import { SurveyAnswerController } from './survey-answer.controller';
 import { SurveyAnswerService } from './survey-answer.service';
 

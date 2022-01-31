@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Role } from 'src/role/role.type';
+import { UserI } from '../interfaces/user.interface';
 import {
-  UserSurveyAnswerSchema,
   UserSurveyAnswer,
-} from './userSurveyAnswer.entity';
+  UserSurveyAnswerSchema,
+} from './user-survey-answer.model';
 
 @Schema({ autoIndex: true, timestamps: true })
-export class User extends Document {
+export class User extends Document implements UserI {
   _id?: string;
 
   @Prop({ required: true, unique: true })
@@ -31,7 +32,12 @@ export class User extends Document {
   @Prop({ default: '' })
   companyId: string;
 
-  @Prop({ type: [UserSurveyAnswerSchema], default: [], required: true })
+  @Prop({
+    type: [UserSurveyAnswerSchema],
+    default: [],
+    excludeIndexes: true,
+    required: true,
+  })
   surveysAnswers: UserSurveyAnswer[];
 }
 

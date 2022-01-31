@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { Survey } from 'src/survey/entities/survey.entity';
+import { Survey } from 'src/survey/models/survey.model';
 import {
   CreateQuestionDto,
   QuestionParamsDto,

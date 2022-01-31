@@ -11,8 +11,8 @@ import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
-import { Company } from '../entities/Company.entity';
-import { Team } from '../entities/team.entity';
+import { Company } from '../models/company.model';
+import { Team } from '../models/team.model';
 import { TeamService } from './team.service';
 
 @Injectable()

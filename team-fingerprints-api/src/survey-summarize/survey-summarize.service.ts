@@ -11,7 +11,7 @@ export class SurveySummarizeService {
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
   ) {}
 
-  async countPoints(userId: string, surveyId: string) {
+  async countPointsForUser(userId: string, surveyId: string) {
     const userAnswersAll = await this.userModel
       .findOne({ _id: userId, 'surveysAnswers.surveyId': surveyId })
       .exec();

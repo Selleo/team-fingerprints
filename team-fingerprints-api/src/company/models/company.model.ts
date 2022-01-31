@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Team, TeamSchema } from './team.entity';
+import { Team, TeamSchema } from './team.model';
 
 @Schema({ autoIndex: true, timestamps: true })
 export class Company extends Document {
@@ -21,10 +21,22 @@ export class Company extends Document {
   @Prop({ default: '', required: true, unique: true })
   domain: string;
 
-  @Prop({ default: [], unique: true, type: [String] })
+  @Prop({
+    default: [],
+    unique: true,
+    type: [String],
+    excludeIndexes: true,
+    required: true,
+  })
   emailWhitelist: string[];
 
-  @Prop({ default: [] })
+  @Prop({
+    default: [],
+    unique: true,
+    type: [String],
+    excludeIndexes: true,
+    required: true,
+  })
   members: string[];
 }
 

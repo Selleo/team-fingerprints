@@ -4,7 +4,7 @@ import { RoleModule } from 'src/role/role.module';
 import { UsersModule } from 'src/users/users.module';
 import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
-import { Company, CompanySchema } from './entities/Company.entity';
+import { Company, CompanySchema } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 import { TeamModule } from './team/team.module';
 

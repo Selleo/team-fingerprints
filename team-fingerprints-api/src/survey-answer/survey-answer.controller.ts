@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { QuestionAnswerDto } from './dto/QuestionAnswerDto.dto';
+import { QuestionAnswerDto } from './dto/question-answer.dto';
 import { SurveyAnswerService } from './survey-answer.service';
 
 @ApiTags('survey-answers')

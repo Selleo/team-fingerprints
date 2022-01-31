@@ -1,8 +1,9 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
-import { QuestionAnswerSchema, QuestionAnswer } from './questionAnswer.entity';
+import { UserSurveyResultI } from '../interfaces/user.interface';
+import { QuestionAnswerSchema, QuestionAnswer } from './question-answer.model';
 
 @Schema({ _id: false })
-export class UserSurveyResult {
+export class UserSurveyResult implements UserSurveyResultI {
   @Prop({ required: true })
   category: string;
 

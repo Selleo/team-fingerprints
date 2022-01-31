@@ -1,9 +1,10 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
-import { QuestionAnswerSchema, QuestionAnswer } from './questionAnswer.entity';
+import { UserSurveyAnswerI } from '../interfaces/user.interface';
+import { QuestionAnswerSchema, QuestionAnswer } from './question-answer.model';
 
 @Schema({ _id: false })
-export class UserSurveyAnswer {
+export class UserSurveyAnswer implements UserSurveyAnswerI {
   @Prop({ required: true })
   surveyId: string;
 

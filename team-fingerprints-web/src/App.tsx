@@ -12,6 +12,8 @@ const App = () => {
       redirectUri={window.location.origin}
       scope="read"
       audience={process.env.REACT_APP_AUTH0_AUDIENCE}
+      useRefreshTokens
+      cacheLocation="localstorage"
     >
       <LoginGateway />
     </Auth0Provider>

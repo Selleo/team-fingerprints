@@ -51,7 +51,7 @@ const Chart: FC<IProps> = ({ data }: { data: CategoryResults[] }) => {
 
   const mappedTrends = useMemo<TrendToDisplay[]>(() => {
     const tmpTrends: TrendToDisplay[] = [];
-    data.forEach((category) => {
+    data?.forEach?.((category) => {
       category.avgTrends.forEach((trend) => {
         tmpTrends.push({ ...trend, categoryTitile: category.categoryTitile });
       });

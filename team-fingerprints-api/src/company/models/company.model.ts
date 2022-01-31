@@ -25,7 +25,6 @@ export class Company extends Document {
     default: [],
     unique: true,
     type: [String],
-    excludeIndexes: true,
     required: true,
   })
   emailWhitelist: string[];
@@ -34,7 +33,6 @@ export class Company extends Document {
     default: [],
     unique: true,
     type: [String],
-    excludeIndexes: true,
     required: true,
   })
   members: string[];

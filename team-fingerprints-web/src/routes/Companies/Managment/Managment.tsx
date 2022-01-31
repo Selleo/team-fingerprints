@@ -1,5 +1,5 @@
 import { Button, Group, Modal, Skeleton } from "@mantine/core";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import times from "lodash/times";
 
@@ -7,23 +7,22 @@ import { useStyles } from "./styles";
 import axios from "axios";
 import { Company, Team } from "../../../types/models";
 import CompanyForm from "../../../components/Company/CompanyForm";
-import { ProfileContext } from "../../../routes";
 import EmailWhitelist from "../../../components/EmailWhitelist/EmailWhitelist";
 import EmailForm from "../../../components/EmailForm";
 import { queryClient } from "../../../App";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TeamForm from "../../../components/Team/TeamForm/TeamForm";
 
 const CompaniesManagment = () => {
   const navigate = useNavigate();
-  const { profile } = useContext(ProfileContext);
+  const params = useParams();
   const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [addTeamModalVisible, setTeamModalVisible] = useState(false);
 
   const [whitelistModalVisible, setWhitelistModalVisible] = useState(false);
 
-  const companyId = profile?.company?._id;
+  const companyId = params.id;
 
   const {
     isLoading,
@@ -110,7 +109,7 @@ const CompaniesManagment = () => {
       </Group>
       {company?.teams.map((team) => (
         <Button
-          onClick={() => navigate(`company/${companyId}/team/${team._id}`)}
+          onClick={() => navigate(`team/${team._id}`)}
           color="yellow"
           className={classes.teamButton}
         >

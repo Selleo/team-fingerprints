@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Survey, SurveySchema } from 'src/survey/entities/survey.entity';
-import { User, UserSchema } from 'src/users/entities/user.entity';
+import { Survey, SurveySchema } from 'src/survey/models/survey.model';
+import { User, UserSchema } from 'src/users/models/user.model';
 import { SurveySummarizeService } from './survey-summarize.service';
 
 @Module({

@@ -1,7 +1,8 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { QuestionAnswerI } from '../interfaces/user.interface';
 
 @Schema({ _id: false })
-export class QuestionAnswer {
+export class QuestionAnswer implements QuestionAnswerI {
   @Prop({ required: true })
   questionId: string;
 

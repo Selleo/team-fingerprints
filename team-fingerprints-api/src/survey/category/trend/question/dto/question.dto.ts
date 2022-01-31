@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsMongoId,
@@ -5,23 +6,28 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { QuestionI } from 'src/survey/interfaces/survey.interface';
 
-export class CreateQuestionDto {
+export class CreateQuestionDto implements Partial<QuestionI> {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   readonly title: string;
 
+  @ApiProperty()
   @IsBoolean()
   @IsNotEmpty()
   readonly primary: boolean;
 }
 
-export class UpdateQuestionDto {
+export class UpdateQuestionDto implements Partial<QuestionI> {
+  @ApiProperty()
   @IsString()
   @IsOptional()
   @IsNotEmpty()
   readonly title: string;
 
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   @IsNotEmpty()
@@ -29,21 +35,25 @@ export class UpdateQuestionDto {
 }
 
 export class QuestionParamsDto {
+  @ApiProperty()
   @IsString()
   @IsMongoId()
   @IsNotEmpty()
   readonly surveyId: string;
 
+  @ApiProperty()
   @IsString()
   @IsMongoId()
   @IsNotEmpty()
   readonly categoryId: string;
 
+  @ApiProperty()
   @IsString()
   @IsMongoId()
   @IsNotEmpty()
   readonly trendId: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsMongoId()
   @IsNotEmpty()

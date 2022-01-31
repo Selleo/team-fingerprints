@@ -16,7 +16,7 @@ import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
-import { Company } from './entities/Company.entity';
+import { Company } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 
 @ApiTags('companies')

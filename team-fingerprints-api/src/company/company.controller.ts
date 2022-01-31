@@ -39,7 +39,7 @@ export class CompanyController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<Company> {
-    return await this.companyService.getCompany(userId, companyId);
+    return await this.companyService.getCompanyByAdminId(userId, companyId);
   }
 
   @Post()

@@ -144,7 +144,7 @@ export class SurveyAnswerService {
   async finishSurvey(userId: string, surveyId: string) {
     const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
     if (isFinished)
-      return await this.surveyResultService.getSurveyResultForCurrentUser(
+      return await this.surveyResultService.getSurveyResultForUser(
         userId,
         surveyId,
       );
@@ -152,7 +152,7 @@ export class SurveyAnswerService {
     const calculatedAnswers =
       await this.surveySummarizeService.countPointsForUser(userId, surveyId);
     await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
-    return await this.surveyResultService.getSurveyResultForCurrentUser(
+    return await this.surveyResultService.getSurveyResultForUser(
       userId,
       surveyId,
     );

@@ -43,7 +43,7 @@ export class TeamController {
   }
 
   @Post('/')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() teamDto: CreateTeamDto,
@@ -52,7 +52,7 @@ export class TeamController {
   }
 
   @Patch('/:teamId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
   async updateTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -62,7 +62,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async removeTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
   ): Promise<Company | HttpException> {
@@ -70,7 +70,7 @@ export class TeamController {
   }
 
   @Post('/:teamId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
   async addUserToTeamWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -88,7 +88,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
   async removeMemberFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -102,7 +102,7 @@ export class TeamController {
   }
 
   @Post('/:teamId/leader')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -128,7 +128,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId/leader')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async removeTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,

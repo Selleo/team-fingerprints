@@ -13,6 +13,7 @@ import Companies from "./routes/Companies";
 import CompaniesNew from "./routes/Companies/New";
 
 import CompaniesManagment from "./routes/Companies/Managment";
+import TeamManagement from "./routes/TeamManagement";
 import { Profile } from "./types/models";
 import { createContext, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -50,7 +51,14 @@ const AppRoutes = () => {
         return;
       }
       if (data.data?.role === "COMPANY_ADMIN") {
-        navigate("companies/managment");
+        const companyId = data.data.company?._id;
+        navigate(`companies/${companyId}`);
+        return;
+      }
+      if (data.data?.role === "TEAM_LEADER") {
+        const companyId = data.data.company?._id;
+        const teamId = data.data.team?._id;
+        navigate(`companies/${companyId}/teams/${teamId}`);
         return;
       }
     });
@@ -72,7 +80,10 @@ const AppRoutes = () => {
           <Route path="surveys" element={<Surveys />} />
           <Route path="companies" element={<Companies />} />
           <Route path="companies/new" element={<CompaniesNew />} />
-          <Route path="companies/managment" element={<CompaniesManagment />} />
+          <Route path="companies/:id" element={<CompaniesManagment />} />
+          <Route path="companies/:id/team">
+            <Route path=":teamId" element={<TeamManagement />} />
+          </Route>
 
           <Route path="users" element={<Users />} />
 

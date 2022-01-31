@@ -11,7 +11,7 @@ export class SurveyResultService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async getSurveyResult(userId: string, surveyId: string) {
+  async getSurveyResultForCurrentUser(userId: string, surveyId: string) {
     const isFinished = await this.surveyAnswerService.checkIfSurveyIsFinished(
       userId,
       surveyId,
@@ -29,5 +29,36 @@ export class SurveyResultService {
 
     const result = userAnswers.surveyResult;
     return result;
+  }
+
+  async getAvgResultForAllCompanies(currentUserId: string, surveyId: string) {
+    return { currentUserId, surveyId };
+  }
+
+  async getAvgResultForCompany(
+    currentUserId: string,
+    surveyId: string,
+    companyId: string,
+  ) {
+    return { currentUserId, surveyId, companyId };
+  }
+
+  async getAvgResultForTeam(
+    currentUserId: string,
+    surveyId: string,
+    companyId: string,
+    teamId: string,
+  ) {
+    return { currentUserId, surveyId, companyId, teamId };
+  }
+
+  async getSurveyResultForUser(
+    currentUserId: string,
+    surveyId: string,
+    companyId: string,
+    teamId: string,
+    userId: string,
+  ) {
+    return { currentUserId, surveyId, companyId, teamId, userId };
   }
 }

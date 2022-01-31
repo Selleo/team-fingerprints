@@ -31,9 +31,7 @@ export default function Edit() {
     data: surveyFinished,
     refetch: refetchIsFinished,
   } = useQuery<any, Error>(`surveyFinishedOne-${params.surveyId}`, async () => {
-    const response = await axios.get<any>(
-      `/survey-answers/${params.surveyId}/finish`
-    );
+    const response = await axios.get<any>(`/survey-answers/${params.surveyId}`);
     return response.data;
   });
 
@@ -45,8 +43,8 @@ export default function Edit() {
       onSuccess: () => refetchIsFinished(),
     }
   );
-
-  const surveyIsFinished = surveyFinished?.status !== 400;
+  const surveyIsFinished =
+    surveyFinished?.surveysAnswers?.[0].completeStatus === "finished";
 
   const {
     isLoading: isLoadingSurveyResponse,

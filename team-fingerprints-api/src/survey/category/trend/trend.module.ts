@@ -3,6 +3,7 @@ import { TrendController } from './trend.controller';
 import { TrendService } from './trend.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Survey, SurveySchema } from 'src/survey/models/survey.model';
+import { QuestionModule } from './question/question.module';
 
 @Module({
   imports: [
@@ -12,8 +13,10 @@ import { Survey, SurveySchema } from 'src/survey/models/survey.model';
         schema: SurveySchema,
       },
     ]),
+    QuestionModule,
   ],
   controllers: [TrendController],
   providers: [TrendService],
+  exports: [TrendService],
 })
 export class TrendModule {}

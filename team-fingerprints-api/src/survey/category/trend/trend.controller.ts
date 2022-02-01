@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/role/role.guard';
-import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
 import { Survey } from 'src/survey/models/survey.model';
 import { TrendService } from './trend.service';
@@ -44,9 +43,7 @@ export class TrendController {
 
   @Delete('/:trendId')
   @UseGuards(RoleGuard([Role.SUPER_ADMIN]))
-  async removeTrend(
-    @Param('trendId', ValidateObjectId) trendId: string,
-  ): Promise<Survey> {
-    return this.trendService.removeTrend(trendId);
+  async removeTrend(@Param() params: TrendParamsDto) {
+    return this.trendService.removeTrend(params);
   }
 }

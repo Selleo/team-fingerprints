@@ -32,6 +32,13 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
+  authId: string;
+  companyId: string;
+  createdAt: string;
+  pictureUrl: string;
+  role: "COMPANY_ADMIN" | "SUPER_ADMIN" | "USER" | "TEAM_LEADER";
+  surveysAnswers: Answer[];
+  updatedAt: string;
 };
 
 export type Team = {
@@ -39,6 +46,7 @@ export type Team = {
   name: string;
   emailWhitelist: string[];
   description: string;
+  teamLeader?: string;
 };
 
 export type Company = {

@@ -1,6 +1,6 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 
-@Schema()
+@Schema({ autoIndex: false })
 export class Team {
   _id?: string;
 
@@ -11,17 +11,17 @@ export class Team {
   description?: string;
 
   @Prop({
-    default: [],
+    default: [null],
     type: [String],
-    required: true,
+    excludeIndexes: true,
     index: false,
   })
   members?: string[];
 
   @Prop({
-    default: [],
-    required: true,
+    default: [null],
     type: [String],
+    excludeIndexes: true,
     index: false,
   })
   emailWhitelist?: string[];

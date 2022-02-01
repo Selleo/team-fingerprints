@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CompanyService } from 'src/company/company.service';
@@ -26,8 +22,7 @@ export class SurveyResultService {
       userId,
       surveyId,
     );
-    if (!isFinished)
-      return new BadRequestException('Survey is not completed yet');
+    if (!isFinished) return;
 
     const userAnswersAll = await this.userModel
       .findOne({
@@ -86,60 +81,61 @@ export class SurveyResultService {
 
     switch (type) {
       case 'team':
-        {
-          const members: any = await this.teamMembersService.getTeamMembers(
-            entityId,
-          );
+        const members: any = await this.teamMembersService.getTeamMembers(
+          entityId,
+        );
 
-          entitiesResult = await Promise.all(
-            members.map(async (member: string) => {
-              return await this.getSurveyResultForUser(member, surveyId);
-            }),
-          );
+        entitiesResult = await Promise.all(
+          members.map(async (member: string) => {
+            return await this.getSurveyResultForUser(member, surveyId);
+          }),
+        );
 
-          entitiesResult.forEach((result) => {
-            result.forEach((el) => {
+        entitiesResult.forEach((result) => {
+          if (result) {
+            result?.forEach((el) => {
               entitiesResultFlat.push(el);
             });
-          });
-        }
+          }
+        });
+
         break;
 
       case 'company':
-        {
-          const { teams } = await this.companyService.getCompanyById(entityId);
+        entitiesResult = [];
+        const { teams } = await this.companyService.getCompanyById(entityId);
 
-          entitiesResult = await Promise.all(
-            teams.map(async (team: any) => {
-              return await this.getAvgResultForTeam(
-                surveyId,
-                team._id.toString(),
-              );
-            }),
-          );
+        entitiesResult = await Promise.all(
+          teams.map(async (team: any) => {
+            return await this.getAvgResultForTeam(
+              surveyId,
+              team._id.toString(),
+            );
+          }),
+        );
 
-          for (const res of entitiesResult) {
-            entitiesResultFlat.push(res);
-          }
+        for (const res of entitiesResult) {
+          entitiesResultFlat.push(res);
         }
+
         break;
 
       case 'companies':
-        {
-          const companies = await this.companyService.getCompaneis();
-          entitiesResult = await Promise.all(
-            companies.map(async (company: any) => {
-              return await this.getAvgResultForCompany(
-                surveyId,
-                company._id.toString(),
-              );
-            }),
-          );
+        entitiesResult = [];
+        const companies = await this.companyService.getCompaneis();
+        entitiesResult = await Promise.all(
+          companies.map(async (company: any) => {
+            return await this.getAvgResultForCompany(
+              surveyId,
+              company._id.toString(),
+            );
+          }),
+        );
 
-          for (const res of entitiesResult) {
-            entitiesResultFlat.push(res);
-          }
+        for (const res of entitiesResult) {
+          entitiesResultFlat.push(res);
         }
+
         break;
     }
 

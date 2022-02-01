@@ -71,13 +71,23 @@ export class SurveySummarizeService {
           });
         }
       });
-      summary.push({
-        categoryId: category._id.toString(),
-        categoryTitle: category.title,
-        avgTrends,
-      });
+      const categoryId = category._id.toString();
+
+      if (summary[categoryId]) {
+        summary[categoryId] = {
+          categoryTitle: category.title,
+          categoryId: categoryId,
+          avgTrends: [...avgTrends, ...summary[categoryId].avgTrends],
+        };
+      } else {
+        summary[categoryId] = {
+          categoryTitle: category.title,
+          categoryId: categoryId,
+          avgTrends,
+        };
+      }
     });
 
-    return summary;
+    return Object.values(summary);
   }
 }

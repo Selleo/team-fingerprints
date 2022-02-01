@@ -72,7 +72,7 @@ const AppRoutes = () => {
         // navbarOffsetBreakpoint controls when navbar should no longer be offset with padding-left
         navbarOffsetBreakpoint="sm"
         fixed
-        navbar={shouldSeeNav ? <AppNavBar /> : undefined}
+        navbar={true ? <AppNavBar /> : undefined}
         header={<AppHeader />}
       >
         <Routes>

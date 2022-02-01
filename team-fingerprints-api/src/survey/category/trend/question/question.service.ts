@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Scope } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
@@ -9,7 +9,7 @@ import {
   UpdateQuestionDto,
 } from './dto/question.dto';
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 export class QuestionService {
   constructor(
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
@@ -104,10 +104,10 @@ export class QuestionService {
             },
           },
           {
+            session,
             new: true,
           },
         )
-        .session(session)
         .exec();
 
       if (!removedQuestion) {
@@ -131,5 +131,44 @@ export class QuestionService {
     });
 
     session.endSession();
+  }
+
+  async removeQuestions(surveyId: string, questions: string[]): Promise<void> {
+    questions.forEach(async (questionId) => {
+      const session = await this.connection.startSession();
+      await session.withTransaction(async () => {
+        const removedQuestion = await this.surveyModel
+          .findOneAndUpdate(
+            {
+              'categories.trends.questions._id': questionId,
+            },
+            {
+              $pull: {
+                'categories.$.trends.$[].questions': { _id: questionId },
+              },
+            },
+            {
+              session,
+              new: true,
+            },
+          )
+          .exec();
+
+        await this.surveyModel
+          .findOneAndUpdate(
+            { _id: surveyId },
+            {
+              $inc: { amountOfQuestions: -1 },
+            },
+            {
+              session,
+              new: true,
+            },
+          )
+          .exec();
+
+        return removedQuestion;
+      });
+    });
   }
 }

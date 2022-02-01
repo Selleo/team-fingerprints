@@ -4,6 +4,7 @@ import { Survey, SurveySchema } from '../models/survey.model';
 import { SurveyModule } from '../survey.module';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
+import { TrendModule } from './trend/trend.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CategoryService } from './category.service';
       },
     ]),
     SurveyModule,
+    TrendModule,
   ],
   controllers: [CategoryController],
   providers: [CategoryService],

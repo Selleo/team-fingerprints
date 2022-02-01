@@ -22,18 +22,18 @@ export class Company extends Document {
   domain: string;
 
   @Prop({
-    default: [],
-    unique: true,
+    default: [null],
     type: [String],
-    required: true,
+    excludeIndexes: true,
+    index: false,
   })
   emailWhitelist: string[];
 
   @Prop({
-    default: [],
-    unique: true,
+    default: [null],
     type: [String],
-    required: true,
+    excludeIndexes: true,
+    index: false,
   })
   members: string[];
 }

@@ -12,19 +12,17 @@ export class Team {
 
   @Prop({
     default: [],
-    unique: true,
-    excludeIndexes: true,
     type: [String],
     required: true,
+    index: false,
   })
   members?: string[];
 
   @Prop({
     default: [],
-    excludeIndexes: true,
     required: true,
     type: [String],
-    unique: true,
+    index: false,
   })
   emailWhitelist?: string[];
 

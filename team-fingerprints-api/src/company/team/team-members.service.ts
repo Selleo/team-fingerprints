@@ -39,7 +39,7 @@ export class TeamMembersService {
   }
 
   async getTeamMembers(teamId: string) {
-    const team: any = await this.teamService.getTeam(teamId);
+    const team = await this.teamService.getTeam(teamId);
     if (!team) return new NotFoundException();
     const { members } = team as Team;
     return members ? members : [];

@@ -23,8 +23,15 @@ export class CompanyService {
     return await this.companyModel.find({}).exec();
   }
 
-  async getCompany(adminId: string, companyId: string): Promise<Company> {
+  async getCompanyByAdminId(
+    adminId: string,
+    companyId: string,
+  ): Promise<Company> {
     return await this.companyModel.findOne({ _id: companyId, adminId }).exec();
+  }
+
+  async getCompanyById(companyId: string): Promise<Company> {
+    return await this.companyModel.findOne({ _id: companyId }).exec();
   }
 
   async getCompanyByUserEmail(email: string): Promise<Company> {

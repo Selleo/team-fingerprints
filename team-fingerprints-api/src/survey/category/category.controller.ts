@@ -46,8 +46,9 @@ export class CategoryController {
   @Delete('/:categoryId')
   @UseGuards(RoleGuard([Role.SUPER_ADMIN]))
   async removeCategory(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('categoryId', ValidateObjectId) categoryId: string,
   ): Promise<Survey> {
-    return this.categoryService.removeCategory(categoryId);
+    return this.categoryService.removeCategory(surveyId, categoryId);
   }
 }

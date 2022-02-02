@@ -29,7 +29,7 @@ export class UsersController {
     return await this.userService.getUser(userId);
   }
 
-  @Get()
+  @Get('all')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
   async getUsersAll(): Promise<User[]> {
     return await this.userService.getUsersAll();

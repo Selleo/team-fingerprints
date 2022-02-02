@@ -89,11 +89,11 @@ export class CompanyMembersService {
 
     const company = await this.companyService.getCompanyByUserEmail(email);
     const user = await this.usersService.getUserByEmail(email);
-    if (!company || !user) return new NotFoundException();
+    if (!company && !user) return new NotFoundException();
 
     const userId = user?._id.toString();
-
     const team: Team = await this.teamService.getTeamByUserEmail(email);
+
     if (team) {
       await this.teamMembersService.removeMemberFromTeam(
         company._id,

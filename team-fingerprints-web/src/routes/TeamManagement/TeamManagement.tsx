@@ -1,20 +1,19 @@
-import { Button, Group, Modal, Skeleton } from "@mantine/core";
+import { Button, Modal, Skeleton } from "@mantine/core";
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import times from "lodash/times";
 
 import { useStyles } from "./styles";
 import axios from "axios";
-import { Company, Team } from "../../types/models";
-import EmailWhitelist from "../../components/EmailWhitelist/EmailWhitelist";
+import { Team, User } from "../../types/models";
+import EmailWhitelist from "./EmailWhitelist";
 import EmailForm from "../../components/EmailForm";
 import { queryClient } from "../../App";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TeamForm from "../../components/Team/TeamForm/TeamForm";
 
 const TeamManagment = () => {
   const params = useParams();
-  console.log(params);
   const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
 
@@ -31,6 +30,15 @@ const TeamManagment = () => {
     const response = await axios.get<Team>(
       `/companies/${companyId}/teams/${teamId}`
     );
+    return response.data;
+  });
+
+  const {
+    isLoading: isLoadingUsers,
+    error: isErrorUsers,
+    data: users,
+  } = useQuery<User[]>(`users${companyId}`, async () => {
+    const response = await axios.get<User[]>(`/users/all`);
     return response.data;
   });
 
@@ -64,6 +72,20 @@ const TeamManagment = () => {
     }
   );
 
+  const makeALeader = useMutation(
+    (email: string) => {
+      return axios.post<string>(
+        `/companies/${companyId}/teams/${teamId}/leader`,
+        { email }
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(`team${teamId}`);
+      },
+    }
+  );
+
   const removeEmailFromWhitelist = useMutation(
     (email: string) => {
       return axios.delete<string>(
@@ -81,7 +103,7 @@ const TeamManagment = () => {
     }
   );
 
-  if (isLoading)
+  if (isLoading || isLoadingUsers)
     return (
       <>
         {times(1, () => (
@@ -89,7 +111,8 @@ const TeamManagment = () => {
         ))}
       </>
     );
-  if (error) return <div>'An error has occurred: ' + console.error;</div>;
+  if (error || isErrorUsers)
+    return <div>'An error has occurred: ' + console.error;</div>;
 
   return (
     <>
@@ -108,6 +131,9 @@ const TeamManagment = () => {
       <EmailWhitelist
         onRemove={removeEmailFromWhitelist.mutate}
         list={team?.emailWhitelist}
+        users={users}
+        teamLeader={team?.teamLeader}
+        makeALeader={makeALeader.mutate}
       />
       <hr />
       <Button onClick={() => setWhitelistModalVisible(true)}>

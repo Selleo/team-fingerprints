@@ -9,11 +9,9 @@ import { useStyles } from "./styles";
 import axios from "axios";
 import { Company } from "../../types/models";
 import CompanyItem from "../../components/Company/CompanyItem";
-import CompanyForm from "../../components/Company/CompanyForm";
 
 const Companies = () => {
   const { classes } = useStyles();
-  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   const { isLoading, error, data } = useQuery<Company[]>(
     "companiesAll",
@@ -39,18 +37,13 @@ const Companies = () => {
         <h1 className={classes.headerTitle}>
           Companies - only SUPERADMIN can see it!
         </h1>
-        <Button
-          onClick={() => setCreateModalVisible(true)}
-          className={classes.addButton}
-        >
-          Add new company
-        </Button>
       </div>
       <Table>
         <thead>
           <tr>
             <th>title</th>
-            <th>actions</th>
+            <th>description</th>
+            <th>domain</th>
           </tr>
         </thead>
         {isArray(data) &&
@@ -64,13 +57,6 @@ const Companies = () => {
             </tbody>
           ))}
       </Table>
-      <Modal
-        opened={createModalVisible}
-        onClose={() => setCreateModalVisible(false)}
-        title="Create Company"
-      >
-        <CompanyForm onClose={() => setCreateModalVisible(false)} />
-      </Modal>
     </>
   );
 };

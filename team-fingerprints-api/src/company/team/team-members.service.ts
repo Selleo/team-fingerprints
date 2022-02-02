@@ -122,14 +122,17 @@ export class TeamMembersService {
     memberEmail: string,
   ): Promise<Company | HttpException> {
     const memberToRemove = await this.usersService.getUserByEmail(memberEmail);
-    if (!memberToRemove) return new NotFoundException();
-
     const memberToRemoveId = memberToRemove?._id.toString();
     const team = await this.teamService.getTeam(teamId);
     if (!team) return new NotFoundException();
-    const { members } = team as Team;
+    const { members, emailWhitelist } = team as Team;
 
-    if (!members.find((el) => el === memberToRemoveId))
+    const memberToRemoveInsideTeam = members.find(
+      (el) => el === memberToRemoveId,
+    );
+    const emailToRemove = emailWhitelist.find((el) => el === memberEmail);
+
+    if (!memberToRemoveInsideTeam && !emailToRemove)
       return new NotFoundException();
 
     const leader = await this.isTeamLeaderByEmail(memberEmail);
@@ -160,7 +163,7 @@ export class TeamMembersService {
     leaderEmail: string,
   ): Promise<Company | HttpException> {
     const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
-    if (leaderCandidate.role !== Role.USER)
+    if (leaderCandidate?.role !== Role.USER)
       return new ForbiddenException(
         `User ${leaderEmail} can not be a team leader.`,
       );
@@ -255,7 +258,11 @@ export class TeamMembersService {
       email,
     );
 
-    if (teamLeader === user._id.toString() && user.role === Role.TEAM_LEADER) {
+    if (
+      user &&
+      teamLeader === user._id.toString() &&
+      user.role === Role.TEAM_LEADER
+    ) {
       return { leaderId: user._id, teamId: _id };
     }
     return false;

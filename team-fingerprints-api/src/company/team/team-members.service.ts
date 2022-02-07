@@ -1,6 +1,8 @@
 import {
   ForbiddenException,
+  forwardRef,
   HttpException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -11,6 +13,8 @@ import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
+import { CompanyMembersService } from '../company-members.service';
+import { CompanyService } from '../company.service';
 import { Company } from '../models/company.model';
 import { Team } from '../models/team.model';
 import { TeamService } from './team.service';
@@ -23,12 +27,16 @@ export class TeamMembersService {
     private readonly teamService: TeamService,
     private readonly mailService: MailService,
     private readonly roleService: RoleService,
+    @Inject(forwardRef(() => CompanyMembersService))
+    private readonly companyMembersService: CompanyMembersService,
+    @Inject(forwardRef(() => CompanyService))
+    private readonly companyService: CompanyService,
   ) {}
 
   async isLeaderInTeam(teamId: string): Promise<string | boolean> {
     const team = await this.teamService.getTeam(teamId);
     const { teamLeader } = team as Team;
-    return teamLeader ? teamLeader : false;
+    return teamLeader?._id ? teamLeader?._id : false;
   }
 
   async isUserInAnyTeamWhitelist(email: string): Promise<boolean> {
@@ -157,18 +165,51 @@ export class TeamMembersService {
     return teamWithoutRemovedMember;
   }
 
+  async checkEmailIfAssignedToBeLeader(email: string) {
+    const team: Team = await this.teamService.getTeamByUserEmail(email);
+    if (!team) return;
+
+    if (team?.teamLeader.email === email) {
+      const { _id } = await this.companyService.getCompanyByUserEmail(email);
+      await this.assignTeamLeader(_id, team._id, email);
+    }
+  }
+
   async assignTeamLeader(
     companyId: string,
     teamId: string,
     leaderEmail: string,
   ): Promise<Company | HttpException> {
-    const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
+    const leaderCandidate: any = await this.usersService.getUserByEmail(
+      leaderEmail,
+    );
+
+    if (!leaderCandidate) {
+      const teamWithLeaderEmail = await this.teamModel
+        .findOneAndUpdate(
+          { _id: companyId, 'teams._id': teamId },
+          {
+            $set: {
+              'teams.$.teamLeader.email': leaderEmail,
+              'teams.$.teamLeader._id': '',
+            },
+          },
+          { new: true },
+        )
+        .exec();
+      if (!teamWithLeaderEmail) return new InternalServerErrorException();
+      await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
+      await this.companyMembersService.addUserToCompanyWhitelist(
+        companyId,
+        leaderEmail,
+      );
+      return teamWithLeaderEmail;
+    }
 
     if (leaderCandidate?.role !== Role.USER)
       return new ForbiddenException(
         `User ${leaderEmail} can not be a team leader.`,
       );
-    if (!leaderCandidate) return new NotFoundException();
 
     const leaderCandidateId = leaderCandidate?._id.toString();
     const team = await this.teamService.getTeam(teamId);
@@ -182,7 +223,8 @@ export class TeamMembersService {
         { _id: companyId, 'teams._id': teamId },
         {
           $set: {
-            'teams.$.teamLeader': leaderCandidateId,
+            'teams.$.teamLeader.email': leaderEmail,
+            'teams.$.teamLeader._id': leaderCandidateId,
           },
         },
         { new: true },
@@ -197,6 +239,11 @@ export class TeamMembersService {
     } else if (!members.includes(leaderCandidateId)) {
       await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
     }
+    await this.companyMembersService.addUserToCompanyWhitelist(
+      companyId,
+      leaderEmail,
+    );
+
     await this.roleService.changeUserRole(leaderCandidateId, Role.TEAM_LEADER);
     if (
       currentLeader &&
@@ -208,7 +255,7 @@ export class TeamMembersService {
       );
     }
 
-    //   const message = (email: string) => `
+    // const message = (email: string) => `
     //   <html>
     //     <body>
     //       <h3>You are a team leader now ${email}</h3>
@@ -216,11 +263,11 @@ export class TeamMembersService {
     //   </html>
     // `;
 
-    //   await this.mailService.sendMail(
-    //     leaderEmail,
-    //     `Team invitation for ${leaderEmail}`,
-    //     message(leaderEmail),
-    //   );
+    // await this.mailService.sendMail(
+    //   leaderEmail,
+    //   `Team invitation for ${leaderEmail}`,
+    //   message(leaderEmail),
+    // );
 
     return teamWithLeader;
   }
@@ -261,7 +308,7 @@ export class TeamMembersService {
 
     if (
       user &&
-      teamLeader === user._id.toString() &&
+      teamLeader._id === user._id.toString() &&
       user.role === Role.TEAM_LEADER
     ) {
       return { leaderId: user._id, teamId: _id };

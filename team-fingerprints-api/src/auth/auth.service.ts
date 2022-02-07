@@ -48,6 +48,7 @@ export class AuthService {
   async handleExistingUsers(email: string) {
     await this.companyMembersService.addMemberToCompanyByEmail(email);
     await this.teamMembersService.addMemberToTeamByEmail(email);
+    await this.teamMembersService.checkEmailIfAssignedToBeLeader(email);
   }
 
   async handleNewUsers(auth0Id: string) {

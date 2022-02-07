@@ -163,9 +163,7 @@ export class TeamMembersService {
     leaderEmail: string,
   ): Promise<Company | HttpException> {
     const leaderCandidate = await this.usersService.getUserByEmail(leaderEmail);
-    // if (!leaderCandidate) {
-    //   await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
-    // }
+
     if (leaderCandidate?.role !== Role.USER)
       return new ForbiddenException(
         `User ${leaderEmail} can not be a team leader.`,

@@ -1,4 +1,4 @@
-import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
+import { Prop, SchemaFactory, Schema, raw } from '@nestjs/mongoose';
 
 @Schema({ autoIndex: false })
 export class Team {
@@ -26,7 +26,7 @@ export class Team {
   })
   emailWhitelist?: string[];
 
-  @Prop()
-  teamLeader?: string;
+  @Prop(raw({ _id: String, email: String }))
+  teamLeader?: any;
 }
 export const TeamSchema = SchemaFactory.createForClass(Team);

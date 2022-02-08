@@ -43,13 +43,13 @@ export class CompanyService {
     { name, description, domain }: CreateCompanyDto,
   ): Promise<Company | HttpException> {
     if (await this.isDomainTaken(domain)) {
-      return new ForbiddenException(`Domain ${domain} is already taken.`);
+      throw new ForbiddenException(`Domain ${domain} is already taken.`);
     }
     const { email } = await this.usersService.getUser(userId);
-    if (!email) return new NotFoundException();
+    if (!email) throw new NotFoundException();
 
     if (await this.getCompanyByUserEmail(email)) {
-      return new ForbiddenException(`You already belong to ${domain} company.`);
+      throw new ForbiddenException(`You already belong to ${domain} company.`);
     }
 
     const newCompany = await this.companyModel.create({
@@ -65,7 +65,7 @@ export class CompanyService {
     });
 
     await this.roleService.changeUserRole(userId, Role.COMPANY_ADMIN);
-    return newCompany;
+    throw newCompany;
   }
 
   async updateCompany(

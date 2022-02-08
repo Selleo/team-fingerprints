@@ -15,6 +15,7 @@ export class AuthController {
   async getUserProfile(
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<ResponseAuthDto> {
+    console.log(userId);
     return await this.authService.getUserProfile(userId);
   }
 }

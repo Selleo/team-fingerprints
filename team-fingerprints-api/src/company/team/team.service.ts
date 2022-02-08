@@ -19,11 +19,11 @@ export class TeamService {
     const company: Company = await this.teamModel
       .findOne({ 'teams._id': teamId })
       .exec();
-    if (!company) return new NotFoundException();
+    if (!company) throw new NotFoundException();
     const team = company.teams.find(
       (team) => teamId && team?._id?.toString() === teamId?.toString(),
     );
-    if (!team) return new NotFoundException();
+    if (!team) throw new NotFoundException();
     return team;
   }
 

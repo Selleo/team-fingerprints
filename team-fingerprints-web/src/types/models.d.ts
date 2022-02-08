@@ -41,12 +41,17 @@ export type User = {
   updatedAt: string;
 };
 
+export type TeamLead = {
+  _id: string;
+  email: string;
+};
+
 export type Team = {
   _id: string;
   name: string;
   emailWhitelist: string[];
   description: string;
-  teamLeader?: string;
+  teamLeader?: TeamLead;
 };
 
 export type Company = {

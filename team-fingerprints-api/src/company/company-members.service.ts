@@ -39,9 +39,8 @@ export class CompanyMembersService {
     email: string,
   ): Promise<Company | HttpException> {
     if (await this.isUserInAnyCompanyWhitelist(email)) {
-      return new ForbiddenException();
+      throw new ForbiddenException();
     }
-
     return await this.companyModel.findOneAndUpdate(
       { _id: companyId },
       { $push: { emailWhitelist: email } },
@@ -60,17 +59,15 @@ export class CompanyMembersService {
       await this.addUserToCompanyWhitelist(destinationCompnay?._id, email);
     }
 
-    if (!destinationCompnay) return new NotFoundException();
+    if (!destinationCompnay) throw new NotFoundException();
 
     const newMember = await this.usersService.getUserByEmail(email);
-    if (!newMember) return new NotFoundException();
+    if (!newMember) throw new NotFoundException();
 
     const newMemberId = newMember?._id.toString();
     const members = destinationCompnay.members || [];
 
-    if (members.find((el) => el === newMemberId)) {
-      return new ForbiddenException();
-    }
+    if (members.find((el) => el === newMemberId)) return;
 
     const companyWithNewMember = await this.companyModel
       .findOneAndUpdate(
@@ -79,17 +76,17 @@ export class CompanyMembersService {
         { new: true },
       )
       .exec();
-    if (!companyWithNewMember) return new InternalServerErrorException();
+    if (!companyWithNewMember) throw new InternalServerErrorException();
     return companyWithNewMember;
   }
 
   async removeCompanyMemberByEmail(email: string) {
     if (!(await this.isUserInAnyCompanyWhitelist(email)))
-      return new NotFoundException();
+      throw new NotFoundException();
 
     const company = await this.companyService.getCompanyByUserEmail(email);
     const user = await this.usersService.getUserByEmail(email);
-    if (!company && !user) return new NotFoundException();
+    if (!company && !user) throw new NotFoundException();
 
     const userId = user?._id.toString();
     const team: Team = await this.teamService.getTeamByUserEmail(email);

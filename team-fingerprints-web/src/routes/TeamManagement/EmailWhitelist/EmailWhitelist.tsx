@@ -1,13 +1,13 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Table, Badge, Group } from "@mantine/core";
 import React, { FC } from "react";
-import { User } from "../../../types/models";
+import { TeamLead, User } from "../../../types/models";
 
 interface IProps {
   list?: string[];
   onRemove?: (email: string) => void;
   users?: User[];
-  teamLeader?: string;
+  teamLeader?: TeamLead;
   makeALeader: (email: string) => void;
 }
 
@@ -19,12 +19,16 @@ const EmailWhitelist: FC<IProps> = ({
   makeALeader,
 }) => {
   const { user } = useAuth0();
-  const userEmail = user?.email;
+  const currentUserEmail = user?.email;
 
   const rows = (list || []).map((email) => {
     const user = users?.find((el) => el.email === email);
-    const thatsMe = user?.email === userEmail;
-    const isALeader = user?._id === teamLeader;
+    const thatsMe = email === currentUserEmail;
+
+    const isALeader =
+      user?._id === teamLeader?._id || email === teamLeader?.email;
+
+    const roleInTeam = isALeader ? "LEAD" : "MEMBER";
 
     return (
       <tr key={email}>
@@ -33,7 +37,11 @@ const EmailWhitelist: FC<IProps> = ({
           <td></td>
         ) : (
           <td>
-            {user ? <Badge>{isALeader ? "LEAD" : "MEMBER"}</Badge> : "Pending"}
+            {user ? (
+              <Badge>{roleInTeam}</Badge>
+            ) : (
+              <Badge>{`PENDING ${roleInTeam}`}</Badge>
+            )}
           </td>
         )}
         <td>
@@ -43,7 +51,7 @@ const EmailWhitelist: FC<IProps> = ({
                 Remove
               </Button>
             )}
-            {!thatsMe && (
+            {!thatsMe && !isALeader && (
               <Button onClick={() => makeALeader?.(email)} color="green">
                 Make a leader
               </Button>

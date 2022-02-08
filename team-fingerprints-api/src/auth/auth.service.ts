@@ -23,7 +23,6 @@ export class AuthService {
   ) {}
 
   async getUserProfile(userId: string): Promise<UserProfileI> {
-    console.log('sssssss');
     const user = await this.usersService.getUser(userId);
     const company = await this.companyService.getCompanyByUserEmail(user.email);
     const team: Team = await this.teamService.getTeamByUserEmail(user.email);

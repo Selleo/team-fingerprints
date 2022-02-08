@@ -11,8 +11,10 @@ import EmailForm from "../../components/EmailForm";
 import { queryClient } from "../../App";
 import { useParams } from "react-router-dom";
 import TeamForm from "../../components/Team/TeamForm/TeamForm";
+import { useNotifications } from "@mantine/notifications";
 
 const TeamManagment = () => {
+  const { showNotification } = useNotifications();
   const params = useParams();
   const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -54,6 +56,13 @@ const TeamManagment = () => {
         setWhitelistModalVisible(false);
         queryClient.invalidateQueries(`team${teamId}`);
       },
+      onError: (error: any) => {
+        showNotification({
+          color: "red",
+          title: "Can not add user to whitelist",
+          message: error?.message,
+        });
+      },
     }
   );
 
@@ -82,6 +91,13 @@ const TeamManagment = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(`team${teamId}`);
+      },
+      onError: (error: any) => {
+        showNotification({
+          color: "red",
+          title: "Can not setup a leader",
+          message: error?.message,
+        });
       },
     }
   );

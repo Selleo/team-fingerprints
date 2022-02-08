@@ -105,7 +105,7 @@ export class TeamMembersService {
     const newMemberId = newMember?._id.toString();
     const { members } = team as Team;
 
-    if (!members.find((el) => el === newMemberId)) return;
+    if (members.find((el) => el === newMemberId)) return;
 
     const teamWithNewMember = await this.teamModel
       .findOneAndUpdate(
@@ -166,6 +166,8 @@ export class TeamMembersService {
   async checkEmailIfAssignedToBeLeader(email: string) {
     const team: Team = await this.teamService.getTeamByUserEmail(email);
     if (!team) return;
+
+    if (await this.isTeamLeaderByEmail(email)) return;
 
     if (team?.teamLeader.email === email) {
       const { _id } = await this.companyService.getCompanyByUserEmail(email);

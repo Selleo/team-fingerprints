@@ -7,11 +7,11 @@ import {
   ColorSchemeProvider,
   MantineProvider,
 } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 import { useState } from "react";
 import { QueryClientProvider } from "react-query";
 import TokenSetup from "./components/TokenSetup";
 import { ReactQueryDevtools } from "react-query/devtools";
-
 import { queryClient } from "./App";
 
 const LoginGateway = () => {
@@ -25,23 +25,25 @@ const LoginGateway = () => {
       }}
     >
       <MantineProvider theme={{ colorScheme: theme }} withGlobalStyles>
-        {isAuthenticated && !isLoading ? (
-          <TokenSetup>
-            <QueryClientProvider client={queryClient}>
-              <BrowserRouter>
-                <AppRoutes />
-              </BrowserRouter>
+        <NotificationsProvider>
+          {isAuthenticated && !isLoading ? (
+            <TokenSetup>
+              <QueryClientProvider client={queryClient}>
+                <BrowserRouter>
+                  <AppRoutes />
+                </BrowserRouter>
 
-              <ReactQueryDevtools />
-            </QueryClientProvider>
-          </TokenSetup>
-        ) : (
-          <Center style={{ width: "100%", height: "1000px" }}>
-            <Button size="xl" onClick={() => loginWithRedirect()}>
-              {isLoading ? "Login" : "Loading"}
-            </Button>
-          </Center>
-        )}
+                <ReactQueryDevtools />
+              </QueryClientProvider>
+            </TokenSetup>
+          ) : (
+            <Center style={{ width: "100%", height: "1000px" }}>
+              <Button size="xl" onClick={() => loginWithRedirect()}>
+                {isLoading ? "Login" : "Loading"}
+              </Button>
+            </Center>
+          )}
+        </NotificationsProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );

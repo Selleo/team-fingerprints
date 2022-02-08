@@ -73,6 +73,8 @@ export class TeamMembersService {
       )
       .exec();
 
+    await this.mailService.sendEmail();
+
     // const message = (email: string) => `
     //   <html>
     //     <body>
@@ -239,6 +241,7 @@ export class TeamMembersService {
     } else if (!members.includes(leaderCandidateId)) {
       await this.addUserToTeamWhitelist(companyId, teamId, leaderEmail);
     }
+
     await this.companyMembersService.addUserToCompanyWhitelist(
       companyId,
       leaderEmail,
@@ -254,6 +257,8 @@ export class TeamMembersService {
         Role.USER,
       );
     }
+
+    await this.mailService.sendEmail();
 
     // const message = (email: string) => `
     //   <html>

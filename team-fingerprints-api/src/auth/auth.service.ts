@@ -77,6 +77,8 @@ export class AuthService {
         picture,
         pictureUrl,
       } = JSON.parse(body);
+      user = await this.usersService.getUserByEmail(email);
+      if (user) return await this.handleExistingUsers(email);
       user = await this.usersService.createUser({
         authId: auth0Id,
         email,

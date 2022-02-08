@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   HttpException,
   Injectable,
   InternalServerErrorException,
@@ -38,9 +37,7 @@ export class CompanyMembersService {
     companyId: string,
     email: string,
   ): Promise<Company | HttpException> {
-    if (await this.isUserInAnyCompanyWhitelist(email)) {
-      throw new ForbiddenException();
-    }
+    if (await this.isUserInAnyCompanyWhitelist(email)) return;
     return await this.companyModel.findOneAndUpdate(
       { _id: companyId },
       { $push: { emailWhitelist: email } },

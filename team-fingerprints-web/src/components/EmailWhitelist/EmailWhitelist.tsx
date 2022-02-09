@@ -21,9 +21,17 @@ const EmailWhitelist: FC<IProps> = ({ list, onRemove, users }) => {
       <tr key={email}>
         <td>{email}</td>
         {thatsMe ? (
-          <td></td>
+          <td>
+            <Badge color="green">{user?.role}</Badge>
+          </td>
         ) : (
-          <td>{user ? <Badge>Present</Badge> : "Pending"}</td>
+          <td>
+            {user ? (
+              <Badge color="green">{user?.role}</Badge>
+            ) : (
+              <Badge color="yellow">Pending</Badge>
+            )}
+          </td>
         )}
         <td>
           {!thatsMe && (

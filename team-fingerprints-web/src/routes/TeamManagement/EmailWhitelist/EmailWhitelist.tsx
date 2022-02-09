@@ -9,6 +9,7 @@ interface IProps {
   users?: User[];
   teamLeader?: TeamLead;
   makeALeader: (email: string) => void;
+  removeLeaderRole: (email: string) => void;
 }
 
 const EmailWhitelist: FC<IProps> = ({
@@ -17,6 +18,7 @@ const EmailWhitelist: FC<IProps> = ({
   users,
   teamLeader,
   makeALeader,
+  removeLeaderRole,
 }) => {
   const { user } = useAuth0();
   const currentUserEmail = user?.email;
@@ -54,6 +56,11 @@ const EmailWhitelist: FC<IProps> = ({
             {!thatsMe && !isALeader && (
               <Button onClick={() => makeALeader?.(email)} color="green">
                 Make a leader
+              </Button>
+            )}
+            {!thatsMe && isALeader && (
+              <Button onClick={() => removeLeaderRole?.(email)} color="red">
+                Remove leadership
               </Button>
             )}
           </Group>

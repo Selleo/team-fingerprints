@@ -63,7 +63,7 @@ export class SurveyResultService {
     const schema = [];
 
     const survey = await this.surveyModel.findById({ _id: surveyId });
-    if (!survey) return new InternalServerErrorException();
+    if (!survey) throw new InternalServerErrorException();
     survey.categories.map((category: any) => {
       category.trends.forEach((trend: any) => {
         schema.push({

@@ -46,9 +46,12 @@ export class AuthService {
   }
 
   async handleExistingUsers(email: string) {
-    await this.companyMembersService.addMemberToCompanyByEmail(email);
-    await this.teamMembersService.addMemberToTeamByEmail(email);
-    await this.teamMembersService.checkEmailIfAssignedToBeLeader(email);
+    const user = await this.usersService.getUserByEmail(email);
+    if (user.role !== Role.SUPER_ADMIN) {
+      await this.companyMembersService.addMemberToCompanyByEmail(email);
+      await this.teamMembersService.addMemberToTeamByEmail(email);
+      await this.teamMembersService.checkEmailIfAssignedToBeLeader(email);
+    }
   }
 
   async handleNewUsers(auth0Id: string) {
@@ -65,7 +68,7 @@ export class AuthService {
     let user: User;
     await request(options(auth0Id), async (err, res, body) => {
       if (err) {
-        return new BadRequestException();
+        throw new BadRequestException();
       }
       const {
         email,
@@ -74,6 +77,8 @@ export class AuthService {
         picture,
         pictureUrl,
       } = JSON.parse(body);
+      user = await this.usersService.getUserByEmail(email);
+      if (user) return await this.handleExistingUsers(email);
       user = await this.usersService.createUser({
         authId: auth0Id,
         email,
@@ -82,7 +87,7 @@ export class AuthService {
         lastName,
       });
     });
-    if (!user) return new BadRequestException();
+    if (!user) throw new BadRequestException();
 
     await this.handleExistingUsers(user.email);
     return user;

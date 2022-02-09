@@ -24,7 +24,7 @@ export class SurveySummarizeService {
     const { answers } = userAnswers;
 
     const survey = await this.surveyModel.findById({ _id: surveyId });
-    if (!survey) return new InternalServerErrorException();
+    if (!survey) throw new InternalServerErrorException();
     const categories = survey.categories;
 
     const questions = [];

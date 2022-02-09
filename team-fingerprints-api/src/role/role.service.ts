@@ -16,6 +16,6 @@ export class RoleService {
         { new: true },
       );
     }
-    return new BadRequestException();
+    throw new BadRequestException();
   }
 }

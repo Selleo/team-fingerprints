@@ -19,7 +19,7 @@ export class MailService {
       text: 'Testing some Mailgun awesomness!',
     };
     await mg.messages().send(data, (err) => {
-      if (err) throw new InternalServerErrorException();
+      if (err) throw new InternalServerErrorException(err);
     });
   }
 }

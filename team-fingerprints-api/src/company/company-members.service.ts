@@ -56,7 +56,7 @@ export class CompanyMembersService {
       await this.addUserToCompanyWhitelist(destinationCompnay?._id, email);
     }
 
-    if (!destinationCompnay) throw new NotFoundException();
+    if (!destinationCompnay) return;
 
     const newMember = await this.usersService.getUserByEmail(email);
     if (!newMember) throw new NotFoundException();
@@ -73,6 +73,7 @@ export class CompanyMembersService {
         { new: true },
       )
       .exec();
+
     if (!companyWithNewMember) throw new InternalServerErrorException();
     return companyWithNewMember;
   }

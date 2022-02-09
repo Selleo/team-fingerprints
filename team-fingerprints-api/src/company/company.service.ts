@@ -63,9 +63,8 @@ export class CompanyService {
     await this.usersService.updateUser(userId, {
       companyId: newCompany?._id,
     });
-
     await this.roleService.changeUserRole(userId, Role.COMPANY_ADMIN);
-    throw newCompany;
+    return newCompany;
   }
 
   async updateCompany(

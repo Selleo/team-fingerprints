@@ -1,18 +1,10 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as mailgun from 'mailgun-js';
 
 @Injectable()
 export class MailService {
-  constructor(
-    private readonly mailerService: MailerService,
-    private readonly configService: ConfigService,
-  ) {}
-
-  async sendMail(to: string, subject: string, html: string): Promise<any> {
-    await this.mailerService.sendMail({ to, subject, html });
-  }
+  constructor(private readonly configService: ConfigService) {}
 
   async sendEmail() {
     const DOMAIN = this.configService.get<string>('MAILGUN_DOMAIN');

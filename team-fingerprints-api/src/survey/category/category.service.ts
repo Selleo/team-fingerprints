@@ -23,7 +23,7 @@ export class CategoryService {
     { title }: CreateCategoryDto,
   ): Promise<Survey | HttpException> {
     const surveyExists = await this.surveyService.getSurvey(surveyId);
-    if (!surveyExists) return new NotFoundException();
+    if (!surveyExists) throw new NotFoundException();
     surveyExists.categories.push({ title });
     return await surveyExists.save();
   }

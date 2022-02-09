@@ -19,11 +19,11 @@ export class TeamService {
     const company: Company = await this.teamModel
       .findOne({ 'teams._id': teamId })
       .exec();
-    if (!company) return new NotFoundException();
+    if (!company) throw new NotFoundException();
     const team = company.teams.find(
       (team) => teamId && team?._id?.toString() === teamId?.toString(),
     );
-    if (!team) return new NotFoundException();
+    if (!team) throw new NotFoundException();
     return team;
   }
 
@@ -54,11 +54,11 @@ export class TeamService {
   }
 
   async updateTeam(
-    teamId: string,
     companyId: string,
+    teamId: string,
     { name, description }: UpdateTeamDto,
   ): Promise<Company> {
-    return await this.teamModel
+    const team = await this.teamModel
       .findOneAndUpdate(
         {
           _id: companyId,
@@ -73,6 +73,7 @@ export class TeamService {
         { new: true },
       )
       .exec();
+    return team;
   }
 
   async removeTeam(teamId: string): Promise<Company> {

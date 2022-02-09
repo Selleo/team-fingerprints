@@ -40,7 +40,7 @@ export class SurveyAnswerService {
     { value, questionId }: QuestionAnswerDto,
   ): Promise<User | HttpException> {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
-      return new ForbiddenException();
+      throw new ForbiddenException();
 
     return await this.User.findOneAndUpdate(
       { _id: userId },
@@ -65,7 +65,7 @@ export class SurveyAnswerService {
     questionAnswerData: QuestionAnswerDto,
   ) {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
-      return new ForbiddenException();
+      throw new ForbiddenException();
 
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {

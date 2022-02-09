@@ -71,7 +71,7 @@ export class TrendService {
       { categories: true },
     );
 
-    if (!categories) return new NotFoundException();
+    if (!categories) throw new NotFoundException();
 
     const questionsId = [];
     categories.forEach((category) => {

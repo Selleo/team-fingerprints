@@ -1,4 +1,4 @@
-import { Button, Modal, Skeleton } from "@mantine/core";
+import { Button, Group, Modal, Skeleton } from "@mantine/core";
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import times from "lodash/times";
@@ -60,7 +60,7 @@ const TeamManagment = () => {
         showNotification({
           color: "red",
           title: "Can not add user to whitelist",
-          message: error?.message,
+          message: error?.response?.data?.message,
         });
       },
     }
@@ -68,15 +68,38 @@ const TeamManagment = () => {
 
   const editTeamMuatation = useMutation(
     (team: Partial<Team>) => {
-      return axios.patch<string>(
-        `/companies/${companyId}/teams/${teamId}`,
-        team
-      );
+      return axios.patch<string>(`/companies/${companyId}/teams/${teamId}`, {
+        name: team.name,
+        description: team.description,
+      });
     },
     {
       onSuccess: () => {
         setEditModalVisible(false);
         queryClient.invalidateQueries(`team${teamId}`);
+      },
+      onError: (error: any) => {
+        showNotification({
+          color: "red",
+          title: "Can not update company",
+          message: error?.response?.data?.message,
+        });
+      },
+    }
+  );
+
+  const deleteTeamMuatation = useMutation(
+    () => axios.delete<string>(`/companies/${companyId}/teams/${teamId}`),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(`team${teamId}`);
+      },
+      onError: (error: any) => {
+        showNotification({
+          color: "red",
+          title: "Can not remove company",
+          message: error?.response?.data?.message,
+        });
       },
     }
   );
@@ -96,7 +119,29 @@ const TeamManagment = () => {
         showNotification({
           color: "red",
           title: "Can not setup a leader",
-          message: error?.message,
+          message: error?.response?.data?.message,
+        });
+      },
+    }
+  );
+
+  const removeLeaderRole = useMutation(
+    (email: string) => {
+      return axios.delete<string>(
+        `/companies/${companyId}/teams/${teamId}/leader`,
+        { data: { email } }
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(`team${teamId}`);
+      },
+      onError: (error: any) => {
+        console.log(error?.response);
+        showNotification({
+          color: "red",
+          title: "Can not remove leadership",
+          message: error?.response?.data?.message,
         });
       },
     }
@@ -135,16 +180,26 @@ const TeamManagment = () => {
       <div className={classes.header}>
         <h1 className={classes.headerTitle}>Team Managment</h1>
 
-        <Button
-          onClick={() => setEditModalVisible(true)}
-          className={classes.addButton}
-        >
-          Edit team
-        </Button>
+        <Group>
+          <Button
+            onClick={() => setEditModalVisible(true)}
+            className={classes.addButton}
+          >
+            Edit team
+          </Button>
+          <Button
+            color="red"
+            onClick={() => deleteTeamMuatation.mutate()}
+            className={classes.addButton}
+          >
+            Remove team
+          </Button>
+        </Group>
       </div>
       <h2>Team Name: {team?.name}</h2>
       <h3>Team Description: {team?.description}</h3>
       <EmailWhitelist
+        removeLeaderRole={removeLeaderRole.mutate}
         onRemove={removeEmailFromWhitelist.mutate}
         list={team?.emailWhitelist}
         users={users}

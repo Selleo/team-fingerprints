@@ -1,29 +1,33 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as mailgun from 'mailgun-js';
 
 @Injectable()
 export class MailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async sendMail(to: string, subject: string, html: string): Promise<any> {
     await this.mailerService.sendMail({ to, subject, html });
   }
 
   async sendEmail() {
-    const DOMAIN = 'sandboxf44ddb0274b849c6bbffff77bd5bc4d3.mailgun.org';
+    const DOMAIN = this.configService.get<string>('MAILGUN_DOMAIN');
     const mg = mailgun({
-      apiKey: 'adb3ab4001bc4948141bd47ae5d2654f-d2cc48bc-560fb827',
+      apiKey: this.configService.get<string>('MAILGUN_API_KEY'),
       domain: DOMAIN,
     });
     const data = {
-      from: 'Mailgun Sandbox <postmaster@sandboxf44ddb0274b849c6bbffff77bd5bc4d3.mailgun.org>',
+      from: `Mailgun Sandbox <postmaster@${DOMAIN}>`,
       to: 'm.zupa@selleo.com',
       subject: 'Hello',
       text: 'Testing some Mailgun awesomness!',
     };
-    await mg.messages().send(data, (err, body) => {
-      console.log(body);
+    await mg.messages().send(data, (err) => {
+      if (err) throw new InternalServerErrorException();
     });
   }
 }

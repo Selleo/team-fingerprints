@@ -17,7 +17,8 @@ const CompanyForm = ({
   const isUpdate = !!initialValues;
 
   const onSuccess = () => {
-    queryClient.invalidateQueries(["companiesAll"]);
+    queryClient.invalidateQueries("companiesAll");
+    queryClient.invalidateQueries(`companies${initialValues?._id}`);
   };
 
   const createMutation = useMutation(

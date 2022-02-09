@@ -12,12 +12,10 @@ import EmailForm from "../../../components/EmailForm";
 import { queryClient } from "../../../App";
 import { useNavigate, useParams } from "react-router-dom";
 import TeamForm from "../../../components/Team/TeamForm/TeamForm";
-import { ProfileContext } from "../../../routes";
 
 const CompaniesManagment = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const { profile } = useContext(ProfileContext);
   const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [addTeamModalVisible, setTeamModalVisible] = useState(false);
@@ -99,6 +97,7 @@ const CompaniesManagment = () => {
     <>
       <div className={classes.header}>
         <h1 className={classes.headerTitle}>Company Managment</h1>
+
         <Button
           onClick={() => setEditModalVisible(true)}
           className={classes.addButton}
@@ -106,6 +105,10 @@ const CompaniesManagment = () => {
           Edit company
         </Button>
       </div>
+      <h2>
+        {company?.name} - {company?.domain}
+      </h2>
+      <h3>{company?.description}</h3>
       <EmailWhitelist
         onRemove={removeEmailFromWhitelist.mutate}
         list={company?.emailWhitelist}

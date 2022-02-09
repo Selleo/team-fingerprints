@@ -30,7 +30,10 @@ type CategoryResults = {
 
 type TrendToDisplay = TrendResults & { categoryTitile: string };
 
-const Chart: FC<IProps> = ({ data }: { data: CategoryResults[] }) => {
+const Chart: FC<IProps> = ({ data }: { data: any }) => {
+  const dataReadyToUse = data?.surveysAnswers[0]
+    .surveyResult as CategoryResults[];
+
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const pixelRatio = window.devicePixelRatio;
@@ -51,13 +54,13 @@ const Chart: FC<IProps> = ({ data }: { data: CategoryResults[] }) => {
 
   const mappedTrends = useMemo<TrendToDisplay[]>(() => {
     const tmpTrends: TrendToDisplay[] = [];
-    data?.forEach?.((category) => {
+    dataReadyToUse?.forEach?.((category) => {
       category.avgTrends.forEach((trend) => {
         tmpTrends.push({ ...trend, categoryTitile: category.categoryTitile });
       });
     });
     return tmpTrends;
-  }, [data]);
+  }, [dataReadyToUse]);
 
   const numberOfRows = mappedTrends.length;
 

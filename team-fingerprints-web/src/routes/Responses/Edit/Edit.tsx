@@ -112,6 +112,7 @@ export default function Edit() {
       params.surveyId,
       questionsWithAnswers,
       refetch,
+      surveyFinished,
       surveyIsFinished,
     ]
   );

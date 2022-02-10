@@ -9,11 +9,13 @@ import { Team, User } from "../../types/models";
 import EmailWhitelist from "./EmailWhitelist";
 import EmailForm from "../../components/EmailForm";
 import { queryClient } from "../../App";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
 import TeamForm from "../../components/Team/TeamForm/TeamForm";
 import { useNotifications } from "@mantine/notifications";
 
 const TeamManagment = () => {
+  const navigation = useNavigate();
   const { showNotification } = useNotifications();
   const params = useParams();
   const { classes } = useStyles();
@@ -93,6 +95,7 @@ const TeamManagment = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(`team${teamId}`);
+        navigation(-1);
       },
       onError: (error: any) => {
         showNotification({
@@ -201,7 +204,7 @@ const TeamManagment = () => {
       <EmailWhitelist
         removeLeaderRole={removeLeaderRole.mutate}
         onRemove={removeEmailFromWhitelist.mutate}
-        list={team?.emailWhitelist}
+        list={team?.emailWhitelist?.filter((val) => !!val)}
         users={users}
         teamLeader={team?.teamLeader}
         makeALeader={makeALeader.mutate}

@@ -9,9 +9,12 @@ import { useStyles } from "./styles";
 import axios from "axios";
 import { Survey } from "../../types/models";
 import ResponseItem from "../../components/Response/ResponseItem";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Responses = () => {
   const { classes } = useStyles();
+  const navigation = useNavigate();
 
   const { isLoading, error, data } = useQuery<Survey[]>(
     "surveysAll",
@@ -20,6 +23,13 @@ const Responses = () => {
       return response.data;
     }
   );
+
+  useEffect(() => {
+    if (data?.length === 1) {
+      const surveyId = data[0]?._id;
+      navigation("/response/" + surveyId);
+    }
+  }, [data, navigation]);
 
   if (isLoading)
     return (

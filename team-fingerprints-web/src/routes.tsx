@@ -61,6 +61,11 @@ const AppRoutes = () => {
         navigate(`companies/${companyId}/teams/${teamId}`);
         return;
       }
+      if (data.data?.role === "SUPER_ADMIN") {
+        navigate(`surveys`);
+        return;
+      }
+      navigate("responses");
     });
   }, []);
 

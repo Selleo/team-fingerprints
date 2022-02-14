@@ -6,19 +6,58 @@ import {
   Title,
   Button,
 } from "@mantine/core";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useStyles } from "./styles";
 import DarkMoreToogle from "../DarkModeToogle";
 import { useAuth0 } from "@auth0/auth0-react";
 import { ProfileContext } from "../../routes";
+import { useNavigate } from "react-router-dom";
 
 const AppHeader = () => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const { classes } = useStyles();
+  const navigate = useNavigate();
 
   const { logout, user } = useAuth0();
   const { profile } = useContext(ProfileContext);
+
+  const roleBasedBtn = useMemo(() => {
+    if (profile?.role === "COMPANY_ADMIN") {
+      const companyId = profile?.company?._id;
+
+      return (
+        <div className={classes.loginButton}>
+          <Button
+            color="yellow"
+            onClick={() => {
+              navigate(`companies/${companyId}`);
+            }}
+          >
+            Manage company
+          </Button>
+        </div>
+      );
+    }
+
+    if (profile?.role === "TEAM_LEADER") {
+      const companyId = profile.company?._id;
+      const teamId = profile.team?._id;
+
+      return (
+        <div className={classes.loginButton}>
+          <Button
+            color="yellow"
+            onClick={() => {
+              navigate(`companies/${companyId}/teams/${teamId}`);
+            }}
+          >
+            Manage team
+          </Button>
+        </div>
+      );
+    }
+  }, []);
 
   return (
     <Header height={70} padding="md">
@@ -43,6 +82,19 @@ const AppHeader = () => {
             <strong> {profile?.role}</strong>
           </div>
         )}
+        {profile?.role !== "SUPER_ADMIN" && (
+          <div className={classes.loginButton}>
+            <Button
+              color="green"
+              onClick={() => {
+                navigate("responses");
+              }}
+            >
+              Answer survey
+            </Button>
+          </div>
+        )}
+        {roleBasedBtn}
         <div className={classes.loginButton}>
           <Button
             onClick={() => {

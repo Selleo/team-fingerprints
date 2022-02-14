@@ -57,9 +57,15 @@ const Surveys = () => {
             <span className={classes.emptyCopy}>No surveys yet</span>
           ) : (
             <tbody>
-              {data?.map((item) => (
-                <SurveyItem item={item} />
-              ))}
+              {data
+                ?.sort(
+                  (item1, item2) =>
+                    new Date(item2.createdAt).getTime() -
+                    new Date(item1.createdAt).getTime()
+                )
+                .map((item) => (
+                  <SurveyItem item={item} />
+                ))}
             </tbody>
           ))}
       </Table>

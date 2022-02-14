@@ -5,7 +5,7 @@ import axios from "axios";
 import { SurveyDetails } from "../../../types/models";
 import { useMutation, useQuery } from "react-query";
 import { find, flatMapDeep, size, toNumber } from "lodash";
-import { Button, Group, SegmentedControl } from "@mantine/core";
+import { Button, Center, Group, SegmentedControl } from "@mantine/core";
 import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
 import Chart from "../../../components/Chart";
 
@@ -78,32 +78,35 @@ export default function Edit() {
       surveyIsFinished && mode === "result" ? (
         <Chart data={surveyFinished} />
       ) : (
-        <>
-          {questionsWithAnswers.map((questionsWithAnswer) => (
-            <QuestionResponse
-              disabled={surveyIsFinished}
-              refetch={refetch}
-              surveyId={params.surveyId || ""}
-              question={questionsWithAnswer.question}
-              answer={
-                questionsWithAnswer.answer
-                  ? toNumber(questionsWithAnswer.answer.value)
-                  : undefined
-              }
-            />
-          ))}
-          {!surveyIsFinished && (
-            <Button
-              onClick={() => finishSurvey.mutate()}
-              disabled={!buttonActive}
-              fullWidth
-              color="green"
-              style={{ marginBottom: "20px", marginTop: "10px" }}
-            >
-              Submit responses
-            </Button>
-          )}
-        </>
+        <Center>
+          <div style={{ width: "50vw" }}>
+            {questionsWithAnswers.map((questionsWithAnswer) => (
+              <QuestionResponse
+                disabled={surveyIsFinished}
+                refetch={refetch}
+                surveyId={params.surveyId || ""}
+                question={questionsWithAnswer.question}
+                answer={
+                  questionsWithAnswer.answer
+                    ? toNumber(questionsWithAnswer.answer.value)
+                    : undefined
+                }
+              />
+            ))}
+
+            {!surveyIsFinished && (
+              <Button
+                onClick={() => finishSurvey.mutate()}
+                disabled={!buttonActive}
+                fullWidth
+                color="green"
+                style={{ marginBottom: "20px", marginTop: "10px" }}
+              >
+                Submit responses
+              </Button>
+            )}
+          </div>
+        </Center>
       ),
     [
       buttonActive,

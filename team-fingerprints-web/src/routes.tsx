@@ -58,7 +58,7 @@ const AppRoutes = () => {
       if (data.data?.role === "TEAM_LEADER") {
         const companyId = data.data.company?._id;
         const teamId = data.data.team?._id;
-        navigate(`companies/${companyId}/teams/${teamId}`);
+        navigate(`companies/${companyId}/team/${teamId}`);
         return;
       }
       if (data.data?.role === "SUPER_ADMIN") {

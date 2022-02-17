@@ -39,7 +39,7 @@ const LoginGateway = () => {
           ) : (
             <Center style={{ width: "100%", height: "1000px" }}>
               <Button size="xl" onClick={() => loginWithRedirect()}>
-                {isLoading ? "Login" : "Loading"}
+                {isLoading ? "Loading" : "Login"}
               </Button>
             </Center>
           )}

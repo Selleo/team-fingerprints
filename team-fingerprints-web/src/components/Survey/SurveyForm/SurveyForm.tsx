@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { TextInput, Button, Switch, Alert } from "@mantine/core";
 import { BellIcon } from "@modulz/radix-icons";
 import { useFormik } from "formik";
@@ -14,6 +15,7 @@ const SurveyForm = ({
   initialValues?: Survey;
   onClose: () => void;
 }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const { classes } = useStyles();
   const isUpdate = !!initialValues;
 
@@ -48,9 +50,18 @@ const SurveyForm = ({
         isUpdate ? updateMutation.mutate(val) : createMutation.mutate(val),
     });
 
+    useEffect(() => {
+      const timeoutId = setTimeout(() => { 
+        inputRef && inputRef.current!.focus() 
+      }, 1);
+  
+      return () => clearTimeout(timeoutId)
+    }, [])
+
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
+        ref={inputRef}
         required
         label="Survey title"
         placeholder="Survey name"

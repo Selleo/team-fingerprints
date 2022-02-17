@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { TextInput, Button } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
@@ -18,6 +19,7 @@ const TrendForm = ({
   categoryId: string;
   initialValues?: Trend;
 }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const isCreate = isEmpty(initialValues);
   const { classes } = useStyles();
 
@@ -56,9 +58,18 @@ const TrendForm = ({
       isCreate ? createMutation.mutate(val) : updateMutation.mutate(val),
   });
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => { 
+      inputRef && inputRef.current!.focus() 
+    }, 1);
+
+    return () => clearTimeout(timeoutId)
+  }, [])
+
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
+        ref={inputRef}
         value={values.primary}
         required
         label="Trend primary"

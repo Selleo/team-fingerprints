@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { TextInput, Button, Switch } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
@@ -20,6 +21,7 @@ const CreateQuestionForm = ({
   trendId: string;
   initialValues?: Question;
 }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const isCreate = isEmpty(initialValues);
   const { classes } = useStyles();
 
@@ -58,9 +60,18 @@ const CreateQuestionForm = ({
       isCreate ? createMutation.mutate(val) : updateMutation.mutate(val),
   });
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => { 
+      inputRef && inputRef.current!.focus() 
+    }, 1);
+
+    return () => clearTimeout(timeoutId)
+  }, [])
+
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
+        ref={inputRef}
         value={values.title}
         required
         label="Question content"

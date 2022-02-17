@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { TextInput, Button, Textarea } from "@mantine/core";
 import { useFormik } from "formik";
 import { Team } from "../../../types/models";
@@ -10,6 +11,7 @@ const TeamForm = ({
   initialValues?: Partial<Team>;
   onSubmit: (values: Partial<Team>) => void;
 }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const { classes } = useStyles();
 
   const { handleSubmit, handleChange, values } = useFormik<Partial<Team>>({
@@ -17,9 +19,18 @@ const TeamForm = ({
     onSubmit,
   });
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => { 
+      inputRef && inputRef.current!.focus() 
+    }, 1);
+
+    return () => clearTimeout(timeoutId)
+  }, [])
+
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
+        ref={inputRef}
         required
         label="Team name"
         placeholder="Team name"

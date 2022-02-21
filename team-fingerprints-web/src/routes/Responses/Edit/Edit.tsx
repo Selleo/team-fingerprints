@@ -1,28 +1,30 @@
 import React, { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
 
-import { SurveyDetails } from "../../../types/models";
+import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { find, flatMapDeep, size, toNumber } from "lodash";
 import { Button, Center, Group, SegmentedControl } from "@mantine/core";
-import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
+import axios from "axios";
+
+import { SurveyDetails } from "../../../types/models";
+
 import Chart from "../../../components/Chart";
+import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
 
 export default function Edit() {
   const [mode, setMode] = useState("result");
-  const params = useParams();
+  const { surveyId } = useParams();
   const {
     isLoading: isLoadingSurvey,
     error: errorLoadingSurvey,
     data: survey,
   } = useQuery<SurveyDetails, Error>(
-    `surveyOne${params.surveyId}`,
+    `surveyOne${surveyId}`,
     async () => {
-      const response = await axios.get<SurveyDetails>(
-        `/surveys/${params.surveyId}`
+      const { data } = await axios.get<SurveyDetails>(
+        `/surveys/${surveyId}`
       );
-      return response.data;
+      return data;
     }
   );
 
@@ -30,14 +32,14 @@ export default function Edit() {
     isLoading: isLoadingSurveyFinished,
     data: surveyFinished,
     refetch: refetchIsFinished,
-  } = useQuery<any, Error>(`surveyFinishedOne-${params.surveyId}`, async () => {
-    const response = await axios.get<any>(`/survey-answers/${params.surveyId}`);
-    return response.data;
+  } = useQuery<any, Error>(`surveyFinishedOne-${surveyId}`, async () => {
+    const { data } = await axios.get<any>(`/survey-answers/${surveyId}`);
+    return data;
   });
 
   const finishSurvey = useMutation(
     async () => {
-      return axios.post(`/survey-answers/${params.surveyId}/finish`);
+      return axios.post(`/survey-answers/${surveyId}/finish`);
     },
     {
       onSuccess: () => refetchIsFinished(),
@@ -51,9 +53,9 @@ export default function Edit() {
     error: errorLoadingSurveyResponse,
     data: surveyResponse,
     refetch,
-  } = useQuery<any, Error>(`surveyResponseOne-${params.surveyId}`, async () => {
-    const response = await axios.get<any>(`/survey-answers/${params.surveyId}`);
-    return response.data;
+  } = useQuery<any, Error>(`surveyResponseOne-${surveyId}`, async () => {
+    const { data } = await axios.get<any>(`/survey-answers/${surveyId}`);
+    return data;
   });
 
   const questions = flatMapDeep(
@@ -64,12 +66,10 @@ export default function Edit() {
 
   const allResponses = surveyResponse?.surveysAnswers?.[0].answers;
 
-  const questionsWithAnswers = questions.map((question) => {
-    return {
+  const questionsWithAnswers = questions.map((question) => ({
       question,
       answer: find(allResponses, { questionId: question._id }),
-    };
-  });
+  }));
 
   const buttonActive = size(questions) === size(allResponses);
 
@@ -80,19 +80,18 @@ export default function Edit() {
       ) : (
         <Center>
           <div style={{ width: "50vw" }}>
-            {questionsWithAnswers.map((questionsWithAnswer) => (
+            <ul>
+            {questionsWithAnswers.map(({ answer, question }) => (
               <QuestionResponse
+                answer={answer ? toNumber(answer.value) : undefined}
                 disabled={surveyIsFinished}
+                key={question.title}
+                question={question}
                 refetch={refetch}
-                surveyId={params.surveyId || ""}
-                question={questionsWithAnswer.question}
-                answer={
-                  questionsWithAnswer.answer
-                    ? toNumber(questionsWithAnswer.answer.value)
-                    : undefined
-                }
+                surveyId={surveyId || ""}
               />
             ))}
+            </ul>
 
             {!surveyIsFinished && (
               <Button
@@ -112,7 +111,7 @@ export default function Edit() {
       buttonActive,
       finishSurvey,
       mode,
-      params.surveyId,
+      surveyId,
       questionsWithAnswers,
       refetch,
       surveyFinished,

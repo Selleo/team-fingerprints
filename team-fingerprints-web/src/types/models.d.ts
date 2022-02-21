@@ -84,3 +84,5 @@ export type Profile = {
   company?: { _id: string; name: string; description: string };
   team?: { _id: string };
 };
+
+export type QuestionWithAnswers = { answer: Answer, question: Question }

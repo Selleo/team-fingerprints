@@ -6,6 +6,8 @@ import { find, flatMapDeep, size, toNumber } from "lodash";
 import { Button, Center, Group, SegmentedControl } from "@mantine/core";
 import axios from "axios";
 
+import { shuffle } from "./utils";
+
 import { SurveyDetails } from "../../../types/models";
 
 import Chart from "../../../components/Chart";
@@ -71,6 +73,8 @@ export default function Edit() {
       answer: find(allResponses, { questionId: question._id }),
   }));
 
+  const shuffledData = useMemo(() => shuffle(questionsWithAnswers), [questionsWithAnswers.length])
+
   const buttonActive = size(questions) === size(allResponses);
 
   const renderContent = useMemo(
@@ -81,7 +85,7 @@ export default function Edit() {
         <Center>
           <div style={{ width: "50vw" }}>
             <ul>
-            {questionsWithAnswers.map(({ answer, question }) => (
+            {shuffledData.map(({ answer, question }) => (
               <QuestionResponse
                 answer={answer ? toNumber(answer.value) : undefined}
                 disabled={surveyIsFinished}

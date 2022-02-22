@@ -1,6 +1,8 @@
 import {
   ForbiddenException,
+  forwardRef,
   HttpException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -16,6 +18,7 @@ import { Company } from './models/company.model';
 export class CompanyService {
   constructor(
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly roleService: RoleService,
   ) {}

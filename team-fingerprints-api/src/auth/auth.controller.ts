@@ -1,20 +1,23 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, forwardRef, Get, Inject } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { AuthService } from './auth.service';
+import { UsersService } from 'src/users/users.service';
 import { ResponseAuthDto } from './dto/auth.dto';
 
 @ApiTags('auth')
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
+  ) {}
 
   @ApiResponse({ type: ResponseAuthDto })
   @Get('/profile')
   async getUserProfile(
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<ResponseAuthDto> {
-    return await this.authService.getUserProfile(userId);
+    return await this.usersService.getUserProfile(userId);
   }
 }

@@ -16,6 +16,7 @@ import { Role } from 'src/role/role.type';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { UserProfileI } from 'src/auth/interfaces/auth.interface';
 
 @ApiTags('users')
 @Controller({ path: 'users', version: '1' })
@@ -33,6 +34,12 @@ export class UsersController {
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
   async getUsersAll(): Promise<User[]> {
     return await this.userService.getUsersAll();
+  }
+
+  @Post('/profiles')
+  // @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  async getUsersByIds(@Body() users: string[]): Promise<UserProfileI[]> {
+    return await this.userService.getUsersByIds(users);
   }
 
   @Post()

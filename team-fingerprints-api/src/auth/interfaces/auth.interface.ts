@@ -1,6 +1,8 @@
 import { Role } from 'src/role/role.type';
 
 export interface UserProfileI {
+  readonly id: string;
+  readonly email: string;
   readonly role: Role;
   readonly canCreateTeam: boolean;
   readonly company: {

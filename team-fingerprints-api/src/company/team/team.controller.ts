@@ -19,6 +19,7 @@ import { TeamService } from './team.service';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 import { TeamMembersService } from './team-members.service';
 import { CompanyMembersService } from '../company-members.service';
+import { ValidateEmail } from '../dto/company.dto';
 
 @ApiTags('teams')
 @Controller({ version: '1' })
@@ -74,7 +75,7 @@ export class TeamController {
   async addUserToTeamWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('email') email: string,
+    @Body() { email }: ValidateEmail,
   ): Promise<Company | HttpException> {
     await this.companyMembersService.addUserToCompanyWhitelist(
       companyId,
@@ -92,12 +93,12 @@ export class TeamController {
   async removeMemberFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('email') memberEmail: string,
+    @Body() { email: memberEmail }: ValidateEmail,
   ): Promise<Company | HttpException> {
     return await this.teamMembersService.removeMemberFromTeam(
       companyId,
       teamId,
-      memberEmail,
+      memberEmail as unknown as string,
     );
   }
 
@@ -106,7 +107,7 @@ export class TeamController {
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('email') email: string,
+    @Body() { email }: ValidateEmail,
   ): Promise<Company | HttpException> {
     return await this.teamMembersService.assignTeamLeader(
       companyId,
@@ -120,7 +121,7 @@ export class TeamController {
   async removeTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('email') email: string,
+    @Body() { email }: ValidateEmail,
   ): Promise<Company | HttpException> {
     return await this.teamMembersService.removeTeamLeaderByEmail(
       email,

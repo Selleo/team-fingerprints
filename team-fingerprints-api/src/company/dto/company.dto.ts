@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDefined,
+  IsEmail,
   IsFQDN,
   IsNotEmpty,
   IsOptional,
@@ -44,4 +45,11 @@ export class UpdateCompanyDto {
   @IsString()
   @IsNotEmpty()
   readonly domain?: string;
+}
+
+export class ValidateEmail {
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 }

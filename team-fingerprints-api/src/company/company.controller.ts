@@ -15,7 +15,11 @@ import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Role } from 'src/role/role.type';
 import { CompanyService } from './company.service';
-import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
+import {
+  ValidateEmail,
+  CreateCompanyDto,
+  UpdateCompanyDto,
+} from './dto/company.dto';
 import { Company } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 
@@ -72,7 +76,7 @@ export class CompanyController {
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async addUserToCompanyWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
-    @Body('email') email: string,
+    @Body() { email }: ValidateEmail,
   ): Promise<Company | HttpException> {
     return await this.companyMembersService.addUserToCompanyWhitelist(
       companyId,
@@ -82,7 +86,7 @@ export class CompanyController {
 
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   @Delete(':companyId/member')
-  async removeCompanyMemberByEmail(@Body('email') email: string) {
+  async removeCompanyMemberByEmail(@Body() { email }: ValidateEmail) {
     return await this.companyMembersService.removeCompanyMemberByEmail(email);
   }
 }

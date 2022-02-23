@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   forwardRef,
   HttpException,
@@ -54,6 +55,11 @@ export class TeamMembersService {
     return members ? members : [];
   }
 
+  async isSuperAdminByEmail(email: string) {
+    const user = await this.usersService.getUserByEmail(email);
+    return user?.role === Role.SUPER_ADMIN ? true : false;
+  }
+
   async addUserToTeamWhitelist(
     companyId: string,
     teamId: string,
@@ -95,6 +101,9 @@ export class TeamMembersService {
   async addMemberToTeamByEmail(
     email: string,
   ): Promise<Company | HttpException> {
+    if (await this.isSuperAdminByEmail(email))
+      throw new BadRequestException('This user can not be managed');
+
     const team: any = await this.teamService.getTeamByUserEmail(email);
     if (!team) return;
     const teamId = team?._id?.toString();
@@ -182,6 +191,9 @@ export class TeamMembersService {
     teamId: string,
     leaderEmail: string,
   ): Promise<Company | HttpException> {
+    if (await this.isSuperAdminByEmail(leaderEmail))
+      throw new BadRequestException('This user can not be managed');
+
     const leaderCandidate: User = await this.usersService.getUserByEmail(
       leaderEmail,
     );

@@ -34,9 +34,9 @@ export class UsersService {
     return await this.User.find({});
   }
 
-  async getUsersByIds(ids: string[]): Promise<UserProfileI[]> {
-    if (!ids || ids.length <= 0) return [];
-    const profiles = ids?.map(async (id) => {
+  async getUsersByIds(userIds: string[]): Promise<UserProfileI[]> {
+    if (!userIds || userIds.length <= 0) return [];
+    const profiles = userIds?.map(async (id) => {
       if (!mongoose.Types.ObjectId.isValid(id)) return;
       const profile = await this.getUserProfile(id);
       if (profile) return profile;

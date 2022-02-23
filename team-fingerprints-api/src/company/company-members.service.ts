@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   Injectable,
   InternalServerErrorException,
@@ -37,6 +38,9 @@ export class CompanyMembersService {
     companyId: string,
     email: string,
   ): Promise<Company | HttpException> {
+    if (await this.teamMembersService.isSuperAdminByEmail(email))
+      throw new BadRequestException('This user can not be managed');
+
     if (await this.isUserInAnyCompanyWhitelist(email)) return;
     return await this.companyModel.findOneAndUpdate(
       { _id: companyId },
@@ -48,6 +52,9 @@ export class CompanyMembersService {
   async addMemberToCompanyByEmail(
     email: string,
   ): Promise<Company | HttpException> {
+    if (await this.teamMembersService.isSuperAdminByEmail(email))
+      throw new BadRequestException('This user can not be managed');
+
     const destinationCompnay =
       (await this.isUserInAnyCompanyWhitelist(email)) ||
       (await this.isUserInCompanyDomain(email));

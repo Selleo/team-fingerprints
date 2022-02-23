@@ -37,9 +37,9 @@ export class UsersController {
   }
 
   @Post('/profiles')
-  // @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
-  async getUsersByIds(@Body() users: string[]): Promise<UserProfileI[]> {
-    return await this.userService.getUsersByIds(users);
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  async getUsersByIds(@Body() userIds: string[]): Promise<UserProfileI[]> {
+    return await this.userService.getUsersByIds(userIds);
   }
 
   @Post()

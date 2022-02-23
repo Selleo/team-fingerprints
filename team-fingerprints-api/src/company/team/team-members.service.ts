@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MailService } from 'src/mail/mail.service';
+// import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/role.type';
 import { User } from 'src/users/models/user.model';
@@ -26,7 +26,7 @@ export class TeamMembersService {
     @InjectModel(Company.name) private readonly teamModel: Model<Company>,
     private readonly usersService: UsersService,
     private readonly teamService: TeamService,
-    private readonly mailService: MailService,
+    // private readonly mailService: MailService,
     private readonly roleService: RoleService,
     @Inject(forwardRef(() => CompanyMembersService))
     private readonly companyMembersService: CompanyMembersService,
@@ -73,7 +73,7 @@ export class TeamMembersService {
       )
       .exec();
 
-    await this.mailService.sendEmail();
+    // await this.mailService.sendEmail();
 
     // const message = (email: string) => `
     //   <html>
@@ -258,7 +258,7 @@ export class TeamMembersService {
       );
     }
 
-    await this.mailService.sendEmail();
+    // await this.mailService.sendEmail();
 
     // const message = (email: string) => `
     //   <html>

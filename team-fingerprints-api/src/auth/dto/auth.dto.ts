@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
+  IsEmail,
   IsNotEmpty,
   IsString,
   ValidateNested,
@@ -9,6 +10,17 @@ import { Role } from 'src/role/role.type';
 import { UserProfileI } from '../interfaces/auth.interface';
 
 export class ResponseAuthDto implements UserProfileI {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()

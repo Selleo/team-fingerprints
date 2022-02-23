@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CategoryModule } from './survey/category/category.module';
 import { QuestionModule } from './survey/category/trend/question/question.module';
 import { TrendModule } from './survey/category/trend/trend.module';
@@ -63,7 +61,5 @@ const ENV = process.env.NODE_ENV;
     MailModule,
     SurveyResultModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

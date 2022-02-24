@@ -16,7 +16,7 @@ export class MailService {
     };
 
     const mg = mailgun({
-      apiKey: this.configService.get<string>('MAILGUN_API_KAY'),
+      apiKey: this.configService.get<string>('MAILGUN_API_KEY'),
       domain: this.configService.get<string>('MAILGUN_DOMAIN'),
     });
     mg.messages().send(data);

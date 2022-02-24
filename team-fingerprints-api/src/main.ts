@@ -16,7 +16,7 @@ async function bootstrap() {
     const frontendUri = app.get(ConfigService).get('FRONTEND_URI');
 
     app.enableCors({
-      origin: frontendUri,
+      origin: frontendUri.split(','),
     });
   }
 

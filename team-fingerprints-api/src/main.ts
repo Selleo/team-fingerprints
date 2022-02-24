@@ -6,12 +6,16 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const frontendUri = app.get(ConfigService).get('FRONTEND_URI');
   app.enableCors({
-    origin: 'https://determined-curie-bd5cb1.netlify.app/*',
+    origin: frontendUri,
   });
+
   app.enableVersioning({
     type: VersioningType.URI,
   });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

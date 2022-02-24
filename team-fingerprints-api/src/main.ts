@@ -6,10 +6,24 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+
+  const NODE_ENV = app.get(ConfigService).get('ENV');
+  if (NODE_ENV === 'development') {
+    app.enableCors({
+      origin: '*',
+    });
+  } else {
+    const frontendUri = app.get(ConfigService).get('FRONTEND_URI');
+
+    app.enableCors({
+      origin: frontendUri,
+    });
+  }
+
   app.enableVersioning({
     type: VersioningType.URI,
   });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

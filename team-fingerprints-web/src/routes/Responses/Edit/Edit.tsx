@@ -2,11 +2,9 @@ import React, { useMemo, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { find, flatMapDeep, size, toNumber } from "lodash";
+import { find, flatMapDeep, shuffle, size, toNumber } from "lodash";
 import { Button, Center, Group, SegmentedControl } from "@mantine/core";
 import axios from "axios";
-
-import { shuffle } from "./utils";
 
 import { SurveyDetails } from "../../../types/models";
 

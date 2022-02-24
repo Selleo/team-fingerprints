@@ -6,7 +6,9 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({
+    origin: 'https://determined-curie-bd5cb1.netlify.app/*',
+  });
   app.enableVersioning({
     type: VersioningType.URI,
   });

@@ -58,7 +58,7 @@ export class CompanyService {
     const newCompany = await this.companyModel.create({
       name,
       description,
-      domain,
+      domain: domain.toLowerCase(),
       adminId: userId,
       members: [userId],
       emailWhitelist: [email],
@@ -86,7 +86,9 @@ export class CompanyService {
   }
 
   async isDomainTaken(domain: string): Promise<boolean> {
-    const companyByDomain = await this.companyModel.findOne({ domain }).exec();
+    const companyByDomain = await this.companyModel
+      .findOne({ domain: domain.toLowerCase() })
+      .exec();
     return companyByDomain ? true : false;
   }
 }

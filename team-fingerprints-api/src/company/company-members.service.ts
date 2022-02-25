@@ -43,14 +43,17 @@ export class CompanyMembersService {
       throw new BadRequestException('This user can not be managed');
 
     const user = await this.usersService.getUserByEmail(email);
+    if (!user) return;
     if (user.role !== Role.USER) return;
 
-    if (await this.isUserInAnyCompanyWhitelist(email)) return;
-    return await this.companyModel.findOneAndUpdate(
-      { _id: companyId },
-      { $push: { emailWhitelist: email } },
-      { new: true },
-    );
+    if (!(await this.isUserInAnyCompanyWhitelist(email))) {
+      return await this.companyModel.findOneAndUpdate(
+        { _id: companyId },
+        { $push: { emailWhitelist: email } },
+        { new: true },
+      );
+    }
+    return await this.companyService.getCompanyByUserEmail(user.email);
   }
 
   async addMemberToCompanyByEmail(

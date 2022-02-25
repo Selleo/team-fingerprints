@@ -1,19 +1,18 @@
-import { Skeleton, Table } from "@mantine/core";
+import { useEffect } from "react";
+
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import times from "lodash/times";
-import isArray from "lodash/isArray";
-import isEmpty from "lodash/isEmpty";
+import { isArray, isEmpty, times } from "lodash";
+import { Skeleton, Table } from "@mantine/core";
+import axios from "axios";
 
 import { useStyles } from "./styles";
-
-import axios from "axios";
 import { Survey } from "../../types/models";
+
 import ResponseItem from "../../components/Response/ResponseItem";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 const Responses = () => {
-  const { classes } = useStyles();
+  const { classes: { emptyCopy, header, headerTitle } } = useStyles();
   const navigation = useNavigate();
 
   const { isLoading, error, data } = useQuery<Survey[]>(
@@ -42,25 +41,23 @@ const Responses = () => {
   if (error) return <div>'An error has occurred: ' + console.error;</div>;
 
   //TODO map responses together with surveys
-  const mappedData = data?.map((el) => {
-    return {
+  const mappedData = data?.map((el) => ({
       survey: el,
-    };
-  });
+  }));
 
   return (
     <>
-      <div className={classes.header}>
-        <h1 className={classes.headerTitle}>Responses to surveys</h1>
+      <div className={header}>
+        <h1 className={headerTitle}>Responses to surveys</h1>
       </div>
       <Table>
         {isArray(mappedData) &&
           (isEmpty(mappedData) ? (
-            <span className={classes.emptyCopy}>No responses yet</span>
+            <span className={emptyCopy}>No responses yet</span>
           ) : (
             <tbody>
               {mappedData?.map((item) => (
-                <ResponseItem item={item} />
+                <ResponseItem key={item.survey._id} item={item} />
               ))}
             </tbody>
           ))}

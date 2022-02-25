@@ -24,16 +24,16 @@ export const TrendIcon = () => {
 
 export const SecondaryIcon = () => {
   return (
-    <ThemeIcon color="green" size={30} radius="xl">
-      <ResetIcon />
+    <ThemeIcon style={{ backgroundColor: "#48bd66" }} size={30} radius="xl">
+      <ResetIcon style={{ color: '#2b2b2b' }} />
     </ThemeIcon>
   );
 };
 
 export const PrimaryIcon = () => {
   return (
-    <ThemeIcon color="blue" size={30} radius="xl">
-      <CheckboxIcon />
+    <ThemeIcon style={{ backgroundColor: "#FEC92D" }} size={30} radius="xl">
+      <CheckboxIcon style={{ color: '#2b2b2b' }} />
     </ThemeIcon>
   );
 };

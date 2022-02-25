@@ -34,6 +34,7 @@ const DeleteQuestionButton = ({
       variant="outline"
       onClick={() => mutation.mutate()}
       compact
+      style={{ color: '#ff0000', borderColor: '#ff0000' }}
     >
       Delete Question
     </Button>

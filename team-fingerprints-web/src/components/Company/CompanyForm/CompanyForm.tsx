@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { TextInput, Button, Textarea } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
@@ -13,6 +14,7 @@ const CompanyForm = ({
   initialValues?: Company;
   onClose: () => void;
 }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const { classes } = useStyles();
   const isUpdate = !!initialValues;
 
@@ -50,9 +52,18 @@ const CompanyForm = ({
         isUpdate ? updateMutation.mutate(val) : createMutation.mutate(val),
     });
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => { 
+      inputRef && inputRef.current!.focus() 
+    }, 1);
+
+    return () => clearTimeout(timeoutId)
+  }, [])
+
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
+        ref={inputRef}
         required
         label="Company name"
         placeholder="Company name"

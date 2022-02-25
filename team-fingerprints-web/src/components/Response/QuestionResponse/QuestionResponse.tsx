@@ -1,8 +1,11 @@
-import { SegmentedControl } from "@mantine/core";
-import axios from "axios";
-import { toNumber } from "lodash";
 import { useState } from "react";
+
 import { useMutation } from "react-query";
+import { toNumber } from "lodash";
+import axios from "axios";
+import { SegmentedControl } from "@mantine/core";
+
+import { useStyles } from "./styles";
 import { Answer, Question } from "../../../types/models";
 
 const OPTIONS = [
@@ -14,7 +17,10 @@ const OPTIONS = [
 ];
 
 export default function QuestionResponse({
-  question,
+  question: {
+    _id,
+    title,
+  },
   answer,
   surveyId,
   refetch,
@@ -26,6 +32,7 @@ export default function QuestionResponse({
   refetch: () => void;
   disabled: boolean;
 }) {
+  const { classes: { listItem } } = useStyles();
   const [value, setValue] = useState<string>(answer?.toString() || "none");
 
   const responseMutation = useMutation(
@@ -41,12 +48,12 @@ export default function QuestionResponse({
 
   const setAndSaveNewValue = (val: string) => {
     setValue(val);
-    responseMutation.mutate({ questionId: question._id, value: toNumber(val) });
+    responseMutation.mutate({ questionId: _id, value: toNumber(val) });
   };
 
   return (
-    <>
-      <h3>{question.title}</h3>
+    <li className={listItem}> 
+      <h3>{title}</h3>
       <SegmentedControl
         onChange={(val) => !disabled && setAndSaveNewValue(val)}
         value={value}
@@ -54,6 +61,6 @@ export default function QuestionResponse({
         color={disabled ? "yellow" : "blue"}
         data={OPTIONS}
       />
-    </>
+    </li>
   );
 }

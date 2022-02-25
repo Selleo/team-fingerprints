@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Role } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import { CompanyService } from './company.service';
 import { Company } from './models/company.model';
@@ -41,6 +42,9 @@ export class CompanyMembersService {
     if (await this.teamMembersService.isSuperAdminByEmail(email))
       throw new BadRequestException('This user can not be managed');
 
+    const user = await this.usersService.getUserByEmail(email);
+    if (user.role !== Role.USER) return;
+
     if (await this.isUserInAnyCompanyWhitelist(email)) return;
     return await this.companyModel.findOneAndUpdate(
       { _id: companyId },
@@ -54,6 +58,9 @@ export class CompanyMembersService {
   ): Promise<Company | HttpException> {
     if (await this.teamMembersService.isSuperAdminByEmail(email))
       throw new BadRequestException('This user can not be managed');
+
+    const user = await this.usersService.getUserByEmail(email);
+    if (user.role !== Role.USER) return;
 
     const destinationCompnay =
       (await this.isUserInAnyCompanyWhitelist(email)) ||

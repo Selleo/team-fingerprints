@@ -1,0 +1,53 @@
+=box-shadow($color)
+  box-shadow: 0 5px 15px rgba($color, .2)
+
+// DEPRECATED - you should not use floats for columns anymore
+=clearfix
+  &:after
+    clear: both
+    content: ''
+    display: table
+
+=ellipsis
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+
+// UNOFF - watch the browser support for this one here https://caniuse.com/#search=line-clamp
+=ellipsis-multiline($lines: 3)
+  /* autoprefixer: ignore next */
+  -webkit-box-orient: vertical
+  -webkit-line-clamp: $lines
+  display: -webkit-box
+  overflow: hidden
+
+// experimental hover device detection, if you use this IE will not get any hovers
+=hover
+  @media (hover: hover) and (pointer: fine)
+    &:hover
+      @content
+
+=list-unstyled
+  list-style: none
+  padding-left: 0
+
+=pseudoelement
+  bottom: 0
+  content: ''
+  left: 0
+  position: absolute
+  right: 0
+  top: 0
+
+=transition($property...)
+  transition-property: $property
+  transition-duration: $transition-duration
+  transition-timing-function: $transition-function
+
+=position($position, $top: null, $right: null, $bottom: null, $left: null)
+  position: $position
+  top: $top
+  right: $right
+  bottom: $bottom
+  left: $left
+  

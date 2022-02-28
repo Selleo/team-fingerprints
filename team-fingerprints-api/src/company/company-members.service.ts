@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  forwardRef,
   HttpException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -21,6 +23,7 @@ export class CompanyMembersService {
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,
+    @Inject(forwardRef(() => TeamMembersService))
     private readonly teamMembersService: TeamMembersService,
     private readonly teamService: TeamService,
   ) {}

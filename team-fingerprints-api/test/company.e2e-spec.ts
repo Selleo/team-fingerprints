@@ -9,6 +9,7 @@ describe('Company controller (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
+    jest.setTimeout(10000);
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule, CompanyModule],
     }).compile();
@@ -27,5 +28,9 @@ describe('Company controller (e2e)', () => {
       .then((res) => {
         console.log(res.body);
       });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });

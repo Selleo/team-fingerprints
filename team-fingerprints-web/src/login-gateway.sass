@@ -1,0 +1,50 @@
+.login
+    align-items: flex-start
+    display: flex
+    flex-direction: column
+    font-weight: $font-weight-regular
+    height: 100vh
+    justify-content: center
+    letter-spacing: $letter-spacing
+    margin: 0 auto
+    max-width: $login-gateway-width
+    width: 85%
+    
+    &__header
+        color: $color-white-label
+        font-size: $font-size-h4
+        font-weight: $font-weight-regular
+        margin-bottom: $m-base
+
+    &__header-span
+        color: $color-white
+        display: block
+        font-size: $font-size-h2
+        font-weight: $font-weight-600
+
+    &__text
+        color: $color-white-text
+        font-size: $font-size-h5
+        margin:
+            bottom: $m-lg
+            top: 0
+
+    &__button
+        +transition(background-color)
+        background-color: $color-primary
+        border: none
+        border-radius: $border-radius-sm
+        color: $color-background
+        cursor: pointer
+        display: flex
+        font-weight: $font-weight-500
+        font-size: $font-size-base
+        margin: 0 auto
+        padding: $m-xs $m-sm
+        width: fit-content
+
+        &:focus
+            outline: none
+
+        &:hover
+            background-color: $color-primary-dark

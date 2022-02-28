@@ -28,7 +28,8 @@ const EmailWhitelist: FC<IProps> = ({
     const thatsMe = email === currentUserEmail;
 
     const isALeader =
-      user?._id === teamLeader?._id || email === teamLeader?.email;
+      teamLeader &&
+      (user?._id === teamLeader?._id || email === teamLeader?.email);
 
     const roleInTeam = isALeader ? "LEAD" : "MEMBER";
 

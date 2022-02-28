@@ -68,7 +68,7 @@ export class TeamMembersService {
     if (await this.isUserInAnyTeamWhitelist(email)) return;
 
     const user = await this.usersService.getUserByEmail(email);
-    if (user.role !== Role.USER) return;
+    if (user && user.role !== Role.USER) return;
 
     const updatedTeam = await this.teamModel
       .findOneAndUpdate(

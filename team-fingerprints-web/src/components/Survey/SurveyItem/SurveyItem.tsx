@@ -32,7 +32,7 @@ const SurveyItem = ({ item }: { item: Survey }) => {
             Show
           </Button>
           <Button
-            style={{ marginLeft: "10px" }}
+            style={{ marginLeft: "10px", opacity: item.isPublic ? '.3' : '1' }}
             onClick={() => setModalVisible(true)}
           >
             Edit

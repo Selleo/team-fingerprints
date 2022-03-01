@@ -61,14 +61,11 @@ function Details() {
           <List.Item icon={<CategoryIcon />}>
             <Group>
               <Text>{category.title}</Text>
-                <EditCategoryButton
-                  category={category}
-                  surveyId={survey?._id}
-                />
-                <DeleteCategoryButton
-                  categoryId={category._id}
-                  surveyId={survey?._id}
-                />
+              <EditCategoryButton category={category} surveyId={survey?._id} />
+              <DeleteCategoryButton
+                categoryId={category._id}
+                surveyId={survey?._id}
+              />
             </Group>
             <Group style={{ marginTop: "10px" }}>
               <AddTrendButton
@@ -76,75 +73,73 @@ function Details() {
                 categoryId={category._id}
               />
             </Group>
-              <List style={{ padding: "10px" }}>
-                {category.trends.map((trend: Trend) => {
-                  return (
-                    <List.Item icon={<TrendIcon />}>
-                      <Group>
-                        <Text color="#FEC92D">
-                          primary: <strong>{trend.primary}</strong>
-                        </Text>
-                        <Text color="#48bd66">secondary: {trend.secondary}</Text>
-                        <EditTrendButton
-                          trend={trend}
-                          surveyId={survey?._id}
-                          categoryId={category._id}
-                        />
-                        <DeleteTrendButton
-                          trendId={trend._id}
-                          surveyId={survey?._id}
-                          categoryId={category._id}
-                        />
-                      </Group>
-                      <Group style={{ marginTop: "10px" }}>
-                        <AddQuestionButton
-                          trendId={trend._id}
-                          surveyId={survey?._id}
-                          categoryId={category._id}
-                        />
-                      </Group>
-                      <List
-                        style={{
-                          padding: "10px",
-                        }}
-                        spacing="xs"
-                        size="sm"
-                        center
-                        icon={<PrimaryIcon />}
-                      >
-                        {trend.questions.map((question: Question) => {
-                          const icon = !question.primary
-                            ? { icon: <SecondaryIcon /> }
-                            : {};
-                          return (
-                            <List.Item {...icon}>
-                              <Group>
-                                <Text>{`${question.title} ${
-                                  question.primary ? "(primary)" : "(secondary)"
-                                }`}</Text>
-                                <EditQuestionButton
-                                  question={question}
-                                  surveyId={survey._id}
-                                  trendId={trend._id}
-                                  categoryId={category._id}
-                                />
-                                <DeleteQuestionButton
-                                  questionId={question._id}
-                                  surveyId={survey._id}
-                                  trendId={trend._id}
-                                  categoryId={category._id}
-                                />
-                              </Group>
-                            </List.Item>
-                          );
-                        })}
-                      </List>
-                    </List.Item>
-                  );
-                })}
-              </List>
-            </List.Item>
-          ))}
+            <List style={{ padding: "10px" }}>
+              {category.trends.map((trend: Trend) => {
+                return (
+                  <List.Item icon={<TrendIcon />}>
+                    <Group>
+                      <Text color="#FEC92D">
+                        primary: <strong>{trend.primary}</strong>
+                      </Text>
+                      <Text color="#48bd66">secondary: {trend.secondary}</Text>
+                      <EditTrendButton
+                        trend={trend}
+                        surveyId={survey?._id}
+                        categoryId={category._id}
+                      />
+                      <DeleteTrendButton
+                        trendId={trend._id}
+                        surveyId={survey?._id}
+                        categoryId={category._id}
+                      />
+                    </Group>
+                    <Group style={{ marginTop: "10px" }}>
+                      <AddQuestionButton
+                        trendId={trend._id}
+                        surveyId={survey?._id}
+                        categoryId={category._id}
+                      />
+                    </Group>
+                    <List
+                      style={{
+                        padding: "10px",
+                      }}
+                      spacing="xs"
+                      size="sm"
+                      center
+                      icon={<PrimaryIcon />}
+                    >
+                      {trend.questions.map((question: Question) => {
+                        const icon = !question.primary
+                          ? { icon: <SecondaryIcon /> }
+                          : {};
+                        return (
+                          <List.Item {...icon}>
+                            <Group>
+                              <Text>{question.title}</Text>
+                              <EditQuestionButton
+                                question={question}
+                                surveyId={survey._id}
+                                trendId={trend._id}
+                                categoryId={category._id}
+                              />
+                              <DeleteQuestionButton
+                                questionId={question._id}
+                                surveyId={survey._id}
+                                trendId={trend._id}
+                                categoryId={category._id}
+                              />
+                            </Group>
+                          </List.Item>
+                        );
+                      })}
+                    </List>
+                  </List.Item>
+                );
+              })}
+            </List>
+          </List.Item>
+        ))}
       </List>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -14,8 +14,8 @@ import { TeamModule } from 'src/company/team/team.module';
         schema: UserSchema,
       },
     ]),
-    CompanyModule,
-    TeamModule,
+    forwardRef(() => CompanyModule),
+    forwardRef(() => TeamModule),
   ],
   providers: [UsersService],
   controllers: [UsersController],

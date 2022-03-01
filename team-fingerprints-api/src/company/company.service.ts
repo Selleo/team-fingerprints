@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   forwardRef,
   HttpException,
@@ -14,6 +15,9 @@ import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './models/company.model';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const isDomainValid = require('is-valid-domain');
+
 @Injectable()
 export class CompanyService {
   constructor(
@@ -23,7 +27,9 @@ export class CompanyService {
     private readonly roleService: RoleService,
   ) {}
   async getCompaneis(): Promise<Company[]> {
-    return await this.companyModel.find({}).exec();
+    const companies = await this.companyModel.find({}).exec();
+    if (companies && companies.length > 0) return companies;
+    else return [];
   }
 
   async getCompanyByAdminId(
@@ -45,6 +51,8 @@ export class CompanyService {
     userId: string,
     { name, description, domain }: CreateCompanyDto,
   ): Promise<Company | HttpException> {
+    if (!isDomainValid(domain)) throw new BadRequestException('Invalid domain');
+
     if (await this.isDomainTaken(domain)) {
       throw new ForbiddenException(`Domain ${domain} is already taken.`);
     }

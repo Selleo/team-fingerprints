@@ -1,4 +1,9 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CompanyService } from 'src/company/company.service';
@@ -10,6 +15,7 @@ import { User } from 'src/users/models/user.model';
 @Injectable()
 export class SurveyResultService {
   constructor(
+    @Inject(forwardRef(() => SurveyAnswerService))
     private readonly surveyAnswerService: SurveyAnswerService,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,

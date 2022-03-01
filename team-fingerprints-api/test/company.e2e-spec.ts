@@ -264,8 +264,4 @@ describe('Company controller (e2e)', () => {
   afterAll(async () => {
     await app.close();
   });
-
-  afterAll(async () => {
-    await app.close();
-  });
 });

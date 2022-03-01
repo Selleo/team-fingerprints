@@ -52,7 +52,7 @@ export class CompanyMembersService {
         { new: true },
       );
     }
-    return await this.companyService.getCompanyByUserEmail(user.email);
+    return await this.companyService.getCompanyByUserEmail(email);
   }
 
   async addMemberToCompanyByEmail(

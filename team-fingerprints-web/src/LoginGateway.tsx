@@ -11,7 +11,7 @@ import {
   ColorSchemeProvider,
   MantineProvider,
   Text,
-  Title
+  Title,
 } from "@mantine/core";
 
 import { queryClient } from "./App";
@@ -20,43 +20,39 @@ import TokenSetup from "./components/TokenSetup";
 
 const LoginGateway = () => {
   const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   return (
-    <ColorSchemeProvider
-      colorScheme={theme}
-      toggleColorScheme={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-    >
-      <MantineProvider theme={{ colorScheme: theme }} withGlobalStyles>
-        <NotificationsProvider>
-          {isAuthenticated && !isLoading ? (
-            <TokenSetup>
-              <QueryClientProvider client={queryClient}>
-                <BrowserRouter>
-                  <AppRoutes />
-                </BrowserRouter>
-                <ReactQueryDevtools />
-              </QueryClientProvider>
-            </TokenSetup>
-          ) : (
-            <Center className="login">
-              <Title order={1} className="login__header">
-                Welcome to
-                <Text className="login__header-span">
-                  Selleo Fingerprint
-                </Text>
-              </Title>
-              <Text className="login__text">
-                Find out what the values of employees, companies and teams are. Compare charts and data. Create surveys you dream about.
-              </Text>
-              <Button className="login__button" onClick={() => loginWithRedirect()}>
-                {isLoading ? "Loading" : "Log in"}
-              </Button>
-            </Center>
-          )}
-        </NotificationsProvider>
-      </MantineProvider>
-    </ColorSchemeProvider>
+    <MantineProvider theme={{ colorScheme: "dark" }} withGlobalStyles>
+      <NotificationsProvider>
+        {isAuthenticated && !isLoading ? (
+          <TokenSetup>
+            <QueryClientProvider client={queryClient}>
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+              <ReactQueryDevtools />
+            </QueryClientProvider>
+          </TokenSetup>
+        ) : (
+          <Center className="login">
+            <Title order={1} className="login__header">
+              Welcome to
+              <Text className="login__header-span">Selleo Fingerprint</Text>
+            </Title>
+            <Text className="login__text">
+              Find out what the values of employees, companies and teams are.
+              Compare charts and data. Create surveys you dream about.
+            </Text>
+            <Button
+              className="login__button"
+              onClick={() => loginWithRedirect()}
+            >
+              {isLoading ? "Loading" : "Log in"}
+            </Button>
+          </Center>
+        )}
+      </NotificationsProvider>
+    </MantineProvider>
   );
 };
 

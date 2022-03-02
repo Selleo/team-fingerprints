@@ -4,7 +4,6 @@ import {
   MediaQuery,
   Burger,
   Title,
-  Button,
 } from "@mantine/core";
 import { useContext, useMemo, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -28,18 +27,16 @@ const AppHeader = () => {
     if (profile?.role === "COMPANY_ADMIN") {
       const companyId = profile?.company?._id;
       return (
-        <div className={"j"}>
-          <Button
-            color="yellow"
-            onClick={() => {
-              navigate(`companies/${companyId}`);
-            }}
-          >
-            <div className="svg-wrap">
-              <span>Manage Company</span>
-            </div>
-          </Button>
-        </div>
+        <button
+          onClick={() => {
+            navigate(`companies/${companyId}`);
+          }}
+        >
+          <div className="svg-wrap">
+            <GearIcon />
+          </div>
+          <span>Manage Company</span>
+        </button>
       );
     }
 
@@ -89,7 +86,6 @@ const AppHeader = () => {
           <div className="header__menu__submenu">
             {profile?.role !== "SUPER_ADMIN" && (
               <button
-                color="green"
                 onClick={() => {
                   navigate("responses");
                 }}

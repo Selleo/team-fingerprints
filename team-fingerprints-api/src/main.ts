@@ -8,7 +8,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const NODE_ENV = app.get(ConfigService).get('ENV');
-  console.log(NODE_ENV);
   if (NODE_ENV === 'development') {
     app.enableCors({
       origin: '*',
@@ -42,7 +41,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = app.get(ConfigService).get('PORT');
-  console.log(port);
   await app.listen(port);
 }
 bootstrap();

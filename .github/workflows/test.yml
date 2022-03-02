@@ -34,7 +34,7 @@ jobs:
       - run: npm i
       - run: npm run build
       - name: 'Test envs'
-        run: echo 'koko'
+        run: echo ${{ env.MONGODB_URI }} ${{environment.MONGODB_URI}}
       - run: npm run test:e2e
     
 

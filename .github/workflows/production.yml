@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: team-fingerprints-api
+        working-directory: ./team-fingerprints-api
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
@@ -30,6 +30,9 @@ jobs:
     
   deploy: ## <-- this is the new stuff
     needs: build
+    defaults:
+      run:
+        working-directory: ./team-fingerprints-api
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

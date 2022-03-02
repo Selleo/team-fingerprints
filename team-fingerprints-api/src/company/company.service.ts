@@ -87,12 +87,6 @@ export class CompanyService {
       .exec();
   }
 
-  async removeCompany(companyId: string): Promise<Company> {
-    return await this.companyModel
-      .findOneAndDelete({ _id: companyId }, { new: true })
-      .exec();
-  }
-
   async isDomainTaken(domain: string): Promise<boolean> {
     const companyByDomain = await this.companyModel
       .findOne({ domain: domain.toLowerCase() })

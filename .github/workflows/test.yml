@@ -18,6 +18,14 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
+    env:
+      AUTH0_CLIENT_ID: ${{secrets.HEROKU_API_KEY}}
+      AUTH0_CLIENT_SECRET: ${{secrets.AUTH0_CLIENT_SECRET}}
+      AUTH0_DOMAIN: ${{secrets.AUTH0_DOMAIN}}
+      AUTH0_ISSUER: ${{secrets.AUTH0_ISSUER}}
+      AUTH0_MANAGEMENT_API_TOKEN: ${{secrets.AUTH0_MANAGEMENT_API_TOKEN}}
+      ENV: ${{secrets.ENV}}
+      MONGODB_URI: ${{secrets.MONGODB_URI}}
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -25,14 +33,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-        env:
-          AUTH0_CLIENT_ID: ${{secrets.HEROKU_API_KEY}}
-          AUTH0_CLIENT_SECRET: ${{secrets.AUTH0_CLIENT_SECRET}}
-          AUTH0_DOMAIN: ${{secrets.AUTH0_DOMAIN}}
-          AUTH0_ISSUER: ${{secrets.AUTH0_ISSUER}}
-          AUTH0_MANAGEMENT_API_TOKEN: ${{secrets.AUTH0_MANAGEMENT_API_TOKEN}}
-          ENV: ${{secrets.ENV}}
-          MONGODB_URI: ${{secrets.MONGODB_URI}}
+
       - run: npm i
       - run: npm run build
       - run: npm run test:e2e

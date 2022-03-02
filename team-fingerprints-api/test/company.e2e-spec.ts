@@ -215,19 +215,19 @@ describe('Company controller (e2e)', () => {
     });
   });
 
-  describe('DELETE /companies - remove compaby by id', () => {
-    it('removes company by given id', async () => {
+  describe('POST /companies/:companyId/member', () => {
+    it('remove user from company', async () => {
       let company;
       await request(app.getHttpServer())
-        .get('/companies')
+        .del('/companies')
         .set('Authorization', `Bearer ${authToken}`)
         .then(({ body }) => {
-          company = body[0];
-          expect(body.length).toBe(1);
+          company = body;
         });
 
       return await request(app.getHttpServer())
-        .delete(`/companies/${company._id}`)
+        .delete(`/companies/${company._id}/member`)
+        .send({ email: 'yetiasgii@gmail.com' })
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200)
         .then(({ body }) => {
@@ -245,18 +245,8 @@ describe('Company controller (e2e)', () => {
           expect(domain).toBe('leo.com');
           expect(adminId).toEqual([user.userId]);
           expect(members).toEqual([user.userId]);
-          expect(emailWhitelist).toEqual([user.email, 'yetiasgii@gmail.com']);
+          expect(emailWhitelist).toEqual([user.email]);
           expect(teams).toEqual([]);
-        });
-    });
-
-    it('returns empty array', async () => {
-      return await request(app.getHttpServer())
-        .get('/companies')
-        .set('Authorization', `Bearer ${authToken}`)
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual([]);
         });
     });
   });

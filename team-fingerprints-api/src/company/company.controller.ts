@@ -64,14 +64,6 @@ export class CompanyController {
     return await this.companyService.updateCompany(companyId, companyDto);
   }
 
-  @Delete(':companyId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
-  async removeCompany(
-    @Param('companyId', ValidateObjectId) companyId: string,
-  ): Promise<Company> {
-    return await this.companyService.removeCompany(companyId);
-  }
-
   @Post(':companyId/member')
   @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
   async addUserToCompanyWhitelist(

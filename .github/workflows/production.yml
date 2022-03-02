@@ -27,9 +27,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm i rimraf
       - run: npm run build
-      - run: npm test:e2e
+      - run: npm test
     
   deploy: ## <-- this is the new stuff
     needs: build

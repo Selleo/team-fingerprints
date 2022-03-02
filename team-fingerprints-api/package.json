@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config=./test/jest-e2e.json",
-    "rimraf": "./node_modules/rimraf/bin.js",
+    "rimraf": "./node_modules/rimraf/bin.js"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.6.1",

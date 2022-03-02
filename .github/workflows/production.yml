@@ -6,12 +6,8 @@ name: production
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'team-fingerprints-api/*'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'team-fingerprints-api/*'
 
 jobs:
   build:

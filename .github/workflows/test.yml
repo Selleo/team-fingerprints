@@ -10,7 +10,7 @@ on:
     
 defaults:
       run:
-        working-directory: ./team-fingerprints-api
+        working-directory: team-fingerprints-api
 
 env:
   AUTH0_CLIENT_ID: ${{secrets.HEROKU_API_KEY}}

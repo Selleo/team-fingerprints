@@ -47,6 +47,7 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_EMAIL}}
+          buildpack: https://github.com/heroku/heroku-buildpack-nodejs.git
         env:
           AUTH0_CLIENT_ID: ${{secrets.HEROKU_API_KEY}}
           AUTH0_CLIENT_SECRET: ${{secrets.AUTH0_CLIENT_SECRET}}

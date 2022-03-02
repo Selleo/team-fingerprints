@@ -30,7 +30,7 @@ const envValidaion = Joi.object({
 const mongooseModuleConfig = {
   imports: [ConfigModule],
   inject: [ConfigService],
-  useFactory: async (configService: ConfigService) => ({
+  useFactory: (configService: ConfigService) => ({
     uri: configService.get<string>('MONGODB_URI'),
   }),
 };

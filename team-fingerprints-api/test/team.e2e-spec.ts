@@ -37,7 +37,7 @@ describe('Company controller (e2e)', () => {
 
   describe('POST /teams - create company', () => {
     it('returns true', async () => {
-      console.log(true);
+      console.log(false);
       return true;
     });
   });

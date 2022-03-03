@@ -1,7 +1,6 @@
 .header
-  border-bottom: 1px white solid
+  border-bottom: 2px #ffffff0d solid
   display: flex
-  height: 122px
   margin-left: 96px
   margin-right: 96px
 
@@ -16,17 +15,30 @@
       letter-spacing: 1.7px
 
   &__menu
+    align-items: center
     align-self: center
     border-radius: 12px
     border: 1px solid rgba(255, 255, 255, 0.26)
     box-sizing: border-box
     display: flex
-    align-items: center
+    height: 68px
+    min-width: 200px
     padding-left: 20px
     padding-right: 16px
-    height: 68px
-    min-width: 20px
     position: relative
+
+    img
+      width: 42px
+      height: 42px
+      border-radius: 21px
+      margin-right: 18px
+
+    span
+      font-size: 14px
+      line-height: 24px
+      font-weight: 700
+      margin-right: 4px
+      flex: 1
 
     &__submenu
       position: absolute
@@ -80,17 +92,3 @@
 
       .header__menu__submenu
         display: flex
-
-    &__chevron
-
-    img
-      width: 42px
-      height: 42px
-      border-radius: 21px
-      margin-right: 18px
-
-    span
-      font-size: 14px
-      line-height: 24px
-      font-weight: 700
-      margin-right: 4px

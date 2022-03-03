@@ -5,11 +5,13 @@ import { CompanyModule } from 'src/company/company.module';
 import { AppModule } from 'src/app.module';
 import { Role } from 'src/role/role.type';
 import * as mongoose from 'mongoose';
+import { CompanyService } from 'src/company/company.service';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Company, CompanySchema } from 'src/company/models/company.model';
+import { UsersModule } from 'src/users/users.module';
+import { RoleModule } from 'src/role/role.module';
 
 jest.setTimeout(40000);
-
-const authToken =
-  'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlM0ZVVpMFVfdVlnYlpjbV9fSXBDYSJ9.eyJpc3MiOiJodHRwczovL2Rldi1sbGt0ZTQxbS51cy5hdXRoMC5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDU5ODkyODA1NTgxNDkzOTIyMjIiLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAwLyIsImh0dHBzOi8vZGV2LWxsa3RlNDFtLnVzLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2NDYyMjk3NzMsImV4cCI6MTY0NjMxNjE3MywiYXpwIjoiZ3FHWVFOaXM2SldmbXBkTlE1dG14Vlc5N1NHUHp6dmwiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIn0.PAScPRv6BByemh241YgIvjcgTPddNKht6O44hwh0t_m9Ra7IuwjcyAk4WAuVeUiAkVxx_tNKSeGfmRhAzEZI2Ruuoop1Zo4pA7FVfsIZujtZ8j6mb8bVBDWypJXKeAdOURt5jtP5QIzujrPAzbeVCh1_L0rSxHX2OfbRROqpDVwDR-fioBaEvdLnUmDb7AhATJ7vVAMy7DNTogjzdE1hGwreuU6b5nx4lxgrpEbuYLwM2jVMpUJWZGM0_WHkokv-x44LbaVRXn71LEssQHyZ8lqToYUDP56BrTb35jBw3u8qfW9e70cn6cS2Hc22ol536QKheEHF6zt4nSzmbsukhg';
 
 const user = {
   userId: '621de1f21ee7e0b082154322',
@@ -25,21 +27,41 @@ const mockCompanyData = {
 
 describe('Company controller (e2e)', () => {
   let app: INestApplication;
+  let companyModel;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, CompanyModule],
+      imports: [
+        AppModule,
+        CompanyModule,
+        UsersModule,
+        RoleModule,
+        MongooseModule.forFeature([
+          {
+            name: Company.name,
+            schema: CompanySchema,
+          },
+        ]),
+      ],
+      providers: [CompanyService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    companyModel = moduleFixture.get(getModelToken(Company.name));
     await app.init();
+  });
+
+  afterAll(async () => {
+    const companies = await companyModel.find();
+    await companyModel.findOneAndDelete({ _id: companies[0]._id });
+    await mongoose.connection.close(true);
+    await app.close();
   });
 
   describe('GET /companies - get list of companies', () => {
     it('returns empty array', async () => {
       return await request(app.getHttpServer())
         .get('/companies')
-        .set('Authorization', `Bearer ${authToken}`)
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual([]);
@@ -56,7 +78,6 @@ describe('Company controller (e2e)', () => {
           description: '',
           domain: 'as',
         })
-        .set('Authorization', `Bearer ${authToken}`)
         .expect(400);
     });
 
@@ -68,7 +89,6 @@ describe('Company controller (e2e)', () => {
           description: mockCompanyData.description,
           domain: mockCompanyData.domain,
         })
-        .set('Authorization', `Bearer ${authToken}`)
         .expect(201)
         .then(({ body }) => {
           const {
@@ -98,7 +118,6 @@ describe('Company controller (e2e)', () => {
           description: 'company description',
           domain: mockCompanyData.domain,
         })
-        .set('Authorization', `Bearer ${authToken}`)
         .expect(403);
     });
   });
@@ -108,14 +127,12 @@ describe('Company controller (e2e)', () => {
       let company;
       await request(app.getHttpServer())
         .get('/companies')
-        .set('Authorization', `Bearer ${authToken}`)
         .then(({ body }) => {
           company = body;
         });
 
       return await request(app.getHttpServer())
         .get(`/companies/${company[0]._id}`)
-        .set('Authorization', `Bearer ${authToken}`)
         .expect(200)
         .then(({ body }) => {
           const {
@@ -143,7 +160,6 @@ describe('Company controller (e2e)', () => {
       let company;
       await request(app.getHttpServer())
         .get('/companies')
-        .set('Authorization', `Bearer ${authToken}`)
         .then(({ body }) => {
           company = body[0];
           expect(body.length).toBe(1);
@@ -156,7 +172,6 @@ describe('Company controller (e2e)', () => {
           description: 'leo',
           domain: 'leo.com',
         })
-        .set('Authorization', `Bearer ${authToken}`)
         .then(({ body }) => {
           const {
             name,
@@ -183,7 +198,6 @@ describe('Company controller (e2e)', () => {
       let company;
       await request(app.getHttpServer())
         .get('/companies')
-        .set('Authorization', `Bearer ${authToken}`)
         .then(({ body }) => {
           company = body[0];
           expect(body.length).toBe(1);
@@ -192,7 +206,6 @@ describe('Company controller (e2e)', () => {
       return await request(app.getHttpServer())
         .post(`/companies/${company._id}/member`)
         .send({ email: 'yetiasgii@gmail.com' })
-        .set('Authorization', `Bearer ${authToken}`)
         .expect(201)
         .then(({ body }) => {
           const {
@@ -220,7 +233,6 @@ describe('Company controller (e2e)', () => {
       let company;
       await request(app.getHttpServer())
         .del('/companies')
-        .set('Authorization', `Bearer ${authToken}`)
         .then(({ body }) => {
           company = body;
         });
@@ -228,7 +240,6 @@ describe('Company controller (e2e)', () => {
       return await request(app.getHttpServer())
         .delete(`/companies/${company._id}/member`)
         .send({ email: 'yetiasgii@gmail.com' })
-        .set('Authorization', `Bearer ${authToken}`)
         .expect(200)
         .then(({ body }) => {
           const {
@@ -249,10 +260,5 @@ describe('Company controller (e2e)', () => {
           expect(teams).toEqual([]);
         });
     });
-  });
-
-  afterAll(async () => {
-    await mongoose.connection.close(true);
-    await app.close();
   });
 });

@@ -7,14 +7,23 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const NODE_ENV = app.get(ConfigService).get('ENV');
-  if (NODE_ENV === 'development') {
+  const ENV = app.get(ConfigService).get('NODE_ENV');
+
+  if (ENV === 'development' || ENV === 'test') {
     app.enableCors({
       origin: '*',
     });
+
+    const config = new DocumentBuilder()
+      .setTitle('Selleo - Team-fingerprints')
+      .setDescription('API documentation')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
   } else {
     const frontendUri = app.get(ConfigService).get('FRONTEND_URI');
-
     app.enableCors({
       origin: new RegExp(frontendUri),
     });
@@ -30,15 +39,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
-  const config = new DocumentBuilder()
-    .setTitle('Selleo - Team-fingerprints')
-    .setDescription('API documentation')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
 
   const port = app.get(ConfigService).get('PORT');
   await app.listen(port);

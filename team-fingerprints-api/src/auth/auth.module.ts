@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD, Reflector } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/guards/JwtAuthGuard.guard';
 import { JwtStrategy } from './jwt.strategy';
@@ -9,6 +9,8 @@ import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { CompanyModule } from 'src/company/company.module';
 import { TeamModule } from 'src/company/team/team.module';
+import { TestingAuthGuard } from './guards/TestingAuthGuard.guard';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
   imports: [
@@ -21,7 +23,17 @@ import { TeamModule } from 'src/company/team/team.module';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      inject: [ConfigService, UsersService, Reflector],
+      useFactory: (
+        configService: ConfigService,
+        usersService: UsersService,
+        reflector: Reflector,
+      ) => {
+        const ENV = configService.get<string>('NODE_ENV');
+        if (ENV === 'test') {
+          return new TestingAuthGuard(usersService);
+        } else return new JwtAuthGuard(reflector);
+      },
     },
     JwtStrategy,
     AuthService,

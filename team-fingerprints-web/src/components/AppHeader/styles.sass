@@ -1,0 +1,96 @@
+.header
+  border-bottom: 1px white solid
+  display: flex
+  height: 122px
+  margin-left: 96px
+  margin-right: 96px
+
+  &__branding
+    flex: 1
+    display: flex
+    align-items: center
+
+    &__title
+      color: #32A89C
+      font-size: 24px
+      letter-spacing: 1.7px
+
+  &__menu
+    align-self: center
+    border-radius: 12px
+    border: 1px solid rgba(255, 255, 255, 0.26)
+    box-sizing: border-box
+    display: flex
+    align-items: center
+    padding-left: 20px
+    padding-right: 16px
+    height: 68px
+    min-width: 20px
+    position: relative
+
+    &__submenu
+      position: absolute
+      width: 182px
+      min-height: 60px
+      background-color: yellow
+      top: 68px
+      right: 0px
+      z-index: 10
+      display: none
+      background-color: #202020
+      border: 0.25px solid rgba(255, 255, 255, 0.26)
+      box-sizing: border-box
+      border-radius: 5px
+      padding-bottom: 15px
+      padding-top: 15px
+      flex-direction: column
+
+      button
+        all: unset
+        height: 38px
+        padding-left: 16px
+        padding-right: 22px
+        position: relative
+        display: flex
+        align-items: center
+        transition: padding-left 400ms ease-in
+
+        span
+          font-size: 12px
+          font-weight: 400
+          color: rgba(255, 255, 255, 0.64)
+          flex: 1
+          text-align: left
+
+        .svg-wrap
+          flex: 0 0 29px
+          display: flex
+          justify-content: center
+
+
+        &:hover
+          background-color: rgba(255, 255, 255, 0.1)
+          padding-left: 30px
+
+
+
+    &:hover
+      background-color: rgba(255, 255, 255, 0.1)
+      transition: background-color 300ms ease-in
+
+      .header__menu__submenu
+        display: flex
+
+    &__chevron
+
+    img
+      width: 42px
+      height: 42px
+      border-radius: 21px
+      margin-right: 18px
+
+    span
+      font-size: 14px
+      line-height: 24px
+      font-weight: 700
+      margin-right: 4px

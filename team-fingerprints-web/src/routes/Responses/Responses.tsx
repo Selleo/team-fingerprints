@@ -3,16 +3,17 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { isArray, isEmpty, times } from "lodash";
-import { Skeleton, Table } from "@mantine/core";
+import { Skeleton } from "@mantine/core";
 import axios from "axios";
 
-import { useStyles } from "./styles";
 import { Survey } from "../../types/models";
+import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 
-import ResponseItem from "../../components/Response/ResponseItem";
+import ResponseItem from "./ResponseItem";
+
+import "./styles.sass";
 
 const Responses = () => {
-  const { classes: { emptyCopy, header, headerTitle } } = useStyles();
   const navigation = useNavigate();
 
   const { isLoading, error, data } = useQuery<Survey[]>(
@@ -42,27 +43,26 @@ const Responses = () => {
 
   //TODO map responses together with surveys
   const mappedData = data?.map((el) => ({
-      survey: el,
+    survey: el,
   }));
 
   return (
-    <>
-      <div className={header}>
-        <h1 className={headerTitle}>Responses to surveys</h1>
+    <div className="responses">
+      <h1 className="responses__headline">Your surveys</h1>
+      {isArray(mappedData) &&
+        (isEmpty(mappedData) ? (
+          <h3 className="responses__empty">No available surveys yet</h3>
+        ) : (
+          <ul className="responses__surveys">
+            {mappedData?.map((item) => (
+              <ResponseItem key={item.survey._id} item={item} />
+            ))}
+          </ul>
+        ))}
+      <div className="svg-background">
+        <BGIcons />
       </div>
-      <Table>
-        {isArray(mappedData) &&
-          (isEmpty(mappedData) ? (
-            <span className={emptyCopy}>No responses yet</span>
-          ) : (
-            <tbody>
-              {mappedData?.map((item) => (
-                <ResponseItem key={item.survey._id} item={item} />
-              ))}
-            </tbody>
-          ))}
-      </Table>
-    </>
+    </div>
   );
 };
 

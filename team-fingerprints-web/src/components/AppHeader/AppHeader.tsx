@@ -72,7 +72,7 @@ const AppHeader = () => {
         />
       </MediaQuery>
 
-      <div className={"header__branding"}>
+      <div className="header__branding">
         <Title order={2} className={"header__branding__title"}>
           fingerprints
         </Title>
@@ -81,8 +81,7 @@ const AppHeader = () => {
         <div className="header__menu">
           <img alt="avatar" src={user.picture} />
           <span>{user?.email}</span>
-
-          <ChevronDownIcon className="header__menu__chevron" />
+          <ChevronDownIcon />
           <div className="header__menu__submenu">
             {profile?.role !== "SUPER_ADMIN" && (
               <button

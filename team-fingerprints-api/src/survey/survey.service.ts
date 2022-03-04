@@ -13,7 +13,10 @@ export class SurveyService {
     private readonly surveyAnswerService: SurveyAnswerService,
   ) {}
 
-  async getSurveysByRole(role: Role, userId: string): Promise<any> {
+  async getSurveysByRole(
+    role: Role,
+    userId: string,
+  ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
     if (role === Role.SUPER_ADMIN) {
       return await this.surveyModel.find({}).exec();
     }

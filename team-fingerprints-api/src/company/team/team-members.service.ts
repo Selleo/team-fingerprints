@@ -68,8 +68,7 @@ export class TeamMembersService {
     if (await this.isUserInAnyTeamWhitelist(email)) return;
 
     const user = await this.usersService.getUserByEmail(email);
-    if (user && user.role !== Role.USER)
-      throw new BadRequestException('This user already exists in some company');
+    if (user && user.role !== Role.USER) return;
 
     const updatedTeam = await this.teamModel
       .findOneAndUpdate(
@@ -124,8 +123,7 @@ export class TeamMembersService {
     const newMemberId = newMember?._id.toString();
     const { members } = team as Team;
 
-    if (members.find((el) => el === newMemberId))
-      throw new BadRequestException('This user already exists in some company');
+    if (members.find((el) => el === newMemberId)) return;
 
     const teamWithNewMember = await this.teamModel
       .findOneAndUpdate(
@@ -187,10 +185,10 @@ export class TeamMembersService {
     const team: Team = await this.teamService.getTeamByUserEmail(email);
     if (!team) return;
 
-    if (await this.isTeamLeaderByEmail(email))
-      throw new BadRequestException('This user is already a team leader');
-
-    if (team?.teamLeader.email === email) {
+    if (
+      !(await this.isTeamLeaderByEmail(email)) &&
+      team?.teamLeader.email === email
+    ) {
       const { _id } = await this.companyService.getCompanyByUserEmail(email);
       await this.assignTeamLeader(_id, team._id, email);
     }

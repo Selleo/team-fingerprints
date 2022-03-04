@@ -27,7 +27,7 @@ export class SurveyController {
   async getSurveysByRole(
     @CurrentUserRole() role: Role,
     @CurrentUserId() userId,
-  ): Promise<Survey[]> {
+  ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
     return await this.surveyService.getSurveysByRole(role, userId);
   }
 

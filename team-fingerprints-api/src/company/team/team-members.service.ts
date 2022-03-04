@@ -68,7 +68,8 @@ export class TeamMembersService {
     if (await this.isUserInAnyTeamWhitelist(email)) return;
 
     const user = await this.usersService.getUserByEmail(email);
-    if (user && user.role !== Role.USER) return;
+    if (user && user.role !== Role.USER)
+      throw new BadRequestException('This user already exists in some company');
 
     const updatedTeam = await this.teamModel
       .findOneAndUpdate(
@@ -103,17 +104,18 @@ export class TeamMembersService {
 
   async addMemberToTeamByEmail(
     email: string,
-  ): Promise<Company | HttpException> {
+  ): Promise<Company | HttpException | boolean> {
     if (await this.isSuperAdminByEmail(email))
       throw new BadRequestException('This user can not be managed');
 
     if (!(await this.isUserInAnyTeamWhitelist(email))) return;
 
     const user = await this.usersService.getUserByEmail(email);
-    if (user.role !== Role.USER) return;
+    if (user && user.role == Role.COMPANY_ADMIN)
+      throw new BadRequestException('This user can not be in this company');
 
     const team: any = await this.teamService.getTeamByUserEmail(email);
-    if (!team) return;
+    if (!team) throw new NotFoundException('This team does not exist');
     const teamId = team?._id?.toString();
 
     const newMember = await this.usersService.getUserByEmail(email);
@@ -122,7 +124,8 @@ export class TeamMembersService {
     const newMemberId = newMember?._id.toString();
     const { members } = team as Team;
 
-    if (members.find((el) => el === newMemberId)) return;
+    if (members.find((el) => el === newMemberId))
+      throw new BadRequestException('This user already exists in some company');
 
     const teamWithNewMember = await this.teamModel
       .findOneAndUpdate(
@@ -184,7 +187,8 @@ export class TeamMembersService {
     const team: Team = await this.teamService.getTeamByUserEmail(email);
     if (!team) return;
 
-    if (await this.isTeamLeaderByEmail(email)) return;
+    if (await this.isTeamLeaderByEmail(email))
+      throw new BadRequestException('This user is already a team leader');
 
     if (team?.teamLeader.email === email) {
       const { _id } = await this.companyService.getCompanyByUserEmail(email);

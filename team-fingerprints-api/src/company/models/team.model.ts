@@ -10,6 +10,12 @@ export class Team {
   @Prop()
   description?: string;
 
+  @Prop()
+  pointColor: string;
+
+  @Prop()
+  pointShape: string;
+
   @Prop({
     default: [null],
     type: [String],

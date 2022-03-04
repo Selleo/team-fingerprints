@@ -27,7 +27,7 @@ export class TeamService {
     return team;
   }
 
-  async getTeamByUserEmail(email: string): Promise<Team | HttpException> {
+  async getTeamByUserEmail(email: string): Promise<Team> {
     const company: Company = await this.teamModel
       .findOne({ 'teams.emailWhitelist': email }, { teams: 1 })
       .exec();

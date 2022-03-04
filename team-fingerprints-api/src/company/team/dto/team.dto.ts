@@ -14,11 +14,13 @@ export class CreateTeamDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   readonly pointShape: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   readonly pointColor: string;
 }
 

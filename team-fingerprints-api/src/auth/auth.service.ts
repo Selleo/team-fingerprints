@@ -39,7 +39,9 @@ export class AuthService {
     let user: User;
     await request(options(auth0Id), async (err, res, body) => {
       if (err) {
-        throw new BadRequestException();
+        throw new BadRequestException(
+          'Can not register user in teamfingerprints.selleo.com',
+        );
       }
       const {
         email,

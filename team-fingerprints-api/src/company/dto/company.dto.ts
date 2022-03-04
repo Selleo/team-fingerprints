@@ -25,6 +25,16 @@ export class CreateCompanyDto {
   @IsFQDN()
   @IsNotEmpty()
   readonly domain: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  readonly pointShape: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  readonly pointColor: string;
 }
 
 export class UpdateCompanyDto {
@@ -44,7 +54,20 @@ export class UpdateCompanyDto {
   @IsFQDN()
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   readonly domain?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  readonly pointShape?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  readonly pointColor?: string;
 }
 
 export class ValidateEmail {

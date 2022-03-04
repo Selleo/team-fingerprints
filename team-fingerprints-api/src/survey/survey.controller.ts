@@ -16,6 +16,7 @@ import { Role } from 'src/role/role.type';
 import { Survey } from './models/survey.model';
 import { SurveyService } from './survey.service';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
+import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 
 @ApiTags('surveys')
 @Controller({ version: '1' })
@@ -23,8 +24,11 @@ export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
   @Get()
-  async getSurveysByRole(@CurrentUserRole() role: Role): Promise<Survey[]> {
-    return await this.surveyService.getSurveysByRole(role);
+  async getSurveysByRole(
+    @CurrentUserRole() role: Role,
+    @CurrentUserId() userId,
+  ): Promise<Survey[]> {
+    return await this.surveyService.getSurveysByRole(role, userId);
   }
 
   @Get('/:surveyId')

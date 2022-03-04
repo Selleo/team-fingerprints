@@ -79,6 +79,7 @@ const AppRoutes = () => {
         fixed
         navbar={true ? <AppNavBar /> : undefined}
         header={<AppHeader />}
+        className="app-shell"
       >
         <Routes>
           <Route path="/" element={<MainRoute />} />

@@ -74,7 +74,7 @@ describe('Company controller (e2e)', () => {
   afterAll(async () => {
     const companies = await companyModel.find();
     await companyModel.findOneAndDelete({ _id: companies[0]._id });
-    // await userModel.findOneAndDelete({ _id: user._id });
+    await userModel.findOneAndDelete({ _id: user._id });
 
     await mongoose.connection.close(true);
     await app.close();

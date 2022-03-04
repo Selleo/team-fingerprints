@@ -46,8 +46,7 @@ export class CompanyMembersService {
       throw new BadRequestException('This user can not be managed');
 
     const user = await this.usersService.getUserByEmail(email);
-    if (user && user.role !== Role.USER)
-      throw new BadRequestException('This user can not be a team leader');
+    if (user && user.role !== Role.USER) return;
 
     if (!(await this.isUserInAnyCompanyWhitelist(email))) {
       return await this.companyModel.findOneAndUpdate(
@@ -66,8 +65,7 @@ export class CompanyMembersService {
       throw new BadRequestException('This user can not be managed');
 
     const user = await this.usersService.getUserByEmail(email);
-    if (user && user.role !== Role.COMPANY_ADMIN)
-      throw new BadRequestException('This user can not be a team leader');
+    if (user && user.role !== Role.USER) return;
 
     const destinationCompnay =
       (await this.isUserInAnyCompanyWhitelist(email)) ||
@@ -77,7 +75,7 @@ export class CompanyMembersService {
       await this.addUserToCompanyWhitelist(destinationCompnay?._id, email);
     }
 
-    if (!destinationCompnay) throw new NotFoundException();
+    if (!destinationCompnay) return;
 
     const newMember = await this.usersService.getUserByEmail(email);
     if (!newMember) throw new NotFoundException('Somethig went wrong');

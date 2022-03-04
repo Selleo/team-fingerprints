@@ -56,7 +56,7 @@ export class TeamService {
   async updateTeam(
     companyId: string,
     teamId: string,
-    { name, description }: UpdateTeamDto,
+    { name, description, pointShape, pointColor }: UpdateTeamDto,
   ): Promise<Company> {
     const team = await this.teamModel
       .findOneAndUpdate(
@@ -68,6 +68,8 @@ export class TeamService {
           $set: {
             'teams.$.name': name,
             'teams.$.description': description,
+            'teams.$.pointShape': pointShape,
+            'teams.$.pointColor': pointColor,
           },
         },
         { new: true },

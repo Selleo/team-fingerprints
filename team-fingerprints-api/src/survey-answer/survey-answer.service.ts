@@ -158,17 +158,26 @@ export class SurveyAnswerService {
     );
   }
 
-  async checkIfSurveyIsFinished(userId: string, surveyId: string) {
-    const userAnswersAll = await this.User.findOne({
+  async getSurveyCompleteStatus(userId: string, surveyId: string) {
+    const userWithSurvey = await this.User.findOne({
       _id: userId,
       'surveysAnswers.surveyId': surveyId,
     }).exec();
 
-    const userAnswers = userAnswersAll?.surveysAnswers?.find?.(
-      (el) => el.surveyId === surveyId,
-    );
+    if (!userWithSurvey) return SurveyCompleteStatus.NEW;
+    const surveysAnswers = userWithSurvey.surveysAnswers;
 
-    const result = userAnswers?.completeStatus;
+    const surveyAnswer = surveysAnswers?.find(
+      (answer) =>
+        answer.surveyId === new mongoose.Types.ObjectId(surveyId).toString(),
+    );
+    if (!surveyAnswer) return SurveyCompleteStatus.NEW;
+
+    return surveyAnswer.completeStatus;
+  }
+
+  async checkIfSurveyIsFinished(userId: string, surveyId: string) {
+    const result = await this.getSurveyCompleteStatus(userId, surveyId);
     return result === SurveyCompleteStatus.FINISHED;
   }
 

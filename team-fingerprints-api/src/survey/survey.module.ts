@@ -1,11 +1,13 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SurveyAnswerModule } from 'src/survey-answer/survey-answer.module';
 import { Survey, SurveySchema } from './models/survey.model';
 import { SurveyController } from './survey.controller';
 import { SurveyService } from './survey.service';
 
 @Module({
   imports: [
+    forwardRef(() => SurveyAnswerModule),
     MongooseModule.forFeature([
       {
         name: Survey.name,

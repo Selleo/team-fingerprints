@@ -3,20 +3,22 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { CompanyModule } from 'src/company/company.module';
 import { AppModule } from 'src/app.module';
-import { Role } from 'src/role/role.type';
 import * as mongoose from 'mongoose';
 import { CompanyService } from 'src/company/company.service';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Company, CompanySchema } from 'src/company/models/company.model';
 import { UsersModule } from 'src/users/users.module';
 import { RoleModule } from 'src/role/role.module';
+import { User, UserSchema } from 'src/users/models/user.model';
+import { CreateUserDto } from 'src/users/dto/user.dto';
 
 jest.setTimeout(40000);
 
-const user = {
-  userId: '621de1f21ee7e0b082154322',
+const userData: CreateUserDto = {
   email: 'yetiasg@gmail.com',
-  role: Role.COMPANY_ADMIN,
+  firstName: 'Kinny',
+  lastName: 'Zimmer',
+  authId: 'sdfh2hfefowhefnjkswfbnw',
 };
 
 const mockCompanyData = {
@@ -27,7 +29,17 @@ const mockCompanyData = {
 
 describe('Company controller (e2e)', () => {
   let app: INestApplication;
-  let companyModel;
+  let companyModel: any;
+  let userModel: any;
+  let user: User;
+  let userId: string;
+
+  const createUser = async (user: CreateUserDto) => {
+    const userExists = await userModel.findOne({ email: user.email });
+    if (userExists) await userModel.findOneAndDelete({ email: user.email });
+    const newUser = await userModel.create(user);
+    return await newUser.save();
+  };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -41,6 +53,10 @@ describe('Company controller (e2e)', () => {
             name: Company.name,
             schema: CompanySchema,
           },
+          {
+            name: User.name,
+            schema: UserSchema,
+          },
         ]),
       ],
       providers: [CompanyService],
@@ -48,12 +64,18 @@ describe('Company controller (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     companyModel = moduleFixture.get(getModelToken(Company.name));
+    userModel = moduleFixture.get(getModelToken(User.name));
     await app.init();
+
+    user = await createUser(userData);
+    userId = new mongoose.Types.ObjectId(user._id).toString();
   });
 
   afterAll(async () => {
     const companies = await companyModel.find();
     await companyModel.findOneAndDelete({ _id: companies[0]._id });
+    await userModel.findOneAndDelete({ _id: user._id });
+
     await mongoose.connection.close(true);
     await app.close();
   });
@@ -103,8 +125,8 @@ describe('Company controller (e2e)', () => {
           expect(name).toBe(mockCompanyData.name);
           expect(description).toBe(mockCompanyData.description);
           expect(domain).toBe(mockCompanyData.domain);
-          expect(adminId).toEqual([user.userId]);
-          expect(members).toEqual([user.userId]);
+          expect(adminId).toEqual([userId]);
+          expect(members).toEqual([userId]);
           expect(emailWhitelist).toEqual([user.email]);
           expect(teams).toEqual([]);
         });
@@ -147,8 +169,8 @@ describe('Company controller (e2e)', () => {
           expect(name).toBe(mockCompanyData.name);
           expect(description).toBe(mockCompanyData.description);
           expect(domain).toBe(mockCompanyData.domain);
-          expect(adminId).toEqual([user.userId]);
-          expect(members).toEqual([user.userId]);
+          expect(adminId).toEqual([userId]);
+          expect(members).toEqual([userId]);
           expect(emailWhitelist).toEqual([user.email]);
           expect(teams).toEqual([]);
         });
@@ -185,8 +207,8 @@ describe('Company controller (e2e)', () => {
           expect(name).toBe('leo');
           expect(description).toBe('leo');
           expect(domain).toBe('leo.com');
-          expect(adminId).toEqual([user.userId]);
-          expect(members).toEqual([user.userId]);
+          expect(adminId).toEqual([userId]);
+          expect(members).toEqual([userId]);
           expect(emailWhitelist).toEqual([user.email]);
           expect(teams).toEqual([]);
         });
@@ -220,8 +242,8 @@ describe('Company controller (e2e)', () => {
           expect(name).toBe('leo');
           expect(description).toBe('leo');
           expect(domain).toBe('leo.com');
-          expect(adminId).toEqual([user.userId]);
-          expect(members).toEqual([user.userId]);
+          expect(adminId).toEqual([userId]);
+          expect(members).toEqual([userId]);
           expect(emailWhitelist).toEqual([user.email, 'yetiasgii@gmail.com']);
           expect(teams).toEqual([]);
         });
@@ -254,8 +276,8 @@ describe('Company controller (e2e)', () => {
           expect(name).toBe('leo');
           expect(description).toBe('leo');
           expect(domain).toBe('leo.com');
-          expect(adminId).toEqual([user.userId]);
-          expect(members).toEqual([user.userId]);
+          expect(adminId).toEqual([userId]);
+          expect(members).toEqual([userId]);
           expect(emailWhitelist).toEqual([user.email]);
           expect(teams).toEqual([]);
         });

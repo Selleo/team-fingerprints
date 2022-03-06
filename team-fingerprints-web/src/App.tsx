@@ -2,7 +2,7 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import { QueryClient } from "react-query";
 import LoginGateway from "./LoginGateway";
 
-import "./stylesheets/application.sass";
+import "./styles/application.sass";
 
 export const queryClient = new QueryClient();
 

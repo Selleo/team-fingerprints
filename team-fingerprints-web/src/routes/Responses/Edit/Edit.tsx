@@ -10,6 +10,7 @@ import { SurveyDetails } from "../../../types/models";
 
 import { ReactComponent as SquareIcon } from "../../../assets/shapes/Square.svg";
 import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
+import { ReactComponent as TriangleIcon } from "../../../assets/shapes/Triangle.svg";
 
 import Chart from "../../../components/Chart";
 import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
@@ -111,6 +112,13 @@ export default function Edit() {
                 <SquareIcon stroke={"#32A89C"} />
               </div>
               <span>Your company</span>
+              <Switch value={true} setValue={setShowMyResults} />
+            </div>
+            <div className="survey-response__legend__item">
+              <div className="survey-response__legend__item__icon">
+                <TriangleIcon stroke={"#32A89C"} />
+              </div>
+              <span>Your team</span>
               <Switch value={true} setValue={setShowMyResults} />
             </div>
           </div>

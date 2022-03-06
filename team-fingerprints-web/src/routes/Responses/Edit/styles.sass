@@ -1,9 +1,13 @@
 @import 'styles/base/variables'
+@import 'styles/base/mixins'
+
 
 .survey-response
   margin-top: 72px
   margin-left: 230px
   margin-right: 230px
+  display: flex
+  flex-direction: column
   &__description
     &__info
       color: $color-white26
@@ -26,9 +30,10 @@
       margin-bottom: 56px
       width: 523px
   &__legend
-    display: block
+    display: flex
     flex-direction: column
-    
+    width: 270px
+    margin-bottom: 100px
 
     &__item
       border-top: 1px solid #FFFFFF1A
@@ -46,6 +51,8 @@
         line-height: 19px
         letter-spacing: 0em
         margin-right: 20px
+        flex-wrap: nowrap
+        +ellipsis
 
 
       &__icon

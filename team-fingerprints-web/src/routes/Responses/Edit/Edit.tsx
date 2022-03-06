@@ -3,30 +3,35 @@ import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { find, flatMapDeep, shuffle, size, toNumber } from "lodash";
-import { Button, Center, Group, SegmentedControl } from "@mantine/core";
+import { Button, Center } from "@mantine/core";
 import axios from "axios";
 
 import { SurveyDetails } from "../../../types/models";
 
+import { ReactComponent as SquareIcon } from "../../../assets/shapes/Square.svg";
+import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
+
 import Chart from "../../../components/Chart";
 import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
+import BackToScreen from "../../../components/BackToScreen/BackToScreen";
+
+import "./styles.sass";
+import { Switch } from "../../../components/Switch";
 
 export default function Edit() {
   const [mode, setMode] = useState("result");
+
+  const [showMyResults, setShowMyResults] = useState(true);
+
   const { surveyId } = useParams();
   const {
     isLoading: isLoadingSurvey,
     error: errorLoadingSurvey,
     data: survey,
-  } = useQuery<SurveyDetails, Error>(
-    `surveyOne${surveyId}`,
-    async () => {
-      const { data } = await axios.get<SurveyDetails>(
-        `/surveys/${surveyId}`
-      );
-      return data;
-    }
-  );
+  } = useQuery<SurveyDetails, Error>(`surveyOne${surveyId}`, async () => {
+    const { data } = await axios.get<SurveyDetails>(`/surveys/${surveyId}`);
+    return data;
+  });
 
   const {
     isLoading: isLoadingSurveyFinished,
@@ -67,32 +72,65 @@ export default function Edit() {
   const allResponses = surveyResponse?.surveysAnswers?.[0].answers;
 
   const questionsWithAnswers = questions.map((question) => ({
-      question,
-      answer: find(allResponses, { questionId: question._id }),
+    question,
+    answer: find(allResponses, { questionId: question._id }),
   }));
 
-  const shuffledData = useMemo(() => shuffle(questionsWithAnswers), [questionsWithAnswers.length])
+  const shuffledData = useMemo(
+    () => shuffle(questionsWithAnswers),
+    [questionsWithAnswers.length]
+  );
 
   const buttonActive = size(questions) === size(allResponses);
 
   const renderContent = useMemo(
     () =>
       surveyIsFinished && mode === "result" ? (
-        <Chart data={surveyFinished} />
+        <>
+          <div className="survey-response__description">
+            <h5 className="survey-response__description__info">Results</h5>
+            <h1 className="survey-response__description__title">
+              {survey?.title || "Survey Name"}
+            </h1>
+            <div className="survey-response__description__copy">
+              Compare your results with the company, the world or other
+              employees. To display the data on the chart, turn on the switch
+              next to the category name.
+            </div>
+          </div>
+          <div className="survey-response__legend">
+            <div className="survey-response__legend__item survey-response__legend__item--first">
+              <div className="survey-response__legend__item__icon">
+                <CircleIcon stroke={"#32A89C"} />
+              </div>
+              <span>You</span>
+              <Switch value={showMyResults} setValue={setShowMyResults} />
+            </div>
+            <div className="survey-response__legend__item">
+              <div className="survey-response__legend__item__icon">
+                <SquareIcon fill={"#32A89C"} />
+              </div>
+              <span>Your company</span>
+              <Switch value={true} setValue={setShowMyResults} />
+            </div>
+          </div>
+
+          <Chart data={surveyFinished} />
+        </>
       ) : (
         <Center>
           <div style={{ width: "50vw" }}>
             <ul>
-            {shuffledData.map(({ answer, question }) => (
-              <QuestionResponse
-                answer={answer ? toNumber(answer.value) : undefined}
-                disabled={surveyIsFinished}
-                key={question.title}
-                question={question}
-                refetch={refetch}
-                surveyId={surveyId || ""}
-              />
-            ))}
+              {shuffledData.map(({ answer, question }) => (
+                <QuestionResponse
+                  answer={answer ? toNumber(answer.value) : undefined}
+                  disabled={surveyIsFinished}
+                  key={question.title}
+                  question={question}
+                  refetch={refetch}
+                  surveyId={surveyId || ""}
+                />
+              ))}
             </ul>
 
             {!surveyIsFinished && (
@@ -110,14 +148,14 @@ export default function Edit() {
         </Center>
       ),
     [
-      buttonActive,
-      finishSurvey,
-      mode,
-      surveyId,
-      questionsWithAnswers,
-      refetch,
-      surveyFinished,
       surveyIsFinished,
+      mode,
+      surveyFinished,
+      shuffledData,
+      buttonActive,
+      refetch,
+      surveyId,
+      finishSurvey,
     ]
   );
 
@@ -135,21 +173,8 @@ export default function Edit() {
 
   return (
     <>
-      <Group style={{ justifyContent: "space-between" }}>
-        <h1>{survey?.title}</h1>
-        {surveyIsFinished && (
-          <SegmentedControl
-            color="green"
-            data={[
-              { value: "result", label: "Result" },
-              { value: "surveyEdit", label: "Show Survery" },
-            ]}
-            value={mode}
-            onChange={setMode}
-          />
-        )}
-      </Group>
-      {renderContent}
+      <BackToScreen name="Dashboard" />
+      <div className="survey-response">{renderContent}</div>
     </>
   );
 }

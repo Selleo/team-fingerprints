@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -31,34 +31,42 @@ const Responses = () => {
     }
   }, [data, navigation]);
 
-  if (isLoading)
+  const content = useMemo(() => {
+    if (isLoading)
+      return (
+        <>
+          {times(3, () => (
+            <Skeleton height={73} width={560} mt={6} radius="md" animate />
+          ))}
+        </>
+      );
+
+    if (error) return <div>'An error has occurred: ' + console.error;</div>;
+
+    const mappedData = data?.map((el) => ({
+      survey: el,
+    }));
+
     return (
-      <>
-        {times(5, () => (
-          <Skeleton height={20} mt={6} radius="xl" />
-        ))}
-      </>
+      isArray(mappedData) &&
+      (isEmpty(mappedData) ? (
+        <h3 className="responses__empty">No available surveys yet</h3>
+      ) : (
+        <ul className="responses__surveys">
+          {mappedData?.map((item) => (
+            <ResponseItem key={item.survey._id} item={item} />
+          ))}
+        </ul>
+      ))
     );
-  if (error) return <div>'An error has occurred: ' + console.error;</div>;
+  }, [data, error, isLoading]);
 
   //TODO map responses together with surveys
-  const mappedData = data?.map((el) => ({
-    survey: el,
-  }));
 
   return (
     <div className="responses">
       <h1 className="responses__headline">Your surveys</h1>
-      {isArray(mappedData) &&
-        (isEmpty(mappedData) ? (
-          <h3 className="responses__empty">No available surveys yet</h3>
-        ) : (
-          <ul className="responses__surveys">
-            {mappedData?.map((item) => (
-              <ResponseItem key={item.survey._id} item={item} />
-            ))}
-          </ul>
-        ))}
+      {content}
       <div className="svg-background">
         <BGIcons />
       </div>

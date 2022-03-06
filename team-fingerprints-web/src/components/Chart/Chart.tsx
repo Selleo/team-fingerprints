@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import "./style.css";
+import "./styles.sass";
 
 interface IProps {
   data: any;
@@ -72,32 +72,41 @@ const Chart: FC<IProps> = ({ data }: { data: any }) => {
     }
     times(numberOfRows, (time) => {
       const positionOfLine = rowHeight / 2 + time * rowHeight;
-      ctx.beginPath();
-      ctx.moveTo(0, positionOfLine);
-      ctx.lineTo(displayWidth, positionOfLine);
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "white";
-      ctx.stroke();
-
-      ctx.beginPath();
       const result = mappedTrends[time];
       const dotPosition = (displayWidth / 4) * (result.avgTrendAnswer - 1);
-      ctx.arc(dotPosition, positionOfLine, 5, 0, 2 * Math.PI, true);
       dotsPositions.push({ x: dotPosition, y: positionOfLine });
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "white";
-      ctx.stroke();
-      ctx.fillStyle = "white";
-      ctx.fill();
     });
     ctx.beginPath();
     ctx.moveTo(dotsPositions[0].x, dotsPositions[0].y);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "yellow";
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#32A89C";
     dotsPositions.forEach((point) => {
       ctx.lineTo(point.x, point.y);
     });
     ctx.stroke();
+    ctx.closePath();
+
+    times(numberOfRows, (time) => {
+      const positionOfLine = rowHeight / 2 + time * rowHeight;
+      ctx.beginPath();
+      ctx.moveTo(0, positionOfLine);
+      ctx.lineTo(displayWidth, positionOfLine);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#FFFFFF1A";
+      ctx.stroke();
+      ctx.closePath();
+
+      ctx.beginPath();
+      const result = mappedTrends[time];
+      const dotPosition = (displayWidth / 4) * (result.avgTrendAnswer - 1);
+      ctx.fillStyle = "#121212";
+      ctx.arc(dotPosition, positionOfLine, 18, 0, 2 * Math.PI, true);
+      ctx.fill();
+      ctx.lineWidth = 12;
+      ctx.strokeStyle = "#32A89C";
+      ctx.stroke();
+      ctx.closePath();
+    });
   }, [
     width,
     height,
@@ -143,13 +152,15 @@ const Chart: FC<IProps> = ({ data }: { data: any }) => {
   };
 
   return (
-    <table className="tg">
-      <thead>
-        {mappedTrends.map((item: TrendToDisplay, index: number) => {
-          return renderRow(item, index);
-        })}
-      </thead>
-    </table>
+    <div className="chart">
+      <table className="tg">
+        <thead>
+          {mappedTrends.map((item: TrendToDisplay, index: number) => {
+            return renderRow(item, index);
+          })}
+        </thead>
+      </table>
+    </div>
   );
 };
 

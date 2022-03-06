@@ -1,4 +1,4 @@
-@import '../../stylesheets/application'
+@import 'styles/base/variables'
 
 .responses
   position: relative
@@ -11,6 +11,7 @@
     font-size: 49px
     line-height: 59px
     margin-top: 86px
+    margin-bottom: 45px
 
   &__surveys
     list-style-type: none
@@ -21,18 +22,18 @@
     padding-left: 0
 
     &__survey
-      cursor: pointer
-      height: 73px
+      align-items: center
+      border-radius: 12px
       border: 1px solid #ffffff42
       box-sizing: border-box
-      border-radius: 12px
-      margin-bottom: 16px
-      width: 560px
-      padding-left: 27px
-      padding-right: 27px
+      cursor: pointer
       display: flex
       flex-direction: row
-      align-items: center
+      height: 73px
+      margin-bottom: 16px
+      padding-left: 27px
+      padding-right: 27px
+      width: 560px
 
       &__name
         margin-left: 15px

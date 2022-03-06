@@ -11,6 +11,8 @@ import { queryClient } from "./App";
 import AppRoutes from "./routes";
 import TokenSetup from "./components/TokenSetup";
 
+import "./login-gateway.sass";
+
 const LoginGateway = () => {
   const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
 

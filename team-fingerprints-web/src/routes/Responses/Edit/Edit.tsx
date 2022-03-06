@@ -108,7 +108,7 @@ export default function Edit() {
             </div>
             <div className="survey-response__legend__item">
               <div className="survey-response__legend__item__icon">
-                <SquareIcon fill={"#32A89C"} />
+                <SquareIcon stroke={"#32A89C"} />
               </div>
               <span>Your company</span>
               <Switch value={true} setValue={setShowMyResults} />

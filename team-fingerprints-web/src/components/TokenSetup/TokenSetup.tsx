@@ -1,14 +1,9 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
 export const TokenSetup: FC = ({ children }) => {
   const { isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
   const [tokenPresent, setTokenPresent] = useState(false);
-
-  const createProfile = (token: string) => {
-    axios.post("/auth", {}, { headers: { Authorization: `Bearer ${token}` } });
-  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -19,7 +14,6 @@ export const TokenSetup: FC = ({ children }) => {
         .then((token) => {
           localStorage.setItem("token", token);
           setTokenPresent(true);
-          createProfile(token);
         })
         .catch((e) => console.warn(e));
     }

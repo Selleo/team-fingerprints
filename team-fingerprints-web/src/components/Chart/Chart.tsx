@@ -83,7 +83,7 @@ const Chart: FC<IProps> = ({ data, additionalData }) => {
         const positionOfLine = rowHeight / 2 + time * rowHeight;
         const result = data[time];
         const dotPosition =
-          (displayWidth / 4) * ((result.avgTrendAnswer || 2.5) - 1);
+          (displayWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
         dotsPositions.push({ x: dotPosition, y: positionOfLine });
       });
 
@@ -103,7 +103,7 @@ const Chart: FC<IProps> = ({ data, additionalData }) => {
         ctx.beginPath();
         const result = data[time];
         const dotPosition =
-          (displayWidth / 4) * ((result.avgTrendAnswer || 2.5) - 1);
+          (displayWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
         ctx.fillStyle = "#121212";
         if (shape === "circle") {
           ctx.arc(dotPosition, positionOfLine, 18, 0, 2 * Math.PI, true);

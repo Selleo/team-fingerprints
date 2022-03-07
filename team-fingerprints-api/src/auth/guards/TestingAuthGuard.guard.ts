@@ -9,7 +9,9 @@ export class TestingAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const users = await this.usersService.getUsersAll();
     const user = users[0];
-    request.user = user;
-    return !!user;
+    if (user) {
+      request.user = user;
+      return !!user;
+    } else return true;
   }
 }

@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   Patch,
@@ -55,13 +54,5 @@ export class UsersController {
     @Body() updateUserData: UpdateUserDto,
   ): Promise<User> {
     return await this.userService.updateUser(userId, updateUserData);
-  }
-
-  @Delete()
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
-  async removeUser(
-    @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<User> {
-    return await this.userService.removeUser(userId);
   }
 }

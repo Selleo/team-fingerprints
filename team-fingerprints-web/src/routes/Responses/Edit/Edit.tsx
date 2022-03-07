@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { find, flatMapDeep, shuffle, size, toNumber } from "lodash";
+import { find, flatMapDeep, shuffle, size, toNumber, values } from "lodash";
 import { Button, Center } from "@mantine/core";
 import axios from "axios";
 
-import { SurveyDetails } from "../../../types/models";
+import { AdditionalData, SurveyDetails } from "../../../types/models";
 
 import { ReactComponent as SquareIcon } from "../../../assets/shapes/Square.svg";
 import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
@@ -18,10 +18,11 @@ import BackToScreen from "../../../components/BackToScreen/BackToScreen";
 
 import "./styles.sass";
 import { Switch } from "../../../components/Switch";
+import { ProfileContext } from "../../../routes";
 
 export default function Edit() {
-  const [mode, setMode] = useState("result");
-
+  const [visibleData, setVisibleData] = useState([true, true, true]);
+  const { profile } = useContext(ProfileContext);
   const [showMyResults, setShowMyResults] = useState(true);
 
   const { surveyId } = useParams();
@@ -42,6 +43,26 @@ export default function Edit() {
     const { data } = await axios.get<any>(`/survey-answers/${surveyId}`);
     return data;
   });
+
+  const { isLoading: isLoadingSurveyResultsAll, data: serveyResultsAll } =
+    useQuery<any, Error>(`surveyResultsAll-${surveyId}`, async () => {
+      const { data } = await axios.get<any>(
+        `/survey-results/${surveyId}/companies/${profile?.company?._id}`
+      );
+      return data;
+    });
+
+  const additionalData = useMemo(() => {
+    let tmp: AdditionalData[] = [];
+    if (serveyResultsAll) {
+      tmp.push({
+        categories: values(serveyResultsAll),
+        color: "red",
+        icon: "triangle",
+      });
+    }
+    return tmp;
+  }, [serveyResultsAll]);
 
   const finishSurvey = useMutation(
     async () => {
@@ -86,7 +107,7 @@ export default function Edit() {
 
   const renderContent = useMemo(
     () =>
-      surveyIsFinished && mode === "result" ? (
+      surveyIsFinished ? (
         <>
           <div className="survey-response__description">
             <h5 className="survey-response__description__info">Results</h5>
@@ -107,23 +128,10 @@ export default function Edit() {
               <span>You</span>
               <Switch value={showMyResults} setValue={setShowMyResults} />
             </div>
-            <div className="survey-response__legend__item">
-              <div className="survey-response__legend__item__icon">
-                <SquareIcon stroke={"#32A89C"} />
-              </div>
-              <span>Your company</span>
-              <Switch value={true} setValue={setShowMyResults} />
-            </div>
-            <div className="survey-response__legend__item">
-              <div className="survey-response__legend__item__icon">
-                <TriangleIcon stroke={"#32A89C"} />
-              </div>
-              <span>Your team</span>
-              <Switch value={true} setValue={setShowMyResults} />
-            </div>
+            {additionalData.map((item) => {})}
           </div>
 
-          <Chart data={surveyFinished} />
+          <Chart data={surveyFinished} additionalData={additionalData} />
         </>
       ) : (
         <Center>
@@ -157,7 +165,9 @@ export default function Edit() {
       ),
     [
       surveyIsFinished,
-      mode,
+      survey?.title,
+      showMyResults,
+      additionalData,
       surveyFinished,
       shuffledData,
       buttonActive,
@@ -167,7 +177,12 @@ export default function Edit() {
     ]
   );
 
-  if (isLoadingSurvey || isLoadingSurveyResponse || isLoadingSurveyFinished) {
+  if (
+    isLoadingSurvey ||
+    isLoadingSurveyResponse ||
+    isLoadingSurveyFinished ||
+    isLoadingSurveyResultsAll
+  ) {
     return <span>Loading survey</span>;
   }
 

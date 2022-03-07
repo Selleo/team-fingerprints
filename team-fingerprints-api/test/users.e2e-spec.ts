@@ -21,7 +21,7 @@ const userData: CreateUserDto = {
   authId: 'sdfh2hfefowhefnjkswfbnw',
 };
 
-const user: Partial<User> = {
+let user: Partial<User> = {
   email: userData.email,
   firstName: userData.firstName,
   lastName: userData.lastName,
@@ -87,7 +87,6 @@ describe('Company controller (e2e)', () => {
         .send(userData)
         .expect(201)
         .then(({ body }) => {
-          userId = new mongoose.Types.ObjectId(body._id).toString();
           expect(body).toMatchObject(user);
         });
     });
@@ -181,7 +180,10 @@ describe('Company controller (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body).toMatchObject(Object.assign(user, dataToUpdate));
+          expect(body).toMatchObject({ ...user, ...dataToUpdate });
+        })
+        .finally(() => {
+          user = { ...user, ...dataToUpdate };
         });
     });
   });
@@ -197,9 +199,7 @@ describe('Company controller (e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.length).toBe(1);
-          expect(body[0]).toMatchObject(
-            Object.assign(user, { role: Role.TEAM_LEADER }),
-          );
+          expect(body[0]).toMatchObject({ ...user, role: Role.TEAM_LEADER });
         })
         .finally(async () => {
           await userModel.findOneAndUpdate(

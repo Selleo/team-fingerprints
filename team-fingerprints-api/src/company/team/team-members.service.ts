@@ -67,9 +67,6 @@ export class TeamMembersService {
   ): Promise<Company | HttpException> {
     if (await this.isUserInAnyTeamWhitelist(email)) return;
 
-    const user = await this.usersService.getUserByEmail(email);
-    if (user && user.role !== Role.USER) return;
-
     const updatedTeam = await this.teamModel
       .findOneAndUpdate(
         { _id: companyId, 'teams._id': teamId },
@@ -108,10 +105,6 @@ export class TeamMembersService {
       throw new BadRequestException('This user can not be managed');
 
     if (!(await this.isUserInAnyTeamWhitelist(email))) return;
-
-    const user = await this.usersService.getUserByEmail(email);
-    if (user && user.role == Role.COMPANY_ADMIN)
-      throw new BadRequestException('This user can not be in this company');
 
     const team: any = await this.teamService.getTeamByUserEmail(email);
     if (!team) throw new NotFoundException('This team does not exist');

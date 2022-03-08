@@ -32,7 +32,7 @@ const AppRoutes = () => {
   const { user } = useAuth0();
   const navigate = useNavigate();
 
-  const { data, refetch } = useQuery<Profile>(
+  const { data, refetch, isLoading } = useQuery<Profile>(
     `profileData${user?.sub}`,
     async () => {
       const response = await axios.get<Profile>("/auth/profile");
@@ -81,30 +81,35 @@ const AppRoutes = () => {
         header={<AppHeader />}
         className="app-shell"
       >
-        <Routes>
-          <Route path="/" element={<MainRoute />} />
-          <Route path="surveys" element={<Surveys />} />
-          <Route path="companies" element={<Companies />} />
-          <Route path="companies/new" element={<CompaniesNew />} />
-          <Route path="companies/:id" element={<CompaniesManagment />} />
-          <Route path="companies/:id/team">
-            <Route path=":teamId" element={<TeamManagement />} />
-          </Route>
+        {" "}
+        {isLoading ? (
+          <div></div>
+        ) : (
+          <Routes>
+            <Route path="/" element={<MainRoute />} />
+            <Route path="surveys" element={<Surveys />} />
+            <Route path="companies" element={<Companies />} />
+            <Route path="companies/new" element={<CompaniesNew />} />
+            <Route path="companies/:id" element={<CompaniesManagment />} />
+            <Route path="companies/:id/team">
+              <Route path=":teamId" element={<TeamManagement />} />
+            </Route>
 
-          <Route path="users" element={<Users />} />
+            <Route path="users" element={<Users />} />
 
-          <Route path="survey/:id" element={<SurveyDetails />} />
-          <Route
-            path="*"
-            element={
-              <main style={{ padding: "1rem" }}>
-                <p>There's nothing here!</p>
-              </main>
-            }
-          />
-          <Route path="responses" element={<Responses />} />
-          <Route path="response/:surveyId" element={<ResponseEdit />} />
-        </Routes>
+            <Route path="survey/:id" element={<SurveyDetails />} />
+            <Route
+              path="*"
+              element={
+                <main style={{ padding: "1rem" }}>
+                  <p>There's nothing here!</p>
+                </main>
+              }
+            />
+            <Route path="responses" element={<Responses />} />
+            <Route path="response/:surveyId" element={<ResponseEdit />} />
+          </Routes>
+        )}
       </AppShell>
     </ProfileContext.Provider>
   );

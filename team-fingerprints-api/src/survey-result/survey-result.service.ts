@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CompanyService } from 'src/company/company.service';
 import { TeamMembersService } from 'src/company/team/team-members.service';
+import { TeamService } from 'src/company/team/team.service';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 import { Survey } from 'src/survey/models/survey.model';
 import { User } from 'src/users/models/user.model';
@@ -20,6 +21,8 @@ export class SurveyResultService {
     private readonly surveyAnswerService: SurveyAnswerService,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
+    @Inject(forwardRef(() => TeamService))
+    private readonly teamService: TeamService,
     private readonly teamMembersService: TeamMembersService,
     private readonly companyService: CompanyService,
   ) {}
@@ -132,17 +135,20 @@ export class SurveyResultService {
         });
         if (!user) throw new InternalServerErrorException();
 
-        const surveyAnswer = user.surveysAnswers.find(
-          (el) => el.surveyId === surveyId,
-        );
+        const team = await this.teamService.getTeamByUserEmail(user.email);
+        if (!team) {
+          const surveyAnswer = user.surveysAnswers.find(
+            (el) => el.surveyId === surveyId,
+          );
 
-        const res = [];
-        surveyAnswer.surveyResult.forEach((el) => {
-          if (!res[el.categoryId]) {
-            res[el.categoryId] = el;
-          }
-        });
-        entitiesResultFlat.push(res);
+          const res = [];
+          surveyAnswer.surveyResult.forEach((el) => {
+            if (!res[el.categoryId]) {
+              res[el.categoryId] = el;
+            }
+          });
+          entitiesResultFlat.push(res);
+        }
 
         break;
 

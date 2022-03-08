@@ -14,6 +14,7 @@ import { User } from 'src/users/models/user.model';
 
 @Injectable()
 export class SurveyResultService {
+  defaultEntity = null;
   constructor(
     @Inject(forwardRef(() => SurveyAnswerService))
     private readonly surveyAnswerService: SurveyAnswerService,
@@ -22,6 +23,23 @@ export class SurveyResultService {
     private readonly teamMembersService: TeamMembersService,
     private readonly companyService: CompanyService,
   ) {}
+
+  async getSurveyResult(surveyId: string, userId: string) {
+    return await this.getSurveyResultForUser(userId, surveyId);
+  }
+
+  async getAvgResultForAllCompanies(surveyId: string) {
+    return await this.countPoints(surveyId, 'companies', '');
+  }
+
+  async getAvgResultForCompany(surveyId: string, companyId: string) {
+    return await this.countPoints(surveyId, 'company', companyId);
+  }
+
+  async getAvgResultForTeam(surveyId: string, teamId: string) {
+    this.defaultEntity = 'team';
+    return await this.countPoints(surveyId, 'team', teamId);
+  }
 
   async getSurveyResultForUser(userId: string, surveyId: string) {
     const isFinished = await this.surveyAnswerService.checkIfSurveyIsFinished(
@@ -43,22 +61,6 @@ export class SurveyResultService {
 
     const result = userAnswers.surveyResult;
     return result;
-  }
-
-  async getSurveyResult(surveyId: string, userId: string) {
-    return await this.getSurveyResultForUser(userId, surveyId);
-  }
-
-  async getAvgResultForAllCompanies(surveyId: string) {
-    return await this.countPoints(surveyId, 'companies', '');
-  }
-
-  async getAvgResultForCompany(surveyId: string, companyId: string) {
-    return await this.countPoints(surveyId, 'company', companyId);
-  }
-
-  async getAvgResultForTeam(surveyId: string, teamId: string) {
-    return await this.countPoints(surveyId, 'team', teamId);
   }
 
   async countPoints(
@@ -87,9 +89,10 @@ export class SurveyResultService {
 
     switch (type) {
       case 'team':
-        const members: any = await this.teamMembersService.getTeamMembers(
+        let members: any = await this.teamMembersService.getTeamMembers(
           entityId,
         );
+        members = members.filter(Boolean);
 
         entitiesResult = await Promise.all(
           members.map(async (member: string) => {
@@ -123,6 +126,23 @@ export class SurveyResultService {
         for (const res of entitiesResult) {
           entitiesResultFlat.push(res);
         }
+
+        const user: User = await this.userModel.findOne({
+          companyId: entityId,
+        });
+        if (!user) throw new InternalServerErrorException();
+
+        const surveyAnswer = user.surveysAnswers.find(
+          (el) => el.surveyId === surveyId,
+        );
+
+        const res = [];
+        surveyAnswer.surveyResult.forEach((el) => {
+          if (!res[el.categoryId]) {
+            res[el.categoryId] = el;
+          }
+        });
+        entitiesResultFlat.push(res);
 
         break;
 

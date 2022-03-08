@@ -85,4 +85,12 @@ export type Profile = {
   team?: { _id: string };
 };
 
-export type QuestionWithAnswers = { answer: Answer, question: Question }
+export type QuestionWithAnswers = { answer: Answer; question: Question };
+
+export type Shape = "triangle" | "square" | "circle" | "trapeze";
+
+export type AdditionalData = {
+  icon: Shape;
+  color: string;
+  categories: CategoryResults[];
+};

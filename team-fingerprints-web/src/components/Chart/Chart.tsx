@@ -1,16 +1,20 @@
-import { times } from "lodash";
+import { each, times } from "lodash";
 import {
   FC,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
+import useWindowDimensions from "../../hooks/useWindowDimensions";
+import { AdditionalData, Shape } from "../../types/models";
 import "./styles.sass";
 
 interface IProps {
   data: any;
+  additionalData: AdditionalData[];
 }
 
 const ROW_HEIGHT_PX = 60;
@@ -30,7 +34,18 @@ type CategoryResults = {
 
 type TrendToDisplay = TrendResults & { categoryTitile: string };
 
-const Chart: FC<IProps> = ({ data }: { data: any }) => {
+const asTrends = (data: CategoryResults[]) => {
+  const tmpTrends: TrendToDisplay[] = [];
+  data?.forEach?.((category) => {
+    category.avgTrends.forEach((trend) => {
+      tmpTrends.push({ ...trend, categoryTitile: category.categoryTitile });
+    });
+  });
+  return tmpTrends;
+};
+
+const Chart: FC<IProps> = ({ data, additionalData }) => {
+  const { width: screenWidth } = useWindowDimensions();
   const dataReadyToUse = data?.surveysAnswers[0]
     .surveyResult as CategoryResults[];
 
@@ -39,7 +54,6 @@ const Chart: FC<IProps> = ({ data }: { data: any }) => {
   const pixelRatio = window.devicePixelRatio;
   const ref = useRef<any>(null);
   const canvas = useRef<any>(null);
-
   // responsive width and height
   useEffect(() => {
     setWidth(ref.current?.clientWidth);
@@ -52,40 +66,66 @@ const Chart: FC<IProps> = ({ data }: { data: any }) => {
 
   const style = { width, height };
 
-  const mappedTrends = useMemo<TrendToDisplay[]>(() => {
-    const tmpTrends: TrendToDisplay[] = [];
-    dataReadyToUse?.forEach?.((category) => {
-      category.avgTrends.forEach((trend) => {
-        tmpTrends.push({ ...trend, categoryTitile: category.categoryTitile });
-      });
-    });
-    return tmpTrends;
+  const userMappedTrendsData = useMemo<TrendToDisplay[]>(() => {
+    return asTrends(dataReadyToUse);
   }, [dataReadyToUse]);
 
-  const numberOfRows = mappedTrends.length;
+  const numberOfRows = userMappedTrendsData.length;
+
+  const renderResults = useCallback(
+    (data: TrendToDisplay[], ctx: any, color = "#32A89C", shape?: Shape) => {
+      const dotsPositions: { x: number; y: number }[] = [];
+      //position of dots
+      if (data.length !== numberOfRows) {
+        return;
+      }
+      times(numberOfRows, (time) => {
+        const positionOfLine = rowHeight / 2 + time * rowHeight;
+        const result = data[time];
+        const dotPosition =
+          (displayWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
+        dotsPositions.push({ x: dotPosition, y: positionOfLine });
+      });
+
+      //connections between shapes
+      ctx.beginPath();
+      ctx.moveTo(dotsPositions[0].x, dotsPositions[0].y);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = color;
+      dotsPositions.forEach((point) => {
+        ctx.lineTo(point.x, point.y);
+      });
+      ctx.stroke();
+      ctx.closePath();
+
+      times(numberOfRows, (time) => {
+        const positionOfLine = rowHeight / 2 + time * rowHeight;
+        ctx.beginPath();
+        const result = data[time];
+        const dotPosition =
+          (displayWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
+        ctx.fillStyle = "#121212";
+        if (shape === "circle") {
+          ctx.arc(dotPosition, positionOfLine, 18, 0, 2 * Math.PI, true);
+        } else {
+          ctx.rect(dotPosition - 12, positionOfLine - 12, 24, 24);
+        }
+        ctx.fill();
+        ctx.lineWidth = 12;
+        ctx.strokeStyle = color;
+        ctx.stroke();
+        ctx.closePath();
+      });
+    },
+    [displayWidth, numberOfRows, rowHeight]
+  );
 
   useLayoutEffect(() => {
-    const dotsPositions: { x: number; y: number }[] = [];
     const ctx = canvas.current?.getContext?.("2d");
     if (!ctx) {
       return;
     }
-    times(numberOfRows, (time) => {
-      const positionOfLine = rowHeight / 2 + time * rowHeight;
-      const result = mappedTrends[time];
-      const dotPosition = (displayWidth / 4) * (result.avgTrendAnswer - 1);
-      dotsPositions.push({ x: dotPosition, y: positionOfLine });
-    });
-    ctx.beginPath();
-    ctx.moveTo(dotsPositions[0].x, dotsPositions[0].y);
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = "#32A89C";
-    dotsPositions.forEach((point) => {
-      ctx.lineTo(point.x, point.y);
-    });
-    ctx.stroke();
-    ctx.closePath();
-
+    // horizontal lines
     times(numberOfRows, (time) => {
       const positionOfLine = rowHeight / 2 + time * rowHeight;
       ctx.beginPath();
@@ -95,17 +135,12 @@ const Chart: FC<IProps> = ({ data }: { data: any }) => {
       ctx.strokeStyle = "#FFFFFF1A";
       ctx.stroke();
       ctx.closePath();
+    });
 
-      ctx.beginPath();
-      const result = mappedTrends[time];
-      const dotPosition = (displayWidth / 4) * (result.avgTrendAnswer - 1);
-      ctx.fillStyle = "#121212";
-      ctx.arc(dotPosition, positionOfLine, 18, 0, 2 * Math.PI, true);
-      ctx.fill();
-      ctx.lineWidth = 12;
-      ctx.strokeStyle = "#32A89C";
-      ctx.stroke();
-      ctx.closePath();
+    renderResults(userMappedTrendsData, ctx, "#32A89C", "circle");
+    each(additionalData, ({ categories }) => {
+      const datasetAsTrends = asTrends(categories);
+      renderResults(datasetAsTrends, ctx, "#ffffffcc");
     });
   }, [
     width,
@@ -114,14 +149,16 @@ const Chart: FC<IProps> = ({ data }: { data: any }) => {
     displayHeight,
     numberOfRows,
     rowHeight,
-    mappedTrends,
+    userMappedTrendsData,
+    additionalData,
+    renderResults,
   ]);
 
   const resultChart = useMemo(() => {
     return (
       <div
         style={{
-          width: "400px",
+          width: screenWidth - 920,
           height: numberOfRows * ROW_HEIGHT_PX,
         }}
         ref={ref}
@@ -134,7 +171,7 @@ const Chart: FC<IProps> = ({ data }: { data: any }) => {
         />
       </div>
     );
-  }, [displayHeight, displayWidth, numberOfRows, style]);
+  }, [displayHeight, displayWidth, numberOfRows, screenWidth, style]);
 
   const renderRow = (item: TrendToDisplay, index: number) => {
     const firstRow = index === 0;
@@ -155,7 +192,7 @@ const Chart: FC<IProps> = ({ data }: { data: any }) => {
     <div className="chart">
       <table className="tg">
         <thead>
-          {mappedTrends.map((item: TrendToDisplay, index: number) => {
+          {userMappedTrendsData.map((item: TrendToDisplay, index: number) => {
             return renderRow(item, index);
           })}
         </thead>

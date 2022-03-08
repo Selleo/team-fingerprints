@@ -61,7 +61,11 @@ const LoginGateway = () => {
               </Text>
               <Button
                 className="login__button"
-                onClick={() => loginWithRedirect()}
+                onClick={() =>
+                  loginWithRedirect({
+                    connection: "google-oauth2",
+                  })
+                }
               >
                 {isLoading ? "Loading" : "Log in"}
               </Button>

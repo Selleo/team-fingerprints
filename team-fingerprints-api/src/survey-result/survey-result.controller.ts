@@ -16,7 +16,7 @@ export class SurveyResultController {
     return await this.surveyResultService.getAvgResultForAllCompanies(surveyId);
   }
 
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
   @Get(':surveyId/companies/:companyId')
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -28,7 +28,7 @@ export class SurveyResultController {
     );
   }
 
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER]))
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
   @Get(':surveyId/companies/:companyId/teams/:teamId')
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -37,6 +37,7 @@ export class SurveyResultController {
     return await this.surveyResultService.getAvgResultForTeam(surveyId, teamId);
   }
 
+  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
   @Get(':surveyId/companies/:companyId/teams/:teamId/users/:userId')
   async getSurveyResultForUser(
     @Param('surveyId', ValidateObjectId) surveyId: string,

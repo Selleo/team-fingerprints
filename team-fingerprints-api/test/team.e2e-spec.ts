@@ -3,18 +3,37 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { CompanyModule } from 'src/company/company.module';
 import { AppModule } from 'src/app.module';
-import { Role } from 'src/role/role.type';
 import * as mongoose from 'mongoose';
+import { TeamModule } from 'src/company/team/team.module';
+import { RoleModule } from 'src/role/role.module';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Company, CompanySchema } from 'src/company/models/company.model';
+import { User } from 'src/users/models/user.model';
+import { CreateUserDto } from 'src/users/dto/user.dto';
+import { CreateCompanyDto } from 'src/company/dto/company.dto';
 
-jest.setTimeout(40000);
+const usersData: Partial<User>[] = [
+  {
+    email: 'bedo@es.com',
+    firstName: 'Bedo',
+    lastName: 'Es',
+    authId: 'sdh2hfefowhefnjkswfbnw',
+  },
+  {
+    email: 'white2115@gmail.com',
+    firstName: 'White',
+    lastName: '2115',
+    authId: 'sdsdh2hfefowhefnjkswfbnw',
+  },
+  {
+    email: 'yetiasg@gmail.com',
+    firstName: 'Kinny',
+    lastName: 'Zimmer',
+    authId: 'sdfh2hfefowhefnjkswfbnw',
+  },
+];
 
-const user = {
-  userId: '621de1f21ee7e0b082154322',
-  email: 'yetiasg@gmail.com',
-  role: Role.COMPANY_ADMIN,
-};
-
-const mockCompanyData = {
+const companyData: Partial<Company> = {
   name: 'Selleo',
   description: 'Selleo - w&m',
   domain: 'selleo.com',
@@ -22,23 +41,84 @@ const mockCompanyData = {
 
 describe('Company controller (e2e)', () => {
   let app: INestApplication;
+  let companyModel: any;
+  let userModel: any;
+  let company: Company;
+  let companyAdmin: User;
+  let teamLeader: User;
+  let user: User;
+
+  const createUser = async (user: CreateUserDto) => {
+    const userExists = await userModel.findOne({ email: user.email });
+    if (userExists) await userModel.findOneAndDelete({ email: user.email });
+    const newUser = await userModel.create(user);
+    await newUser.save();
+    return newUser;
+  };
+
+  const removeUser = async (userId: string) => {
+    return await userModel.findOneAndDelete({ _id: userId });
+  };
+
+  const createCompany = async (company: CreateCompanyDto) => {
+    const companyExists = await companyModel.findOne({
+      domain: company.domain,
+    });
+    if (companyExists)
+      await companyModel.findOneAndDelete({ domanin: company.domain });
+    const newCompany = await companyModel.create(company);
+    await newCompany.save();
+    return newCompany;
+  };
+
+  const removeCompany = async (companyId: string) => {
+    return await companyModel.findOneAndDelete({ _id: companyId });
+  };
+
+  jest.setTimeout(10000);
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, CompanyModule],
+      imports: [
+        AppModule,
+        CompanyModule,
+        TeamModule,
+        RoleModule,
+        MongooseModule.forFeature([
+          {
+            name: Company.name,
+            schema: CompanySchema,
+          },
+        ]),
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    companyModel = await moduleFixture.get(getModelToken(Company.name));
+    userModel = await moduleFixture.get(getModelToken(User.name));
+
+    companyAdmin = await createUser(usersData[0] as CreateUserDto);
+    company = await createCompany(companyData as CreateCompanyDto);
+
+    teamLeader = await createUser(usersData[1] as CreateUserDto);
+    user = await createUser(usersData[2] as CreateUserDto);
   });
 
-  describe('POST /teams - create company', () => {
+  describe('POST /teams - create team', () => {
     it('returns true', async () => {
       return true;
     });
   });
 
   afterAll(async () => {
+    await removeCompany(company._id);
+
+    await removeUser(companyAdmin._id);
+    await removeUser(teamLeader._id);
+    await removeUser(user._id);
+
     await mongoose.connection.close(true);
     await app.close();
   });

@@ -52,7 +52,8 @@ describe('Company controller (e2e)', () => {
     const userExists = await userModel.findOne({ email: user.email });
     if (userExists) await userModel.findOneAndDelete({ email: user.email });
     const newUser = await userModel.create(user);
-    return await newUser.save();
+    await newUser.save();
+    return newUser;
   };
 
   const removeUser = async (userId: string) => {
@@ -66,12 +67,15 @@ describe('Company controller (e2e)', () => {
     if (companyExists)
       await companyModel.findOneAndDelete({ domanin: company.domain });
     const newCompany = await companyModel.create(company);
-    return await newCompany.save();
+    await newCompany.save();
+    return newCompany;
   };
 
   const removeCompany = async (companyId: string) => {
     return await companyModel.findOneAndDelete({ _id: companyId });
   };
+
+  jest.setTimeout(10000);
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -95,9 +99,9 @@ describe('Company controller (e2e)', () => {
     companyModel = await moduleFixture.get(getModelToken(Company.name));
     userModel = await moduleFixture.get(getModelToken(User.name));
 
+    companyAdmin = await createUser(usersData[0] as CreateUserDto);
     company = await createCompany(companyData as CreateCompanyDto);
 
-    companyAdmin = await createUser(usersData[0] as CreateUserDto);
     teamLeader = await createUser(usersData[1] as CreateUserDto);
     user = await createUser(usersData[2] as CreateUserDto);
   });

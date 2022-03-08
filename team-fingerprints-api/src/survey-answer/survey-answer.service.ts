@@ -18,7 +18,7 @@ import { SurveyResultService } from 'src/survey-result/survey-result.service';
 @Injectable()
 export class SurveyAnswerService {
   constructor(
-    @InjectModel(User.name) private readonly User: Model<User>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
     @Inject(forwardRef(() => SurveyResultService))
     private readonly surveyResultService: SurveyResultService,
@@ -26,12 +26,14 @@ export class SurveyAnswerService {
   ) {}
 
   async getUserAnswers(userId: string, surveyId: string): Promise<User> {
-    return await this.User.findOne(
-      { _id: userId, 'surveysAnswers.surveyId': surveyId },
-      {
-        'surveysAnswers.$': 1,
-      },
-    ).exec();
+    return await this.userModel
+      .findOne(
+        { _id: userId, 'surveysAnswers.surveyId': surveyId },
+        {
+          'surveysAnswers.$': 1,
+        },
+      )
+      .exec();
   }
 
   private async changeAnswer(
@@ -42,21 +44,23 @@ export class SurveyAnswerService {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
       throw new ForbiddenException();
 
-    return await this.User.findOneAndUpdate(
-      { _id: userId },
-      {
-        $set: {
-          'surveysAnswers.$[survey].answers.$[question].value': value,
+    return await this.userModel
+      .findOneAndUpdate(
+        { _id: userId },
+        {
+          $set: {
+            'surveysAnswers.$[survey].answers.$[question].value': value,
+          },
         },
-      },
-      {
-        arrayFilters: [
-          { 'survey.surveyId': surveyId },
-          { 'question.questionId': questionId },
-        ],
-        new: true,
-      },
-    ).exec();
+        {
+          arrayFilters: [
+            { 'survey.surveyId': surveyId },
+            { 'question.questionId': questionId },
+          ],
+          new: true,
+        },
+      )
+      .exec();
   }
 
   async saveUserSurveyAnswer(
@@ -72,18 +76,19 @@ export class SurveyAnswerService {
       let survey = await this.getUserAnswers(userId, surveyId);
 
       if (!survey) {
-        await this.User.updateOne(
-          { _id: userId },
-          {
-            $push: {
-              surveysAnswers: {
-                questionAnswerData,
-                surveyId,
-                completeStatus: SurveyCompleteStatus.PENDING,
+        await this.userModel
+          .updateOne(
+            { _id: userId },
+            {
+              $push: {
+                surveysAnswers: {
+                  questionAnswerData,
+                  surveyId,
+                  completeStatus: SurveyCompleteStatus.PENDING,
+                },
               },
             },
-          },
-        )
+          )
           .session(session)
           .exec();
         survey = await this.getUserAnswers(userId, surveyId);
@@ -99,14 +104,15 @@ export class SurveyAnswerService {
         return this.changeAnswer(userId, surveyId, questionAnswerData);
       }
 
-      const newAnswer = await this.User.updateOne(
-        { _id: userId, 'surveysAnswers.surveyId': surveyId },
-        {
-          $push: {
-            'surveysAnswers.$.answers': questionAnswerData,
+      const newAnswer = await this.userModel
+        .updateOne(
+          { _id: userId, 'surveysAnswers.surveyId': surveyId },
+          {
+            $push: {
+              'surveysAnswers.$.answers': questionAnswerData,
+            },
           },
-        },
-      )
+        )
         .session(session)
         .exec();
 
@@ -114,12 +120,13 @@ export class SurveyAnswerService {
         throw new InternalServerErrorException();
       }
 
-      await this.User.updateOne(
-        { _id: userId, 'surveysAnswers.surveyId': surveyId },
-        {
-          $inc: { 'surveysAnswers.$.amountOfAnswers': 1 },
-        },
-      )
+      await this.userModel
+        .updateOne(
+          { _id: userId, 'surveysAnswers.surveyId': surveyId },
+          {
+            $inc: { 'surveysAnswers.$.amountOfAnswers': 1 },
+          },
+        )
         .session(session)
         .exec();
       return newAnswer;
@@ -128,17 +135,19 @@ export class SurveyAnswerService {
   }
 
   async saveCalculatedAnswers(userId: string, surveyId, data: unknown) {
-    return await this.User.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          'surveysAnswers.$[survey].surveyResult': data,
+    return await this.userModel
+      .updateOne(
+        { _id: userId },
+        {
+          $set: {
+            'surveysAnswers.$[survey].surveyResult': data,
+          },
         },
-      },
-      {
-        arrayFilters: [{ 'survey.surveyId': surveyId }],
-      },
-    ).exec();
+        {
+          arrayFilters: [{ 'survey.surveyId': surveyId }],
+        },
+      )
+      .exec();
   }
 
   async finishSurvey(userId: string, surveyId: string) {
@@ -159,10 +168,12 @@ export class SurveyAnswerService {
   }
 
   async getSurveyCompleteStatus(userId: string, surveyId: string) {
-    const userWithSurvey = await this.User.findOne({
-      _id: userId,
-      'surveysAnswers.surveyId': surveyId,
-    }).exec();
+    const userWithSurvey = await this.userModel
+      .findOne({
+        _id: new mongoose.Types.ObjectId(userId),
+        'surveysAnswers.$.surveyId': surveyId,
+      })
+      .exec();
 
     if (!userWithSurvey) return SurveyCompleteStatus.NEW;
     const surveysAnswers = userWithSurvey.surveysAnswers;
@@ -185,17 +196,19 @@ export class SurveyAnswerService {
     userId: string,
     surveyId: string,
   ) {
-    return await this.User.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          'surveysAnswers.$[survey].completeStatus':
-            SurveyCompleteStatus.FINISHED,
+    return await this.userModel
+      .updateOne(
+        { _id: userId },
+        {
+          $set: {
+            'surveysAnswers.$[survey].completeStatus':
+              SurveyCompleteStatus.FINISHED,
+          },
         },
-      },
-      {
-        arrayFilters: [{ 'survey.surveyId': surveyId }],
-      },
-    ).exec();
+        {
+          arrayFilters: [{ 'survey.surveyId': surveyId }],
+        },
+      )
+      .exec();
   }
 }

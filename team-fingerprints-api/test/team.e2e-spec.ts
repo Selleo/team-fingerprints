@@ -11,6 +11,8 @@ import { Company, CompanySchema } from 'src/company/models/company.model';
 import { User } from 'src/users/models/user.model';
 import { CreateUserDto } from 'src/users/dto/user.dto';
 import { CreateCompanyDto } from 'src/company/dto/company.dto';
+import { Role } from 'src/role/role.type';
+import { Team } from 'src/company/models/team.model';
 
 const usersData: Partial<User>[] = [
   {
@@ -33,11 +35,29 @@ const usersData: Partial<User>[] = [
   },
 ];
 
-const companyData: Partial<Company> = {
+const teamData: Partial<Team> = {
+  name: '2115',
+  description: '2115',
+};
+
+const team: Omit<Team, 'pointColor' | 'pointShape'> = {
+  name: teamData.name,
+  description: teamData.description,
+  emailWhitelist: [null],
+  members: [null],
+  teamLeader: undefined,
+};
+
+const companyData = (user: User): Partial<Company> => ({
   name: 'Selleo',
   description: 'Selleo - w&m',
   domain: 'selleo.com',
-};
+  adminId: [user._id],
+  members: [user._id],
+  emailWhitelist: [user.email],
+});
+
+jest.setTimeout(10000);
 
 describe('Company controller (e2e)', () => {
   let app: INestApplication;
@@ -45,6 +65,7 @@ describe('Company controller (e2e)', () => {
   let userModel: any;
   let company: Company;
   let companyAdmin: User;
+  let companyId: string;
   let teamLeader: User;
   let user: User;
 
@@ -75,8 +96,6 @@ describe('Company controller (e2e)', () => {
     return await companyModel.findOneAndDelete({ _id: companyId });
   };
 
-  jest.setTimeout(10000);
-
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
@@ -100,26 +119,58 @@ describe('Company controller (e2e)', () => {
     userModel = await moduleFixture.get(getModelToken(User.name));
 
     companyAdmin = await createUser(usersData[0] as CreateUserDto);
-    company = await createCompany(companyData as CreateCompanyDto);
+    company = await createCompany(
+      companyData(companyAdmin) as CreateCompanyDto,
+    );
 
-    teamLeader = await createUser(usersData[1] as CreateUserDto);
-    user = await createUser(usersData[2] as CreateUserDto);
-  });
+    companyId = new mongoose.Types.ObjectId(company._id).toString();
 
-  describe('POST /teams - create team', () => {
-    it('returns true', async () => {
-      return true;
-    });
+    companyAdmin = await userModel
+      .findOneAndUpdate(
+        { _id: companyAdmin._id },
+        {
+          $set: {
+            role: Role.COMPANY_ADMIN,
+            companyId: company._id,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+
+    // teamLeader = await createUser(usersData[1] as CreateUserDto);
+    // user = await createUser(usersData[2] as CreateUserDto);
   });
 
   afterAll(async () => {
     await removeCompany(company._id);
 
     await removeUser(companyAdmin._id);
-    await removeUser(teamLeader._id);
-    await removeUser(user._id);
+    // await removeUser(teamLeader._id);
+    // await removeUser(user._id);
 
     await mongoose.connection.close(true);
     await app.close();
+  });
+
+  describe('POST /teams - create team', () => {
+    it('returns created team', async () => {
+      return await request(app.getHttpServer())
+        .post(`/companies/${companyId}/teams`)
+        .send(teamData)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.teams.length).toBe(1);
+          const newTeam: typeof team = {
+            emailWhitelist: body.teams[0].emailWhitelist,
+            members: body.teams[0].members,
+            teamLeader: body.teams[0].teamLeader,
+            name: body.teams[0].name,
+            description: body.teams[0].description,
+          };
+
+          expect(newTeam).toMatchObject(team);
+        });
+    });
   });
 });

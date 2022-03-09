@@ -221,7 +221,7 @@ export class SurveyResultService {
         surveyResult[obj.category] = {
           categoryTitle: obj.categoryTitle,
           categoryId: obj.category,
-          avgTrends: [...avgTrends, ...surveyResult[obj.category].avgTrends],
+          avgTrends: [...surveyResult[obj.category].avgTrends, ...avgTrends],
         };
       } else {
         surveyResult[obj.category] = {

@@ -17,7 +17,6 @@ export class Team {
   pointShape: string;
 
   @Prop({
-    default: [null],
     type: [String],
     excludeIndexes: true,
     index: false,
@@ -25,7 +24,6 @@ export class Team {
   members?: string[];
 
   @Prop({
-    default: [null],
     type: [String],
     excludeIndexes: true,
     index: false,

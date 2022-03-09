@@ -13,6 +13,7 @@ import { CreateUserDto } from 'src/users/dto/user.dto';
 import { CreateCompanyDto } from 'src/company/dto/company.dto';
 import { Role } from 'src/role/role.type';
 import { Team } from 'src/company/models/team.model';
+import { UpdateTeamDto } from 'src/company/team/dto/team.dto';
 
 const usersData: Partial<User>[] = [
   {
@@ -20,12 +21,6 @@ const usersData: Partial<User>[] = [
     firstName: 'Bedo',
     lastName: 'Es',
     authId: 'sdh2hfefowhefnjkswfbnw',
-  },
-  {
-    email: 'white2115@gmail.com',
-    firstName: 'White',
-    lastName: '2115',
-    authId: 'sdsdh2hfefowhefnjkswfbnw',
   },
   {
     email: 'yetiasg@gmail.com',
@@ -40,21 +35,35 @@ const teamData: Partial<Team> = {
   description: '2115',
 };
 
-const team: Omit<Team, 'pointColor' | 'pointShape'> = {
+let mockTeam: Omit<Team, 'pointColor' | 'pointShape'> = {
   name: teamData.name,
   description: teamData.description,
-  emailWhitelist: [null],
-  members: [null],
+  emailWhitelist: [],
+  members: [],
   teamLeader: undefined,
 };
 
-const companyData = (user: User): Partial<Company> => ({
+const returnTeam = ({
+  emailWhitelist,
+  members,
+  teamLeader,
+  name,
+  description,
+}: Team): typeof mockTeam => ({
+  emailWhitelist,
+  members,
+  teamLeader,
+  name,
+  description,
+});
+
+const companyData = ({ _id, email }: User): Partial<Company> => ({
   name: 'Selleo',
   description: 'Selleo - w&m',
   domain: 'selleo.com',
-  adminId: [user._id],
-  members: [user._id],
-  emailWhitelist: [user.email],
+  adminId: [_id],
+  members: [_id],
+  emailWhitelist: [email],
 });
 
 jest.setTimeout(10000);
@@ -66,7 +75,8 @@ describe('Company controller (e2e)', () => {
   let company: Company;
   let companyAdmin: User;
   let companyId: string;
-  let teamLeader: User;
+  let team: Partial<Company>;
+  let teamId: string;
   let user: User;
 
   const createUser = async (user: CreateUserDto) => {
@@ -137,17 +147,13 @@ describe('Company controller (e2e)', () => {
         { new: true },
       )
       .exec();
-
-    // teamLeader = await createUser(usersData[1] as CreateUserDto);
-    // user = await createUser(usersData[2] as CreateUserDto);
   });
 
   afterAll(async () => {
     await removeCompany(company._id);
 
     await removeUser(companyAdmin._id);
-    // await removeUser(teamLeader._id);
-    // await removeUser(user._id);
+    await removeUser(user._id);
 
     await mongoose.connection.close(true);
     await app.close();
@@ -161,15 +167,134 @@ describe('Company controller (e2e)', () => {
         .expect(201)
         .then(({ body }) => {
           expect(body.teams.length).toBe(1);
-          const newTeam: typeof team = {
-            emailWhitelist: body.teams[0].emailWhitelist,
-            members: body.teams[0].members,
-            teamLeader: body.teams[0].teamLeader,
-            name: body.teams[0].name,
-            description: body.teams[0].description,
-          };
 
-          expect(newTeam).toMatchObject(team);
+          const newTeam = returnTeam(body.teams[0]);
+          expect(newTeam).toMatchObject(mockTeam);
+
+          team = body.teams[0];
+          teamId = new mongoose.Types.ObjectId(team._id).toString();
+        });
+    });
+  });
+
+  describe('GET /teams - get team by given id', () => {
+    it('returns team', async () => {
+      return await request(app.getHttpServer())
+        .get(`/companies/${companyId}/teams/${teamId}`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(returnTeam(body)).toMatchObject(mockTeam);
+        });
+    });
+  });
+
+  describe('GET /teams - update team', () => {
+    it('returns updated team', async () => {
+      const updateData: UpdateTeamDto = {
+        name: '5112',
+        description: '5112',
+      };
+      return await request(app.getHttpServer())
+        .patch(`/companies/${companyId}/teams/${teamId}`)
+        .send(updateData)
+        .expect(200)
+        .then(({ body }) => {
+          const updatedTeam = returnTeam(body.teams[0]);
+          mockTeam = { ...mockTeam, ...updateData };
+          expect(updatedTeam).toMatchObject(mockTeam);
+
+          team = body.teams[0];
+        });
+    });
+  });
+
+  describe('Team members management', () => {
+    describe('POST /teams/:teamId/member - Adding new team member', () => {
+      it('returns updated team with new member', async () => {
+        user = await createUser(usersData[1] as CreateUserDto);
+        const updateData: Partial<Team> = {
+          emailWhitelist: [user.email],
+        };
+
+        return await request(app.getHttpServer())
+          .post(`/companies/${companyId}/teams/${teamId}/member`)
+          .send({ email: user.email })
+          .expect(201)
+          .then(({ body }) => {
+            const updatedTeam = returnTeam(body.teams[0]);
+            mockTeam = { ...mockTeam, ...updateData };
+            expect(updatedTeam).toMatchObject(mockTeam);
+
+            team = body.teams[0];
+          });
+      });
+    });
+
+    describe('Adding team leader to team', () => {
+      it('returns updated team with team leader', async () => {
+        const updateData: Partial<Team> = {
+          emailWhitelist: [user.email],
+          teamLeader: {
+            _id: user._id,
+            email: user.email,
+          },
+        };
+
+        return await request(app.getHttpServer())
+          .post(`/companies/${companyId}/teams/${teamId}/leader`)
+          .send({ email: user.email })
+          .expect(201)
+          .then(({ body }) => {
+            const updatedTeam = returnTeam(body.teams[0]);
+            mockTeam = { ...mockTeam, ...updateData };
+            expect(updatedTeam).toMatchObject(mockTeam);
+
+            team = body.teams[0];
+          });
+      });
+    });
+
+    describe('Removing team leader', () => {
+      it('removes team leader from team', async () => {
+        return await request(app.getHttpServer())
+          .delete(`/companies/${companyId}/teams/${teamId}/leader`)
+          .send({ email: user.email })
+          .expect(200)
+          .then(({ body }) => {
+            const updatedTeam = returnTeam(body.teams[0]);
+
+            mockTeam.teamLeader = { _id: '', email: '' };
+            expect(updatedTeam).toMatchObject(mockTeam);
+
+            team = body.teams[0];
+          });
+      });
+    });
+
+    describe('Removing team member', () => {
+      it('removes team member by given id', async () => {
+        return await request(app.getHttpServer())
+          .delete(`/companies/${companyId}/teams/${teamId}/member`)
+          .send({ email: team.emailWhitelist[0] })
+          .expect(200)
+          .then(({ body }) => {
+            const updatedTeam = returnTeam(body.teams[0]);
+
+            mockTeam.emailWhitelist = [];
+            expect(updatedTeam).toMatchObject(mockTeam);
+          });
+      });
+    });
+  });
+
+  describe('GET /teams - remove team by given id', () => {
+    it('returns removed team', async () => {
+      return await request(app.getHttpServer())
+        .delete(`/companies/${companyId}/teams/${teamId}`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.teams.length).toBe(0);
+          expect(body.teams).toEqual([]);
         });
     });
   });

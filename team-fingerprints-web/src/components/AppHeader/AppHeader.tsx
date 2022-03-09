@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as ChevronDownIcon } from "../../assets/ChevronDown.svg";
 import { ReactComponent as LogoutIcon } from "../../assets/Logout.svg";
 import { ReactComponent as GearIcon } from "../../assets/Gear.svg";
+import { ReactComponent as PencilIcon } from "../../assets/Pencil2.svg";
 
 import "./styles.sass";
 
@@ -89,7 +90,9 @@ const AppHeader = () => {
                   navigate("responses");
                 }}
               >
-                <div className="svg-wrap"></div>
+                <div className="svg-wrap">
+                  <PencilIcon />
+                </div>
                 <span>Put answers</span>
               </button>
             )}

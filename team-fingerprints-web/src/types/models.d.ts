@@ -93,4 +93,5 @@ export type AdditionalData = {
   icon: Shape;
   color: string;
   categories: CategoryResults[];
+  id: string;
 };

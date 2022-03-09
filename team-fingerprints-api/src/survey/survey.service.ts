@@ -50,7 +50,7 @@ export class SurveyService {
 
   async updateSurvey(
     surveyId: string,
-    { title, isPublic }: UpdateSurveyDto,
+    { title, isPublic, archived }: UpdateSurveyDto,
   ): Promise<Survey> {
     return await this.surveyModel
       .findByIdAndUpdate(
@@ -59,6 +59,7 @@ export class SurveyService {
           $set: {
             title,
             isPublic,
+            archived,
           },
         },
         { new: true },

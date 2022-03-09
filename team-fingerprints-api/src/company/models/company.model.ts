@@ -28,7 +28,6 @@ export class Company extends Document {
   domain: string;
 
   @Prop({
-    default: [null],
     type: [String],
     excludeIndexes: true,
     index: false,
@@ -36,7 +35,6 @@ export class Company extends Document {
   emailWhitelist: string[];
 
   @Prop({
-    default: [null],
     type: [String],
     excludeIndexes: true,
     index: false,

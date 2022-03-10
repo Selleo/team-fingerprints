@@ -1,4 +1,3 @@
-import { RoleType } from 'src/role/role.type';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 
 export interface QuestionAnswerI {

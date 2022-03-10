@@ -6,17 +6,16 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserRole } from 'src/common/decorators/currentUserRole.decorator';
-import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'src/role/role.type';
 import { Survey } from './models/survey.model';
 import { SurveyService } from './survey.service';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
+import { Roles } from 'src/role/decorators/roles.decorator';
 
 @ApiTags('surveys')
 @Controller({ version: '1' })
@@ -40,13 +39,13 @@ export class SurveyController {
   }
 
   @Post()
-  @UseGuards(RoleGuard([RoleType.SUPER_ADMIN]))
+  @Roles([RoleType.SUPER_ADMIN])
   async createSurvey(@Body() surveyDto: CreateSurveyDto): Promise<Survey> {
     return await this.surveyService.createSurvey(surveyDto);
   }
 
   @Patch('/:surveyId')
-  @UseGuards(RoleGuard([RoleType.SUPER_ADMIN]))
+  @Roles([RoleType.SUPER_ADMIN])
   async updateSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() surveyDto: UpdateSurveyDto,
@@ -55,7 +54,7 @@ export class SurveyController {
   }
 
   @Delete('/:surveyId')
-  @UseGuards(RoleGuard([RoleType.SUPER_ADMIN]))
+  @Roles([RoleType.SUPER_ADMIN])
   async removeSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
   ): Promise<Survey> {

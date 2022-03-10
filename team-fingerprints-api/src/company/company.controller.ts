@@ -7,11 +7,9 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
-import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'src/role/role.type';
 import { CompanyService } from './company.service';
@@ -22,6 +20,7 @@ import {
 } from './dto/company.dto';
 import { Company } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
+import { Roles } from 'src/role/decorators/roles.decorator';
 
 @ApiTags('companies')
 @Controller({ version: '1' })
@@ -32,13 +31,13 @@ export class CompanyController {
   ) {}
 
   @Get()
-  @UseGuards(RoleGuard([RoleType.USER, RoleType.COMPANY_ADMIN]))
+  @Roles([RoleType.USER, RoleType.COMPANY_ADMIN])
   async getCompanies(): Promise<Company[]> {
     return await this.companyService.getCompaneis();
   }
 
   @Get(':companyId')
-  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN]))
+  @Roles([RoleType.COMPANY_ADMIN])
   async getCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @CurrentUserId(ValidateObjectId) userId: string,
@@ -47,7 +46,7 @@ export class CompanyController {
   }
 
   @Post()
-  @UseGuards(RoleGuard([RoleType.USER], false))
+  @Roles([RoleType.USER], false)
   async createCompany(
     @Body() companyDto: CreateCompanyDto,
     @CurrentUserId(ValidateObjectId) userId: string,
@@ -56,7 +55,7 @@ export class CompanyController {
   }
 
   @Patch(':companyId')
-  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN], false))
+  @Roles([RoleType.COMPANY_ADMIN], false)
   async updateCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() companyDto: UpdateCompanyDto,
@@ -65,7 +64,7 @@ export class CompanyController {
   }
 
   @Post(':companyId/member')
-  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN], false))
+  @Roles([RoleType.COMPANY_ADMIN], false)
   async addUserToCompanyWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() { email }: ValidateEmail,
@@ -76,8 +75,8 @@ export class CompanyController {
     );
   }
 
-  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN], false))
   @Delete(':companyId/member')
+  @Roles([RoleType.COMPANY_ADMIN], false)
   async removeCompanyMemberByEmail(@Body() { email }: ValidateEmail) {
     return await this.companyMembersService.removeCompanyMemberByEmail(email);
   }

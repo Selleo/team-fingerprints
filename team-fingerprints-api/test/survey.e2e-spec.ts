@@ -7,12 +7,11 @@ import * as mongoose from 'mongoose';
 import { TeamModule } from 'src/company/team/team.module';
 import { RoleModule } from 'src/role/role.module';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { Company, CompanySchema } from 'src/company/models/company.model';
 import { User } from 'src/users/models/user.model';
 import { CreateUserDto } from 'src/users/dto/user.dto';
 import { Role } from 'src/role/role.type';
 import { CreateSurveyDto } from 'src/survey/dto/survey.dto';
-import { Survey } from 'src/survey/models/survey.model';
+import { Survey, SurveySchema } from 'src/survey/models/survey.model';
 
 const usersData: Partial<User>[] = [
   {
@@ -87,8 +86,8 @@ describe('Company controller (e2e)', () => {
         RoleModule,
         MongooseModule.forFeature([
           {
-            name: Company.name,
-            schema: CompanySchema,
+            name: Survey.name,
+            schema: SurveySchema,
           },
         ]),
       ],

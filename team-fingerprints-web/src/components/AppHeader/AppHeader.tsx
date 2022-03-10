@@ -13,6 +13,7 @@ import { ReactComponent as ChevronDownIcon } from "../../assets/ChevronDown.svg"
 import { ReactComponent as LogoutIcon } from "../../assets/Logout.svg";
 import { ReactComponent as GearIcon } from "../../assets/Gear.svg";
 import { ReactComponent as PencilIcon } from "../../assets/Pencil2.svg";
+import { ReactComponent as LogoIcon } from "../../assets/Logo.svg";
 
 import "./styles.sass";
 
@@ -62,21 +63,8 @@ const AppHeader = () => {
 
   return (
     <Header height={122} className="header">
-      {/* Handle other responsive styles with MediaQuery component or createStyles function */}
-      <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-        <Burger
-          opened={opened}
-          onClick={() => setOpened((o) => !o)}
-          size="sm"
-          color={theme.colors.gray[6]}
-          mr="xl"
-        />
-      </MediaQuery>
-
       <div className="header__branding">
-        <Title order={2} className={"header__branding__title"}>
-          fingerprints
-        </Title>
+        <LogoIcon height={37} fill="#ccc" />
       </div>
       {user?.email && (
         <div className="header__menu">

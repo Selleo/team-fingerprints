@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/users/models/user.model';
@@ -23,7 +27,10 @@ export class RoleService {
     throw new BadRequestException();
   }
 
-  async createRoleDocument(userId: string): Promise<Role> {
-    return await this.roleModel.create({ userId });
+  async createRoleDocument(userId: string, email: string): Promise<Role> {
+    const roleDocument = await this.roleModel.create({ userId, email });
+    if (!roleDocument) throw new InternalServerErrorException();
+    await roleDocument.save();
+    return roleDocument;
   }
 }

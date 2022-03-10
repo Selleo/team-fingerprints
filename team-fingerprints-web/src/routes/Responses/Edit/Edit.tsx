@@ -2,7 +2,15 @@ import React, { useContext, useMemo, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { find, flatMapDeep, shuffle, size, toNumber, values } from "lodash";
+import {
+  find,
+  flatMapDeep,
+  keys,
+  shuffle,
+  size,
+  toNumber,
+  values,
+} from "lodash";
 import { Button, Center } from "@mantine/core";
 import axios from "axios";
 
@@ -21,7 +29,7 @@ import { Switch } from "../../../components/Switch";
 import { ProfileContext } from "../../../routes";
 
 export default function Edit() {
-  const [visibleData, setVisibleData] = useState([true, true, true]);
+  const [visibleData, setVisibleData] = useState<any>({});
   const { profile } = useContext(ProfileContext);
   const [showMyResults, setShowMyResults] = useState(true);
 
@@ -44,25 +52,78 @@ export default function Edit() {
     return data;
   });
 
-  const { isLoading: isLoadingSurveyResultsAll, data: serveyResultsAll } =
-    useQuery<any, Error>(`surveyResultsAll-${surveyId}`, async () => {
+  // const { isLoading: isLoadingSurveyResultsAll, data: serveyResultsAll } =
+  //   useQuery<any, Error>(`surveyResultsAll-${surveyId}`, async () => {
+  //     const { data } = await axios.get<any>(
+  //       `/survey-results/${surveyId}/companies`
+  //     );
+  //     return data;
+  //   });
+
+  const {
+    isLoading: isLoadingSurveyResultsCompany,
+    data: serveyResultsCompany,
+  } = useQuery<any, Error>(
+    `surveyResultsAll-${surveyId}-${profile?.company?._id}`,
+    async () => {
       const { data } = await axios.get<any>(
         `/survey-results/${surveyId}/companies/${profile?.company?._id}`
       );
       return data;
-    });
+    }
+  );
+
+  const { isLoading: isLoadingTeamResults, data: serveyResultsTeam } = useQuery<
+    any,
+    Error
+  >(`surveyResultsAll-${surveyId}-${profile?.company?._id}`, async () => {
+    if (profile?.team?._id) {
+      const { data } = await axios.get<any>(
+        `/survey-results/${surveyId}/companies/${profile?.company?._id}/team/${profile?.team?._id}`
+      );
+      return data;
+    } else return null;
+  });
 
   const additionalData = useMemo(() => {
     let tmp: AdditionalData[] = [];
-    if (serveyResultsAll) {
+    let visibility = {};
+    // if (serveyResultsAll) {
+    //   tmp.push({
+    //     categories: values(serveyResultsAll),
+    //     color: "orange",
+    //     icon: "square",
+    //   });
+    // }
+    if (profile?.team?._id && serveyResultsTeam) {
+      const id = "team";
       tmp.push({
-        categories: values(serveyResultsAll),
-        color: "red",
-        icon: "triangle",
+        categories: values(serveyResultsTeam),
+        color: "yellow",
+        icon: "square",
+        id,
       });
+      visibility = { ...visibility, [id]: true };
     }
+    if (serveyResultsCompany) {
+      const id = "company";
+      tmp.push({
+        categories: values(serveyResultsCompany),
+        color: "yellow",
+        icon: "trapeze",
+        id,
+      });
+      visibility = { ...visibility, [id]: true };
+    }
+    setVisibleData(visibility);
     return tmp;
-  }, [serveyResultsAll]);
+  }, [serveyResultsCompany, serveyResultsTeam]);
+
+  const filteredAdditionalData = useMemo(() => {
+    return additionalData.filter((element) => {
+      return visibleData[element.id];
+    });
+  }, [additionalData, visibleData]);
 
   const finishSurvey = useMutation(
     async () => {
@@ -128,10 +189,32 @@ export default function Edit() {
               <span>You</span>
               <Switch value={showMyResults} setValue={setShowMyResults} />
             </div>
-            {additionalData.map((item) => {})}
+            {keys(visibleData).map((key) => {
+              return (
+                <div className="survey-response__legend__item survey-response__legend__item--first">
+                  <div className="survey-response__legend__item__icon">
+                    <SquareIcon className="trapeze" stroke={"yellow"} />
+                  </div>
+                  <span>{key}</span>
+                  <Switch
+                    value={!!visibleData[key]}
+                    setValue={() =>
+                      setVisibleData({
+                        ...visibleData,
+                        [key]: !visibleData[key],
+                      })
+                    }
+                  />
+                </div>
+              );
+            })}
           </div>
 
-          <Chart data={surveyFinished} additionalData={additionalData} />
+          <Chart
+            data={surveyFinished}
+            additionalData={filteredAdditionalData}
+            showMe={showMyResults}
+          />
         </>
       ) : (
         <Center>
@@ -181,7 +264,8 @@ export default function Edit() {
     isLoadingSurvey ||
     isLoadingSurveyResponse ||
     isLoadingSurveyFinished ||
-    isLoadingSurveyResultsAll
+    isLoadingSurveyResultsCompany ||
+    isLoadingTeamResults
   ) {
     return <span>Loading survey</span>;
   }

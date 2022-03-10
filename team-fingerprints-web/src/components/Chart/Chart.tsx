@@ -15,6 +15,7 @@ import "./styles.sass";
 interface IProps {
   data: any;
   additionalData: AdditionalData[];
+  showMe: boolean;
 }
 
 const ROW_HEIGHT_PX = 60;
@@ -44,7 +45,7 @@ const asTrends = (data: CategoryResults[]) => {
   return tmpTrends;
 };
 
-const Chart: FC<IProps> = ({ data, additionalData }) => {
+const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
   const { width: screenWidth } = useWindowDimensions();
   const dataReadyToUse = data?.surveysAnswers[0]
     .surveyResult as CategoryResults[];
@@ -105,16 +106,29 @@ const Chart: FC<IProps> = ({ data, additionalData }) => {
         const dotPosition =
           (displayWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
         ctx.fillStyle = "#121212";
-        if (shape === "circle") {
-          ctx.arc(dotPosition, positionOfLine, 18, 0, 2 * Math.PI, true);
-        } else {
-          ctx.rect(dotPosition - 12, positionOfLine - 12, 24, 24);
+        switch (shape) {
+          case "circle":
+            ctx.arc(dotPosition, positionOfLine, 18, 0, 2 * Math.PI, true);
+            break;
+          case "triangle":
+            ctx.moveTo(dotPosition, positionOfLine - 15);
+            ctx.lineTo(dotPosition + 18, positionOfLine + 15);
+            ctx.lineTo(dotPosition - 18, positionOfLine + 15);
+            break;
+          case "trapeze":
+            ctx.moveTo(dotPosition, positionOfLine - 15);
+            ctx.lineTo(dotPosition + 15, positionOfLine);
+            ctx.lineTo(dotPosition, positionOfLine + 15);
+            ctx.lineTo(dotPosition - 15, positionOfLine);
+            break;
+          default:
+            ctx.rect(dotPosition - 12, positionOfLine - 12, 24, 24);
         }
+        ctx.closePath();
         ctx.fill();
         ctx.lineWidth = 12;
         ctx.strokeStyle = color;
         ctx.stroke();
-        ctx.closePath();
       });
     },
     [displayWidth, numberOfRows, rowHeight]
@@ -125,6 +139,7 @@ const Chart: FC<IProps> = ({ data, additionalData }) => {
     if (!ctx) {
       return;
     }
+    ctx.clearRect(0, 0, displayWidth, displayHeight);
     // horizontal lines
     times(numberOfRows, (time) => {
       const positionOfLine = rowHeight / 2 + time * rowHeight;
@@ -137,10 +152,10 @@ const Chart: FC<IProps> = ({ data, additionalData }) => {
       ctx.closePath();
     });
 
-    renderResults(userMappedTrendsData, ctx, "#32A89C", "circle");
-    each(additionalData, ({ categories }) => {
+    showMe && renderResults(userMappedTrendsData, ctx, "#32A89C", "circle");
+    each(additionalData, ({ categories, color, icon }) => {
       const datasetAsTrends = asTrends(categories);
-      renderResults(datasetAsTrends, ctx, "#ffffffcc");
+      renderResults(datasetAsTrends, ctx, color, icon);
     });
   }, [
     width,
@@ -152,6 +167,7 @@ const Chart: FC<IProps> = ({ data, additionalData }) => {
     userMappedTrendsData,
     additionalData,
     renderResults,
+    showMe,
   ]);
 
   const resultChart = useMemo(() => {

@@ -13,7 +13,6 @@ export interface UserI {
   lastName: string;
   email: string;
   pictureUrl?: string;
-  role: RoleType;
   companyId: string;
   surveysAnswers: UserSurveyAnswerI[];
 }

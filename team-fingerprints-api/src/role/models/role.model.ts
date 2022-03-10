@@ -13,13 +13,13 @@ export class Role extends Document implements RoleI {
   @Prop({ default: RoleType.USER, required: true })
   role: RoleType;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   userId: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   companyId: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   teamId: string;
 }
 

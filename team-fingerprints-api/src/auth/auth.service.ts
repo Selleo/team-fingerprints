@@ -6,6 +6,7 @@ import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import * as request from 'request';
 import { User } from 'src/users/models/user.model';
+import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
     private readonly companyMembersService: CompanyMembersService,
     private readonly teamMembersService: TeamMembersService,
     private readonly configService: ConfigService,
+    private readonly roleService: RoleService,
   ) {}
 
   async handleExistingUsers(email: string) {
@@ -59,6 +61,7 @@ export class AuthService {
         firstName,
         lastName,
       });
+      await this.roleService.createRoleDocument(user);
     });
     if (!user) throw new BadRequestException();
 

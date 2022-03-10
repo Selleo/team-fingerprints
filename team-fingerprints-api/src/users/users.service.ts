@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserProfileI } from 'src/auth/interfaces/auth.interface';
@@ -9,6 +9,7 @@ import { RoleType } from 'src/role/role.type';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
+import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,7 @@ export class UsersService {
     @InjectModel(User.name) private readonly User: Model<User>,
     private readonly companyService: CompanyService,
     private readonly teamService: TeamService,
+    private readonly roleService: RoleService,
   ) {}
 
   async getUserByAuthId(authId: string): Promise<User> {
@@ -48,12 +50,18 @@ export class UsersService {
     const user = await this.getUser(userId);
     const company = await this.companyService.getCompanyByUserEmail(user.email);
     const team: Team = await this.teamService.getTeamByUserEmail(user.email);
+    const roleDocument = await this.roleService.findOneRoleDocument({
+      userId: user._id,
+      companyId: company._id || null,
+    });
+
+    if (!roleDocument) throw new BadRequestException();
 
     const profile: UserProfileI = {
       id: user._id,
       email: user.email,
-      role: user.role,
-      canCreateTeam: !company && !team && user.role === RoleType.USER,
+      role: roleDocument.role,
+      canCreateTeam: !company && !team && roleDocument.role === RoleType.USER,
       company: {
         _id: company?._id,
         name: company?.name,

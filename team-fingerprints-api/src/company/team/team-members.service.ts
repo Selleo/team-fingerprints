@@ -12,7 +12,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 // import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { User } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
 import { CompanyMembersService } from '../company-members.service';
@@ -57,7 +57,7 @@ export class TeamMembersService {
 
   async isSuperAdminByEmail(email: string) {
     const user = await this.usersService.getUserByEmail(email);
-    return user?.role === Role.SUPER_ADMIN ? true : false;
+    return user?.role === RoleType.SUPER_ADMIN ? true : false;
   }
 
   async addUserToTeamWhitelist(
@@ -220,7 +220,7 @@ export class TeamMembersService {
       return teamWithLeaderEmail;
     }
 
-    if (leaderCandidate?.role !== Role.USER) {
+    if (leaderCandidate?.role !== RoleType.USER) {
       throw new ForbiddenException(
         `User ${leaderEmail} can not be a team leader.`,
       );
@@ -260,14 +260,17 @@ export class TeamMembersService {
       leaderEmail,
     );
 
-    await this.roleService.changeUserRole(leaderCandidateId, Role.TEAM_LEADER);
+    await this.roleService.changeUserRole(
+      leaderCandidateId,
+      RoleType.TEAM_LEADER,
+    );
     if (
       currentLeader &&
       currentLeader.toString() !== leaderCandidate._id.toString()
     ) {
       await this.roleService.changeUserRole(
         currentLeader.toString(),
-        Role.USER,
+        RoleType.USER,
       );
     }
 
@@ -318,7 +321,7 @@ export class TeamMembersService {
       .exec();
     if (!team) throw new InternalServerErrorException();
     if (leaderId) {
-      await this.roleService.changeUserRole(leaderId, Role.USER);
+      await this.roleService.changeUserRole(leaderId, RoleType.USER);
     }
     return team;
   }
@@ -332,7 +335,7 @@ export class TeamMembersService {
     if (
       user &&
       teamLeader._id === user._id.toString() &&
-      user.role === Role.TEAM_LEADER
+      user.role === RoleType.TEAM_LEADER
     ) {
       return { leaderId: user._id, teamId: _id };
     }

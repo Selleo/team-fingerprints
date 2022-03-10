@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { UserI } from '../interfaces/user.interface';
 import {
   UserSurveyAnswer,
@@ -26,8 +26,8 @@ export class User extends Document implements UserI {
   @Prop()
   pictureUrl?: string;
 
-  @Prop({ default: Role.USER, required: true })
-  role: Role;
+  @Prop({ default: RoleType.USER, required: true })
+  role: RoleType;
 
   @Prop({ default: '' })
   companyId: string;

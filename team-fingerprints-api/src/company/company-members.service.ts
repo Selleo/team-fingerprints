@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import { CompanyService } from './company.service';
 import { Company } from './models/company.model';
@@ -46,7 +46,7 @@ export class CompanyMembersService {
       throw new BadRequestException('This user can not be managed');
 
     const user = await this.usersService.getUserByEmail(email);
-    if (user && user.role !== Role.USER) return;
+    if (user && user.role !== RoleType.USER) return;
 
     if (!(await this.isUserInAnyCompanyWhitelist(email))) {
       return await this.companyModel.findOneAndUpdate(
@@ -65,7 +65,7 @@ export class CompanyMembersService {
       throw new BadRequestException('This user can not be managed');
 
     const user = await this.usersService.getUserByEmail(email);
-    if (user && user.role !== Role.USER) return;
+    if (user && user.role !== RoleType.USER) return;
 
     const destinationCompnay =
       (await this.isUserInAnyCompanyWhitelist(email)) ||

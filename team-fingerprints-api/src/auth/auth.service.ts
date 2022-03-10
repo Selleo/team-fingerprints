@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CompanyMembersService } from 'src/company/company-members.service';
 import { TeamMembersService } from 'src/company/team/team-members.service';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import * as request from 'request';
 import { User } from 'src/users/models/user.model';
@@ -18,7 +18,7 @@ export class AuthService {
 
   async handleExistingUsers(email: string) {
     const user = await this.usersService.getUserByEmail(email);
-    if (user.role !== Role.SUPER_ADMIN) {
+    if (user.role !== RoleType.SUPER_ADMIN) {
       await this.companyMembersService.addMemberToCompanyByEmail(email);
       await this.teamMembersService.addMemberToTeamByEmail(email);
       await this.teamMembersService.checkEmailIfAssignedToBeLeader(email);

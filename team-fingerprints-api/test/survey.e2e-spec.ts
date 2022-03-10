@@ -9,7 +9,7 @@ import { RoleModule } from 'src/role/role.module';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { User } from 'src/users/models/user.model';
 import { CreateUserDto } from 'src/users/dto/user.dto';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { CreateSurveyDto } from 'src/survey/dto/survey.dto';
 import { Survey, SurveySchema } from 'src/survey/models/survey.model';
 
@@ -19,14 +19,14 @@ const usersData: Partial<User>[] = [
     firstName: 'Bedo',
     lastName: 'Es',
     authId: 'sdh2hfefowhefnjkswfbnw',
-    role: Role.USER,
+    role: RoleType.USER,
   },
   {
     email: 'yetiasg@gmail.com',
     firstName: 'Kinny',
     lastName: 'Zimmer',
     authId: 'sdfh2hfefowhefnjkswfbnw',
-    role: Role.SUPER_ADMIN,
+    role: RoleType.SUPER_ADMIN,
   },
 ];
 

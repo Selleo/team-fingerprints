@@ -1,7 +1,7 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleGuard } from 'src/role/role.guard';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { SurveyResultService } from './survey-result.service';
 
 @Controller({ path: 'survey-results', version: '1' })
@@ -16,7 +16,9 @@ export class SurveyResultController {
     return await this.surveyResultService.getAvgResultForAllCompanies(surveyId);
   }
 
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
+  @UseGuards(
+    RoleGuard([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER]),
+  )
   @Get(':surveyId/companies/:companyId')
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -28,7 +30,9 @@ export class SurveyResultController {
     );
   }
 
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
+  @UseGuards(
+    RoleGuard([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER]),
+  )
   @Get(':surveyId/companies/:companyId/teams/:teamId')
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -37,7 +41,9 @@ export class SurveyResultController {
     return await this.surveyResultService.getAvgResultForTeam(surveyId, teamId);
   }
 
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
+  @UseGuards(
+    RoleGuard([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER]),
+  )
   @Get(':surveyId/companies/:companyId/teams/:teamId/users/:userId')
   async getSurveyResultForUser(
     @Param('surveyId', ValidateObjectId) surveyId: string,

@@ -5,7 +5,7 @@ import { UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { CompanyService } from 'src/company/company.service';
 import { Team } from 'src/company/models/team.model';
 import { TeamService } from 'src/company/team/team.service';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
@@ -53,7 +53,7 @@ export class UsersService {
       id: user._id,
       email: user.email,
       role: user.role,
-      canCreateTeam: !company && !team && user.role === Role.USER,
+      canCreateTeam: !company && !team && user.role === RoleType.USER,
       company: {
         _id: company?._id,
         name: company?.name,

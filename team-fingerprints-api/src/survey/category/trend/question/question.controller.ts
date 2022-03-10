@@ -10,7 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { Survey } from 'src/survey/models/survey.model';
 import {
   CreateQuestionDto,
@@ -25,7 +25,7 @@ export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @Post('/')
-  @UseGuards(RoleGuard([Role.SUPER_ADMIN]))
+  @UseGuards(RoleGuard([RoleType.SUPER_ADMIN]))
   async createQuestion(
     @Param() params: QuestionParamsDto,
     @Body() questionDto: CreateQuestionDto,
@@ -34,7 +34,7 @@ export class QuestionController {
   }
 
   @Patch('/:questionId')
-  @UseGuards(RoleGuard([Role.SUPER_ADMIN]))
+  @UseGuards(RoleGuard([RoleType.SUPER_ADMIN]))
   async updateQuestion(
     @Param() params: QuestionParamsDto,
     @Body() questionDto: UpdateQuestionDto,
@@ -43,7 +43,7 @@ export class QuestionController {
   }
 
   @Delete('/:questionId')
-  @UseGuards(RoleGuard([Role.SUPER_ADMIN]))
+  @UseGuards(RoleGuard([RoleType.SUPER_ADMIN]))
   async removeQuestion(
     @Param('questionId', ValidateObjectId) questionId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,

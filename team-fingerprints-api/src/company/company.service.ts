@@ -10,7 +10,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './models/company.model';
@@ -74,7 +74,7 @@ export class CompanyService {
     await this.usersService.updateUser(userId, {
       companyId: newCompany?._id,
     });
-    await this.roleService.changeUserRole(userId, Role.COMPANY_ADMIN);
+    await this.roleService.changeUserRole(userId, RoleType.COMPANY_ADMIN);
     return newCompany;
   }
 

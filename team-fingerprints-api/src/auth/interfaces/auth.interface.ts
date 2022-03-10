@@ -1,9 +1,9 @@
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 
 export interface UserProfileI {
   readonly id: string;
   readonly email: string;
-  readonly role: Role;
+  readonly role: RoleType;
   readonly canCreateTeam: boolean;
   readonly company: {
     _id: string;

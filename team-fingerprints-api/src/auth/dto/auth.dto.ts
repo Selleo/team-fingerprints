@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { UserProfileI } from '../interfaces/auth.interface';
 
 export class ResponseAuthDto implements UserProfileI {
@@ -24,7 +24,7 @@ export class ResponseAuthDto implements UserProfileI {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  readonly role: Role;
+  readonly role: RoleType;
 
   @ApiProperty()
   @IsBoolean()

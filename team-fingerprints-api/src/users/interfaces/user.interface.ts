@@ -1,4 +1,4 @@
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 
 export interface QuestionAnswerI {
@@ -13,7 +13,7 @@ export interface UserI {
   lastName: string;
   email: string;
   pictureUrl?: string;
-  role: Role;
+  role: RoleType;
   companyId: string;
   surveysAnswers: UserSurveyAnswerI[];
 }

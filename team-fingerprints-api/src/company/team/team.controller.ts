@@ -12,7 +12,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { Company } from '../models/company.model';
 import { Team } from '../models/team.model';
 import { TeamService } from './team.service';
@@ -31,7 +31,7 @@ export class TeamController {
   ) {}
 
   @Get()
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
+  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN]))
   async getTeamsAll(): Promise<Company[]> {
     return await this.teamService.getTeamsAll();
   }
@@ -44,7 +44,7 @@ export class TeamController {
   }
 
   @Post('/')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
+  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN], false))
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() teamDto: CreateTeamDto,
@@ -53,7 +53,7 @@ export class TeamController {
   }
 
   @Patch('/:teamId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
+  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false))
   async updateTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -63,7 +63,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
+  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN], false))
   async removeTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
   ): Promise<Company | HttpException> {
@@ -71,7 +71,7 @@ export class TeamController {
   }
 
   @Post('/:teamId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
+  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false))
   async addUserToTeamWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -89,7 +89,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
+  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false))
   async removeMemberFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -103,7 +103,7 @@ export class TeamController {
   }
 
   @Post('/:teamId/leader')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
+  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN], false))
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -117,7 +117,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId/leader')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
+  @UseGuards(RoleGuard([RoleType.COMPANY_ADMIN], false))
   async removeTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,

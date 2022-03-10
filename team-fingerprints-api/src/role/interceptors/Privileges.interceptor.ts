@@ -27,8 +27,6 @@ export class PrivilegesInterceptor implements NestInterceptor {
       companyId,
     });
 
-    console.log(roleDocuments);
-
     if (!roleDocuments || roleDocuments.length <= 0)
       throw new UnauthorizedException();
 

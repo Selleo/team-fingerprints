@@ -1,15 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserProfileI } from 'src/auth/interfaces/auth.interface';
+import { PrivilegeI, UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { CompanyService } from 'src/company/company.service';
-import { Team } from 'src/company/models/team.model';
 import { TeamService } from 'src/company/team/team.service';
 import { RoleType } from 'src/role/role.type';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
 import { RoleService } from 'src/role/role.service';
+import { Role } from 'src/role/models/role.model';
 
 @Injectable()
 export class UsersService {
@@ -48,33 +48,64 @@ export class UsersService {
 
   async getUserProfile(userId: string): Promise<UserProfileI> {
     const user = await this.getUser(userId);
-    const company = await this.companyService.getCompanyByUserEmail(user.email);
-    const team: Team = await this.teamService.getTeamByUserEmail(user.email);
-    const roleDocument = await this.roleService.findOneRoleDocument({
-      userId: user._id,
-      companyId: company._id || null,
-    });
-
-    if (!roleDocument) throw new BadRequestException();
-
     const profile: UserProfileI = {
       id: user._id,
       email: user.email,
-      role: roleDocument.role,
-      canCreateTeam: !company && !team && roleDocument.role === RoleType.USER,
-      company: {
-        _id: company?._id,
-        name: company?.name,
-        description: company?.description,
-      },
-      team: {
-        _id: team?._id,
-        name: team?.name,
-        description: team?.description,
-      },
+      privileges: [],
     };
+    const privileges: PrivilegeI[] = [];
 
-    return profile;
+    const roleDocuments: Role[] = await this.roleService.findAllRoleDocuments({
+      userId: user._id,
+    });
+
+    if (!roleDocuments || roleDocuments.length <= 0)
+      throw new UnauthorizedException();
+
+    roleDocuments.forEach(async (roleDocument: Role) => {
+      let privilege: PrivilegeI = {
+        role: roleDocument.role,
+        canCreateCompany: false,
+      };
+
+      if (roleDocument.companyId) {
+        const company = await this.companyService.getCompanyByUserEmail(
+          user.email,
+        );
+        privilege = {
+          ...privilege,
+          company: {
+            _id: company?._id,
+            name: company?.name,
+            description: company?.description,
+          },
+        };
+      }
+
+      if (roleDocument.teamId) {
+        const team = await this.teamService.getTeamByUserEmail(user.email);
+        privilege = {
+          ...privilege,
+          team: {
+            _id: team?._id,
+            name: team?.name,
+            description: team?.description,
+          },
+        };
+      }
+
+      if (
+        !privilege.company &&
+        !privilege.team &&
+        roleDocument.role === RoleType.USER
+      ) {
+        privilege = { ...privilege, canCreateCompany: true };
+      }
+
+      privileges.push(privilege);
+    });
+    console.log({ ...profile, privileges });
+    return { ...profile, privileges };
   }
 
   async createUser(newUserData: CreateUserDto): Promise<User> {

@@ -7,7 +7,6 @@ export interface UserProfileI {
 }
 
 export interface PrivilegeI {
-  readonly canCreateCompany: boolean;
   readonly company?: {
     _id: string;
     name: string;

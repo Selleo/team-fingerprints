@@ -14,7 +14,7 @@ import { TeamService } from './team.service';
     forwardRef(() => UsersModule),
     forwardRef(() => TeamModule),
     forwardRef(() => CompanyModule),
-    RoleModule,
+    forwardRef(() => RoleModule),
     MailModule,
     MongooseModule.forFeature([
       {

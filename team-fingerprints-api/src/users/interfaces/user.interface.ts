@@ -12,7 +12,6 @@ export interface UserI {
   lastName: string;
   email: string;
   pictureUrl?: string;
-  companyId: string;
   surveysAnswers: UserSurveyAnswerI[];
 }
 

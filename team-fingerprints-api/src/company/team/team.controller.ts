@@ -31,16 +31,19 @@ export class TeamController {
 
   @Get()
   @Roles([RoleType.COMPANY_ADMIN])
-  async getTeamsAll(): Promise<Company[]> {
-    return await this.teamService.getTeamsAll();
+  async getTeamsAll(
+    @Param('companyId', ValidateObjectId) companyId: string,
+  ): Promise<Company[]> {
+    return await this.teamService.getTeamsAll(companyId);
   }
 
   @Get('/:teamId')
   @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
   async getTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-  ): Promise<Team | HttpException> {
-    return await this.teamService.getTeam(teamId);
+  ): Promise<Team | HttpException | []> {
+    return await this.teamService.getTeam(companyId, teamId);
   }
 
   @Post('/')
@@ -76,10 +79,10 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email }: ValidateEmail,
-  ): Promise<Company | HttpException> {
+  ) {
     await this.companyMembersService.addUserToCompanyWhitelist(
-      companyId,
       email,
+      companyId,
     );
     return await this.teamMembersService.addUserToTeamWhitelist(
       companyId,
@@ -94,11 +97,11 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email: memberEmail }: ValidateEmail,
-  ): Promise<Company | HttpException> {
+  ) {
     return await this.teamMembersService.removeMemberFromTeam(
       companyId,
       teamId,
-      memberEmail as unknown as string,
+      memberEmail,
     );
   }
 
@@ -108,7 +111,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email }: ValidateEmail,
-  ): Promise<Company | HttpException> {
+  ) {
     return await this.teamMembersService.assignTeamLeader(
       companyId,
       teamId,
@@ -122,11 +125,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email }: ValidateEmail,
-  ): Promise<Company | HttpException> {
-    return await this.teamMembersService.removeTeamLeaderByEmail(
-      email,
-      teamId,
-      companyId,
-    );
+  ) {
+    return await this.teamMembersService.removeTeamLeader(email, teamId);
   }
 }

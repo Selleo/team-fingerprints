@@ -76,5 +76,5 @@ export class ValidateEmail {
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  readonly email: string;
 }

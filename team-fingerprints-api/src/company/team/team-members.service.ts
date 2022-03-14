@@ -168,8 +168,6 @@ export class TeamMembersService {
       teamId,
     );
 
-    console.log(companyId, teamId, leaderEmail);
-
     const isTeamLeader = await this.isTeamLeaderByEmail(leaderEmail, teamId);
     if (!isUserInTargetTeam || isTeamLeader) return;
 

@@ -24,7 +24,7 @@ export class AuthService {
     roleDocuments.forEach(async (doc) => {
       console.log(doc);
       if (doc.companyId) {
-        const res = await this.roleService.updateRoleDocument(
+        await this.roleService.updateRoleDocument(
           { email: doc.email, companyId: doc.companyId },
           { userId: user._id },
         );

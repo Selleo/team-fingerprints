@@ -78,11 +78,22 @@ export type SurveyDetails = Survey & { categories: Category[] };
 
 export type role = "SUPER_ADMIN" | "COMPANY_ADMIN" | "TEAM_LEADER" | "USER";
 
-export type Profile = {
-  canCreateTeam: boolean;
+type ComplexRole = {
+  team: {
+    _id: string;
+    name: string;
+  };
+  company: {
+    _id: string;
+    name: string;
+  };
   role: role;
-  company?: { _id: string; name: string; description: string };
-  team?: { _id: string };
+};
+
+export type Profile = {
+  privileges: ComplexRole[];
+  email: string;
+  _id: string;
 };
 
 export type QuestionWithAnswers = { answer: Answer; question: Question };

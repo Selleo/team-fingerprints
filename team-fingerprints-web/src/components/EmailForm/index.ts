@@ -1,3 +1,3 @@
-import CompanyForm from "./EmailForm";
+import Comp from "./EmailForm";
 
-export default CompanyForm;
+export default Comp;

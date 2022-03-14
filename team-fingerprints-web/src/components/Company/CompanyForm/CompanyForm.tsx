@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from "react";
 import { TextInput, Button, Textarea } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
@@ -6,6 +6,7 @@ import { useStyles } from "./styles";
 import axios from "axios";
 import { queryClient } from "../../../App";
 import { Company } from "../../../types/models";
+import { ProfileContext } from "../../../routes";
 
 const CompanyForm = ({
   initialValues,
@@ -14,11 +15,13 @@ const CompanyForm = ({
   initialValues?: Company;
   onClose: () => void;
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const { invalidateProfile } = useContext(ProfileContext);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { classes } = useStyles();
   const isUpdate = !!initialValues;
 
   const onSuccess = () => {
+    invalidateProfile();
     queryClient.invalidateQueries("companiesAll");
     queryClient.invalidateQueries(`companies${initialValues?._id}`);
   };
@@ -53,12 +56,12 @@ const CompanyForm = ({
     });
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => { 
-      inputRef && inputRef.current!.focus() 
+    const timeoutId = setTimeout(() => {
+      inputRef && inputRef.current!.focus();
     }, 1);
 
-    return () => clearTimeout(timeoutId)
-  }, [])
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   return (
     <form onSubmit={handleSubmit}>

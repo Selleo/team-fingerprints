@@ -52,54 +52,51 @@ export class UsersService {
       email: user.email,
       privileges: [],
     };
-    const privileges: PrivilegeI[] = [];
 
     const roleDocuments: Role[] = await this.roleService.findAllRoleDocuments({
       userId: user._id,
     });
 
-    if (!roleDocuments || roleDocuments.length <= 0)
-      throw new UnauthorizedException();
-
-    roleDocuments.forEach(async (roleDocument: Role) => {
-      let privilege: PrivilegeI = {
-        role: roleDocument.role,
-      };
-
-      if (roleDocument.companyId) {
-        const company = await this.companyService.getCompanyById(
-          roleDocument.companyId,
-        );
-        privilege = {
-          ...privilege,
-          company: {
-            _id: company?._id,
-            name: company?.name,
-            description: company?.description,
-          },
+    const privileges = await Promise.all(
+      roleDocuments.map(async (roleDocument: Role) => {
+        let privilege: PrivilegeI = {
+          role: roleDocument.role,
         };
-      }
 
-      if (roleDocument.teamId) {
-        const team = await this.teamService.getTeam(
-          roleDocument.companyId,
-          roleDocument.teamId,
-        );
-        if (!team) privilege = { ...privilege, team: null };
-        if (team) {
+        if (roleDocument.companyId) {
+          const company = await this.companyService.getCompanyById(
+            roleDocument.companyId,
+          );
           privilege = {
             ...privilege,
-            team: {
-              _id: team?._id,
-              name: team?.name,
-              description: team?.description,
+            company: {
+              _id: company?._id,
+              name: company?.name,
+              description: company?.description,
             },
           };
         }
-      }
 
-      privileges.push(privilege);
-    });
+        if (roleDocument.teamId) {
+          const team = await this.teamService.getTeam(
+            roleDocument.companyId,
+            roleDocument.teamId,
+          );
+          if (!team) privilege = { ...privilege, team: null };
+          if (team) {
+            privilege = {
+              ...privilege,
+              team: {
+                _id: team?._id,
+                name: team?.name,
+                description: team?.description,
+              },
+            };
+          }
+        }
+        return privilege;
+      }),
+    );
     return { ...profile, privileges };
   }
 

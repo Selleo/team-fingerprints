@@ -46,7 +46,6 @@ export class CompanyController {
   }
 
   @Post()
-  @Roles([RoleType.USER], false)
   async createCompany(
     @Body() companyDto: CreateCompanyDto,
     @CurrentUserId(ValidateObjectId) userId: string,
@@ -68,16 +67,22 @@ export class CompanyController {
   async addUserToCompanyWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() { email }: ValidateEmail,
-  ): Promise<Company | HttpException> {
+  ) {
     return await this.companyMembersService.addUserToCompanyWhitelist(
-      companyId,
       email,
+      companyId,
     );
   }
 
   @Delete(':companyId/member')
   @Roles([RoleType.COMPANY_ADMIN], false)
-  async removeCompanyMemberByEmail(@Body() { email }: ValidateEmail) {
-    return await this.companyMembersService.removeCompanyMemberByEmail(email);
+  async removeCompanyMemberByEmail(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Body() { email }: ValidateEmail,
+  ) {
+    return await this.companyMembersService.removeCompanyMemberByEmail(
+      email,
+      companyId,
+    );
   }
 }

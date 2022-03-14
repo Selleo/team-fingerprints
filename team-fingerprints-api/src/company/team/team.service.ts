@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException, HttpException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { RoleService } from 'src/role/role.service';
 import { Company } from '../models/company.model';
 import { Team } from '../models/team.model';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
@@ -8,39 +9,30 @@ import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 @Injectable()
 export class TeamService {
   constructor(
-    @InjectModel(Company.name) private readonly teamModel: Model<Company>,
+    @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+    private readonly roleService: RoleService,
   ) {}
 
-  async getTeamsAll(): Promise<Company[]> {
-    return await this.teamModel.find({}, { teams: 1 }).exec();
+  async getTeamsAll(companyId): Promise<Company[]> {
+    return await this.companyModel
+      .find({ _id: companyId }, { teams: 1 })
+      .exec();
   }
 
-  async getTeam(teamId: string): Promise<Team | HttpException> {
-    const company: Company = await this.teamModel
-      .findOne({ 'teams._id': teamId })
+  async getTeam(companyId: string, teamId: string): Promise<Team> {
+    const company: Company = await this.companyModel
+      .findOne({ _id: companyId, 'teams._id': teamId })
       .exec();
+
     if (!company) throw new NotFoundException();
     const team = company.teams.find(
-      (team) => teamId && team?._id?.toString() === teamId?.toString(),
+      (team) => team?._id?.toString() === teamId?.toString(),
     );
-    if (!team) throw new NotFoundException();
-    return team;
-  }
-
-  async getTeamByUserEmail(email: string): Promise<Team> {
-    const company: Company = await this.teamModel
-      .findOne({ 'teams.emailWhitelist': email }, { teams: 1 })
-      .exec();
-    if (!company) return;
-    const team = company.teams.find((team) =>
-      team.emailWhitelist.find((member) => member === email),
-    );
-    if (!team) return;
     return team;
   }
 
   async createTeam(companyId: string, team: CreateTeamDto): Promise<Company> {
-    return await this.teamModel
+    return await this.companyModel
       .findOneAndUpdate(
         { _id: companyId },
         {
@@ -58,7 +50,7 @@ export class TeamService {
     teamId: string,
     { name, description, pointShape, pointColor }: UpdateTeamDto,
   ): Promise<Company> {
-    const team = await this.teamModel
+    const team = await this.companyModel
       .findOneAndUpdate(
         {
           _id: companyId,
@@ -79,7 +71,15 @@ export class TeamService {
   }
 
   async removeTeam(teamId: string): Promise<Company> {
-    return await this.teamModel
+    const roleDocuments = await this.roleService.findAllRoleDocuments({
+      teamId,
+    });
+
+    roleDocuments.forEach(async (doc) => {
+      await this.roleService.removeRoleDocumentById(doc);
+    });
+
+    return await this.companyModel
       .findOneAndUpdate(
         { 'teams._id': teamId },
         {

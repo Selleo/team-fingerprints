@@ -1,30 +1,54 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CompanyMembersService } from 'src/company/company-members.service';
-import { TeamMembersService } from 'src/company/team/team-members.service';
-import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import * as request from 'request';
 import { User } from 'src/users/models/user.model';
 import { RoleService } from 'src/role/role.service';
+import { RoleType } from 'src/role/role.type';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly companyMembersService: CompanyMembersService,
-    private readonly teamMembersService: TeamMembersService,
     private readonly configService: ConfigService,
     private readonly roleService: RoleService,
   ) {}
 
   async handleExistingUsers(email: string) {
+    const roleDocuments = await this.roleService.findAllRoleDocuments({
+      email,
+    });
+
     const user = await this.usersService.getUserByEmail(email);
-    if (user.role !== RoleType.SUPER_ADMIN) {
-      await this.companyMembersService.addMemberToCompanyByEmail(email);
-      await this.teamMembersService.addMemberToTeamByEmail(email);
-      await this.teamMembersService.checkEmailIfAssignedToBeLeader(email);
-    }
+
+    roleDocuments.forEach(async (doc) => {
+      console.log(doc);
+      if (doc.companyId) {
+        const res = await this.roleService.updateRoleDocument(
+          { email: doc.email, companyId: doc.companyId },
+          { userId: user._id },
+        );
+      }
+      if (doc.companyId && doc.teamId) {
+        await this.roleService.updateRoleDocument(
+          { email: doc.email, companyId: doc.companyId, teamId: doc.teamId },
+          { userId: user._id },
+        );
+      }
+      if (doc.role === RoleType.TEAM_LEADER) {
+        await this.roleService.updateRoleDocument(
+          {
+            email: doc.email,
+            companyId: doc.companyId,
+            teamId: doc.teamId,
+            role: doc.role,
+          },
+          {
+            userId: user._id,
+          },
+        );
+      }
+    });
   }
 
   async handleNewUsers(auth0Id: string) {
@@ -61,7 +85,7 @@ export class AuthService {
         firstName,
         lastName,
       });
-      await this.roleService.createRoleDocument(user);
+      await this.roleService.createRoleDocument(user, { userId: user._id });
     });
     if (!user) throw new BadRequestException();
 

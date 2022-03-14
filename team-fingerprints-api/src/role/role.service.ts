@@ -28,16 +28,25 @@ export class RoleService {
     throw new BadRequestException();
   }
 
-  async createRoleDocument({ email }: User): Promise<Role> {
-    const roleDocument = await this.roleModel.create({ email });
+  async createRoleDocument(
+    user: Partial<User>,
+    roleDocumentData: Partial<Role> = {},
+  ): Promise<Role> {
+    const roleDocument = await this.roleModel.create({
+      email: user.email,
+      role: RoleType.USER,
+      ...roleDocumentData,
+    });
     if (!roleDocument) throw new InternalServerErrorException();
     await roleDocument.save();
     return roleDocument;
   }
 
-  async findOneRoleDocument(searchParams: Partial<RoleI>): Promise<Role> {
+  async findOneRoleDocument(
+    searchParams: Partial<RoleI | null>,
+  ): Promise<Role> {
     const roleDocument = await this.roleModel.findOne(searchParams).exec();
-    if (!roleDocument) throw new BadRequestException();
+    if (!roleDocument) return null;
     return roleDocument;
   }
 
@@ -52,7 +61,7 @@ export class RoleService {
     updateData: Partial<RoleI>,
   ): Promise<Role> {
     const updatedRoleDocument = await this.roleModel
-      .findOneAndUpdate({ searchParams }, { updateData }, { new: true })
+      .findOneAndUpdate(searchParams, updateData, { new: true })
       .exec();
     if (!updatedRoleDocument)
       throw new InternalServerErrorException('Could not update role document');

@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { PrivilegeI, UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
-import { RoleType } from 'src/role/role.type';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
@@ -65,12 +64,11 @@ export class UsersService {
     roleDocuments.forEach(async (roleDocument: Role) => {
       let privilege: PrivilegeI = {
         role: roleDocument.role,
-        canCreateCompany: false,
       };
 
       if (roleDocument.companyId) {
-        const company = await this.companyService.getCompanyByUserEmail(
-          user.email,
+        const company = await this.companyService.getCompanyById(
+          roleDocument.companyId,
         );
         privilege = {
           ...privilege,
@@ -83,28 +81,25 @@ export class UsersService {
       }
 
       if (roleDocument.teamId) {
-        const team = await this.teamService.getTeamByUserEmail(user.email);
-        privilege = {
-          ...privilege,
-          team: {
-            _id: team?._id,
-            name: team?.name,
-            description: team?.description,
-          },
-        };
-      }
-
-      if (
-        !privilege.company &&
-        !privilege.team &&
-        roleDocument.role === RoleType.USER
-      ) {
-        privilege = { ...privilege, canCreateCompany: true };
+        const team = await this.teamService.getTeam(
+          roleDocument.companyId,
+          roleDocument.teamId,
+        );
+        if (!team) privilege = { ...privilege, team: null };
+        if (team) {
+          privilege = {
+            ...privilege,
+            team: {
+              _id: team?._id,
+              name: team?.name,
+              description: team?.description,
+            },
+          };
+        }
       }
 
       privileges.push(privilege);
     });
-    console.log({ ...profile, privileges });
     return { ...profile, privileges };
   }
 

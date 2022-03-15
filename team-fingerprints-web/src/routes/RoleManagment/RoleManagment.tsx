@@ -78,8 +78,6 @@ export const RoleManagment = () => {
 
   return (
     <>
-      <BackToScreen name="Dashboard" />
-
       <div className="managment">
         <a
           onClick={() => setCreateModalVisible(true)}

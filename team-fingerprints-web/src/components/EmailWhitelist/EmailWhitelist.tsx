@@ -1,41 +1,42 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Table, Badge } from "@mantine/core";
-import React, { FC } from "react";
-import { User } from "../../types/models";
+import { FC, useContext } from "react";
+import { ProfileContext } from "../../routes";
+import { CompanyRole } from "../../types/models";
 
 interface IProps {
-  list?: string[];
   onRemove?: (email: string) => void;
-  users?: User[];
+  roles: CompanyRole[];
 }
 
-const EmailWhitelist: FC<IProps> = ({ list, onRemove, users }) => {
-  const { user } = useAuth0();
-  const userEmail = user?.email;
+const EmailWhitelist: FC<IProps> = ({ onRemove, roles }) => {
+  const { profile } = useContext(ProfileContext);
 
-  const rows = (list || []).map((email) => {
-    const user = users?.find((el) => el.email === email);
-    const thatsMe = user?.email == userEmail;
+  const rows = roles.map((role) => {
+    const thatsMe = role?.userId === profile?.id;
 
     return (
-      <tr key={email}>
-        <td>{email}</td>
+      <tr key={role.createdAt}>
+        <td>{role.email}</td>
+
         {thatsMe ? (
           <td>
-            <Badge color="green">{user?.role}</Badge>
+            <Badge color="green">{role?.role}</Badge>
           </td>
         ) : (
           <td>
-            {user ? (
-              <Badge color="green">{user?.role}</Badge>
+            {role.userId ? (
+              <Badge color="green">{role.role}</Badge>
             ) : (
-              <Badge color="yellow">Pending</Badge>
+              <Badge color="yellow">Pending {role.role}</Badge>
             )}
           </td>
         )}
         <td>
-          {!thatsMe && (
-            <Button onClick={() => onRemove?.(email)} color="red">
+          {thatsMe ? (
+            <span>thats you!</span>
+          ) : (
+            <Button onClick={() => onRemove?.(role.email)} color="red">
               Remove
             </Button>
           )}

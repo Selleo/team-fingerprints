@@ -4,22 +4,16 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { Role } from 'src/role/models/role.model';
 // import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
-import { Company } from '../models/company.model';
-import { TeamService } from './team.service';
 
 @Injectable()
 export class TeamMembersService {
   constructor(
-    @InjectModel(Company.name) private readonly teamModel: Model<Company>,
     private readonly usersService: UsersService,
-    private readonly teamService: TeamService,
     // private readonly mailService: MailService,
     private readonly roleService: RoleService,
   ) {}

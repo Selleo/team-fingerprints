@@ -37,15 +37,6 @@ const TeamManagment = () => {
     return response.data;
   });
 
-  const {
-    isLoading: isLoadingUsers,
-    error: isErrorUsers,
-    data: users,
-  } = useQuery<User[]>(`users${companyId}`, async () => {
-    const response = await axios.get<User[]>(`/users/all`);
-    return response.data;
-  });
-
   const addEmailToWhitelist = useMutation(
     (email: string) => {
       return axios.post<string>(
@@ -167,7 +158,7 @@ const TeamManagment = () => {
     }
   );
 
-  if (isLoading || isLoadingUsers)
+  if (isLoading)
     return (
       <>
         {times(1, () => (
@@ -175,8 +166,7 @@ const TeamManagment = () => {
         ))}
       </>
     );
-  if (error || isErrorUsers)
-    return <div>'An error has occurred: ' + console.error;</div>;
+  if (error) return <div>'An error has occurred: ' + console.error;</div>;
 
   return (
     <>
@@ -205,7 +195,7 @@ const TeamManagment = () => {
         removeLeaderRole={removeLeaderRole.mutate}
         onRemove={removeEmailFromWhitelist.mutate}
         list={team?.emailWhitelist?.filter((val) => !!val)}
-        users={users}
+        users={[]}
         teamLeader={team?.teamLeader}
         makeALeader={makeALeader.mutate}
       />

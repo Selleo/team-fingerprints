@@ -6,6 +6,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -32,20 +33,22 @@ export class CompanyService {
     else return [];
   }
 
-  async getCompanyByAdminId(
-    adminId: string,
-    companyId: string,
-  ): Promise<Company> {
-    return await this.companyModel.findOne({ _id: companyId, adminId }).exec();
+  async getCompany(companyId: string) {
+    const company = await this.companyModel.findOne({ _id: companyId }).exec();
+    if (!company) throw new NotFoundException();
+
+    const roleDocuments = await this.roleService.findAllRoleDocuments({
+      companyId,
+    });
+
+    if (!roleDocuments || roleDocuments.length <= 0) return company;
+
+    return { company, roles: roleDocuments };
   }
 
   async getCompanyById(companyId: string): Promise<Company> {
     return await this.companyModel.findOne({ _id: companyId }).exec();
   }
-
-  // async getCompanyByUserEmail(email: string): Promise<Company> {
-  //   return await this.companyModel.findOne({ emailWhitelist: email }).exec();
-  // }
 
   async createCompany(
     userId: string,

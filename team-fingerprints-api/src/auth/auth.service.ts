@@ -84,7 +84,6 @@ export class AuthService {
         firstName,
         lastName,
       });
-      await this.roleService.createRoleDocument(user, { userId: user._id });
     });
     if (!user) throw new BadRequestException();
 

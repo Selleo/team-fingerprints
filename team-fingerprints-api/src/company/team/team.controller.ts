@@ -12,7 +12,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'src/role/role.type';
 import { Company } from '../models/company.model';
-import { Team } from '../models/team.model';
 import { TeamService } from './team.service';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 import { TeamMembersService } from './team-members.service';
@@ -39,11 +38,11 @@ export class TeamController {
 
   @Get('/:teamId')
   @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
-  async getTeam(
+  async getTeamById(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-  ): Promise<Team | HttpException | []> {
-    return await this.teamService.getTeam(companyId, teamId);
+  ) {
+    return await this.teamService.getTeamById(companyId, teamId);
   }
 
   @Post('/')

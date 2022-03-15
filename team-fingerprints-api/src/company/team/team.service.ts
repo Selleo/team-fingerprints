@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { Company } from '../models/company.model';
-import { Team } from '../models/team.model';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 
 @Injectable()
@@ -19,7 +18,7 @@ export class TeamService {
       .exec();
   }
 
-  async getTeam(companyId: string, teamId: string): Promise<Team> {
+  async getTeamById(companyId: string, teamId: string) {
     const company: Company = await this.companyModel
       .findOne({ _id: companyId, 'teams._id': teamId })
       .exec();
@@ -28,6 +27,27 @@ export class TeamService {
     const team = company.teams.find(
       (team) => team?._id?.toString() === teamId?.toString(),
     );
+
+    const roleDocuments = await this.roleService.findAllRoleDocuments({
+      companyId,
+      teamId,
+    });
+
+    if (!roleDocuments || roleDocuments.length <= 0) return { team };
+
+    return { team, roles: roleDocuments };
+  }
+
+  async getTeam(companyId: string, teamId: string) {
+    const company: Company = await this.companyModel
+      .findOne({ _id: companyId, 'teams._id': teamId })
+      .exec();
+
+    if (!company) throw new NotFoundException();
+    const team = company.teams.find(
+      (team) => team?._id?.toString() === teamId?.toString(),
+    );
+
     return team;
   }
 

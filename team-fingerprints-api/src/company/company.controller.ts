@@ -37,12 +37,8 @@ export class CompanyController {
   }
 
   @Get(':companyId')
-  @Roles([RoleType.COMPANY_ADMIN])
-  async getCompany(
-    @Param('companyId', ValidateObjectId) companyId: string,
-    @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<Company> {
-    return await this.companyService.getCompanyByAdminId(userId, companyId);
+  async getCompany(@Param('companyId', ValidateObjectId) companyId: string) {
+    return await this.companyService.getCompany(companyId);
   }
 
   @Post()

@@ -7,6 +7,8 @@ export interface UserProfileI {
 }
 
 export interface PrivilegeI {
+  readonly roleId: string;
+  readonly role: RoleType;
   readonly company?: {
     _id: string;
     name: string;
@@ -17,5 +19,4 @@ export interface PrivilegeI {
     name: string;
     description?: string | undefined;
   };
-  readonly role: RoleType;
 }

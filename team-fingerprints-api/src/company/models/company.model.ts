@@ -12,10 +12,10 @@ export class Company extends Document {
   @Prop()
   description?: string;
 
-  @Prop()
+  @Prop({ default: '' })
   pointColor: string;
 
-  @Prop()
+  @Prop({ default: '' })
   pointShape: string;
 
   @Prop({ type: [TeamSchema], default: [], required: true })

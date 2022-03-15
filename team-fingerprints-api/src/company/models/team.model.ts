@@ -10,10 +10,10 @@ export class Team {
   @Prop()
   description?: string;
 
-  @Prop()
-  pointColor: string;
-
-  @Prop()
+  @Prop({ default: '' })
   pointShape: string;
+
+  @Prop({ default: '' })
+  pointColor: string;
 }
 export const TeamSchema = SchemaFactory.createForClass(Team);

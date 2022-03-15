@@ -13,10 +13,14 @@ export interface PrivilegeI {
     _id: string;
     name: string;
     description?: string | undefined;
+    pointShape?: string;
+    pointColor?: string;
   };
   readonly team?: {
     _id: string;
     name: string;
     description?: string | undefined;
+    pointShape?: string;
+    pointColor?: string;
   };
 }

@@ -74,6 +74,8 @@ export class UsersService {
               _id: company?._id,
               name: company?.name,
               description: company?.description,
+              pointShape: company.pointShape,
+              pointColor: company.pointColor,
             },
           };
         }
@@ -91,6 +93,8 @@ export class UsersService {
                 _id: team?._id,
                 name: team?.name,
                 description: team?.description,
+                pointShape: team.pointShape,
+                pointColor: team.pointColor,
               },
             };
           }

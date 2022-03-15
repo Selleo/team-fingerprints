@@ -31,17 +31,25 @@ export class PrivilegesInterceptor implements NestInterceptor {
       throw new UnauthorizedException();
 
     if (roleDocuments.some((el) => el.role === RoleType.SUPER_ADMIN)) {
-      roleDocuments[0].role = RoleType.SUPER_ADMIN;
-      request.roleDocument = roleDocuments[0];
+      request.roleDocument = {
+        ...request.roleDocument,
+        role: RoleType.SUPER_ADMIN,
+      };
     } else if (roleDocuments.some((el) => el.role === RoleType.COMPANY_ADMIN)) {
-      roleDocuments[0].role = RoleType.COMPANY_ADMIN;
-      request.roleDocument = roleDocuments[0];
+      request.roleDocument = {
+        ...request.roleDocument,
+        role: RoleType.COMPANY_ADMIN,
+      };
     } else if (roleDocuments.some((el) => el.role === RoleType.TEAM_LEADER)) {
-      roleDocuments[0].role = RoleType.TEAM_LEADER;
-      request.roleDocument = roleDocuments[0];
+      request.roleDocument = {
+        ...request.roleDocument,
+        role: RoleType.TEAM_LEADER,
+      };
     } else {
-      roleDocuments[0].role = RoleType.USER;
-      request.roleDocument = roleDocuments[0];
+      request.roleDocument = {
+        ...request.roleDocument,
+        role: RoleType.USER,
+      };
     }
 
     return handler.handle();

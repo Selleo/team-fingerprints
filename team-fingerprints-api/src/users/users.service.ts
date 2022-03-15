@@ -61,6 +61,7 @@ export class UsersService {
       roleDocuments.map(async (roleDocument: Role) => {
         let privilege: PrivilegeI = {
           role: roleDocument.role,
+          roleId: roleDocument._id,
         };
 
         if (roleDocument.companyId) {

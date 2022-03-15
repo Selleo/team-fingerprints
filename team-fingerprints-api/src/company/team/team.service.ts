@@ -33,7 +33,7 @@ export class TeamService {
       teamId,
     });
 
-    if (!roleDocuments) return team;
+    if (!roleDocuments || roleDocuments.length <= 0) return { team };
 
     return { team, roles: roleDocuments };
   }

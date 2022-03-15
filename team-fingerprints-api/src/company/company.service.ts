@@ -41,7 +41,7 @@ export class CompanyService {
       companyId,
     });
 
-    if (!roleDocuments || roleDocuments.length <= 0) return company;
+    if (!roleDocuments || roleDocuments.length <= 0) return { company };
 
     return { company, roles: roleDocuments };
   }

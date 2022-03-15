@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserProfileI } from 'src/auth/interfaces/auth.interface';
+import { PrivilegeI, UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { CompanyService } from 'src/company/company.service';
-import { Team } from 'src/company/models/team.model';
 import { TeamService } from 'src/company/team/team.service';
-import { Role } from 'src/role/role.type';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
+import { RoleService } from 'src/role/role.service';
+import { Role } from 'src/role/models/role.model';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +16,7 @@ export class UsersService {
     @InjectModel(User.name) private readonly User: Model<User>,
     private readonly companyService: CompanyService,
     private readonly teamService: TeamService,
+    private readonly roleService: RoleService,
   ) {}
 
   async getUserByAuthId(authId: string): Promise<User> {
@@ -46,27 +47,57 @@ export class UsersService {
 
   async getUserProfile(userId: string): Promise<UserProfileI> {
     const user = await this.getUser(userId);
-    const company = await this.companyService.getCompanyByUserEmail(user.email);
-    const team: Team = await this.teamService.getTeamByUserEmail(user.email);
-
     const profile: UserProfileI = {
       id: user._id,
       email: user.email,
-      role: user.role,
-      canCreateTeam: !company && !team && user.role === Role.USER,
-      company: {
-        _id: company?._id,
-        name: company?.name,
-        description: company?.description,
-      },
-      team: {
-        _id: team?._id,
-        name: team?.name,
-        description: team?.description,
-      },
+      privileges: [],
     };
 
-    return profile;
+    const roleDocuments: Role[] = await this.roleService.findAllRoleDocuments({
+      userId: user._id,
+    });
+
+    const privileges = await Promise.all(
+      roleDocuments.map(async (roleDocument: Role) => {
+        let privilege: PrivilegeI = {
+          role: roleDocument.role,
+        };
+
+        if (roleDocument.companyId) {
+          const company = await this.companyService.getCompanyById(
+            roleDocument.companyId,
+          );
+          privilege = {
+            ...privilege,
+            company: {
+              _id: company?._id,
+              name: company?.name,
+              description: company?.description,
+            },
+          };
+        }
+
+        if (roleDocument.teamId) {
+          const team = await this.teamService.getTeam(
+            roleDocument.companyId,
+            roleDocument.teamId,
+          );
+          if (!team) privilege = { ...privilege, team: null };
+          if (team) {
+            privilege = {
+              ...privilege,
+              team: {
+                _id: team?._id,
+                name: team?.name,
+                description: team?.description,
+              },
+            };
+          }
+        }
+        return privilege;
+      }),
+    );
+    return { ...profile, privileges };
   }
 
   async createUser(newUserData: CreateUserDto): Promise<User> {

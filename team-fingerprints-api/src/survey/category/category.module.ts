@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RoleModule } from 'src/role/role.module';
 import { Survey, SurveySchema } from '../models/survey.model';
 import { SurveyModule } from '../survey.module';
 import { CategoryController } from './category.controller';
@@ -8,6 +9,7 @@ import { TrendModule } from './trend/trend.module';
 
 @Module({
   imports: [
+    forwardRef(() => RoleModule),
     MongooseModule.forFeature([
       {
         name: Survey.name,

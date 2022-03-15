@@ -1,4 +1,3 @@
-import { Role } from 'src/role/role.type';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 
 export interface QuestionAnswerI {
@@ -13,8 +12,6 @@ export interface UserI {
   lastName: string;
   email: string;
   pictureUrl?: string;
-  role: Role;
-  companyId: string;
   surveysAnswers: UserSurveyAnswerI[];
 }
 

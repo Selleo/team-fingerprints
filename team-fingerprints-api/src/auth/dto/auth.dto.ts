@@ -1,13 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import { Role } from 'src/role/role.type';
-import { UserProfileI } from '../interfaces/auth.interface';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { PrivilegeI, UserProfileI } from '../interfaces/auth.interface';
 
 export class ResponseAuthDto implements UserProfileI {
   @ApiProperty()
@@ -22,30 +15,6 @@ export class ResponseAuthDto implements UserProfileI {
   email: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  readonly role: Role;
-
-  @ApiProperty()
-  @IsBoolean()
-  @IsNotEmpty()
-  readonly canCreateTeam: boolean;
-
-  @ApiPropertyOptional()
   @ValidateNested()
-  @IsNotEmpty()
-  readonly company: {
-    _id: string;
-    name: string;
-    description?: string | undefined;
-  };
-
-  @ApiPropertyOptional()
-  @ValidateNested()
-  @IsNotEmpty()
-  readonly team: {
-    _id: string;
-    name: string;
-    description?: string | undefined;
-  };
+  privileges: PrivilegeI[];
 }

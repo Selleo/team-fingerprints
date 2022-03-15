@@ -60,30 +60,33 @@ export default function Edit() {
   //     return data;
   //   });
 
+  //TODO fix it
+  const companyId = profile?.privileges?.[0].company?._id;
+
   const {
     isLoading: isLoadingSurveyResultsCompany,
     data: serveyResultsCompany,
   } = useQuery<any, Error>(
-    `surveyResultsAll-${surveyId}-${profile?.company?._id}`,
+    `surveyResultsAll-${surveyId}-${companyId}`,
     async () => {
       const { data } = await axios.get<any>(
-        `/survey-results/${surveyId}/companies/${profile?.company?._id}`
+        `/survey-results/${surveyId}/companies/${companyId}`
       );
       return data;
     }
   );
 
-  const { isLoading: isLoadingTeamResults, data: serveyResultsTeam } = useQuery<
-    any,
-    Error
-  >(`surveyResultsAll-${surveyId}-${profile?.company?._id}`, async () => {
-    if (profile?.team?._id) {
-      const { data } = await axios.get<any>(
-        `/survey-results/${surveyId}/companies/${profile?.company?._id}/team/${profile?.team?._id}`
-      );
-      return data;
-    } else return null;
-  });
+  // const { isLoading: isLoadingTeamResults, data: serveyResultsTeam } = useQuery<
+  //   any,
+  //   Error
+  // >(`surveyResultsAll-${surveyId}-${profile?.company?._id}`, async () => {
+  //   if (profile?.team?._id) {
+  //     const { data } = await axios.get<any>(
+  //       `/survey-results/${surveyId}/companies/${profile?.company?._id}/team/${profile?.team?._id}`
+  //     );
+  //     return data;
+  //   } else return null;
+  // });
 
   const additionalData = useMemo(() => {
     let tmp: AdditionalData[] = [];
@@ -95,16 +98,16 @@ export default function Edit() {
     //     icon: "square",
     //   });
     // }
-    if (profile?.team?._id && serveyResultsTeam) {
-      const id = "team";
-      tmp.push({
-        categories: values(serveyResultsTeam),
-        color: "yellow",
-        icon: "square",
-        id,
-      });
-      visibility = { ...visibility, [id]: true };
-    }
+    // if (profile?.team?._id && serveyResultsTeam) {
+    //   const id = "team";
+    //   tmp.push({
+    //     categories: values(serveyResultsTeam),
+    //     color: "yellow",
+    //     icon: "square",
+    //     id,
+    //   });
+    //   visibility = { ...visibility, [id]: true };
+    // }
     if (serveyResultsCompany) {
       const id = "company";
       tmp.push({
@@ -117,7 +120,7 @@ export default function Edit() {
     }
     setVisibleData(visibility);
     return tmp;
-  }, [serveyResultsCompany, serveyResultsTeam]);
+  }, [serveyResultsCompany]);
 
   const filteredAdditionalData = useMemo(() => {
     return additionalData.filter((element) => {
@@ -264,8 +267,8 @@ export default function Edit() {
     isLoadingSurvey ||
     isLoadingSurveyResponse ||
     isLoadingSurveyFinished ||
-    isLoadingSurveyResultsCompany ||
-    isLoadingTeamResults
+    isLoadingSurveyResultsCompany
+    //|| isLoadingTeamResults
   ) {
     return <span>Loading survey</span>;
   }

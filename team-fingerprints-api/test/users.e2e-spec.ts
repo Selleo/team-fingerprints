@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { CompanyModule } from 'src/company/company.module';
 import { AppModule } from 'src/app.module';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import * as mongoose from 'mongoose';
 import { UsersModule } from 'src/users/users.module';
 import { RoleModule } from 'src/role/role.module';
@@ -26,12 +26,15 @@ let user: Partial<User> = {
   firstName: userData.firstName,
   lastName: userData.lastName,
   authId: userData.authId,
-  role: Role.USER,
+  role: RoleType.USER,
   companyId: '',
   surveysAnswers: [],
 };
 
-const userProfile = (userId: string, role: Role): Partial<UserProfileI> => ({
+const userProfile = (
+  userId: string,
+  role: RoleType,
+): Partial<UserProfileI> => ({
   id: userId,
   email: user.email,
   role,
@@ -120,7 +123,7 @@ describe('Company controller (e2e)', () => {
       it('returns profile for TEAM_LEADER', async () => {
         await userModel.findOneAndUpdate(
           { _id: userId },
-          { role: Role.TEAM_LEADER },
+          { role: RoleType.TEAM_LEADER },
         );
         await request(app.getHttpServer())
           .post('/users/profiles')
@@ -129,13 +132,13 @@ describe('Company controller (e2e)', () => {
           .then(({ body }) => {
             expect(body.length).toBe(1);
             expect(body[0]).toMatchObject(
-              userProfile(userId, Role.TEAM_LEADER),
+              userProfile(userId, RoleType.TEAM_LEADER),
             );
           })
           .finally(async () => {
             await userModel.findOneAndUpdate(
               { _id: userId },
-              { role: Role.USER },
+              { role: RoleType.USER },
             );
           });
       });
@@ -143,7 +146,7 @@ describe('Company controller (e2e)', () => {
       it('returns profile for COMPANY_ADMIN', async () => {
         await userModel.findOneAndUpdate(
           { _id: userId },
-          { role: Role.COMPANY_ADMIN },
+          { role: RoleType.COMPANY_ADMIN },
         );
         return await request(app.getHttpServer())
           .post('/users/profiles')
@@ -152,13 +155,13 @@ describe('Company controller (e2e)', () => {
           .then(({ body }) => {
             expect(body.length).toBe(1);
             expect(body[0]).toMatchObject(
-              userProfile(userId, Role.COMPANY_ADMIN),
+              userProfile(userId, RoleType.COMPANY_ADMIN),
             );
           })
           .finally(async () => {
             await userModel.findOneAndUpdate(
               { _id: userId },
-              { role: Role.USER },
+              { role: RoleType.USER },
             );
           });
       });
@@ -192,19 +195,22 @@ describe('Company controller (e2e)', () => {
     it('returns emty array', async () => {
       await userModel.findOneAndUpdate(
         { _id: userId },
-        { role: Role.TEAM_LEADER },
+        { role: RoleType.TEAM_LEADER },
       );
       return request(app.getHttpServer())
         .get('/users/all')
         .expect(200)
         .then(({ body }) => {
           expect(body.length).toBe(1);
-          expect(body[0]).toMatchObject({ ...user, role: Role.TEAM_LEADER });
+          expect(body[0]).toMatchObject({
+            ...user,
+            role: RoleType.TEAM_LEADER,
+          });
         })
         .finally(async () => {
           await userModel.findOneAndUpdate(
             { _id: userId },
-            { role: Role.USER },
+            { role: RoleType.USER },
           );
         });
     });

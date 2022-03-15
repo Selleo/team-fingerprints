@@ -1,0 +1,84 @@
+@import 'styles/base/variables'
+
+.managment
+  position: relative
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+
+  &__company-button
+    position: absolute
+    right: 20px
+    top: 0
+    font-weight: 600
+    color: $color-primary
+    border: 1px $color-primary solid
+    padding: 4px 6px
+    border-radius: 6px
+    cursor: pointer
+
+  &__headline
+    font-size: 49px
+    line-height: 59px
+    margin-top: 86px
+    margin-bottom: 45px
+
+  &__roles
+    list-style-type: none
+    flex-direction: column
+    display: flex
+    width: 100%
+    align-items: center
+    padding-left: 0
+
+    &__role
+      align-items: center
+      border-radius: 12px
+      border: 1px solid #ffffff42
+      box-sizing: border-box
+      display: flex
+      flex-direction: row
+      height: 73px
+      margin-bottom: 16px
+      padding-left: 27px
+      padding-right: 27px
+      width: 560px
+      display: flex
+
+      &__icon
+        flex: 0
+        font-size: 11px
+        font-weight: 600
+        border-radius: 6px
+        padding: 4px 6px
+        background-color: $color-white-label
+        color: $color-background
+        margin-right: 10px
+
+
+      &__title
+        flex: 1
+        font-weight: 600
+        color: $color-primary
+        text-align: center
+
+
+      &__manage
+        flex: 0
+        font-weight: 600
+        color: $color-white-label
+        border: 1px $color-white-label solid
+        padding: 4px 6px
+        border-radius: 6px
+        cursor: pointer
+        margin-right: 10px
+
+      &__leave
+        flex: 0
+        font-weight: 600
+        color: $color-switch
+        border: 1px $color-switch solid
+        padding: 4px 6px
+        border-radius: 6px
+        cursor: pointer

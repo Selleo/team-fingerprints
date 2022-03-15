@@ -135,20 +135,20 @@ export class SurveyResultService {
         });
         if (!user) throw new InternalServerErrorException();
 
-        const team = await this.teamService.getTeamByUserEmail(user.email);
-        if (!team) {
-          const surveyAnswer = user.surveysAnswers.find(
-            (el) => el.surveyId === surveyId,
-          );
+        // const team = await this.teamService.getTeamByUserEmail(user.email);
+        // if (!team) {
+        //   const surveyAnswer = user.surveysAnswers.find(
+        //     (el) => el.surveyId === surveyId,
+        //   );
 
-          const res = [];
-          surveyAnswer.surveyResult.forEach((el) => {
-            if (!res[el.categoryId]) {
-              res[el.categoryId] = el;
-            }
-          });
-          entitiesResultFlat.push(res);
-        }
+        //   const res = [];
+        //   surveyAnswer.surveyResult.forEach((el) => {
+        //     if (!res[el.categoryId]) {
+        //       res[el.categoryId] = el;
+        //     }
+        //   });
+        //   entitiesResultFlat.push(res);
+        // }
 
         break;
 

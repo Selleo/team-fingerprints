@@ -11,7 +11,7 @@ import { Company, CompanySchema } from 'src/company/models/company.model';
 import { User } from 'src/users/models/user.model';
 import { CreateUserDto } from 'src/users/dto/user.dto';
 import { CreateCompanyDto } from 'src/company/dto/company.dto';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { Team } from 'src/company/models/team.model';
 import { UpdateTeamDto } from 'src/company/team/dto/team.dto';
 
@@ -140,7 +140,7 @@ describe('Company controller (e2e)', () => {
         { _id: companyAdmin._id },
         {
           $set: {
-            role: Role.COMPANY_ADMIN,
+            role: RoleType.COMPANY_ADMIN,
             companyId: company._id,
           },
         },

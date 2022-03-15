@@ -1,11 +1,11 @@
 import { Button, Group, Modal, Skeleton } from "@mantine/core";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import times from "lodash/times";
 
 import { useStyles } from "./styles";
 import axios from "axios";
-import { Company, Team, User } from "../../../types/models";
+import { Company, Team } from "../../../types/models";
 import CompanyForm from "../../../components/Company/CompanyForm";
 import EmailWhitelist from "../../../components/EmailWhitelist/EmailWhitelist";
 import EmailForm from "../../../components/EmailForm";
@@ -30,15 +30,6 @@ const CompaniesManagment = () => {
     data: company,
   } = useQuery<Company>(`companies${companyId}`, async () => {
     const response = await axios.get<Company>(`/companies/${companyId}`);
-    return response.data;
-  });
-
-  const {
-    isLoading: isLoadingUsers,
-    error: isErrorUsers,
-    data: users,
-  } = useQuery<User[]>(`users${companyId}`, async () => {
-    const response = await axios.get<User[]>(`/users/all`);
     return response.data;
   });
 
@@ -80,7 +71,7 @@ const CompaniesManagment = () => {
     }
   );
 
-  if (isLoading || isLoadingUsers)
+  if (isLoading)
     return (
       <>
         {times(1, () => (
@@ -88,8 +79,7 @@ const CompaniesManagment = () => {
         ))}
       </>
     );
-  if (error || isErrorUsers) {
-    console.warn(error || isErrorUsers);
+  if (error) {
     return <div>'An error has occurred: ' + console.error;</div>;
   }
 
@@ -112,7 +102,7 @@ const CompaniesManagment = () => {
       <EmailWhitelist
         onRemove={removeEmailFromWhitelist.mutate}
         list={company?.emailWhitelist}
-        users={users}
+        users={[]}
         // currentUserId={profile}
       />
       <hr />

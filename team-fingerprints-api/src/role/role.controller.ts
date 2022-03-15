@@ -1,4 +1,4 @@
-import { Controller, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleService } from './role.service';
@@ -9,7 +9,7 @@ import { Role } from './models/role.model';
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
-  @Post('/:roleId/leave')
+  @Delete('/:roleId/leave')
   async removeRole(@Param('roleId', ValidateObjectId) roleId: string) {
     await this.roleService.removeRoleDocumentById({ _id: roleId } as Role);
   }

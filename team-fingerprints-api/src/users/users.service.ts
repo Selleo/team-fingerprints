@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PrivilegeI, UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import {
+  CreateUserDto,
+  UpdateUserDetailsDto,
+  UpdateUserDto,
+  UserDetailsDto,
+} from './dto/user.dto';
 import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
 import { RoleService } from 'src/role/role.service';
@@ -13,26 +18,26 @@ import { Role } from 'src/role/models/role.model';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private readonly User: Model<User>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly companyService: CompanyService,
     private readonly teamService: TeamService,
     private readonly roleService: RoleService,
   ) {}
 
   async getUserByAuthId(authId: string): Promise<User> {
-    return await this.User.findOne({ authId });
+    return await this.userModel.findOne({ authId });
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    return await this.User.findOne({ email });
+    return await this.userModel.findOne({ email });
   }
 
   async getUser(userId: string): Promise<User> {
-    return await this.User.findOne({ _id: userId });
+    return await this.userModel.findOne({ _id: userId });
   }
 
   async getUsersAll(): Promise<User[]> {
-    return await this.User.find({});
+    return await this.userModel.find({});
   }
 
   async getUsersByIds(userIds: string[]): Promise<UserProfileI[]> {
@@ -50,6 +55,7 @@ export class UsersService {
     const profile: UserProfileI = {
       id: user._id,
       email: user.email,
+      userDetails: user.userDetails,
       privileges: [],
     };
 
@@ -74,6 +80,8 @@ export class UsersService {
               _id: company?._id,
               name: company?.name,
               description: company?.description,
+              pointShape: company.pointShape,
+              pointColor: company.pointColor,
             },
           };
         }
@@ -91,6 +99,8 @@ export class UsersService {
                 _id: team?._id,
                 name: team?.name,
                 description: team?.description,
+                pointShape: team.pointShape,
+                pointColor: team.pointColor,
               },
             };
           }
@@ -102,15 +112,37 @@ export class UsersService {
   }
 
   async createUser(newUserData: CreateUserDto): Promise<User> {
-    const user = await this.User.create(newUserData);
+    const user = await this.userModel.create(newUserData);
     return await user.save();
+  }
+
+  async setUserDetails(userId: string, userDetails: UserDetailsDto) {
+    const user = await this.getUser(userId);
+    if (!user) throw new NotFoundException();
+
+    return await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: userDetails },
+      { new: true },
+    );
+  }
+
+  async updateUserDetails(userId: string, userDetails: UpdateUserDetailsDto) {
+    const user = await this.getUser(userId);
+    if (!user) throw new NotFoundException();
+
+    return await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: userDetails },
+      { new: true },
+    );
   }
 
   async updateUser(
     userId: string,
     updateUserData: UpdateUserDto,
   ): Promise<User> {
-    return await this.User.findOneAndUpdate(
+    return await this.userModel.findOneAndUpdate(
       { _id: userId },
       { $set: updateUserData },
       { new: true },
@@ -118,6 +150,6 @@ export class UsersService {
   }
 
   async removeUser(userId: string): Promise<User> {
-    return await this.User.findOneAndDelete({ _id: userId });
+    return await this.userModel.findOneAndDelete({ _id: userId });
   }
 }

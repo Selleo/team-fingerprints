@@ -1,6 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { UserI } from '../interfaces/user.interface';
+import {
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { Optional } from 'utility-types';
+import { UserDetailsI, UserI } from '../interfaces/user.interface';
 
 export class CreateUserDto implements Partial<UserI> {
   @ApiPropertyOptional()
@@ -55,4 +64,71 @@ export class UpdateUserDto implements Partial<UserI> {
   @IsNotEmpty()
   @IsOptional()
   readonly companyId?: string;
+
+  @ApiPropertyOptional()
+  @IsNotEmpty()
+  @IsOptional()
+  @ValidateNested()
+  userDetails?: UserDetailsI;
+}
+
+export class UserDetailsDto implements UserDetailsI {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  companyType: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  yearOfExperience: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsArray()
+  mainTechnology: string[];
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  techLevel: string;
+}
+
+export class UpdateUserDetailsDto implements Optional<UserDetailsI> {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  country?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  companyType?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  @IsOptional()
+  yearOfExperience?: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsArray()
+  @IsOptional()
+  mainTechnology?: string[];
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  techLevel?: string;
 }

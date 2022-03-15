@@ -16,7 +16,7 @@ const AppHeader = () => {
 
   return (
     <Header height={122} className="header">
-      <div className="header__branding">
+      <div className="header__branding" onClick={() => navigate("/")}>
         <LogoIcon height={37} fill="#ccc" />
       </div>
       {user?.email && (
@@ -27,7 +27,7 @@ const AppHeader = () => {
           <div className="header__menu__submenu">
             <button
               onClick={() => {
-                navigate("responses");
+                navigate("/");
               }}
             >
               <div className="svg-wrap">

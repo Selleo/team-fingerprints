@@ -61,7 +61,7 @@ const AppRoutes = () => {
           <div>Loading profile data</div>
         ) : (
           <Routes>
-            <Route path="/" element={<Surveys />} />
+            <Route path="/" element={<Responses />} />
             <Route path="manage" element={<RoleManagment />} />
             <Route path="surveys" element={<Surveys />} />
             <Route path="companies/new" element={<CompaniesNew />} />
@@ -81,7 +81,6 @@ const AppRoutes = () => {
                 </main>
               }
             />
-            <Route path="responses" element={<Responses />} />
             <Route path="response/:surveyId" element={<ResponseEdit />} />
           </Routes>
         )}

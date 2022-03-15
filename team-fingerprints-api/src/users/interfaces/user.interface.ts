@@ -13,6 +13,7 @@ export interface UserI {
   email: string;
   pictureUrl?: string;
   surveysAnswers: UserSurveyAnswerI[];
+  userDetails?: UserDetailsI;
 }
 
 export interface UserSurveyAnswerI {
@@ -26,4 +27,12 @@ export interface UserSurveyAnswerI {
 export interface UserSurveyResultI {
   category: string;
   answers: QuestionAnswerI[];
+}
+
+export interface UserDetailsI {
+  country: string;
+  companyType: string;
+  mainTechnology: string[];
+  techLevel: string;
+  yearOfExperience: number;
 }

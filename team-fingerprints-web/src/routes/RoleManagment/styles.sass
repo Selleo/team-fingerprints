@@ -1,3 +1,5 @@
+@import 'styles/base/variables'
+
 .managment
   position: relative
   display: flex
@@ -7,7 +9,14 @@
 
   &__company-button
     position: absolute
-    right: 0
+    right: 20px
+    top: -30px
+    font-weight: 600
+    color: $color-primary
+    border: 1px $color-primary solid
+    padding: 4px 6px
+    border-radius: 6px
+    cursor: pointer
 
   &__headline
     font-size: 49px
@@ -28,7 +37,6 @@
       border-radius: 12px
       border: 1px solid #ffffff42
       box-sizing: border-box
-      cursor: pointer
       display: flex
       flex-direction: row
       height: 73px
@@ -36,3 +44,41 @@
       padding-left: 27px
       padding-right: 27px
       width: 560px
+      display: flex
+
+      &__icon
+        flex: 0
+        font-size: 11px
+        font-weight: 600
+        border-radius: 6px
+        padding: 4px 6px
+        background-color: $color-white-label
+        color: $color-background
+        margin-right: 10px
+
+
+      &__title
+        flex: 1
+        font-weight: 600
+        color: $color-primary
+        text-align: center
+
+
+      &__manage
+        flex: 0
+        font-weight: 600
+        color: $color-white-label
+        border: 1px $color-white-label solid
+        padding: 4px 6px
+        border-radius: 6px
+        cursor: pointer
+        margin-right: 10px
+
+      &__leave
+        flex: 0
+        font-weight: 600
+        color: $color-switch
+        border: 1px $color-switch solid
+        padding: 4px 6px
+        border-radius: 6px
+        cursor: pointer

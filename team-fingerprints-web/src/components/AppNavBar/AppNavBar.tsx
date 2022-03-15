@@ -1,5 +1,5 @@
 import { Navbar, Avatar, Text, Group, UnstyledButton } from "@mantine/core";
-import { DashboardIcon, CheckboxIcon, HomeIcon } from "@modulz/radix-icons";
+import { DashboardIcon, HomeIcon } from "@modulz/radix-icons";
 import { useStyles } from "./styles";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
@@ -11,7 +11,7 @@ const AppNavBar = () => {
 
   const { profile } = useContext(ProfileContext);
 
-  if (profile?.role === "SUPER_ADMIN") {
+  if (profile?.privileges?.find?.((el) => el.role === "SUPER_ADMIN")) {
     return (
       <Navbar height={600} padding="xs" width={{ base: 300 }}>
         <Navbar.Section className={classes.sectionItem}>

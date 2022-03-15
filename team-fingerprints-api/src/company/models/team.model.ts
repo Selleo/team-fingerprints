@@ -1,4 +1,4 @@
-import { Prop, SchemaFactory, Schema, raw } from '@nestjs/mongoose';
+import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 
 @Schema({ autoIndex: false })
 export class Team {
@@ -15,22 +15,5 @@ export class Team {
 
   @Prop()
   pointShape: string;
-
-  @Prop({
-    type: [String],
-    excludeIndexes: true,
-    index: false,
-  })
-  members?: string[];
-
-  @Prop({
-    type: [String],
-    excludeIndexes: true,
-    index: false,
-  })
-  emailWhitelist?: string[];
-
-  @Prop(raw({ _id: String, email: String }))
-  teamLeader?: any;
 }
 export const TeamSchema = SchemaFactory.createForClass(Team);

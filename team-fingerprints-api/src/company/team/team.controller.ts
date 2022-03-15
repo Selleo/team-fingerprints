@@ -7,12 +7,10 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RoleGuard } from 'src/role/role.guard';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { Company } from '../models/company.model';
 import { Team } from '../models/team.model';
 import { TeamService } from './team.service';
@@ -20,6 +18,7 @@ import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 import { TeamMembersService } from './team-members.service';
 import { CompanyMembersService } from '../company-members.service';
 import { ValidateEmail } from '../dto/company.dto';
+import { Roles } from 'src/role/decorators/roles.decorator';
 
 @ApiTags('teams')
 @Controller({ version: '1' })
@@ -31,20 +30,24 @@ export class TeamController {
   ) {}
 
   @Get()
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN]))
-  async getTeamsAll(): Promise<Company[]> {
-    return await this.teamService.getTeamsAll();
+  @Roles([RoleType.COMPANY_ADMIN])
+  async getTeamsAll(
+    @Param('companyId', ValidateObjectId) companyId: string,
+  ): Promise<Company[]> {
+    return await this.teamService.getTeamsAll(companyId);
   }
 
   @Get('/:teamId')
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
   async getTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-  ): Promise<Team | HttpException> {
-    return await this.teamService.getTeam(teamId);
+  ): Promise<Team | HttpException | []> {
+    return await this.teamService.getTeam(companyId, teamId);
   }
 
   @Post('/')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
+  @Roles([RoleType.COMPANY_ADMIN], false)
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() teamDto: CreateTeamDto,
@@ -53,7 +56,7 @@ export class TeamController {
   }
 
   @Patch('/:teamId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
   async updateTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -63,7 +66,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
+  @Roles([RoleType.COMPANY_ADMIN], false)
   async removeTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
   ): Promise<Company | HttpException> {
@@ -71,15 +74,15 @@ export class TeamController {
   }
 
   @Post('/:teamId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
   async addUserToTeamWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email }: ValidateEmail,
-  ): Promise<Company | HttpException> {
+  ) {
     await this.companyMembersService.addUserToCompanyWhitelist(
-      companyId,
       email,
+      companyId,
     );
     return await this.teamMembersService.addUserToTeamWhitelist(
       companyId,
@@ -89,26 +92,26 @@ export class TeamController {
   }
 
   @Delete('/:teamId/member')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER], false))
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
   async removeMemberFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email: memberEmail }: ValidateEmail,
-  ): Promise<Company | HttpException> {
+  ) {
     return await this.teamMembersService.removeMemberFromTeam(
       companyId,
       teamId,
-      memberEmail as unknown as string,
+      memberEmail,
     );
   }
 
   @Post('/:teamId/leader')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
+  @Roles([RoleType.COMPANY_ADMIN], false)
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email }: ValidateEmail,
-  ): Promise<Company | HttpException> {
+  ) {
     return await this.teamMembersService.assignTeamLeader(
       companyId,
       teamId,
@@ -117,16 +120,12 @@ export class TeamController {
   }
 
   @Delete('/:teamId/leader')
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN], false))
+  @Roles([RoleType.COMPANY_ADMIN], false)
   async removeTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email }: ValidateEmail,
-  ): Promise<Company | HttpException> {
-    return await this.teamMembersService.removeTeamLeaderByEmail(
-      email,
-      teamId,
-      companyId,
-    );
+  ) {
+    return await this.teamMembersService.removeTeamLeader(email, teamId);
   }
 }

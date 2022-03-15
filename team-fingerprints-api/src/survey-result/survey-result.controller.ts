@@ -1,14 +1,14 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { RoleGuard } from 'src/role/role.guard';
-import { Role } from 'src/role/role.type';
+import { Roles } from 'src/role/decorators/roles.decorator';
+import { RoleType } from 'src/role/role.type';
 import { SurveyResultService } from './survey-result.service';
 
 @Controller({ path: 'survey-results', version: '1' })
 export class SurveyResultController {
   constructor(private readonly surveyResultService: SurveyResultService) {}
 
-  @UseGuards(RoleGuard())
+  @Roles([RoleType.SUPER_ADMIN])
   @Get(':surveyId/companies')
   async getAvgResultForAllCompanies(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -16,8 +16,8 @@ export class SurveyResultController {
     return await this.surveyResultService.getAvgResultForAllCompanies(surveyId);
   }
 
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
   @Get(':surveyId/companies/:companyId')
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -28,8 +28,8 @@ export class SurveyResultController {
     );
   }
 
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
   @Get(':surveyId/companies/:companyId/teams/:teamId')
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -37,8 +37,8 @@ export class SurveyResultController {
     return await this.surveyResultService.getAvgResultForTeam(surveyId, teamId);
   }
 
-  @UseGuards(RoleGuard([Role.COMPANY_ADMIN, Role.TEAM_LEADER, Role.USER]))
   @Get(':surveyId/companies/:companyId/teams/:teamId/users/:userId')
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
   async getSurveyResultForUser(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('userId', ValidateObjectId) userId: string,

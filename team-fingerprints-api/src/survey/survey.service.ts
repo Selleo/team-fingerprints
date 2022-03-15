@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Survey } from './models/survey.model';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 
@@ -14,10 +14,10 @@ export class SurveyService {
   ) {}
 
   async getSurveysByRole(
-    role: Role,
+    role: RoleType,
     userId: string,
   ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
-    if (role === Role.SUPER_ADMIN) {
+    if (role === RoleType.SUPER_ADMIN) {
       return await this.surveyModel.find({}).exec();
     }
 
@@ -35,8 +35,11 @@ export class SurveyService {
     return await Promise.all(surveysWithCompleteStatus);
   }
 
-  async getSurvey(surveyId: string, role: Role = Role.USER): Promise<Survey> {
-    if (role === Role.SUPER_ADMIN) {
+  async getSurvey(
+    surveyId: string,
+    role: RoleType = RoleType.USER,
+  ): Promise<Survey> {
+    if (role === RoleType.SUPER_ADMIN) {
       return await this.surveyModel.findById({ _id: surveyId }).exec();
     }
     return await this.surveyModel

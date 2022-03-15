@@ -1,5 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
-import MainRoute from "./routes/MainRoute";
+import { Route, Routes } from "react-router-dom";
 import Surveys from "./routes/Surveys";
 import { AppShell } from "@mantine/core";
 
@@ -9,19 +8,21 @@ import SurveyDetails from "./routes/Surveys/Details";
 import Responses from "./routes/Responses";
 import ResponseEdit from "./routes/Responses/Edit";
 import Users from "./routes/Users";
-import Companies from "./routes/Companies";
 import CompaniesNew from "./routes/Companies/New";
+import RoleManagment from "./routes/RoleManagment";
 
 import CompaniesManagment from "./routes/Companies/Managment";
 import TeamManagement from "./routes/TeamManagement";
 import { Profile } from "./types/models";
-import { createContext, useEffect } from "react";
+import { createContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery } from "react-query";
 import axios from "axios";
+import { queryClient } from "./App";
 
 interface ProfileContextInterface {
   profile: Profile | undefined;
+  invalidateProfile: () => void;
 }
 
 export const ProfileContext = createContext<ProfileContextInterface>(
@@ -30,49 +31,24 @@ export const ProfileContext = createContext<ProfileContextInterface>(
 
 const AppRoutes = () => {
   const { user } = useAuth0();
-  const navigate = useNavigate();
 
-  const { data, refetch, isLoading } = useQuery<Profile>(
-    `profileData${user?.sub}`,
+  const auth0UserId = user?.sub?.split("|")[1];
+
+  const { data, isLoading } = useQuery<Profile>(
+    `profileData${auth0UserId}`,
     async () => {
       const response = await axios.get<Profile>("/auth/profile");
       return response.data;
-    },
-    {
-      refetchOnWindowFocus: false,
-      enabled: false,
     }
   );
 
-  useEffect(() => {
-    refetch().then((data) => {
-      if (data.data?.canCreateTeam) {
-        navigate("companies/new");
-        return;
-      }
-      if (data.data?.role === "COMPANY_ADMIN") {
-        const companyId = data.data.company?._id;
-        navigate(`companies/${companyId}`);
-        return;
-      }
-      if (data.data?.role === "TEAM_LEADER") {
-        const companyId = data.data.company?._id;
-        const teamId = data.data.team?._id;
-        navigate(`companies/${companyId}/team/${teamId}`);
-        return;
-      }
-      if (data.data?.role === "SUPER_ADMIN") {
-        navigate(`surveys`);
-        return;
-      }
-      navigate("responses");
-    });
-  }, []);
-
-  const shouldSeeNav = data?.role === "SUPER_ADMIN";
+  const invalidateProfile = () => {
+    console.log("invalidating");
+    queryClient.invalidateQueries(`profileData${auth0UserId}`);
+  };
 
   return (
-    <ProfileContext.Provider value={{ profile: data }}>
+    <ProfileContext.Provider value={{ profile: data, invalidateProfile }}>
       <AppShell
         // navbarOffsetBreakpoint controls when navbar should no longer be offset with padding-left
         navbarOffsetBreakpoint="sm"
@@ -81,14 +57,13 @@ const AppRoutes = () => {
         header={<AppHeader />}
         className="app-shell"
       >
-        {" "}
         {isLoading ? (
-          <div></div>
+          <div>Loading profile data</div>
         ) : (
           <Routes>
-            <Route path="/" element={<MainRoute />} />
+            <Route path="/" element={<Responses />} />
+            <Route path="manage" element={<RoleManagment />} />
             <Route path="surveys" element={<Surveys />} />
-            <Route path="companies" element={<Companies />} />
             <Route path="companies/new" element={<CompaniesNew />} />
             <Route path="companies/:id" element={<CompaniesManagment />} />
             <Route path="companies/:id/team">
@@ -106,7 +81,6 @@ const AppRoutes = () => {
                 </main>
               }
             />
-            <Route path="responses" element={<Responses />} />
             <Route path="response/:surveyId" element={<ResponseEdit />} />
           </Routes>
         )}

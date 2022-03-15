@@ -5,12 +5,12 @@ import {
   HttpException,
   Inject,
   Injectable,
-  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
-import { Role } from 'src/role/role.type';
+import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './models/company.model';
@@ -43,9 +43,9 @@ export class CompanyService {
     return await this.companyModel.findOne({ _id: companyId }).exec();
   }
 
-  async getCompanyByUserEmail(email: string): Promise<Company> {
-    return await this.companyModel.findOne({ emailWhitelist: email }).exec();
-  }
+  // async getCompanyByUserEmail(email: string): Promise<Company> {
+  //   return await this.companyModel.findOne({ emailWhitelist: email }).exec();
+  // }
 
   async createCompany(
     userId: string,
@@ -56,25 +56,22 @@ export class CompanyService {
     if (await this.isDomainTaken(domain)) {
       throw new ForbiddenException(`Domain ${domain} is already taken.`);
     }
-    const { email } = await this.usersService.getUser(userId);
-    if (!email) throw new NotFoundException();
-
-    if (await this.getCompanyByUserEmail(email)) {
-      throw new ForbiddenException(`You already belong to ${domain} company.`);
-    }
 
     const newCompany = await this.companyModel.create({
       name,
       description,
       domain: domain.toLowerCase(),
-      adminId: userId,
-      members: [userId],
-      emailWhitelist: [email],
     });
-    await this.usersService.updateUser(userId, {
-      companyId: newCompany?._id,
+
+    const user = await this.usersService.getUser(userId);
+    const roleDocument = await this.roleService.createRoleDocument(user, {
+      userId: user._id,
+      role: RoleType.COMPANY_ADMIN,
+      companyId: newCompany._id,
     });
-    await this.roleService.changeUserRole(userId, Role.COMPANY_ADMIN);
+
+    if (!roleDocument) throw new InternalServerErrorException();
+
     return newCompany;
   }
 

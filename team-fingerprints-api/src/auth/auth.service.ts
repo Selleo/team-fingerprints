@@ -5,6 +5,7 @@ import * as request from 'request';
 import { User } from 'src/users/models/user.model';
 import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'src/role/role.type';
+import { CompanyMembersService } from 'src/company/company-members.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly roleService: RoleService,
+    private readonly companyMembersService: CompanyMembersService,
   ) {}
 
   async handleExistingUsers(email: string) {
@@ -20,6 +22,8 @@ export class AuthService {
     });
 
     const user = await this.usersService.getUserByEmail(email);
+
+    await this.companyMembersService.handleUserInCompanyDomain(email);
 
     roleDocuments.forEach(async (doc) => {
       if (doc.companyId) {

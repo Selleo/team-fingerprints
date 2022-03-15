@@ -5,13 +5,18 @@ import times from "lodash/times";
 
 import { useStyles } from "./styles";
 import axios from "axios";
-import { Company, Team } from "../../../types/models";
+import { Company, CompanyRole, Team } from "../../../types/models";
 import CompanyForm from "../../../components/Company/CompanyForm";
 import EmailWhitelist from "../../../components/EmailWhitelist/EmailWhitelist";
 import EmailForm from "../../../components/EmailForm";
 import { queryClient } from "../../../App";
 import { useNavigate, useParams } from "react-router-dom";
 import TeamForm from "../../../components/Team/TeamForm/TeamForm";
+
+type CompanyResponse = {
+  company: Company;
+  roles: CompanyRole[];
+};
 
 const CompaniesManagment = () => {
   const navigate = useNavigate();
@@ -24,14 +29,18 @@ const CompaniesManagment = () => {
 
   const companyId = params.id;
 
-  const {
-    isLoading,
-    error,
-    data: company,
-  } = useQuery<Company>(`companies${companyId}`, async () => {
-    const response = await axios.get<Company>(`/companies/${companyId}`);
-    return response.data;
-  });
+  const { isLoading, error, data } = useQuery<CompanyResponse>(
+    `companies${companyId}`,
+    async () => {
+      const response = await axios.get<CompanyResponse>(
+        `/companies/${companyId}`
+      );
+      return response.data;
+    }
+  );
+
+  const company = data?.company;
+  const roles = data?.roles || ([] as CompanyRole[]);
 
   const addEmailToWhitelist = useMutation(
     (email: string) => {
@@ -101,9 +110,7 @@ const CompaniesManagment = () => {
       <h3>{company?.description}</h3>
       <EmailWhitelist
         onRemove={removeEmailFromWhitelist.mutate}
-        list={company?.emailWhitelist}
-        users={[]}
-        // currentUserId={profile}
+        roles={roles}
       />
       <hr />
       <Button onClick={() => setWhitelistModalVisible(true)}>

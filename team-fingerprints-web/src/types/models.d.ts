@@ -62,6 +62,8 @@ export type Company = {
   domain: string;
   emailWhitelist: string[];
   teams: Team[];
+  pointShape: Shape;
+  pointColor: string;
 };
 
 export type Answer = {
@@ -88,12 +90,22 @@ type ComplexRole = {
     name: string;
   };
   role: role;
+  roleId: string;
+};
+
+type CompanyRole = {
+  companyId: string;
+  createdAt: string;
+  email: string;
+  role: role;
+  updatedAt: string;
+  userId: string;
 };
 
 export type Profile = {
   privileges: ComplexRole[];
   email: string;
-  _id: string;
+  id: string;
 };
 
 export type QuestionWithAnswers = { answer: Answer; question: Question };

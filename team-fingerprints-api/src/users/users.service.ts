@@ -119,11 +119,23 @@ export class UsersService {
   async setUserDetails(userId: string, userDetails: UserDetailsDto) {
     const user = await this.getUser(userId);
     if (!user) throw new NotFoundException();
+
+    return await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: userDetails },
+      { new: true },
+    );
   }
 
   async updateUserDetails(userId: string, userDetails: UpdateUserDetailsDto) {
     const user = await this.getUser(userId);
     if (!user) throw new NotFoundException();
+
+    return await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: userDetails },
+      { new: true },
+    );
   }
 
   async updateUser(

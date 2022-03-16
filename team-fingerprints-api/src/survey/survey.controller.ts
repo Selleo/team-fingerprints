@@ -23,14 +23,26 @@ export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
   @Get()
+  @Roles([
+    RoleType.SUPER_ADMIN,
+    RoleType.COMPANY_ADMIN,
+    RoleType.TEAM_LEADER,
+    RoleType.USER,
+  ])
   async getSurveysByRole(
     @CurrentUserRole() role: RoleType,
-    @CurrentUserId() userId,
+    @CurrentUserId(ValidateObjectId) userId,
   ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
     return await this.surveyService.getSurveysByRole(role, userId);
   }
 
   @Get('/:surveyId')
+  @Roles([
+    RoleType.SUPER_ADMIN,
+    RoleType.COMPANY_ADMIN,
+    RoleType.TEAM_LEADER,
+    RoleType.USER,
+  ])
   async getSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @CurrentUserRole() role: RoleType,

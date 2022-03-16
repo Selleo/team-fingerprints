@@ -57,6 +57,17 @@ export class AuthService {
           },
         );
       }
+      if (doc.role === RoleType.SUPER_ADMIN) {
+        await this.roleService.updateRoleDocument(
+          {
+            email: doc.email,
+            role: doc.role,
+          },
+          {
+            userId: user._id,
+          },
+        );
+      }
     });
   }
 

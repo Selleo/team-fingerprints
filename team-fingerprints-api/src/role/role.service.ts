@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -75,5 +76,23 @@ export class RoleService {
         new: true,
       })
       .exec();
+  }
+
+  async leave(userId: string, roleId: string) {
+    const roleDocument = await this.findOneRoleDocument({
+      _id: roleId,
+      userId,
+    });
+
+    if (!roleDocument) throw new NotFoundException();
+
+    return await this.removeRoleDocumentById(roleDocument);
+  }
+
+  async removeRole(roleId: string) {
+    const roleDocument = await this.findOneRoleDocument({ _id: roleId });
+    if (!roleDocument) throw new NotFoundException();
+
+    return await this.removeRoleDocumentById(roleDocument);
   }
 }

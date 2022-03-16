@@ -8,8 +8,6 @@ const SurveyItem = ({ item }: { item: ResponseItem }) => {
 
   const isFinished = item;
 
-  console.log(item);
-
   return (
     <li
       className="responses__surveys__survey"

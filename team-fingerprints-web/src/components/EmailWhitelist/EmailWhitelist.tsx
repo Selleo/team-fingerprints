@@ -1,47 +1,60 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Table, Badge } from "@mantine/core";
+import { groupBy, keys, map } from "lodash";
 import { FC, useContext } from "react";
 import { ProfileContext } from "../../routes";
-import { CompanyRole } from "../../types/models";
+import { CompanyRole, Team } from "../../types/models";
 
 interface IProps {
   onRemove?: (email: string) => void;
   roles: CompanyRole[];
+  teams?: Team[];
 }
 
-const EmailWhitelist: FC<IProps> = ({ onRemove, roles }) => {
+const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
   const { profile } = useContext(ProfileContext);
-
-  const rows = roles.map((role) => {
-    const thatsMe = role?.userId === profile?.id;
-
+  const grouped = groupBy(roles, "email");
+  const rows = map(keys(grouped), (email) => {
+    const roles = grouped[email];
+    const thatsMe = email === profile?.email;
     return (
-      <tr key={role.createdAt}>
-        <td>{role.email}</td>
-
-        {thatsMe ? (
-          <td>
-            <Badge color="green">{role?.role}</Badge>
-          </td>
-        ) : (
-          <td>
-            {role.userId ? (
-              <Badge color="green">{role.role}</Badge>
-            ) : (
-              <Badge color="yellow">Pending {role.role}</Badge>
-            )}
-          </td>
-        )}
-        <td>
-          {thatsMe ? (
-            <span>thats you!</span>
-          ) : (
-            <Button onClick={() => onRemove?.(role.email)} color="red">
-              Remove
-            </Button>
-          )}
-        </td>
-      </tr>
+      <>
+        <tr style={{ backgroundColor: "#444" }} key={email}>
+          <td>{email}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        {roles.map((role) => {
+          return (
+            <tr key={role._id}>
+              <td></td>
+              {thatsMe ? (
+                <td>
+                  <Badge color="green">{role?.role}</Badge>
+                </td>
+              ) : (
+                <td>
+                  {role.userId ? (
+                    <Badge color="green">{role.role}</Badge>
+                  ) : (
+                    <Badge color="yellow">Pending {role.role}</Badge>
+                  )}
+                </td>
+              )}
+              <td>{teams?.find((team) => team._id === role.teamId)?.name}</td>
+              <td>
+                {thatsMe ? (
+                  <span>thats you!</span>
+                ) : (
+                  <Button onClick={() => onRemove?.(role._id)} color="red">
+                    Remove
+                  </Button>
+                )}
+              </td>
+            </tr>
+          );
+        })}
+      </>
     );
   });
 
@@ -51,6 +64,7 @@ const EmailWhitelist: FC<IProps> = ({ onRemove, roles }) => {
         <tr>
           <th>Whitelisted Emails</th>
           <th>Is in system?</th>
+          <th>Team</th>
           <th>Actions</th>
         </tr>
       </thead>

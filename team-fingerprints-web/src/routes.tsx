@@ -43,7 +43,6 @@ const AppRoutes = () => {
   );
 
   const invalidateProfile = () => {
-    console.log("invalidating");
     queryClient.invalidateQueries(`profileData${auth0UserId}`);
   };
 

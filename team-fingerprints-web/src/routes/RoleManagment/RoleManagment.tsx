@@ -1,8 +1,9 @@
-import { Button, Modal } from "@mantine/core";
+import { Modal } from "@mantine/core";
+import axios from "axios";
 import { isEmpty } from "lodash";
-import React, { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
+import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import BackToScreen from "../../components/BackToScreen/BackToScreen";
 import CompanyForm from "../../components/Company/CompanyForm";
 import { ProfileContext } from "../../routes";
 import { ComplexRole, role } from "../../types/models";
@@ -10,12 +11,23 @@ import { ComplexRole, role } from "../../types/models";
 import "./styles.sass";
 
 export const RoleManagment = () => {
-  const { profile } = useContext(ProfileContext);
+  const { profile, invalidateProfile } = useContext(ProfileContext);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const emptyRoles = useMemo(() => isEmpty(profile?.privileges), [profile]);
   const navigate = useNavigate();
 
-  const leaveRole = (item: ComplexRole) => {};
+  const removeRoleMutation = useMutation(
+    async (roleId: string) => {
+      return axios.delete(`/role/${roleId}/leave`);
+    },
+    {
+      onSuccess: () => invalidateProfile(),
+    }
+  );
+
+  const leaveRole = (item: ComplexRole) => {
+    removeRoleMutation.mutate(item.roleId);
+  };
 
   const goToManage = (item: ComplexRole) => {
     switch (item.role) {

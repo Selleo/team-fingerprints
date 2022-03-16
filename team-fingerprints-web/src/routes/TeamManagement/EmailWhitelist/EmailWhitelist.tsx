@@ -1,41 +1,34 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Table, Badge, Group } from "@mantine/core";
-import React, { FC } from "react";
-import { TeamLead, User } from "../../../types/models";
+import { FC } from "react";
+import { CompanyRole } from "../../../types/models";
 
 interface IProps {
-  list?: string[];
+  roles: CompanyRole[];
   onRemove?: (email: string) => void;
-  users?: User[];
-  teamLeader?: TeamLead;
   makeALeader: (email: string) => void;
   removeLeaderRole: (email: string) => void;
 }
 
 const EmailWhitelist: FC<IProps> = ({
-  list,
+  roles,
   onRemove,
-  users,
-  teamLeader,
   makeALeader,
   removeLeaderRole,
 }) => {
   const { user } = useAuth0();
   const currentUserEmail = user?.email;
 
-  const rows = (list || []).map((email) => {
-    const user = users?.find((el) => el.email === email);
-    const thatsMe = email === currentUserEmail;
+  const rows = (roles || []).map((role) => {
+    const thatsMe = role.email === currentUserEmail;
 
-    const isALeader =
-      teamLeader &&
-      (user?._id === teamLeader?._id || email === teamLeader?.email);
+    const isALeader = role.role === "TEAM_LEADER";
 
     const roleInTeam = isALeader ? "LEAD" : "MEMBER";
 
     return (
-      <tr key={email}>
-        <td>{email}</td>
+      <tr key={role.createdAt}>
+        <td>{role.email}</td>
         {thatsMe ? (
           <td></td>
         ) : (
@@ -50,17 +43,20 @@ const EmailWhitelist: FC<IProps> = ({
         <td>
           <Group>
             {!thatsMe && (
-              <Button onClick={() => onRemove?.(email)} color="red">
+              <Button onClick={() => onRemove?.(role.email)} color="red">
                 Remove
               </Button>
             )}
             {!thatsMe && !isALeader && (
-              <Button onClick={() => makeALeader?.(email)} color="green">
+              <Button onClick={() => makeALeader?.(role.email)} color="green">
                 Make a leader
               </Button>
             )}
             {!thatsMe && isALeader && (
-              <Button onClick={() => removeLeaderRole?.(email)} color="red">
+              <Button
+                onClick={() => removeLeaderRole?.(role.email)}
+                color="red"
+              >
                 Remove leadership
               </Button>
             )}

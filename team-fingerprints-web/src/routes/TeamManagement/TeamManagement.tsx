@@ -5,7 +5,7 @@ import times from "lodash/times";
 
 import { useStyles } from "./styles";
 import axios from "axios";
-import { Team, User } from "../../types/models";
+import { CompanyRole, Team, User } from "../../types/models";
 import EmailWhitelist from "./EmailWhitelist";
 import EmailForm from "../../components/EmailForm";
 import { queryClient } from "../../App";
@@ -13,6 +13,11 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import TeamForm from "../../components/Team/TeamForm/TeamForm";
 import { useNotifications } from "@mantine/notifications";
+
+type TeamResponse = {
+  team: Team;
+  roles: CompanyRole[];
+};
 
 const TeamManagment = () => {
   const navigation = useNavigate();
@@ -26,16 +31,18 @@ const TeamManagment = () => {
   const companyId = params.id;
   const teamId = params.teamId;
 
-  const {
-    isLoading,
-    error,
-    data: team,
-  } = useQuery<Team>(`team${teamId}`, async () => {
-    const response = await axios.get<Team>(
-      `/companies/${companyId}/teams/${teamId}`
-    );
-    return response.data;
-  });
+  const { isLoading, error, data } = useQuery<TeamResponse>(
+    `team${teamId}`,
+    async () => {
+      const response = await axios.get<TeamResponse>(
+        `/companies/${companyId}/teams/${teamId}`
+      );
+      return response.data;
+    }
+  );
+
+  const team = data?.team;
+  const roles = data?.roles || ([] as CompanyRole[]);
 
   const addEmailToWhitelist = useMutation(
     (email: string) => {
@@ -194,9 +201,7 @@ const TeamManagment = () => {
       <EmailWhitelist
         removeLeaderRole={removeLeaderRole.mutate}
         onRemove={removeEmailFromWhitelist.mutate}
-        list={team?.emailWhitelist?.filter((val) => !!val)}
-        users={[]}
-        teamLeader={team?.teamLeader}
+        roles={roles}
         makeALeader={makeALeader.mutate}
       />
       <hr />

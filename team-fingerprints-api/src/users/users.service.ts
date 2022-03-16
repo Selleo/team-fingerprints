@@ -74,16 +74,23 @@ export class UsersService {
           const company = await this.companyService.getCompanyById(
             roleDocument.companyId,
           );
-          privilege = {
-            ...privilege,
-            company: {
-              _id: company?._id,
-              name: company?.name,
-              description: company?.description,
-              pointShape: company.pointShape,
-              pointColor: company.pointColor,
-            },
-          };
+          if (company?.id) {
+            privilege = {
+              ...privilege,
+              company: {
+                _id: company?._id,
+                name: company?.name,
+                description: company?.description,
+                pointShape: company?.pointShape,
+                pointColor: company?.pointColor,
+              },
+            };
+          } else {
+            privilege = {
+              ...privilege,
+              company: null,
+            };
+          }
         }
 
         if (roleDocument.teamId) {

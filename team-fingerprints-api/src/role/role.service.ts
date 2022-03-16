@@ -91,25 +91,33 @@ export class RoleService {
   }
 
   async removeRole(roleId: string, companyId: string, currentUserId: string) {
-    const currenUserRoleDocument = await this.findOneRoleDocument({
-      userId: currentUserId,
-      companyId,
-    });
-
-    if (!currenUserRoleDocument) throw new UnauthorizedException();
-
-    const roleDocument = await this.findOneRoleDocument({
+    const roleDocumentToRemove = await this.findOneRoleDocument({
       _id: roleId,
       companyId,
     });
-    if (!roleDocument) throw new NotFoundException();
 
-    if (
-      currenUserRoleDocument.role === RoleType.TEAM_LEADER &&
-      roleDocument.teamId.length <= 0
-    )
-      throw new UnauthorizedException();
+    if (!roleDocumentToRemove) throw new NotFoundException();
 
-    return await this.removeRoleDocumentById(roleDocument);
+    const adminRemovalRole = await this.findOneRoleDocument({
+      companyId: roleDocumentToRemove.companyId,
+      userId: currentUserId,
+      role: RoleType.COMPANY_ADMIN,
+    });
+
+    if (adminRemovalRole) {
+      return await this.removeRoleDocumentById(roleDocumentToRemove);
+    }
+
+    const teamLeadRemovalRole = await this.findOneRoleDocument({
+      teamId: roleDocumentToRemove.teamId,
+      userId: currentUserId,
+      role: RoleType.TEAM_LEADER,
+    });
+
+    if (teamLeadRemovalRole) {
+      return await this.removeRoleDocumentById(roleDocumentToRemove);
+    }
+
+    throw new UnauthorizedException();
   }
 }

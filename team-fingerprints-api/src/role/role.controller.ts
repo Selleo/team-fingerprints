@@ -21,7 +21,11 @@ export class RoleController {
 
   @Delete('/:roleId/remove')
   @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
-  async removeRole(@Param('roleId', ValidateObjectId) roleId: string) {
-    await this.roleService.removeRole(roleId);
+  async removeRole(
+    @CurrentUserId(ValidateObjectId) currentUserId: string,
+    @Param('comapnyId', ValidateObjectId) companyId: string,
+    @Param('roleId', ValidateObjectId) roleId: string,
+  ) {
+    await this.roleService.removeRole(roleId, companyId, currentUserId);
   }
 }

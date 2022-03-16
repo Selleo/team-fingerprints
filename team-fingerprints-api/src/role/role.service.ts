@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -89,10 +90,34 @@ export class RoleService {
     return await this.removeRoleDocumentById(roleDocument);
   }
 
-  async removeRole(roleId: string) {
-    const roleDocument = await this.findOneRoleDocument({ _id: roleId });
-    if (!roleDocument) throw new NotFoundException();
+  async removeRole(roleId: string, companyId: string, currentUserId: string) {
+    const roleDocumentToRemove = await this.findOneRoleDocument({
+      _id: roleId,
+      companyId,
+    });
 
-    return await this.removeRoleDocumentById(roleDocument);
+    if (!roleDocumentToRemove) throw new NotFoundException();
+
+    const adminRemovalRole = await this.findOneRoleDocument({
+      companyId: roleDocumentToRemove.companyId,
+      userId: currentUserId,
+      role: RoleType.COMPANY_ADMIN,
+    });
+
+    if (adminRemovalRole) {
+      return await this.removeRoleDocumentById(roleDocumentToRemove);
+    }
+
+    const teamLeadRemovalRole = await this.findOneRoleDocument({
+      teamId: roleDocumentToRemove.teamId,
+      userId: currentUserId,
+      role: RoleType.TEAM_LEADER,
+    });
+
+    if (teamLeadRemovalRole) {
+      return await this.removeRoleDocumentById(roleDocumentToRemove);
+    }
+
+    throw new UnauthorizedException();
   }
 }

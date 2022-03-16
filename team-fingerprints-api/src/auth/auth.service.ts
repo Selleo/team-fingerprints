@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
 import * as request from 'request';
@@ -6,6 +10,8 @@ import { User } from 'src/users/models/user.model';
 import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'src/role/role.type';
 import { CompanyMembersService } from 'src/company/company-members.service';
+import axios from 'axios';
+import * as qs from 'qs';
 
 @Injectable()
 export class AuthService {
@@ -55,15 +61,20 @@ export class AuthService {
   }
 
   async handleNewUsers(auth0Id: string) {
-    const options = (id: string) => ({
-      method: 'GET',
-      url: `https://dev-llkte41m.us.auth0.com/api/v2/users/${id}`,
-      headers: {
-        authorization: `Bearer ${this.configService.get<string>(
-          'AUTH0_MANAGEMENT_API_TOKEN',
-        )}`,
-      },
-    });
+    const token = await this.getAuth0ManagementApiToken();
+    const AUTH0_API_EXPLORER_CLIENT_AUDIENCE = this.configService.get<string>(
+      'AUTH0_API_EXPLORER_CLIENT_AUDIENCE',
+    );
+
+    const options = (id: string) => {
+      return {
+        method: 'GET',
+        url: `${AUTH0_API_EXPLORER_CLIENT_AUDIENCE}users/${id}`,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      };
+    };
 
     let user: User;
     await request(options(auth0Id), async (err, res, body) => {
@@ -93,5 +104,34 @@ export class AuthService {
 
     await this.handleExistingUsers(user.email);
     return user;
+  }
+
+  async getAuth0ManagementApiToken() {
+    const AUTH0_API_EXPLORER_CLIENT_ID = this.configService.get<string>(
+      'AUTH0_API_EXPLORER_CLIENT_ID',
+    );
+    const AUTH0_API_EXPLORER_CLIENT_SECRET = this.configService.get<string>(
+      'AUTH0_API_EXPLORER_CLIENT_SECRET',
+    );
+    const AUTH0_API_EXPLORER_CLIENT_AUDIENCE = this.configService.get<string>(
+      'AUTH0_API_EXPLORER_CLIENT_AUDIENCE',
+    );
+
+    const options = {
+      method: 'POST',
+      url: 'https://dev-llkte41m.us.auth0.com/oauth/token',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      data: qs.stringify({
+        grant_type: 'client_credentials',
+        client_id: AUTH0_API_EXPLORER_CLIENT_ID,
+        client_secret: AUTH0_API_EXPLORER_CLIENT_SECRET,
+        audience: AUTH0_API_EXPLORER_CLIENT_AUDIENCE,
+      }),
+    };
+
+    const response = await axios.request(options as any);
+    if (response.status !== 200) throw new UnauthorizedException();
+
+    return response.data.access_token;
   }
 }

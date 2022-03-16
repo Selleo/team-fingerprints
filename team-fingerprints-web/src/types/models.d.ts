@@ -95,11 +95,13 @@ type ComplexRole = {
 
 type CompanyRole = {
   companyId: string;
+  teamId: string;
   createdAt: string;
   email: string;
   role: role;
   updatedAt: string;
   userId: string;
+  _id: string;
 };
 
 export type Profile = {

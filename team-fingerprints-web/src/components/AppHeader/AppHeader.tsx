@@ -8,6 +8,7 @@ import { ReactComponent as PencilIcon } from "../../assets/Pencil2.svg";
 import { ReactComponent as LogoIcon } from "../../assets/Logo.svg";
 
 import "./styles.sass";
+import { queryClient } from "../../App";
 
 const AppHeader = () => {
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ const AppHeader = () => {
                   returnTo: window.location.origin,
                 });
                 localStorage.removeItem("token");
+                queryClient.clear();
               }}
             >
               <div className="svg-wrap">

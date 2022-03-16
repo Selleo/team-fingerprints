@@ -6,7 +6,7 @@ import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import CompanyForm from "../../components/Company/CompanyForm";
 import { ProfileContext } from "../../routes";
-import { ComplexRole, role } from "../../types/models";
+import { ComplexRole } from "../../types/models";
 
 import "./styles.sass";
 
@@ -25,7 +25,9 @@ export const RoleManagment = () => {
     }
   );
 
-  const leaveRole = (item: ComplexRole) => {
+  console.log(profile?.privileges);
+
+  const leaveRole = (item: any) => {
     removeRoleMutation.mutate(item.roleId);
   };
 
@@ -61,11 +63,12 @@ export const RoleManagment = () => {
             item && (
               <li className="managment__roles__role">
                 <span className="managment__roles__role__icon">
-                  {item.role}
+                  {item.team
+                    ? `${item.role} OF TEAM ${item.team.name}`
+                    : item.role}
                 </span>
                 <span className="managment__roles__role__title">
                   {item.company?.name || "SUPER ADMIN RIGHTS"}{" "}
-                  {item.team?._id && item.team?.name}
                 </span>
                 {item.role !== "USER" && (
                   <a
@@ -86,7 +89,7 @@ export const RoleManagment = () => {
         )}
       </ul>
     );
-  }, [emptyRoles, profile?.privileges]);
+  }, [emptyRoles, goToManage, leaveRole, profile?.privileges]);
 
   return (
     <>

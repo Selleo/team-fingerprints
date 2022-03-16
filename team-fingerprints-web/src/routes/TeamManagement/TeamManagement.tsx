@@ -138,7 +138,6 @@ const TeamManagment = () => {
         queryClient.invalidateQueries(`team${teamId}`);
       },
       onError: (error: any) => {
-        console.log(error?.response);
         showNotification({
           color: "red",
           title: "Can not remove leadership",
@@ -148,14 +147,9 @@ const TeamManagment = () => {
     }
   );
 
-  const removeEmailFromWhitelist = useMutation(
-    (email: string) => {
-      return axios.delete<string>(
-        `/companies/${companyId}/teams/${teamId}/member`,
-        {
-          data: { email },
-        }
-      );
+  const removeRole = useMutation(
+    (roleId: string) => {
+      return axios.delete<string>(`/role/${roleId}/remove`);
     },
     {
       onSuccess: () => {
@@ -200,7 +194,7 @@ const TeamManagment = () => {
       <h3>Team Description: {team?.description}</h3>
       <EmailWhitelist
         removeLeaderRole={removeLeaderRole.mutate}
-        onRemove={removeEmailFromWhitelist.mutate}
+        onRemove={removeRole.mutate}
         roles={roles}
         makeALeader={makeALeader.mutate}
       />

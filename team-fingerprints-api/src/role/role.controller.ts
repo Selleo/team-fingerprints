@@ -3,8 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleService } from './role.service';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
-import { Roles } from './decorators/roles.decorator';
-import { RoleType } from './role.type';
 
 @ApiTags('role')
 @Controller({ path: 'role', version: '1' })
@@ -20,12 +18,10 @@ export class RoleController {
   }
 
   @Delete('/:roleId/remove')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeRole(
     @CurrentUserId(ValidateObjectId) currentUserId: string,
     @Param('roleId', ValidateObjectId) roleId: string,
-    @Param('companyId', ValidateObjectId) companyId: string,
   ) {
-    await this.roleService.removeRole(roleId, companyId, currentUserId);
+    await this.roleService.removeRole(roleId, currentUserId);
   }
 }

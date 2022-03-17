@@ -25,8 +25,6 @@ export const RoleManagment = () => {
     }
   );
 
-  console.log(profile?.privileges);
-
   const leaveRole = (item: any) => {
     removeRoleMutation.mutate(item.roleId);
   };

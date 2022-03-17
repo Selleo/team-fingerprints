@@ -267,8 +267,8 @@ export default function Edit() {
   if (
     isLoadingSurvey ||
     isLoadingSurveyResponse ||
-    isLoadingSurveyFinished ||
-    isLoadingSurveyResultsCompany
+    isLoadingSurveyFinished
+    //|| isLoadingSurveyResultsCompany
     //|| isLoadingTeamResults
   ) {
     return <span>Loading survey</span>;

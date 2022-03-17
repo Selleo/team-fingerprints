@@ -8,7 +8,6 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUserRole } from 'src/common/decorators/currentUserRole.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'src/role/role.type';
 import { Survey } from './models/survey.model';

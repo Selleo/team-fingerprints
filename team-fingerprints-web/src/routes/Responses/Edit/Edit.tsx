@@ -61,7 +61,8 @@ export default function Edit() {
   //   });
 
   //TODO fix it
-  const companyId = profile?.privileges?.[0].company?._id;
+  const companyId =
+    profile?.privileges?.[0] && profile?.privileges?.[0].company?._id;
 
   const {
     isLoading: isLoadingSurveyResultsCompany,

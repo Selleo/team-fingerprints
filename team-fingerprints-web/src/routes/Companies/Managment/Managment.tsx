@@ -66,11 +66,9 @@ const CompaniesManagment = () => {
     }
   );
 
-  const removeEmailFromWhitelist = useMutation(
-    (email: string) => {
-      return axios.delete<string>(`/companies/${companyId}/member`, {
-        data: { email },
-      });
+  const removeRole = useMutation(
+    (roleId: string) => {
+      return axios.delete<string>(`/role/${roleId}/remove`);
     },
     {
       onSuccess: () => {
@@ -109,8 +107,9 @@ const CompaniesManagment = () => {
       </h2>
       <h3>{company?.description}</h3>
       <EmailWhitelist
-        onRemove={removeEmailFromWhitelist.mutate}
+        onRemove={removeRole.mutate}
         roles={roles}
+        teams={company?.teams}
       />
       <hr />
       <Button onClick={() => setWhitelistModalVisible(true)}>

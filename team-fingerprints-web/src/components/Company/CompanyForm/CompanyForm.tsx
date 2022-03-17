@@ -75,7 +75,6 @@ const CompanyForm = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
-  console.log(values);
   return (
     <form onSubmit={handleSubmit}>
       <TextInput

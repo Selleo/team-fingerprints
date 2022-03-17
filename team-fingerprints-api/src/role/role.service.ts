@@ -90,10 +90,9 @@ export class RoleService {
     return await this.removeRoleDocumentById(roleDocument);
   }
 
-  async removeRole(roleId: string, companyId: string, currentUserId: string) {
+  async removeRole(roleId: string, currentUserId: string) {
     const roleDocumentToRemove = await this.findOneRoleDocument({
       _id: roleId,
-      companyId,
     });
 
     if (!roleDocumentToRemove) throw new NotFoundException();

@@ -14,6 +14,7 @@ import axios from "axios";
 import { queryClient } from "../../../App";
 import { Company } from "../../../types/models";
 import { ProfileContext } from "../../../routes";
+import { useNotifications } from "@mantine/notifications";
 
 const CompanyForm = ({
   initialValues,
@@ -23,6 +24,7 @@ const CompanyForm = ({
   onClose: () => void;
 }) => {
   const { invalidateProfile } = useContext(ProfileContext);
+  const { showNotification } = useNotifications();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { classes } = useStyles();
   const isUpdate = !!initialValues;
@@ -41,6 +43,13 @@ const CompanyForm = ({
     },
     {
       onSuccess,
+      onError: (error: any) => {
+        showNotification({
+          color: "red",
+          title: "Can not create company",
+          message: error?.response?.data?.message,
+        });
+      },
     }
   );
 

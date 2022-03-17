@@ -5,19 +5,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { RoleType } from 'src/role/role.type';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
+import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class SurveyService {
   constructor(
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
     private readonly surveyAnswerService: SurveyAnswerService,
+    private readonly roleService: RoleService,
   ) {}
 
   async getSurveysByRole(
-    role: RoleType,
     userId: string,
   ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
-    if (role === RoleType.SUPER_ADMIN) {
+    const roleDocuments = await this.roleService.findAllRoleDocuments({
+      userId,
+    });
+
+    if (roleDocuments.some((el) => el.role === RoleType.SUPER_ADMIN)) {
       return await this.surveyModel.find({}).exec();
     }
 
@@ -35,16 +40,21 @@ export class SurveyService {
     return await Promise.all(surveysWithCompleteStatus);
   }
 
-  async getSurvey(
-    surveyId: string,
-    role: RoleType = RoleType.USER,
-  ): Promise<Survey> {
-    if (role === RoleType.SUPER_ADMIN) {
-      return await this.surveyModel.findById({ _id: surveyId }).exec();
+  async getSurveyByRole(surveyId: string, userId: string): Promise<Survey> {
+    const roleDocuments = await this.roleService.findAllRoleDocuments({
+      userId,
+    });
+
+    if (roleDocuments.some((el) => el.role === RoleType.SUPER_ADMIN)) {
+      return await this.getSurvey(surveyId);
     }
     return await this.surveyModel
-      .findById({ _id: surveyId, isPublic: true })
+      .findOne({ _id: surveyId, isPublic: true })
       .exec();
+  }
+
+  async getSurvey(surveyId: string): Promise<Survey> {
+    return await this.surveyModel.findById(surveyId).exec();
   }
 
   async createSurvey({ title }: CreateSurveyDto): Promise<Survey> {

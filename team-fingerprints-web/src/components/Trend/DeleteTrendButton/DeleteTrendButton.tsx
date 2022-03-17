@@ -3,6 +3,7 @@ import { Button } from "@mantine/core";
 import { useMutation } from "react-query";
 import axios from "axios";
 import { queryClient } from "../../../App";
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 const DeleteTrendButton = ({
   trendId,
@@ -13,6 +14,8 @@ const DeleteTrendButton = ({
   categoryId: string;
   surveyId: string;
 }) => {
+  const { onErrorWithTitle } = useDefaultErrorHandler();
+
   const mutation = useMutation(
     async () => {
       return axios.delete(
@@ -23,6 +26,7 @@ const DeleteTrendButton = ({
       onSuccess: () => {
         queryClient.invalidateQueries("surveyOne" + surveyId);
       },
+      onError: onErrorWithTitle("Can not delete trend"),
     }
   );
 
@@ -33,7 +37,7 @@ const DeleteTrendButton = ({
       color="yellow"
       onClick={() => mutation.mutate()}
       compact
-      style={{ color: '#ff0000', borderColor: '#ff0000' }}
+      style={{ color: "#ff0000", borderColor: "#ff0000" }}
     >
       Delete Trend
     </Button>

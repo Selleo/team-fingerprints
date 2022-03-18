@@ -7,6 +7,7 @@ import { SegmentedControl } from "@mantine/core";
 
 import { useStyles } from "./styles";
 import { Answer, Question } from "../../../types/models";
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 const OPTIONS = [
   { value: "1", label: "no" },
@@ -17,10 +18,7 @@ const OPTIONS = [
 ];
 
 export default function QuestionResponse({
-  question: {
-    _id,
-    title,
-  },
+  question: { _id, title },
   answer,
   surveyId,
   refetch,
@@ -32,8 +30,11 @@ export default function QuestionResponse({
   refetch: () => void;
   disabled: boolean;
 }) {
-  const { classes: { listItem } } = useStyles();
+  const {
+    classes: { listItem },
+  } = useStyles();
   const [value, setValue] = useState<string>(answer?.toString() || "none");
+  const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const responseMutation = useMutation(
     async (surveyResponse: Answer) => {
@@ -43,6 +44,7 @@ export default function QuestionResponse({
       onSuccess: () => {
         refetch();
       },
+      onError: onErrorWithTitle("Can not save answer"),
     }
   );
 
@@ -52,7 +54,7 @@ export default function QuestionResponse({
   };
 
   return (
-    <li className={listItem}> 
+    <li className={listItem}>
       <h3>{title}</h3>
       <SegmentedControl
         onChange={(val) => !disabled && setAndSaveNewValue(val)}

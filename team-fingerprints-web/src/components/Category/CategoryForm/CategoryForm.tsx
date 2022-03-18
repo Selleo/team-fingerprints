@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react";
 import { TextInput, Button } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
@@ -7,6 +7,7 @@ import axios from "axios";
 import { queryClient } from "../../../App";
 import { Category } from "../../../types/models";
 import { isEmpty } from "lodash";
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 const CategoryForm = ({
   surveyId,
@@ -17,9 +18,10 @@ const CategoryForm = ({
   onClose: () => void;
   initialValues?: Category;
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const isCreate = isEmpty(initialValues);
   const { classes } = useStyles();
+  const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const onSuccess = () => {
     onClose();
@@ -32,6 +34,7 @@ const CategoryForm = ({
     },
     {
       onSuccess,
+      onError: onErrorWithTitle("Can not create category"),
     }
   );
 
@@ -44,6 +47,7 @@ const CategoryForm = ({
     },
     {
       onSuccess,
+      onError: onErrorWithTitle("Can not update category"),
     }
   );
 
@@ -54,12 +58,12 @@ const CategoryForm = ({
   });
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => { 
-      inputRef && inputRef.current!.focus() 
+    const timeoutId = setTimeout(() => {
+      inputRef && inputRef.current!.focus();
     }, 1);
 
-    return () => clearTimeout(timeoutId)
-  }, [])
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   return (
     <form onSubmit={handleSubmit}>

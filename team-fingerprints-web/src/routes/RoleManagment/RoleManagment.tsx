@@ -5,6 +5,7 @@ import { useContext, useMemo, useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import CompanyForm from "../../components/Company/CompanyForm";
+import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import { ProfileContext } from "../../routes";
 import { ComplexRole } from "../../types/models";
 
@@ -15,6 +16,7 @@ export const RoleManagment = () => {
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const emptyRoles = useMemo(() => isEmpty(profile?.privileges), [profile]);
   const navigate = useNavigate();
+  const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const removeRoleMutation = useMutation(
     async (roleId: string) => {
@@ -22,6 +24,7 @@ export const RoleManagment = () => {
     },
     {
       onSuccess: () => invalidateProfile(),
+      onError: onErrorWithTitle("Can not remove role"),
     }
   );
 

@@ -27,11 +27,13 @@ import BackToScreen from "../../../components/BackToScreen/BackToScreen";
 import "./styles.sass";
 import { Switch } from "../../../components/Switch";
 import { ProfileContext } from "../../../routes";
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 export default function Edit() {
   const [visibleData, setVisibleData] = useState<any>({});
   const { profile } = useContext(ProfileContext);
   const [showMyResults, setShowMyResults] = useState(true);
+  const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const { surveyId } = useParams();
   const {
@@ -135,6 +137,7 @@ export default function Edit() {
     },
     {
       onSuccess: () => refetchIsFinished(),
+      onError: onErrorWithTitle("Can finish survey"),
     }
   );
   const surveyIsFinished =
@@ -254,8 +257,9 @@ export default function Edit() {
       surveyIsFinished,
       survey?.title,
       showMyResults,
-      additionalData,
+      visibleData,
       surveyFinished,
+      filteredAdditionalData,
       shuffledData,
       buttonActive,
       refetch,

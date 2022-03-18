@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react";
 import { TextInput, Button, Switch } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
@@ -7,6 +7,7 @@ import axios from "axios";
 import { queryClient } from "../../../App";
 import { Question } from "../../../types/models";
 import { isEmpty } from "lodash";
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 const CreateQuestionForm = ({
   surveyId,
@@ -21,9 +22,10 @@ const CreateQuestionForm = ({
   trendId: string;
   initialValues?: Question;
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const isCreate = isEmpty(initialValues);
   const { classes } = useStyles();
+  const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const onSuccess = () => {
     onClose();
@@ -39,6 +41,7 @@ const CreateQuestionForm = ({
     },
     {
       onSuccess,
+      onError: onErrorWithTitle("Can not create question"),
     }
   );
 
@@ -51,6 +54,7 @@ const CreateQuestionForm = ({
     },
     {
       onSuccess,
+      onError: onErrorWithTitle("Can not update question"),
     }
   );
 
@@ -61,12 +65,12 @@ const CreateQuestionForm = ({
   });
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => { 
-      inputRef && inputRef.current!.focus() 
+    const timeoutId = setTimeout(() => {
+      inputRef && inputRef.current!.focus();
     }, 1);
 
-    return () => clearTimeout(timeoutId)
-  }, [])
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   return (
     <form onSubmit={handleSubmit}>

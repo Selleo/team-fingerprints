@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react";
 import { TextInput, Button, Switch, Alert } from "@mantine/core";
 import { BellIcon } from "@modulz/radix-icons";
 import { useFormik } from "formik";
@@ -7,6 +7,7 @@ import { useStyles } from "./styles";
 import axios from "axios";
 import { queryClient } from "../../../App";
 import { Survey } from "../../../types/models";
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 const SurveyForm = ({
   initialValues,
@@ -15,13 +16,14 @@ const SurveyForm = ({
   initialValues?: Survey;
   onClose: () => void;
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { classes } = useStyles();
   const isUpdate = !!initialValues;
 
   const onSuccess = () => {
     queryClient.invalidateQueries(["surveysAll"]);
   };
+  const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const createMutation = useMutation(
     (newSurvey: Partial<Survey>) => {
@@ -29,6 +31,7 @@ const SurveyForm = ({
     },
     {
       onSuccess,
+      onError: onErrorWithTitle("Can not create survey"),
     }
   );
 
@@ -40,6 +43,7 @@ const SurveyForm = ({
     },
     {
       onSuccess,
+      onError: onErrorWithTitle("Can not update survey"),
     }
   );
 
@@ -50,13 +54,13 @@ const SurveyForm = ({
         isUpdate ? updateMutation.mutate(val) : createMutation.mutate(val),
     });
 
-    useEffect(() => {
-      const timeoutId = setTimeout(() => { 
-        inputRef && inputRef.current!.focus() 
-      }, 1);
-  
-      return () => clearTimeout(timeoutId)
-    }, [])
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      inputRef && inputRef.current!.focus();
+    }, 1);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   return (
     <form onSubmit={handleSubmit}>

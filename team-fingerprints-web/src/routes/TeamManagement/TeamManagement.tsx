@@ -5,14 +5,14 @@ import times from "lodash/times";
 
 import { useStyles } from "./styles";
 import axios from "axios";
-import { CompanyRole, Team, User } from "../../types/models";
+import { CompanyRole, Team } from "../../types/models";
 import EmailWhitelist from "./EmailWhitelist";
 import EmailForm from "../../components/EmailForm";
 import { queryClient } from "../../App";
 import { useParams, useNavigate } from "react-router-dom";
 
 import TeamForm from "../../components/Team/TeamForm/TeamForm";
-import { useNotifications } from "@mantine/notifications";
+import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
 type TeamResponse = {
   team: Team;
@@ -21,7 +21,7 @@ type TeamResponse = {
 
 const TeamManagment = () => {
   const navigation = useNavigate();
-  const { showNotification } = useNotifications();
+  const { onErrorWithTitle } = useDefaultErrorHandler();
   const params = useParams();
   const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -56,13 +56,7 @@ const TeamManagment = () => {
         setWhitelistModalVisible(false);
         queryClient.invalidateQueries(`team${teamId}`);
       },
-      onError: (error: any) => {
-        showNotification({
-          color: "red",
-          title: "Can not add user to whitelist",
-          message: error?.response?.data?.message,
-        });
-      },
+      onError: onErrorWithTitle("Can not add user to whitelist"),
     }
   );
 
@@ -78,13 +72,7 @@ const TeamManagment = () => {
         setEditModalVisible(false);
         queryClient.invalidateQueries(`team${teamId}`);
       },
-      onError: (error: any) => {
-        showNotification({
-          color: "red",
-          title: "Can not update company",
-          message: error?.response?.data?.message,
-        });
-      },
+      onError: onErrorWithTitle("Can not update company"),
     }
   );
 
@@ -95,13 +83,7 @@ const TeamManagment = () => {
         queryClient.invalidateQueries(`team${teamId}`);
         navigation(-1);
       },
-      onError: (error: any) => {
-        showNotification({
-          color: "red",
-          title: "Can not remove company",
-          message: error?.response?.data?.message,
-        });
-      },
+      onError: onErrorWithTitle("Can not remove company"),
     }
   );
 
@@ -116,13 +98,7 @@ const TeamManagment = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(`team${teamId}`);
       },
-      onError: (error: any) => {
-        showNotification({
-          color: "red",
-          title: "Can not setup a leader",
-          message: error?.response?.data?.message,
-        });
-      },
+      onError: onErrorWithTitle("Can not setup a leader"),
     }
   );
 
@@ -137,13 +113,7 @@ const TeamManagment = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(`team${teamId}`);
       },
-      onError: (error: any) => {
-        showNotification({
-          color: "red",
-          title: "Can not remove leadership",
-          message: error?.response?.data?.message,
-        });
-      },
+      onError: onErrorWithTitle("Can not remove leadership"),
     }
   );
 
@@ -156,6 +126,7 @@ const TeamManagment = () => {
         setWhitelistModalVisible(false);
         queryClient.invalidateQueries(`team${teamId}`);
       },
+      onError: onErrorWithTitle("Can not remove role"),
     }
   );
 

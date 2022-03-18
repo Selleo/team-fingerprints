@@ -13,6 +13,7 @@ import { queryClient } from "../../../App";
 import { useNavigate, useParams } from "react-router-dom";
 import TeamForm from "../../../components/Team/TeamForm/TeamForm";
 import ColoredShape from "../../../components/ColoredShape";
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 type CompanyResponse = {
   company: Company;
@@ -25,6 +26,7 @@ const CompaniesManagment = () => {
   const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [addTeamModalVisible, setTeamModalVisible] = useState(false);
+  const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const [whitelistModalVisible, setWhitelistModalVisible] = useState(false);
 
@@ -57,6 +59,7 @@ const CompaniesManagment = () => {
         setWhitelistModalVisible(false);
         queryClient.invalidateQueries(`companies${companyId}`);
       },
+      onError: onErrorWithTitle("Can not add member"),
     }
   );
 
@@ -69,6 +72,7 @@ const CompaniesManagment = () => {
         setTeamModalVisible(false);
         queryClient.invalidateQueries(`companies${companyId}`);
       },
+      onError: onErrorWithTitle("Can not add new team"),
     }
   );
 
@@ -81,6 +85,7 @@ const CompaniesManagment = () => {
         setWhitelistModalVisible(false);
         queryClient.invalidateQueries(`companies${companyId}`);
       },
+      onError: onErrorWithTitle("Can not remove role"),
     }
   );
 

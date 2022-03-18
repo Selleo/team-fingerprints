@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Survey } from './models/survey.model';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -65,15 +69,21 @@ export class SurveyService {
     surveyId: string,
     { title, isPublic, archived }: UpdateSurveyDto,
   ): Promise<Survey> {
+    const surveyBeforeUpdate = await this.getSurvey(surveyId);
+
+    let updateOptions = {};
+
+    if (surveyBeforeUpdate.isPublic) {
+      updateOptions = { title, archived };
+    } else {
+      updateOptions = { title, archived, isPublic };
+    }
+
     return await this.surveyModel
       .findByIdAndUpdate(
-        { _id: surveyId },
+        surveyId,
         {
-          $set: {
-            title,
-            isPublic,
-            archived,
-          },
+          $set: updateOptions,
         },
         { new: true },
       )
@@ -81,8 +91,18 @@ export class SurveyService {
   }
 
   async removeSurvey(surveyId: string): Promise<Survey> {
+    await this.canEditSurvey(surveyId);
+
     return await this.surveyModel
       .findOneAndDelete({ _id: surveyId }, { new: true })
       .exec();
+  }
+
+  async canEditSurvey(surveyId: string) {
+    const surveyExists = await this.getSurvey(surveyId);
+    if (!surveyExists) throw new NotFoundException();
+
+    if (surveyExists.isPublic)
+      throw new BadRequestException('Can not edit public survey.');
   }
 }

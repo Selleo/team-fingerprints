@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Scope } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
@@ -8,18 +13,23 @@ import {
   QuestionParamsDto,
   UpdateQuestionDto,
 } from './dto/question.dto';
+import { SurveyService } from 'src/survey/survey.service';
 
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable()
 export class QuestionService {
   constructor(
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
     @InjectConnection() private readonly connection: mongoose.Connection,
+    @Inject(forwardRef(() => SurveyService))
+    private readonly surveyService: SurveyService,
   ) {}
 
   async createQuestion(
     { surveyId, categoryId, trendId }: QuestionParamsDto,
     { title, primary }: CreateQuestionDto,
   ): Promise<void> {
+    await this.surveyService.canEditSurvey(surveyId);
+
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
       const newQuestion = await this.surveyModel
@@ -91,6 +101,8 @@ export class QuestionService {
   }
 
   async removeQuestion(surveyId: string, questionId: string): Promise<void> {
+    await this.surveyService.canEditSurvey(surveyId);
+
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
       const removedQuestion = await this.surveyModel

@@ -65,7 +65,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
   async removeTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
   ): Promise<Company | HttpException> {

@@ -1,152 +1,241 @@
-// async getAvgResultForAllCompanies(surveyId: string) {
-//   return await this.countPoints(surveyId, 'companies', '');
-//   // const schema = [];
+// import {
+//   forwardRef,
+//   Inject,
+//   Injectable,
+//   InternalServerErrorException,
+// } from '@nestjs/common';
+// import { InjectModel } from '@nestjs/mongoose';
+// import { Model } from 'mongoose';
+// import { CompanyService } from 'src/company/company.service';
+// import { TeamMembersService } from 'src/company/team/team-members.service';
+// import { TeamService } from 'src/company/team/team.service';
+// import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
+// import { Survey } from 'src/survey/models/survey.model';
+// import { User } from 'src/users/models/user.model';
+// import { FilterParamsDto } from './dto/filter-params.dto';
 
-//   // const survey = await this.surveyModel.findById({ _id: surveyId });
-//   // if (!survey) return new InternalServerErrorException();
-//   // survey.categories.map((category: any) => {
-//   //   category.trends.forEach((trend: any) => {
-//   //     schema.push({
-//   //       category: category._id.toString(),
-//   //       categoryTitle: category.title,
-//   //       trend: trend._id.toString(),
-//   //       trendPrimary: trend.primary,
-//   //       trendSecondary: trend.secondary,
-//   //     });
-//   //   });
-//   // });
+// @Injectable()
+// export class SurveyResultService {
+//   defaultEntity = null;
+//   constructor(
+//     @Inject(forwardRef(() => SurveyAnswerService))
+//     private readonly surveyAnswerService: SurveyAnswerService,
+//     @InjectModel(User.name) private readonly userModel: Model<User>,
+//     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
+//     @Inject(forwardRef(() => TeamService))
+//     private readonly teamService: TeamService,
+//     private readonly teamMembersService: TeamMembersService,
+//     private readonly companyService: CompanyService,
+//   ) {}
 
-//   // const companies = await this.companyService.getCompaneis();
+//   async getSurveyResult(surveyId: string, userId: string) {
+//     return await this.getSurveyResultForUser(userId, surveyId);
+//   }
 
-//   // const companiesResult: any = await Promise.all(
-//   //   companies.map(async (company: any) => {
-//   //     return await this.getAvgResultForCompany(
-//   //       surveyId,
-//   //       company._id.toString(),
-//   //     );
-//   //   }),
-//   // );
+//   async getAvgResultForAllCompanies(
+//     surveyId: string,
+//     filterParams: FilterParamsDto,
+//   ) {
+//     return await this.countPoints(surveyId, 'companies', '');
+//   }
 
-//   // const companiesResultFlat = [];
-//   // for (const res of companiesResult) {
-//   //   companiesResultFlat.push(res);
-//   // }
+//   async getAvgResultForCompany(surveyId: string, companyId: string) {
+//     return await this.countPoints(surveyId, 'company', companyId);
+//   }
 
-//   // const surveyResult = {};
+//   async getAvgResultForTeam(surveyId: string, teamId: string) {
+//     this.defaultEntity = 'team';
+//     return await this.countPoints(surveyId, 'team', teamId);
+//   }
 
-//   // schema.forEach((obj) => {
-//   //   const avgTrends = [];
+//   async getSurveyResultForUser(userId: string, surveyId: string) {
+//     const isFinished = await this.surveyAnswerService.checkIfSurveyIsFinished(
+//       userId,
+//       surveyId,
+//     );
+//     if (!isFinished) return;
 
-//   //   let trendCount = 0;
-//   //   let counter = 0;
-//   //   companiesResultFlat.forEach((surveyAnswer) => {
-//   //     if (surveyAnswer[obj.category]) {
-//   //       surveyAnswer[obj.category].avgTrends.forEach((avgTrend) => {
-//   //         if (obj.trend === avgTrend.trendId) {
-//   //           if (avgTrend.avgTrendAnswer) {
-//   //             trendCount += avgTrend.avgTrendAnswer;
-//   //             counter++;
-//   //           }
-//   //         }
-//   //       });
-//   //     }
-//   //   });
+//     const userAnswersAll = await this.userModel
+//       .findOne({
+//         _id: userId,
+//         'surveysAnswers.surveyId': surveyId,
+//       })
+//       .exec();
 
-//   //   avgTrends.push({
-//   //     trendId: obj.trend,
-//   //     trendPrimary: obj.trendPrimary,
-//   //     trendSecondary: obj.trendSecondary,
-//   //     avgTrendAnswer: trendCount / counter,
-//   //   });
+//     const userAnswers = userAnswersAll.surveysAnswers.find(
+//       (el) => el.surveyId === surveyId,
+//     );
 
-//   //   if (surveyResult[obj.category]) {
-//   //     surveyResult[obj.category] = {
-//   //       categoryTitle: obj.categoryTitle,
-//   //       categoryId: obj.category,
-//   //       avgTrends: [...avgTrends, ...surveyResult[obj.category].avgTrends],
-//   //     };
-//   //   } else {
-//   //     surveyResult[obj.category] = {
-//   //       categoryTitle: obj.categoryTitle,
-//   //       categoryId: obj.category,
-//   //       avgTrends,
-//   //     };
-//   //   }
-//   // });
+//     const result = userAnswers.surveyResult;
+//     return result;
+//   }
 
-//   // return surveyResult;
-// }
+//   async countPoints(
+//     surveyId: string,
+//     type: 'team' | 'company' | 'companies',
+//     entityId: string,
+//   ) {
+//     const schema = [];
 
-// async getAvgResultForCompany(surveyId: string, companyId: string) {
-//   return await this.countPoints(surveyId, 'company', companyId);
-//   // const schema = [];
+//     const survey = await this.surveyModel.findById({ _id: surveyId });
+//     if (!survey) throw new InternalServerErrorException();
+//     survey.categories.map((category: any) => {
+//       category.trends.forEach((trend: any) => {
+//         schema.push({
+//           category: category._id.toString(),
+//           categoryTitle: category.title,
+//           trend: trend._id.toString(),
+//           trendPrimary: trend.primary,
+//           trendSecondary: trend.secondary,
+//         });
+//       });
+//     });
 
-//   // const survey = await this.surveyModel.findById({ _id: surveyId });
-//   // if (!survey) return new InternalServerErrorException();
-//   // survey.categories.map((category: any) => {
-//   //   category.trends.forEach((trend: any) => {
-//   //     schema.push({
-//   //       category: category._id.toString(),
-//   //       categoryTitle: category.title,
-//   //       trend: trend._id.toString(),
-//   //       trendPrimary: trend.primary,
-//   //       trendSecondary: trend.secondary,
-//   //     });
-//   //   });
-//   // });
+//     let entitiesResult: any;
+//     const entitiesResultFlat = [];
 
-//   // const { teams } = await this.companyService.getCompanyById(companyId);
+//     switch (type) {
+//       case 'team':
+//         let members: any = await this.teamMembersService.getTeamMembers(
+//           entityId,
+//         );
+//         members = members.filter(Boolean);
 
-//   // const teamsResult: any = await Promise.all(
-//   //   teams.map(async (team: any) => {
-//   //     return await this.getAvgResultForTeam(surveyId, team._id.toString());
-//   //   }),
-//   // );
+//         entitiesResult = await Promise.all(
+//           members.map(async (member: string) => {
+//             return await this.getSurveyResultForUser(member, surveyId);
+//           }),
+//         );
 
-//   // const teamsResultFlat = [];
-//   // for (const res of teamsResult) {
-//   //   teamsResultFlat.push(res);
-//   // }
+//         entitiesResult.forEach((result) => {
+//           if (result) {
+//             result?.forEach((el) => {
+//               entitiesResultFlat.push(el);
+//             });
+//           }
+//         });
 
-//   // const surveyResult = {};
+//         break;
 
-//   // schema.forEach((obj) => {
-//   //   const avgTrends = [];
+//       case 'company':
+//         entitiesResult = [];
+//         const { teams } = await this.companyService.getCompanyById(entityId);
 
-//   //   let trendCount = 0;
-//   //   let counter = 0;
-//   //   teamsResultFlat.forEach((surveyAnswer) => {
-//   //     if (surveyAnswer[obj.category]) {
-//   //       surveyAnswer[obj.category].avgTrends.forEach((avgTrend) => {
-//   //         if (obj.trend === avgTrend.trendId) {
-//   //           trendCount += avgTrend.avgTrendAnswer;
-//   //           counter++;
-//   //         }
-//   //       });
-//   //     }
-//   //   });
+//         entitiesResult = await Promise.all(
+//           teams.map(async (team: any) => {
+//             return await this.getAvgResultForTeam(
+//               surveyId,
+//               team._id.toString(),
+//             );
+//           }),
+//         );
 
-//   //   avgTrends.push({
-//   //     trendId: obj.trend,
-//   //     trendPrimary: obj.trendPrimary,
-//   //     trendSecondary: obj.trendSecondary,
-//   //     avgTrendAnswer: trendCount / counter,
-//   //   });
+//         for (const res of entitiesResult) {
+//           entitiesResultFlat.push(res);
+//         }
 
-//   //   if (surveyResult[obj.category]) {
-//   //     surveyResult[obj.category] = {
-//   //       categoryTitle: obj.categoryTitle,
-//   //       categoryId: obj.category,
-//   //       avgTrends: [...avgTrends, ...surveyResult[obj.category].avgTrends],
-//   //     };
-//   //   } else {
-//   //     surveyResult[obj.category] = {
-//   //       categoryTitle: obj.categoryTitle,
-//   //       categoryId: obj.category,
-//   //       avgTrends,
-//   //     };
-//   //   }
-//   // });
+//         const user: User = await this.userModel.findOne({
+//           companyId: entityId,
+//         });
+//         if (!user) throw new InternalServerErrorException();
 
-//   // return surveyResult;
+//         // const team = await this.teamService.getTeamByUserEmail(user.email);
+//         // if (!team) {
+//         //   const surveyAnswer = user.surveysAnswers.find(
+//         //     (el) => el.surveyId === surveyId,
+//         //   );
+
+//         //   const res = [];
+//         //   surveyAnswer.surveyResult.forEach((el) => {
+//         //     if (!res[el.categoryId]) {
+//         //       res[el.categoryId] = el;
+//         //     }
+//         //   });
+//         //   entitiesResultFlat.push(res);
+//         // }
+
+//         break;
+
+//       case 'companies':
+//         entitiesResult = [];
+//         const companies = await this.companyService.getCompaneis();
+//         entitiesResult = await Promise.all(
+//           companies.map(async (company: any) => {
+//             return await this.getAvgResultForCompany(
+//               surveyId,
+//               company._id.toString(),
+//             );
+//           }),
+//         );
+
+//         for (const res of entitiesResult) {
+//           entitiesResultFlat.push(res);
+//         }
+
+//         break;
+//     }
+
+//     const surveyResult = {};
+
+//     schema.forEach((obj) => {
+//       const avgTrends = [];
+
+//       let trendCount = 0;
+//       let counter = 0;
+
+//       switch (type) {
+//         case 'team':
+//           {
+//             entitiesResultFlat.forEach((surveyAnswer) => {
+//               if (obj.category === surveyAnswer.categoryId) {
+//                 surveyAnswer.avgTrends.forEach((avgTrend) => {
+//                   if (obj.trend === avgTrend.trendId) {
+//                     trendCount += avgTrend.avgTrendAnswer;
+//                     counter++;
+//                   }
+//                 });
+//               }
+//             });
+//           }
+//           break;
+//         default: {
+//           entitiesResultFlat.forEach((surveyAnswer) => {
+//             if (surveyAnswer[obj.category]) {
+//               surveyAnswer[obj.category].avgTrends.forEach((avgTrend) => {
+//                 if (obj.trend === avgTrend.trendId) {
+//                   if (avgTrend.avgTrendAnswer) {
+//                     trendCount += avgTrend.avgTrendAnswer;
+//                     counter++;
+//                   }
+//                 }
+//               });
+//             }
+//           });
+//         }
+//       }
+
+//       avgTrends.push({
+//         trendId: obj.trend,
+//         trendPrimary: obj.trendPrimary,
+//         trendSecondary: obj.trendSecondary,
+//         avgTrendAnswer: trendCount / counter,
+//       });
+
+//       if (surveyResult[obj.category]) {
+//         surveyResult[obj.category] = {
+//           categoryTitle: obj.categoryTitle,
+//           categoryId: obj.category,
+//           avgTrends: [...surveyResult[obj.category].avgTrends, ...avgTrends],
+//         };
+//       } else {
+//         surveyResult[obj.category] = {
+//           categoryTitle: obj.categoryTitle,
+//           categoryId: obj.category,
+//           avgTrends,
+//         };
+//       }
+//     });
+
+//     return surveyResult;
+//   }
 // }

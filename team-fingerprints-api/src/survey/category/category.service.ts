@@ -22,8 +22,10 @@ export class CategoryService {
     { surveyId }: CategoryParamsDto,
     { title }: CreateCategoryDto,
   ): Promise<Survey | HttpException> {
+    await this.surveyService.canEditSurvey(surveyId);
+
     const surveyExists = await this.surveyService.getSurvey(surveyId);
-    if (!surveyExists) throw new NotFoundException();
+
     surveyExists.categories.push({ title });
     return await surveyExists.save();
   }
@@ -47,6 +49,8 @@ export class CategoryService {
   }
 
   async removeCategory(surveyId: string, categoryId: string): Promise<Survey> {
+    await this.surveyService.canEditSurvey(surveyId);
+
     const { categories }: any = await this.surveyModel.findOne(
       {
         _id: surveyId,

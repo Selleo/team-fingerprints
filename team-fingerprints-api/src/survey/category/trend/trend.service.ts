@@ -1,7 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Survey } from 'src/survey/models/survey.model';
+import { SurveyService } from 'src/survey/survey.service';
 import {
   CreateTrendDto,
   TrendParamsDto,
@@ -14,12 +20,16 @@ export class TrendService {
   constructor(
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
     private readonly questionService: QuestionService,
+    @Inject(forwardRef(() => SurveyService))
+    private readonly surveyService: SurveyService,
   ) {}
 
   async createTrend(
     { surveyId, categoryId }: TrendParamsDto,
     { primary, secondary }: CreateTrendDto,
   ): Promise<Survey> {
+    await this.surveyService.canEditSurvey(surveyId);
+
     return await this.surveyModel.findOneAndUpdate(
       {
         _id: surveyId,
@@ -64,6 +74,8 @@ export class TrendService {
   }
 
   async removeTrend({ surveyId, categoryId, trendId }: TrendParamsDto) {
+    await this.surveyService.canEditSurvey(surveyId);
+
     const { categories }: any = await this.surveyModel.findOne(
       {
         _id: surveyId,

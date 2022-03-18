@@ -7,7 +7,6 @@ import AppHeader from "./components/AppHeader";
 import SurveyDetails from "./routes/Surveys/Details";
 import Responses from "./routes/Responses";
 import ResponseEdit from "./routes/Responses/Edit";
-import Users from "./routes/Users";
 import CompaniesNew from "./routes/Companies/New";
 import RoleManagment from "./routes/RoleManagment";
 
@@ -68,8 +67,6 @@ const AppRoutes = () => {
             <Route path="companies/:id/team">
               <Route path=":teamId" element={<TeamManagement />} />
             </Route>
-
-            <Route path="users" element={<Users />} />
 
             <Route path="survey/:id" element={<SurveyDetails />} />
             <Route

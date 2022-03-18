@@ -12,6 +12,7 @@ import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 import ResponseItem from "./ResponseItem";
 
 import "./styles.sass";
+import ErrorLoading from "../../components/ErrorLoading";
 
 const Responses = () => {
   const navigation = useNavigate();
@@ -41,7 +42,7 @@ const Responses = () => {
         </>
       );
 
-    if (error) return <div>'An error has occurred: ' + console.error;</div>;
+    if (error) return <ErrorLoading title="Can't load responses" />;
 
     const mappedData = data?.map((el) => ({
       survey: el,

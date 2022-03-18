@@ -10,6 +10,7 @@ import SurveyItem from "../../components/Survey/SurveyItem";
 import SurveyForm from "../../components/Survey/SurveyForm";
 import axios from "axios";
 import { Survey } from "../../types/models";
+import ErrorLoading from "../../components/ErrorLoading";
 
 const Surveys = () => {
   const { classes } = useStyles();
@@ -31,7 +32,7 @@ const Surveys = () => {
         ))}
       </>
     );
-  if (error) return <div>'An error has occurred: ' + console.error;</div>;
+  if (error) return <ErrorLoading title="Can't load surveys data" />;
 
   return (
     <>

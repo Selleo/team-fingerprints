@@ -23,7 +23,7 @@ export class QuestionService {
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
       const newQuestion = await this.surveyModel
-        .updateOne(
+        .findByIdAndUpdate(
           {
             _id: surveyId,
           },
@@ -49,7 +49,7 @@ export class QuestionService {
       }
 
       await this.surveyModel
-        .updateOne(
+        .findByIdAndUpdate(
           { _id: surveyId },
           {
             $inc: { amountOfQuestions: 1 },
@@ -67,7 +67,7 @@ export class QuestionService {
     { surveyId, categoryId, trendId, questionId }: QuestionParamsDto,
     { title, primary }: UpdateQuestionDto,
   ): Promise<Survey> {
-    return await this.surveyModel.findOneAndUpdate(
+    return await this.surveyModel.findByIdAndUpdate(
       {
         _id: surveyId,
       },
@@ -115,7 +115,7 @@ export class QuestionService {
       }
 
       await this.surveyModel
-        .findOneAndUpdate(
+        .findByIdAndUpdate(
           { _id: surveyId },
           {
             $inc: { amountOfQuestions: -1 },

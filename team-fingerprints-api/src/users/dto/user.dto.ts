@@ -69,66 +69,66 @@ export class UpdateUserDto implements Partial<UserI> {
   @IsNotEmpty()
   @IsOptional()
   @ValidateNested()
-  userDetails?: UserDetailsI;
+  readonly userDetails?: UserDetailsI;
 }
 
 export class UserDetailsDto implements UserDetailsI {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  country: string;
+  readonly country: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  companyType: string;
+  readonly companyType: string;
 
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  yearOfExperience: number;
+  readonly yearOfExperience: number;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @IsArray()
-  mainTechnology: string[];
+  readonly mainTechnology: string[];
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  techLevel: string;
+  readonly techLevel: string;
 }
 
 export class UpdateUserDetailsDto implements Optional<UserDetailsI> {
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  country?: string;
+  readonly country?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  companyType?: string;
+  readonly companyType?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsNumber()
   @IsNotEmpty()
   @IsOptional()
-  yearOfExperience?: number;
+  readonly yearOfExperience?: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsArray()
   @IsOptional()
-  mainTechnology?: string[];
+  readonly mainTechnology?: string[];
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  techLevel?: string;
+  readonly techLevel?: string;
 }

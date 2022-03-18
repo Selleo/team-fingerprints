@@ -12,6 +12,8 @@ import EmailForm from "../../../components/EmailForm";
 import { queryClient } from "../../../App";
 import { useNavigate, useParams } from "react-router-dom";
 import TeamForm from "../../../components/Team/TeamForm/TeamForm";
+import ColoredShape from "../../../components/ColoredShape";
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 type CompanyResponse = {
   company: Company;
@@ -24,6 +26,7 @@ const CompaniesManagment = () => {
   const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [addTeamModalVisible, setTeamModalVisible] = useState(false);
+  const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const [whitelistModalVisible, setWhitelistModalVisible] = useState(false);
 
@@ -40,6 +43,11 @@ const CompaniesManagment = () => {
   );
 
   const company = data?.company;
+  const companyFormInitialValues: any = {
+    ...company,
+    pointShape: company?.pointShape || "square",
+    pointColor: company?.pointColor || "#ffffff",
+  };
   const roles = data?.roles || ([] as CompanyRole[]);
 
   const addEmailToWhitelist = useMutation(
@@ -51,6 +59,7 @@ const CompaniesManagment = () => {
         setWhitelistModalVisible(false);
         queryClient.invalidateQueries(`companies${companyId}`);
       },
+      onError: onErrorWithTitle("Can not add member"),
     }
   );
 
@@ -63,6 +72,7 @@ const CompaniesManagment = () => {
         setTeamModalVisible(false);
         queryClient.invalidateQueries(`companies${companyId}`);
       },
+      onError: onErrorWithTitle("Can not add new team"),
     }
   );
 
@@ -75,6 +85,7 @@ const CompaniesManagment = () => {
         setWhitelistModalVisible(false);
         queryClient.invalidateQueries(`companies${companyId}`);
       },
+      onError: onErrorWithTitle("Can not remove role"),
     }
   );
 
@@ -93,7 +104,14 @@ const CompaniesManagment = () => {
   return (
     <>
       <div className={classes.header}>
-        <h1 className={classes.headerTitle}>Company Managment</h1>
+        <h1 className={classes.headerTitle}>
+          Company Managment
+          <ColoredShape
+            className={classes.companyShape}
+            color={company?.pointColor}
+            shape={company?.pointShape}
+          />
+        </h1>
 
         <Button
           onClick={() => setEditModalVisible(true)}
@@ -138,7 +156,7 @@ const CompaniesManagment = () => {
         title="Create Company"
       >
         <CompanyForm
-          initialValues={company}
+          initialValues={companyFormInitialValues}
           onClose={() => setEditModalVisible(false)}
         />
       </Modal>

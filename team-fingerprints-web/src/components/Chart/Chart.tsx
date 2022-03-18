@@ -62,6 +62,7 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
   }, []);
 
   const displayWidth = Math.floor(pixelRatio * width);
+  const renderingAreaWidth = displayWidth - 50;
   const displayHeight = Math.floor(pixelRatio * height);
   const rowHeight = Math.floor(pixelRatio * ROW_HEIGHT_PX);
 
@@ -83,8 +84,11 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
       times(numberOfRows, (time) => {
         const positionOfLine = rowHeight / 2 + time * rowHeight;
         const result = data[time];
-        const dotPosition =
-          (displayWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
+        let dotPosition =
+          (renderingAreaWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
+
+        //fix for edges of canvas
+        dotPosition = dotPosition + 25;
         dotsPositions.push({ x: dotPosition, y: positionOfLine });
       });
 
@@ -103,8 +107,12 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
         const positionOfLine = rowHeight / 2 + time * rowHeight;
         ctx.beginPath();
         const result = data[time];
-        const dotPosition =
-          (displayWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
+        let dotPosition =
+          (renderingAreaWidth / 4) * ((result.avgTrendAnswer || 3) - 1);
+
+        //fix for edges of canvas
+        dotPosition = dotPosition + 25;
+
         ctx.fillStyle = "#121212";
         switch (shape) {
           case "circle":

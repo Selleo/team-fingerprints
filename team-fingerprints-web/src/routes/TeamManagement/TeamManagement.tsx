@@ -13,6 +13,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import TeamForm from "../../components/Team/TeamForm/TeamForm";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
+import ErrorLoading from "../../components/ErrorLoading";
 
 type TeamResponse = {
   team: Team;
@@ -138,7 +139,7 @@ const TeamManagment = () => {
         ))}
       </>
     );
-  if (error) return <div>'An error has occurred: ' + console.error;</div>;
+  if (error) return <ErrorLoading title="Can't load team info and roles" />;
 
   return (
     <>

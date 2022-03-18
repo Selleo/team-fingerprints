@@ -1,6 +1,6 @@
 import { Modal } from "@mantine/core";
 import axios from "axios";
-import { isEmpty } from "lodash";
+import { groupBy, isEmpty, keys, map } from "lodash";
 import { useContext, useMemo, useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
@@ -57,39 +57,49 @@ export const RoleManagment = () => {
         </span>
       );
     }
-    return (
-      <ul className="managment__roles">
-        {profile?.privileges?.map(
-          (item) =>
-            item && (
-              <li className="managment__roles__role">
-                <span className="managment__roles__role__icon">
-                  {item.team
-                    ? `${item.role} OF TEAM ${item.team.name}`
-                    : item.role}
-                </span>
-                <span className="managment__roles__role__title">
-                  {item.company?.name || "SUPER ADMIN RIGHTS"}{" "}
-                </span>
-                {item.role !== "USER" && (
-                  <a
-                    onClick={() => goToManage(item)}
-                    className="managment__roles__role__manage"
-                  >
-                    Manage
-                  </a>
-                )}
-                <a
-                  onClick={() => leaveRole(item)}
-                  className="managment__roles__role__leave"
-                >
-                  Leave
-                </a>
-              </li>
-            )
-        )}
-      </ul>
-    );
+    const grouped = groupBy(profile?.privileges, "company._id");
+    console.log(grouped);
+    return map(keys(grouped), (companyId) => {
+      const company = grouped[companyId][0]?.company;
+
+      return (
+        <div className="managment__company">
+          <span className="managment__company__name">
+            Company: {company?.name || "SUPER ADMIN RIGHTs"}
+          </span>
+          <ul className="managment__roles">
+            {profile?.privileges?.map(
+              (item) =>
+                item && (
+                  <li className="managment__roles__role">
+                    <span className="managment__roles__role__icon">
+                      {item.team
+                        ? `${item.role} OF TEAM ${item.team.name}`
+                        : item.role}
+                    </span>
+                    <div>
+                      {item.role !== "USER" && (
+                        <a
+                          onClick={() => goToManage(item)}
+                          className="managment__roles__role__manage"
+                        >
+                          Manage
+                        </a>
+                      )}
+                      <a
+                        onClick={() => leaveRole(item)}
+                        className="managment__roles__role__leave"
+                      >
+                        Leave
+                      </a>
+                    </div>
+                  </li>
+                )
+            )}
+          </ul>
+        </div>
+      );
+    });
   }, [emptyRoles, goToManage, leaveRole, profile?.privileges]);
 
   return (

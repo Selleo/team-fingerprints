@@ -22,6 +22,7 @@ import {
 } from "../../../types/models";
 
 import { CategoryIcon, PrimaryIcon, SecondaryIcon, TrendIcon } from "./Icons";
+import ErrorLoading from "../../../components/ErrorLoading";
 
 function Details() {
   const { id } = useParams();
@@ -34,7 +35,8 @@ function Details() {
     return data;
   });
 
-  if (error) return <div>'An error has occurred: ' + console.error;</div>;
+  if (error) return <ErrorLoading title="Can't load survey info" />;
+
   if (isLoading || !survey)
     return (
       <>

@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { forwardRef, Global, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MailModule } from 'src/mail/mail.module';
 import { RoleModule } from 'src/role/role.module';
@@ -9,6 +9,7 @@ import { TeamMembersService } from './team-members.service';
 import { TeamController } from './team.controller';
 import { TeamService } from './team.service';
 
+@Global()
 @Module({
   imports: [
     forwardRef(() => UsersModule),

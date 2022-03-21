@@ -24,6 +24,8 @@ const Responses = () => {
     }
   );
 
+  const filtredByPublic = data?.filter((survey) => survey.isPublic===true)
+
   useEffect(() => {
     if (data?.length === 1) {
       const surveyId = data[0]?._id;
@@ -43,7 +45,7 @@ const Responses = () => {
 
     if (error) return <div>'An error has occurred: ' + console.error;</div>;
 
-    const mappedData = data?.map((el) => ({
+    const mappedData = filtredByPublic?.map((el) => ({
       survey: el,
     }));
 

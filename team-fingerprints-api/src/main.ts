@@ -25,7 +25,9 @@ async function bootstrap() {
   } else {
     const frontendUri = app.get(ConfigService).get('FRONTEND_URI');
     app.enableCors({
-      origin: new RegExp(frontendUri),
+      // origin: new RegExp(frontendUri),
+      //TODO bring back before release
+      origin: '*',
     });
   }
 

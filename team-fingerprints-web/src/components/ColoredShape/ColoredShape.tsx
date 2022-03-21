@@ -9,21 +9,28 @@ import { ReactComponent as TriangleIcon } from "../../assets/shapes/Triangle.svg
 interface IProps {
   color?: string;
   shape?: Shape;
-  className: string;
+  className?: string;
 }
 
-const ColoredShape: FC<IProps> = ({ color, shape, className }) => {
-  if (!color || !shape) return null;
+const tomatoColor = "#c99284";
 
+const ColoredShape: FC<IProps> = ({ color, shape, className }) => {
   switch (shape) {
-    case "square":
-      return <SquareIcon className={className} stroke={color} />;
     case "circle":
-      return <CircleIcon className={className} stroke={color} />;
+      return <CircleIcon className={className} stroke={color || tomatoColor} />;
     case "triangle":
-      return <TriangleIcon className={className} stroke={color} />;
+      return (
+        <TriangleIcon className={className} stroke={color || tomatoColor} />
+      );
     case "trapeze":
-      return <SquareIcon className={`trapeze ${className}`} stroke={color} />;
+      return (
+        <SquareIcon
+          className={`trapeze ${className}`}
+          stroke={color || tomatoColor}
+        />
+      );
+    default:
+      return <SquareIcon className={className} stroke={color || tomatoColor} />;
   }
 };
 

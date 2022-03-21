@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsArray,
   IsEmail,
   IsNotEmpty,
   IsNumber,
@@ -72,33 +71,32 @@ export class UpdateUserDto implements Partial<UserI> {
   readonly userDetails?: UserDetailsI;
 }
 
-export class UserDetailsDto implements UserDetailsI {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  readonly country: string;
+// export class UserDetailsDto implements Optional<UserDetailsI> {
+//   @ApiProperty()
+//   @IsString()
+//   @IsNotEmpty()
+//   readonly country: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  readonly companyType: string;
+//   @ApiProperty()
+//   @IsString()
+//   @IsNotEmpty()
+//   readonly companyType: string;
 
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  readonly yearOfExperience: number;
+//   @ApiProperty()
+//   @IsNumber()
+//   @IsNotEmpty()
+//   readonly yearOfExperience: number;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  @IsArray()
-  readonly mainTechnology: string[];
+//   @ApiProperty()
+//   @IsString()
+//   @IsNotEmpty()
+//   readonly mainTechnology: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  readonly techLevel: string;
-}
+//   @ApiProperty()
+//   @IsString()
+//   @IsNotEmpty()
+//   readonly techLevel: string;
+// }
 
 export class UpdateUserDetailsDto implements Optional<UserDetailsI> {
   @ApiPropertyOptional()
@@ -122,9 +120,8 @@ export class UpdateUserDetailsDto implements Optional<UserDetailsI> {
   @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
-  @IsArray()
   @IsOptional()
-  readonly mainTechnology?: string[];
+  readonly mainTechnology?: string;
 
   @ApiPropertyOptional()
   @IsString()

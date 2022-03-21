@@ -21,65 +21,62 @@
     align-items: center
     padding-left: 0
 
-    &__survey
-      align-items: center
-      border-radius: 12px
-      border: 1px solid #ffffff42
-      box-sizing: border-box
-      cursor: pointer
+  &__survey
+    align-items: center
+    border-radius: 12px
+    border: 1px solid #ffffff42
+    box-sizing: border-box
+    cursor: pointer
+    display: flex
+    flex-direction: row
+    height: 73px
+    margin-bottom: 16px
+    padding-left: 27px
+    padding-right: 27px
+    width: 560px
+
+    &:hover
+      background-color: #ffffff1a
+      transition: background-color 300ms ease-in-out
+
+      .responses__survey__status-wrapper
+        margin-right: 20px
+
+    &__name
+      margin-left: 15px
+      font-weight: 500
+      font-size: 20px
+      line-height: 24px
+      letter-spacing: -0.25%
+      position: relative
+
+    &__new-indicator
+      text-transform: uppercase
+      position: absolute
+      font-family: Poppins
+      font-size: 10px
+      font-weight: 700
+      line-height: 12px
+      letter-spacing: -0.0625em
+      color: $color-primary
+      top: -12px
+      right: 0px
+
+    &__status-wrapper
+      flex: 1
       display: flex
-      flex-direction: row
-      height: 73px
-      margin-bottom: 16px
-      padding-left: 27px
-      padding-right: 27px
-      width: 560px
+      justify-content: flex-end
+      align-items: center
+      margin-right: 0px
+      transition: margin-right 300ms linear
 
-      &__name
-        margin-left: 15px
-        font-weight: 500
-        font-size: 20px
-        line-height: 24px
-        letter-spacing: -0.25%
-        position: relative
-
-      &__new-indicator
-        text-transform: uppercase
-        position: absolute
-        font-family: Poppins;
-        font-size: 10px
-        font-weight: 700
-        line-height: 12px
-        letter-spacing: -0.0625em
-        color: $color-primary
-        top: -6px
-        right: 0px
-
-      &__status-info-wrapper
-        flex: 1
-        display: flex
-        justify-content: flex-end
-        align-items: center
-        margin-right: 0px
-        transition: margin-right 300ms linear
-
-
-
-
-        span
-          font-size: 12px
-          font-weight: 600
-          line-height: 24px
-          letter-spacing: 0em
-          color: $color-primary
-          margin-right: 8px
-
-
-
-
-      &:hover
-        background-color: #ffffff1a
-        transition: background-color 300ms ease-in-out
-
-        .responses__surveys__survey__status-info-wrapper
-          margin-right: 20px
+    &__status
+      display: flex
+      align-items: center
+      justify-content: space-between
+      font-size: 12px
+      font-weight: 600
+      line-height: 24px
+      letter-spacing: 0em
+      color: $color-primary
+      gap: 8px

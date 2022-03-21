@@ -3,6 +3,7 @@ export type Survey = {
   isPublic: boolean;
   _id: string;
   createdAt: string;
+  completeStatus: string;
 };
 
 export type Category = {

@@ -3,48 +3,27 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CompanyService } from 'src/company/company.service';
-import { TeamMembersService } from 'src/company/team/team-members.service';
-import { TeamService } from 'src/company/team/team.service';
+import { RoleI } from 'src/role/interfaces/role.interface';
+import { RoleService } from 'src/role/role.service';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 import { Survey } from 'src/survey/models/survey.model';
 import { User } from 'src/users/models/user.model';
 
 @Injectable()
 export class SurveyResultService {
-  defaultEntity = null;
   constructor(
     @Inject(forwardRef(() => SurveyAnswerService))
     private readonly surveyAnswerService: SurveyAnswerService,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
-    @Inject(forwardRef(() => TeamService))
-    private readonly teamService: TeamService,
-    private readonly teamMembersService: TeamMembersService,
-    private readonly companyService: CompanyService,
+    private readonly roleService: RoleService,
   ) {}
 
-  async getSurveyResult(surveyId: string, userId: string) {
-    return await this.getSurveyResultForUser(userId, surveyId);
-  }
-
-  async getAvgResultForAllCompanies(surveyId: string) {
-    return await this.countPoints(surveyId, 'companies', '');
-  }
-
-  async getAvgResultForCompany(surveyId: string, companyId: string) {
-    return await this.countPoints(surveyId, 'company', companyId);
-  }
-
-  async getAvgResultForTeam(surveyId: string, teamId: string) {
-    this.defaultEntity = 'team';
-    return await this.countPoints(surveyId, 'team', teamId);
-  }
-
-  async getSurveyResultForUser(userId: string, surveyId: string) {
+  async getSurveyResultForUser(surveyId: string, userId: string) {
     const isFinished = await this.surveyAnswerService.checkIfSurveyIsFinished(
       userId,
       surveyId,
@@ -66,16 +45,54 @@ export class SurveyResultService {
     return result;
   }
 
-  async countPoints(
-    surveyId: string,
-    type: 'team' | 'company' | 'companies',
-    entityId: string,
-  ) {
-    const schema = [];
+  async getAvgResultForAllCompanies(surveyId: string) {
+    const usersIds = await this.getUsersIds();
+    return await this.countPoints(surveyId, usersIds);
+  }
 
+  async getAvgResultForCompany(surveyId: string, companyId: string) {
+    const usersIds = await this.getUsersIds({ companyId });
+    return await this.countPoints(surveyId, usersIds);
+  }
+
+  async getAvgResultForTeam(surveyId: string, teamId: string) {
+    const usersIds = await this.getUsersIds({ teamId });
+    return await this.countPoints(surveyId, usersIds);
+  }
+
+  async getUsersIds(
+    searchParam: Partial<RoleI> | null = null,
+  ): Promise<string[]> {
+    if (!searchParam) {
+      const usersObjectIds = await this.userModel.find({}, { _id: 1 });
+      return usersObjectIds.map((el) => el._id.toString());
+    } else {
+      const roleDocuments = await this.roleService.findAllRoleDocuments({
+        ...searchParam,
+      });
+
+      if (roleDocuments.length <= 0) throw new NotFoundException();
+
+      return roleDocuments
+        .filter(
+          (value, index, array) =>
+            index ===
+            array.findIndex(
+              (el) => el.email === value.email && value.userId?.length > 0,
+            ),
+        )
+        .map((rolDoc) => rolDoc.userId)
+        .filter(Boolean);
+    }
+  }
+
+  async countPoints(surveyId: string, usersIds: string[]) {
     const survey = await this.surveyModel.findById({ _id: surveyId });
     if (!survey) throw new InternalServerErrorException();
-    survey.categories.map((category: any) => {
+
+    const schema = [];
+
+    survey.categories.forEach((category: any) => {
       category.trends.forEach((trend: any) => {
         schema.push({
           category: category._id.toString(),
@@ -87,89 +104,22 @@ export class SurveyResultService {
       });
     });
 
-    let entitiesResult: any;
+    const entitiesResult = (
+      await Promise.all(
+        usersIds.map(async (userId: string) => {
+          return await this.getSurveyResultForUser(surveyId, userId);
+        }),
+      )
+    ).filter(Boolean);
+
     const entitiesResultFlat = [];
-
-    switch (type) {
-      case 'team':
-        let members: any = await this.teamMembersService.getTeamMembers(
-          entityId,
-        );
-        members = members.filter(Boolean);
-
-        entitiesResult = await Promise.all(
-          members.map(async (member: string) => {
-            return await this.getSurveyResultForUser(member, surveyId);
-          }),
-        );
-
-        entitiesResult.forEach((result) => {
-          if (result) {
-            result?.forEach((el) => {
-              entitiesResultFlat.push(el);
-            });
-          }
+    entitiesResult.forEach((result) => {
+      if (result) {
+        result?.forEach((el) => {
+          entitiesResultFlat.push(el);
         });
-
-        break;
-
-      case 'company':
-        entitiesResult = [];
-        const { teams } = await this.companyService.getCompanyById(entityId);
-
-        entitiesResult = await Promise.all(
-          teams.map(async (team: any) => {
-            return await this.getAvgResultForTeam(
-              surveyId,
-              team._id.toString(),
-            );
-          }),
-        );
-
-        for (const res of entitiesResult) {
-          entitiesResultFlat.push(res);
-        }
-
-        const user: User = await this.userModel.findOne({
-          companyId: entityId,
-        });
-        if (!user) throw new InternalServerErrorException();
-
-        // const team = await this.teamService.getTeamByUserEmail(user.email);
-        // if (!team) {
-        //   const surveyAnswer = user.surveysAnswers.find(
-        //     (el) => el.surveyId === surveyId,
-        //   );
-
-        //   const res = [];
-        //   surveyAnswer.surveyResult.forEach((el) => {
-        //     if (!res[el.categoryId]) {
-        //       res[el.categoryId] = el;
-        //     }
-        //   });
-        //   entitiesResultFlat.push(res);
-        // }
-
-        break;
-
-      case 'companies':
-        entitiesResult = [];
-        const companies = await this.companyService.getCompaneis();
-        entitiesResult = await Promise.all(
-          companies.map(async (company: any) => {
-            return await this.getAvgResultForCompany(
-              surveyId,
-              company._id.toString(),
-            );
-          }),
-        );
-
-        for (const res of entitiesResult) {
-          entitiesResultFlat.push(res);
-        }
-
-        break;
-    }
+      }
+    });
 
     const surveyResult = {};
 
@@ -179,36 +129,16 @@ export class SurveyResultService {
       let trendCount = 0;
       let counter = 0;
 
-      switch (type) {
-        case 'team':
-          {
-            entitiesResultFlat.forEach((surveyAnswer) => {
-              if (obj.category === surveyAnswer.categoryId) {
-                surveyAnswer.avgTrends.forEach((avgTrend) => {
-                  if (obj.trend === avgTrend.trendId) {
-                    trendCount += avgTrend.avgTrendAnswer;
-                    counter++;
-                  }
-                });
-              }
-            });
-          }
-          break;
-        default: {
-          entitiesResultFlat.forEach((surveyAnswer) => {
-            if (surveyAnswer[obj.category]) {
-              surveyAnswer[obj.category].avgTrends.forEach((avgTrend) => {
-                if (obj.trend === avgTrend.trendId) {
-                  if (avgTrend.avgTrendAnswer) {
-                    trendCount += avgTrend.avgTrendAnswer;
-                    counter++;
-                  }
-                }
-              });
+      entitiesResultFlat.forEach((surveyAnswer) => {
+        if (obj.category === surveyAnswer.categoryId) {
+          surveyAnswer.avgTrends.forEach((avgTrend) => {
+            if (obj.trend === avgTrend.trendId) {
+              trendCount += avgTrend.avgTrendAnswer;
+              counter++;
             }
           });
         }
-      }
+      });
 
       avgTrends.push({
         trendId: obj.trend,

@@ -6,13 +6,13 @@ const StatusInfo = ({ status }: { status: string }) => {
     const getInfo = () => {
         switch (status) {
             case "finished":
-                return <span className="responses__survey__status-wrapper__status"><Chart />Check results</span>
+                return <span className="responses__survey__status"><Chart />Check results</span>
             case "pending":
-                return <span className="responses__survey__status-wrapper__status">Return to filling<RightArrowIcon /></span>
+                return <span className="responses__survey__status">Return to filling<RightArrowIcon /></span>
             case "new":
-                return <span className="responses__survey__status-wrapper__status">Start filling<RightArrowIcon /></span>
+                return <span className="responses__survey__status">Start filling<RightArrowIcon /></span>
             default:
-                return null;
+                return null
         }
     }
 

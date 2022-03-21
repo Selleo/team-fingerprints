@@ -18,6 +18,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery } from "react-query";
 import axios from "axios";
 import { queryClient } from "./App";
+import LoadingData from "./components/LoadingData";
 
 interface ProfileContextInterface {
   profile: Profile | undefined;
@@ -56,7 +57,7 @@ const AppRoutes = () => {
         className="app-shell"
       >
         {isLoading ? (
-          <div>Loading profile data</div>
+          <LoadingData />
         ) : (
           <Routes>
             <Route path="/" element={<Responses />} />

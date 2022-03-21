@@ -14,6 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import TeamForm from "../../../components/Team/TeamForm/TeamForm";
 import ColoredShape from "../../../components/ColoredShape";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import ErrorLoading from "../../../components/ErrorLoading";
 
 type CompanyResponse = {
   company: Company;
@@ -98,7 +99,7 @@ const CompaniesManagment = () => {
       </>
     );
   if (error) {
-    return <div>'An error has occurred: ' + console.error;</div>;
+    return <ErrorLoading title="Can't load company data" />;
   }
 
   return (

@@ -5,20 +5,20 @@ import StatusInfo from "./StatusInfo";
 
 const SurveyItem = ({ item }: { item: ResponseItem }) => {
   const navigate = useNavigate();
-  const {_id, title, completeStatus} = item.survey;
+  const { _id, title, completeStatus } = item.survey;
 
   return (
     <li
-      className="responses__surveys__survey"
+      className="responses__survey"
       onClick={() => navigate(`/response/${_id}`)}
     >
-      <StatusIcon status={completeStatus}/>
-      <span className="responses__surveys__survey__name">
+      <StatusIcon status={completeStatus} />
+      <span className="responses__survey--name">
         {title}
-        {completeStatus==="new" &&
-          <span className="responses__surveys__survey__new-indicator">New</span>}
+        {completeStatus === "new" &&
+          <span className="responses__survey--new-indicator">New</span>}
       </span>
-      <StatusInfo status={completeStatus}/>
+      <StatusInfo status={completeStatus} />
     </li>
   );
 };

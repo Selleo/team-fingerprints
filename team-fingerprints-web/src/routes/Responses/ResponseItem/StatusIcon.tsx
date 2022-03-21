@@ -3,13 +3,11 @@ import { ReactComponent as TwoPeopleIcon } from "../../../assets/TwoPeople.svg";
 
 const StatusIcon = ({ status }: { status: string }) => {
 
-    if(status==="finished") {
+    if (status === "finished") {
         return <TwoPeopleIcon />
     }
 
-    else {
-        return <SurveyIcon />
-    }
+    return <SurveyIcon />
 
 }
 

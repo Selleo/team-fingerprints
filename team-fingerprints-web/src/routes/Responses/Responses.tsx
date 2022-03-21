@@ -52,7 +52,7 @@ const Responses = () => {
       (isEmpty(mappedData) ? (
         <h3 className="responses__empty">No available surveys yet</h3>
       ) : (
-        <ul className="responses__list">
+        <ul className="responses__surveys">
           {mappedData?.map((item) => (
             <ResponseItem key={item.survey._id} item={item} />
           ))}

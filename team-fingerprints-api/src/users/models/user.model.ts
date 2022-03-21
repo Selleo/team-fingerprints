@@ -37,7 +37,7 @@ export class User extends Document implements UserI {
     raw({
       country: String,
       companyType: String,
-      mainTechnology: [String],
+      mainTechnology: String,
       techLevel: String,
       yearOfExperience: Number,
     }),

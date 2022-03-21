@@ -5,6 +5,7 @@ import {
   HttpException,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
@@ -14,9 +15,8 @@ import { User } from './models/user.model';
 import { UsersService } from './users.service';
 import {
   CreateUserDto,
-  // UpdateUserDetailsDto,
+  UpdateUserDetailsDto,
   UpdateUserDto,
-  // UserDetailsDto,
 } from './dto/user.dto';
 import { UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { Roles } from 'src/role/decorators/roles.decorator';
@@ -45,21 +45,13 @@ export class UsersController {
     return await this.userService.getUsersByIds(userIds);
   }
 
-  // @Post('/details')
-  // async setUserDetails(
-  //   @CurrentUserId(ValidateObjectId) userId: string,
-  //   @Body() userDetais: UserDetailsDto,
-  // ) {
-  //   return await this.userService.setUserDetails(userId, userDetais);
-  // }
-
-  // @Patch('/details')
-  // async updateUserDetails(
-  //   @CurrentUserId(ValidateObjectId) userId: string,
-  //   @Body() userDetais: UpdateUserDetailsDto,
-  // ) {
-  //   return await this.userService.updateUserDetails(userId, userDetais);
-  // }
+  @Put('/details')
+  async setUserDetails(
+    @CurrentUserId(ValidateObjectId) userId: string,
+    @Body() userDetais: UpdateUserDetailsDto,
+  ) {
+    return await this.userService.setUserDetails(userId, userDetais);
+  }
 
   @Post()
   async createUser(

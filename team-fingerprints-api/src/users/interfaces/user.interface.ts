@@ -32,7 +32,7 @@ export interface UserSurveyResultI {
 export interface UserDetailsI {
   country: string;
   companyType: string;
-  mainTechnology: string[];
+  mainTechnology: string;
   techLevel: string;
   yearOfExperience: number;
 }

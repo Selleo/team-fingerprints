@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PrivilegeI, UserProfileI } from 'src/auth/interfaces/auth.interface';
@@ -6,9 +6,8 @@ import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
 import {
   CreateUserDto,
-  // UpdateUserDetailsDto,
+  UpdateUserDetailsDto,
   UpdateUserDto,
-  // UserDetailsDto,
 } from './dto/user.dto';
 import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
@@ -123,27 +122,17 @@ export class UsersService {
     return await user.save();
   }
 
-  // async setUserDetails(userId: string, userDetails: UserDetailsDto) {
-  //   const user = await this.getUser(userId);
-  //   if (!user) throw new NotFoundException();
+  async setUserDetails(userId: string, userDetails: UpdateUserDetailsDto) {
+    const user = await this.getUser(userId);
+    if (!user) throw new NotFoundException();
 
-  //   return await this.userModel.findOneAndUpdate(
-  //     { _id: userId },
-  //     { $set: userDetails },
-  //     { new: true },
-  //   );
-  // }
-
-  // async updateUserDetails(userId: string, userDetails: UpdateUserDetailsDto) {
-  //   const user = await this.getUser(userId);
-  //   if (!user) throw new NotFoundException();
-
-  //   return await this.userModel.findOneAndUpdate(
-  //     { _id: userId },
-  //     { $set: userDetails },
-  //     { new: true },
-  //   );
-  // }
+    await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: { userDetails } },
+      { new: true },
+    );
+    return await this.getUserProfile(userId);
+  }
 
   async updateUser(
     userId: string,

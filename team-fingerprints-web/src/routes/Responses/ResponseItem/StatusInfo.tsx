@@ -5,15 +5,19 @@ const StatusInfo = ({ status }: { status: string }) => {
 
     const getInfo = () => {
         switch (status) {
-            case "finished": return <><Chart /> <span>Check results</span></>
-            case "pending": return <><span>Return to filling</span> <RightArrowIcon /></>
-            case "new": return <><span>Start filling</span> <RightArrowIcon /></>
-            default: return null;
+            case "finished":
+                return <span className="responses__survey__status-wrapper--status"><Chart />Check results</span>
+            case "pending":
+                return <span className="responses__survey__status-wrapper--status">Return to filling<RightArrowIcon /></span>
+            case "new":
+                return <span className="responses__survey__status-wrapper--status">Start filling<RightArrowIcon /></span>
+            default:
+                return null;
         }
     }
 
     return (
-        <div className="responses__surveys__survey__status-info-wrapper">
+        <div className="responses__survey__status-wrapper">
             {getInfo()}
         </div>
     )

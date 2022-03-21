@@ -17,7 +17,6 @@ export class SurveyResultController {
   }
 
   @Get(':surveyId/companies/:companyId')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -29,7 +28,6 @@ export class SurveyResultController {
   }
 
   @Get(':surveyId/companies/:companyId/teams/:teamId')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -38,11 +36,13 @@ export class SurveyResultController {
   }
 
   @Get(':surveyId/companies/:companyId/teams/:teamId/users/:userId')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER, RoleType.USER])
   async getSurveyResultForUser(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('userId', ValidateObjectId) userId: string,
   ) {
-    return await this.surveyResultService.getSurveyResult(surveyId, userId);
+    return await this.surveyResultService.getSurveyResultForUser(
+      surveyId,
+      userId,
+    );
   }
 }

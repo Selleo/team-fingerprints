@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
@@ -9,6 +14,7 @@ import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 export class TeamService {
   constructor(
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
   ) {}
 

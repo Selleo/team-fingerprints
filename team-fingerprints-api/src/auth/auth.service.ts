@@ -8,7 +8,6 @@ import { UsersService } from 'src/users/users.service';
 import * as request from 'request';
 import { User } from 'src/users/models/user.model';
 import { RoleService } from 'src/role/role.service';
-import { RoleType } from 'src/role/role.type';
 import { CompanyMembersService } from 'src/company/company-members.service';
 import axios from 'axios';
 import * as qs from 'qs';
@@ -32,40 +31,10 @@ export class AuthService {
     await this.companyMembersService.handleUserInCompanyDomain(email);
 
     roleDocuments.forEach(async (doc) => {
-      if (doc.companyId) {
+      if (!doc.userId || doc.userId.length <= 0) {
         await this.roleService.updateRoleDocument(
-          { email: doc.email, companyId: doc.companyId },
-          { userId: user._id },
-        );
-      }
-      if (doc.companyId && doc.teamId) {
-        await this.roleService.updateRoleDocument(
-          { email: doc.email, companyId: doc.companyId, teamId: doc.teamId },
-          { userId: user._id },
-        );
-      }
-      if (doc.role === RoleType.TEAM_LEADER) {
-        await this.roleService.updateRoleDocument(
-          {
-            email: doc.email,
-            companyId: doc.companyId,
-            teamId: doc.teamId,
-            role: doc.role,
-          },
-          {
-            userId: user._id,
-          },
-        );
-      }
-      if (doc.role === RoleType.SUPER_ADMIN) {
-        await this.roleService.updateRoleDocument(
-          {
-            email: doc.email,
-            role: doc.role,
-          },
-          {
-            userId: user._id,
-          },
+          { _id: doc._id },
+          { userId: user._id.toString() },
         );
       }
     });

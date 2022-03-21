@@ -88,6 +88,8 @@ type ComplexRole = {
   company: {
     _id: string;
     name: string;
+    pointShape: Shape;
+    pointColor: string;
   };
   role: role;
   roleId: string;
@@ -119,4 +121,5 @@ export type AdditionalData = {
   color: string;
   categories: CategoryResults[];
   id: string;
+  name: string;
 };

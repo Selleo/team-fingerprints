@@ -1,4 +1,4 @@
-import { each, times } from "lodash";
+import { each, times, values } from "lodash";
 import {
   FC,
   useCallback,
@@ -75,7 +75,7 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
   const numberOfRows = userMappedTrendsData.length;
 
   const renderResults = useCallback(
-    (data: TrendToDisplay[], ctx: any, color = "#32A89C", shape?: Shape) => {
+    (data: TrendToDisplay[], ctx: any, color: string, shape?: Shape) => {
       const dotsPositions: { x: number; y: number }[] = [];
       //position of dots
       if (data.length !== numberOfRows) {
@@ -96,7 +96,7 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
       ctx.beginPath();
       ctx.moveTo(dotsPositions[0].x, dotsPositions[0].y);
       ctx.lineWidth = 3;
-      ctx.strokeStyle = color;
+      ctx.strokeStyle = color || "#c99284";
       dotsPositions.forEach((point) => {
         ctx.lineTo(point.x, point.y);
       });
@@ -135,7 +135,7 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
         ctx.closePath();
         ctx.fill();
         ctx.lineWidth = 12;
-        ctx.strokeStyle = color;
+        ctx.strokeStyle = color || "#c99284";
         ctx.stroke();
       });
     },

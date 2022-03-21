@@ -28,6 +28,8 @@ import "./styles.sass";
 import { Switch } from "../../../components/Switch";
 import { ProfileContext } from "../../../routes";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import LoadingData from "../../../components/LoadingData";
+import ErrorLoading from "../../../components/ErrorLoading";
 
 export default function Edit() {
   const [visibleData, setVisibleData] = useState<any>({});
@@ -275,15 +277,15 @@ export default function Edit() {
     //|| isLoadingSurveyResultsCompany
     //|| isLoadingTeamResults
   ) {
-    return <span>Loading survey</span>;
+    return <LoadingData title="Loading survey" />;
   }
 
   if (errorLoadingSurvey) {
-    return <span>Error loading survey</span>;
+    return <ErrorLoading title="Can't load survey info" />;
   }
 
   if (errorLoadingSurveyResponse) {
-    return <span>Error loading survey response</span>;
+    return <ErrorLoading title="Can't load survey responses" />;
   }
 
   return (

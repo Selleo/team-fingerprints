@@ -58,7 +58,6 @@ export const RoleManagment = () => {
       );
     }
     const grouped = groupBy(profile?.privileges, "company._id");
-    console.log(grouped);
     return map(keys(grouped), (companyId) => {
       const company = grouped[companyId][0]?.company;
 

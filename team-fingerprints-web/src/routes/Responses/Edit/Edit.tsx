@@ -3,8 +3,10 @@ import React, { useContext, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import {
+  each,
   find,
   flatMapDeep,
+  isEmpty,
   keys,
   shuffle,
   size,
@@ -14,7 +16,11 @@ import {
 import { Button, Center } from "@mantine/core";
 import axios from "axios";
 
-import { AdditionalData, SurveyDetails } from "../../../types/models";
+import {
+  AdditionalData,
+  ComplexRole,
+  SurveyDetails,
+} from "../../../types/models";
 
 import { ReactComponent as SquareIcon } from "../../../assets/shapes/Square.svg";
 import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
@@ -30,12 +36,24 @@ import { ProfileContext } from "../../../routes";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 import LoadingData from "../../../components/LoadingData";
 import ErrorLoading from "../../../components/ErrorLoading";
+import SingleCompanyResult from "./SingleCompanyResult/SingleCompanyResult";
+import ColoredShape from "../../../components/ColoredShape";
+
+type ResultsPerCompany = {
+  [key: string]: {
+    role: ComplexRole;
+    categoriesArray: any[];
+  };
+};
 
 export default function Edit() {
   const [visibleData, setVisibleData] = useState<any>({});
   const { profile } = useContext(ProfileContext);
   const [showMyResults, setShowMyResults] = useState(true);
   const { onErrorWithTitle } = useDefaultErrorHandler();
+  const [companiesResults, setCompaniesResult] = useState<ResultsPerCompany>(
+    {}
+  );
 
   const { surveyId } = useParams();
   const {
@@ -63,23 +81,6 @@ export default function Edit() {
   //     );
   //     return data;
   //   });
-
-  //TODO fix it
-  const companyId =
-    profile?.privileges?.[0] && profile?.privileges?.[0].company?._id;
-
-  const {
-    isLoading: isLoadingSurveyResultsCompany,
-    data: serveyResultsCompany,
-  } = useQuery<any, Error>(
-    `surveyResultsAll-${surveyId}-${companyId}`,
-    async () => {
-      const { data } = await axios.get<any>(
-        `/survey-results/${surveyId}/companies/${companyId}`
-      );
-      return data;
-    }
-  );
 
   // const { isLoading: isLoadingTeamResults, data: serveyResultsTeam } = useQuery<
   //   any,
@@ -113,19 +114,22 @@ export default function Edit() {
     //   });
     //   visibility = { ...visibility, [id]: true };
     // }
-    if (serveyResultsCompany) {
-      const id = "company";
-      tmp.push({
-        categories: values(serveyResultsCompany),
-        color: "yellow",
-        icon: "trapeze",
-        id,
+    if (!isEmpty(companiesResults)) {
+      each(keys(companiesResults), (companyId) => {
+        const dataAndRoleForCompany = companiesResults[companyId];
+        tmp.push({
+          categories: dataAndRoleForCompany.categoriesArray,
+          color: dataAndRoleForCompany.role.company.pointColor,
+          icon: dataAndRoleForCompany.role.company.pointShape,
+          id: companyId,
+          name: dataAndRoleForCompany.role.company.name,
+        });
+        visibility = { ...visibility, [companyId]: true };
       });
-      visibility = { ...visibility, [id]: true };
     }
     setVisibleData(visibility);
     return tmp;
-  }, [serveyResultsCompany]);
+  }, [companiesResults]);
 
   const filteredAdditionalData = useMemo(() => {
     return additionalData.filter((element) => {
@@ -175,6 +179,14 @@ export default function Edit() {
 
   const buttonActive = size(questions) === size(allResponses);
 
+  const setDataForCompany =
+    (role: ComplexRole) => (companyId: string, categoriesArray: any[]) => {
+      setCompaniesResult((prev) => ({
+        ...prev,
+        [companyId]: { categoriesArray, role },
+      }));
+    };
+
   const renderContent = useMemo(
     () =>
       surveyIsFinished ? (
@@ -199,12 +211,18 @@ export default function Edit() {
               <Switch value={showMyResults} setValue={setShowMyResults} />
             </div>
             {keys(visibleData).map((key) => {
+              const singleVisibleData = additionalData.find(
+                (el) => el.id === key
+              );
               return (
                 <div className="survey-response__legend__item survey-response__legend__item--first">
                   <div className="survey-response__legend__item__icon">
-                    <SquareIcon className="trapeze" stroke={"yellow"} />
+                    <ColoredShape
+                      shape={singleVisibleData?.icon}
+                      color={singleVisibleData?.color}
+                    />
                   </div>
-                  <span>{key}</span>
+                  <span>{singleVisibleData?.name}</span>
                   <Switch
                     value={!!visibleData[key]}
                     setValue={() =>
@@ -292,6 +310,17 @@ export default function Edit() {
     <>
       <BackToScreen name="Dashboard" />
       <div className="survey-response">{renderContent}</div>
+      {profile?.privileges.map((role) => (
+        <>
+          {surveyId && (
+            <SingleCompanyResult
+              surveyId={surveyId}
+              companyId={role.company?._id}
+              setDataForCompany={setDataForCompany(role)}
+            />
+          )}
+        </>
+      ))}
     </>
   );
 }

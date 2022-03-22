@@ -25,6 +25,8 @@ const Responses = () => {
     }
   );
 
+  const filtredByPublic = data?.filter((survey) => survey.isPublic)
+
   useEffect(() => {
     if (data?.length === 1) {
       const surveyId = data[0]?._id;
@@ -44,7 +46,7 @@ const Responses = () => {
 
     if (error) return <ErrorLoading title="Can't load responses" />;
 
-    const mappedData = data?.map((el) => ({
+    const mappedData = filtredByPublic?.map((el) => ({
       survey: el,
     }));
 

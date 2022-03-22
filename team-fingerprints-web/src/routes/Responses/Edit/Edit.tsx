@@ -1,43 +1,29 @@
-import React, { useContext, useMemo, useState } from "react";
-
+import { useContext, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import {
-  each,
-  find,
-  flatMapDeep,
-  isEmpty,
-  keys,
-  shuffle,
-  size,
-  toNumber,
-  values,
-} from "lodash";
+import { each, find, flatMapDeep, isEmpty, keys, size, toNumber } from "lodash";
 import { Button, Center } from "@mantine/core";
 import axios from "axios";
+
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import LoadingData from "../../../components/LoadingData";
+import ErrorLoading from "../../../components/ErrorLoading";
+import SingleCompanyResult from "./SingleCompanyResult/SingleCompanyResult";
+import ColoredShape from "../../../components/ColoredShape";
+import Chart from "../../../components/Chart";
+import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
+import BackToScreen from "../../../components/BackToScreen/BackToScreen";
 
 import {
   AdditionalData,
   ComplexRole,
   SurveyDetails,
 } from "../../../types/models";
-
-import { ReactComponent as SquareIcon } from "../../../assets/shapes/Square.svg";
-import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
-import { ReactComponent as TriangleIcon } from "../../../assets/shapes/Triangle.svg";
-
-import Chart from "../../../components/Chart";
-import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
-import BackToScreen from "../../../components/BackToScreen/BackToScreen";
-
-import "./styles.sass";
 import { Switch } from "../../../components/Switch";
 import { ProfileContext } from "../../../routes";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import LoadingData from "../../../components/LoadingData";
-import ErrorLoading from "../../../components/ErrorLoading";
-import SingleCompanyResult from "./SingleCompanyResult/SingleCompanyResult";
-import ColoredShape from "../../../components/ColoredShape";
+import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
+
+import "./styles.sass";
 
 type ResultsPerCompany = {
   [key: string]: {

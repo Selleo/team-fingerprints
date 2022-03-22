@@ -23,9 +23,9 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
   } else {
-    const frontendUri = app.get(ConfigService).get('FRONTEND_URI');
+    // const frontendUri = app.get(ConfigService).get('FRONTEND_URI');
     app.enableCors({
-//       origin: new RegExp(frontendUri),
+      //       origin: new RegExp(frontendUri),
       origin: '*',
     });
   }

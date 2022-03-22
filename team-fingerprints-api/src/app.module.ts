@@ -16,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import * as Joi from 'joi';
 import { SurveyResultModule } from './survey-result/survey-result.module';
-import { UserDetailsModule } from './user-details/user-details.module';
+import { FilterModule } from './filter/filter.module';
 
 const envValidaion = Joi.object({
   NODE_ENV: Joi.string()
@@ -61,7 +61,7 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
     MailModule,
     SurveyResultModule,
-    UserDetailsModule,
+    FilterModule,
   ],
 })
 export class AppModule {}

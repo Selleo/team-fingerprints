@@ -18,7 +18,7 @@ const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
     const thatsMe = email === profile?.email;
     return (
       <>
-        <tr style={{ backgroundColor: "#444" }} key={email}>
+        <tr style={{ backgroundColor: "#0A0B0B" }} key={email}>
           <td>{email}</td>
           <td></td>
           <td></td>

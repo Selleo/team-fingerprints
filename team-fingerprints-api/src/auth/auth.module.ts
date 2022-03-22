@@ -12,6 +12,7 @@ import { TeamModule } from 'src/company/team/team.module';
 import { TestingAuthGuard } from './guards/TestingAuthGuard.guard';
 import { UsersService } from 'src/users/users.service';
 import { RoleModule } from 'src/role/role.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { RoleModule } from 'src/role/role.module';
     forwardRef(() => CompanyModule),
     forwardRef(() => TeamModule),
     forwardRef(() => RoleModule),
-
+    MailModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   providers: [

@@ -115,7 +115,7 @@ export class UpdateUserDetailsDto implements Optional<UserDetailsI> {
   @IsNumber()
   @IsNotEmpty()
   @IsOptional()
-  readonly yearOfExperience?: number;
+  readonly developerType?: string;
 
   @ApiPropertyOptional()
   @IsString()

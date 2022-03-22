@@ -39,7 +39,7 @@ export class User extends Document implements UserI {
       companyType: String,
       mainTechnology: String,
       techLevel: String,
-      yearOfExperience: Number,
+      developerType: String,
     }),
   )
   userDetails?: UserDetailsI;

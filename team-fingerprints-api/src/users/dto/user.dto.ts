@@ -2,7 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
@@ -112,7 +111,7 @@ export class UpdateUserDetailsDto implements Optional<UserDetailsI> {
   readonly companyType?: string;
 
   @ApiPropertyOptional()
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
   @IsOptional()
   readonly developerType?: string;

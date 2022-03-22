@@ -34,5 +34,5 @@ export interface UserDetailsI {
   companyType: string;
   mainTechnology: string;
   techLevel: string;
-  yearOfExperience: number;
+  developerType: string;
 }

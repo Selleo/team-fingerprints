@@ -172,11 +172,6 @@ export default function Edit() {
     answer: find(allResponses, { questionId: question._id }),
   }));
 
-  const shuffledData = useMemo(
-    () => shuffle(questionsWithAnswers),
-    [questionsWithAnswers.length]
-  );
-
   const buttonActive = size(questions) === size(allResponses);
 
   const setDataForCompany =
@@ -247,7 +242,7 @@ export default function Edit() {
         <Center>
           <div style={{ width: "50vw" }}>
             <ul>
-              {shuffledData.map(({ answer, question }) => (
+              {questionsWithAnswers.map(({ answer, question }) => (
                 <QuestionResponse
                   answer={answer ? toNumber(answer.value) : undefined}
                   disabled={surveyIsFinished}
@@ -280,7 +275,7 @@ export default function Edit() {
       visibleData,
       surveyFinished,
       filteredAdditionalData,
-      shuffledData,
+      questionsWithAnswers,
       buttonActive,
       refetch,
       surveyId,

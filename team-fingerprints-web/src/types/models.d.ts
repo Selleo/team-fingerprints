@@ -137,3 +137,14 @@ export type FilterValue = {
   _id: string;
   value: string;
 };
+
+export type FormData = {
+  [key: string]: string;
+};
+
+export type ProfileSelector = {
+  item: Filter;
+  handleChange: (e: string | ChangeEvent<any>) => any;
+  handleSubmit: () => void;
+  values: FormData;
+};

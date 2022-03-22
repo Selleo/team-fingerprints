@@ -1,26 +1,30 @@
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { templ } from 'src/templates/sample/tampl';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mailgun = require('mailgun-js');
+import { Queue } from 'bull';
+
 @Injectable()
 export class MailService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(@InjectQueue('mailsend') private mailQueue: Queue) {}
 
-  async sendEmail() {
-    const data = {
-      from: 'Excited User <me@samples.mailgun.org>',
-      to: 'm.zupa@selleo.com',
-      subject: 'Hello',
-      html: templ(),
-    };
+  async newAccountMail(to: string): Promise<boolean> {
+    try {
+      this.mailQueue.add('new-account', {
+        to,
+      });
+      return true;
+    } catch (errot) {
+      return false;
+    }
+  }
 
-    const mg = mailgun({
-      apiKey: this.configService.get<string>('MAILGUN_API_KEY'),
-      domain: this.configService.get<string>('MAILGUN_DOMAIN'),
-    });
-    mg.messages().send(data);
-
-    return true;
+  async setNewPasswordPasswordMail(to: string): Promise<boolean> {
+    try {
+      this.mailQueue.add('reset-password', {
+        to,
+      });
+      return true;
+    } catch (errot) {
+      return false;
+    }
   }
 }

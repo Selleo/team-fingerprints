@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis
+    environment:
+      REDIS_PASSWORD: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./.docker/redis/data/:/data/
+      - ./.docker/redis/logs/:/var/log/redis/

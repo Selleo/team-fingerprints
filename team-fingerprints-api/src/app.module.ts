@@ -13,10 +13,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { routes } from './routes';
 import { SurveySummarizeModule } from './survey-summarize/survey-summarize.module';
 import { AuthModule } from './auth/auth.module';
-import { MailModule } from './mail/mail.module';
 import * as Joi from 'joi';
 import { SurveyResultModule } from './survey-result/survey-result.module';
 import { FilterModule } from './filter/filter.module';
+import { BullModule } from '@nestjs/bull';
 
 const envValidaion = Joi.object({
   NODE_ENV: Joi.string()
@@ -28,6 +28,16 @@ const envValidaion = Joi.object({
   API_KEY: Joi.string(),
 });
 
+const ENV = process.env.NODE_ENV;
+
+const configModuleConfig = {
+  envFilePath: ENV ? `.env.${ENV}` : `.env.development`,
+  validationSchema: envValidaion,
+  validationOptions: {
+    abortEarly: true,
+  },
+};
+
 const mongooseModuleConfig = {
   imports: [ConfigModule],
   inject: [ConfigService],
@@ -36,18 +46,21 @@ const mongooseModuleConfig = {
   }),
 };
 
-const ENV = process.env.NODE_ENV;
+console.log({ data: process.env.REDIS_HOST });
+
+const bullModuleConfig = {
+  redis: {
+    port: 6379,
+    host: 'localhost',
+    password: 'redis',
+  },
+};
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: ENV ? `${ENV}.env` : `development.env`,
-      validationSchema: envValidaion,
-      validationOptions: {
-        abortEarly: true,
-      },
-    }),
+    ConfigModule.forRoot(configModuleConfig),
     MongooseModule.forRootAsync(mongooseModuleConfig),
+    BullModule.forRoot(bullModuleConfig),
     RouterModule.register(routes),
     SurveyModule,
     CategoryModule,
@@ -59,7 +72,6 @@ const ENV = process.env.NODE_ENV;
     TeamModule,
     SurveySummarizeModule,
     AuthModule,
-    MailModule,
     SurveyResultModule,
     FilterModule,
   ],

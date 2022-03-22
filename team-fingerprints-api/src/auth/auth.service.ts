@@ -11,6 +11,7 @@ import { RoleService } from 'src/role/role.service';
 import { CompanyMembersService } from 'src/company/company-members.service';
 import axios from 'axios';
 import * as qs from 'qs';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly roleService: RoleService,
     private readonly companyMembersService: CompanyMembersService,
+    private readonly mailService: MailService,
   ) {}
 
   async handleExistingUsers(email: string) {
@@ -70,8 +72,10 @@ export class AuthService {
         picture,
         pictureUrl,
       } = JSON.parse(body);
+
       user = await this.usersService.getUserByEmail(email);
       if (user) return await this.handleExistingUsers(email);
+
       user = await this.usersService.createUser({
         authId: auth0Id,
         email,
@@ -79,10 +83,11 @@ export class AuthService {
         firstName,
         lastName,
       });
-    });
-    if (!user) throw new BadRequestException();
+      if (!user) throw new BadRequestException();
 
-    await this.handleExistingUsers(user.email);
+      this.mailService.newAccountMail(user.email);
+      await this.handleExistingUsers(user.email);
+    });
     return user;
   }
 

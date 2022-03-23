@@ -5,7 +5,7 @@ import { Document } from 'mongoose';
 export class FilterValue extends Document {
   _id?: string;
 
-  @Prop({ required: false, unique: false })
+  @Prop({ required: false, unique: true })
   value: string;
 }
 

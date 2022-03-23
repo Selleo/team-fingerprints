@@ -13,13 +13,10 @@ import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'src/role/role.type';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
-import {
-  CreateUserDto,
-  UpdateUserDetailsDto,
-  UpdateUserDto,
-} from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { Roles } from 'src/role/decorators/roles.decorator';
+import { UserDetailI } from './interfaces/user.interface';
 
 @ApiTags('users')
 @Controller({ path: 'users', version: '1' })
@@ -48,7 +45,7 @@ export class UsersController {
   @Put('/details')
   async setUserDetails(
     @CurrentUserId(ValidateObjectId) userId: string,
-    @Body() userDetais: UpdateUserDetailsDto,
+    @Body() userDetais: UserDetailI,
   ) {
     return await this.userService.setUserDetails(userId, userDetais);
   }

@@ -1,6 +1,6 @@
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UserDetailsI, UserI } from '../interfaces/user.interface';
+import { UserDetailI, UserI } from '../interfaces/user.interface';
 import {
   UserSurveyAnswer,
   UserSurveyAnswerSchema,
@@ -33,16 +33,8 @@ export class User extends Document implements UserI {
   })
   surveysAnswers: UserSurveyAnswer[];
 
-  @Prop(
-    raw({
-      country: String,
-      companyType: String,
-      mainTechnology: String,
-      techLevel: String,
-      developerType: String,
-    }),
-  )
-  userDetails?: UserDetailsI;
+  @Prop(raw({}))
+  userDetails?: UserDetailI[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

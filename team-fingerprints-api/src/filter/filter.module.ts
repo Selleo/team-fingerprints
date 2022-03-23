@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RoleModule } from 'src/role/role.module';
 import { FilterController } from './filter.controller';
@@ -7,7 +7,7 @@ import { Filter, FilterSchema } from './models/filter.model';
 
 @Module({
   imports: [
-    RoleModule,
+    forwardRef(() => RoleModule),
     MongooseModule.forFeature([
       {
         name: Filter.name,
@@ -17,5 +17,6 @@ import { Filter, FilterSchema } from './models/filter.model';
   ],
   controllers: [FilterController],
   providers: [FilterService],
+  exports: [FilterService],
 })
 export class FilterModule {}

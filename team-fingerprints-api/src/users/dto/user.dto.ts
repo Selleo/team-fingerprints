@@ -6,8 +6,8 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Optional } from 'utility-types';
-import { UserDetailsI, UserI } from '../interfaces/user.interface';
+// import { Optional } from 'utility-types';
+import { UserDetailI, UserI } from '../interfaces/user.interface';
 
 export class CreateUserDto implements Partial<UserI> {
   @ApiPropertyOptional()
@@ -67,64 +67,5 @@ export class UpdateUserDto implements Partial<UserI> {
   @IsNotEmpty()
   @IsOptional()
   @ValidateNested()
-  readonly userDetails?: UserDetailsI;
-}
-
-// export class UserDetailsDto implements Optional<UserDetailsI> {
-//   @ApiProperty()
-//   @IsString()
-//   @IsNotEmpty()
-//   readonly country: string;
-
-//   @ApiProperty()
-//   @IsString()
-//   @IsNotEmpty()
-//   readonly companyType: string;
-
-//   @ApiProperty()
-//   @IsNumber()
-//   @IsNotEmpty()
-//   readonly yearOfExperience: number;
-
-//   @ApiProperty()
-//   @IsString()
-//   @IsNotEmpty()
-//   readonly mainTechnology: string;
-
-//   @ApiProperty()
-//   @IsString()
-//   @IsNotEmpty()
-//   readonly techLevel: string;
-// }
-
-export class UpdateUserDetailsDto implements Optional<UserDetailsI> {
-  @ApiPropertyOptional()
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  readonly country?: string;
-
-  @ApiPropertyOptional()
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  readonly companyType?: string;
-
-  @ApiPropertyOptional()
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  readonly developerType?: string;
-
-  @ApiPropertyOptional()
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  readonly mainTechnology?: string;
-
-  @ApiPropertyOptional()
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  readonly techLevel?: string;
+  readonly userDetails?: UserDetailI[];
 }

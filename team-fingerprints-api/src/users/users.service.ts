@@ -4,15 +4,13 @@ import { Model } from 'mongoose';
 import { PrivilegeI, UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
-import {
-  CreateUserDto,
-  UpdateUserDetailsDto,
-  UpdateUserDto,
-} from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/models/role.model';
+import { UserDetailI } from './interfaces/user.interface';
+import { FilterService } from 'src/filter/filter.service';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +19,7 @@ export class UsersService {
     private readonly companyService: CompanyService,
     private readonly teamService: TeamService,
     private readonly roleService: RoleService,
+    private readonly filterService: FilterService,
   ) {}
 
   async getUserByAuthId(authId: string): Promise<User> {
@@ -122,7 +121,29 @@ export class UsersService {
     return await user.save();
   }
 
-  async setUserDetails(userId: string, userDetails: UpdateUserDetailsDto) {
+  async setUserDetails(userId: string, userDetails: UserDetailI) {
+    const filterPaths = Object.keys(userDetails);
+    if (filterPaths.length <= 0)
+      throw new NotFoundException('No params passed');
+
+    const filters = (
+      await Promise.all(
+        filterPaths.map(async (key) => {
+          const filterExists = await this.filterService.getFilterByFilterPath(
+            key,
+          );
+          const filterValue = filterExists.values.find(
+            (el) => el._id.toString() === userDetails[key],
+          );
+          if (!filterValue) return null;
+          return filterExists;
+        }),
+      )
+    ).filter(Boolean);
+
+    if (filterPaths.length !== filters.length)
+      throw new NotFoundException('Filter not found');
+
     const user = await this.getUser(userId);
     if (!user) throw new NotFoundException();
 

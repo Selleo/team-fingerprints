@@ -34,6 +34,10 @@ export class FilterService {
     return await this.filterModel.findById(filterId);
   }
 
+  async getFilterByFilterPath(filterPath: string) {
+    return await this.filterModel.findOne({ filterPath });
+  }
+
   async createFilter(name: string) {
     const filterPath = await this.generateFilterPath(name);
     const newFilter = await this.filterModel.create({

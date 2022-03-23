@@ -57,6 +57,7 @@ export const RoleManagment = () => {
         </span>
       );
     }
+
     const grouped = groupBy(profile?.privileges, "company._id");
     return map(keys(grouped), (companyId) => {
       const company = grouped[companyId][0]?.company;
@@ -67,7 +68,7 @@ export const RoleManagment = () => {
             Company: {company?.name || "SUPER ADMIN RIGHTs"}
           </span>
           <ul className="managment__roles">
-            {profile?.privileges?.map(
+            {grouped[companyId].map(
               (item) =>
                 item && (
                   <li className="managment__roles__role">

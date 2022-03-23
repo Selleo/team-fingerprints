@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import Surveys from "./routes/Surveys";
 import { AppShell } from "@mantine/core";
 
-import AppNavBar from "./components/AppNavBar";
 import AppHeader from "./components/AppHeader";
 import SurveyDetails from "./routes/Surveys/Details";
 import Responses from "./routes/Responses";
@@ -52,7 +51,6 @@ const AppRoutes = () => {
         // navbarOffsetBreakpoint controls when navbar should no longer be offset with padding-left
         navbarOffsetBreakpoint="sm"
         fixed
-        navbar={true ? <AppNavBar /> : undefined}
         header={<AppHeader />}
         className="app-shell"
       >

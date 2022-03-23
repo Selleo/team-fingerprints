@@ -263,6 +263,7 @@ export default function Edit() {
       filteredAdditionalData,
       questionsWithAnswers,
       buttonActive,
+      additionalData,
       refetch,
       surveyId,
       finishSurvey,
@@ -293,7 +294,7 @@ export default function Edit() {
       <div className="survey-response">{renderContent}</div>
       {profile?.privileges.map((role) => (
         <>
-          {surveyId && (
+          {surveyId && role.company?._id && (
             <SingleCompanyResult
               surveyId={surveyId}
               companyId={role.company?._id}

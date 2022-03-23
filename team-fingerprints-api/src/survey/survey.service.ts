@@ -21,16 +21,8 @@ export class SurveyService {
 
   async getSurveysByRole(
     userId: string,
-  ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
-    const roleDocuments = await this.roleService.findAllRoleDocuments({
-      userId,
-    });
-
-    if (roleDocuments.some((el) => el.role === RoleType.SUPER_ADMIN)) {
-      return await this.surveyModel.find({}).exec();
-    }
-
-    const surveys = await this.surveyModel.find({ isPublic: true }).exec();
+  ): Promise<(Survey & 'completeStatus')[]> {
+    const surveys = await this.surveyModel.find().exec();
 
     const surveysWithCompleteStatus: any = surveys.map(async (survey: any) => {
       const completeStatus =

@@ -142,7 +142,7 @@ export type FormData = {
   [key: string]: string;
 };
 
-export type ProfileSelector = {
+export type ProfileSelectorProp = {
   item: Filter;
   handleChange: (e: string | ChangeEvent<any>) => any;
   handleSubmit: () => void;

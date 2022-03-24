@@ -18,6 +18,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import { queryClient } from "./App";
 import LoadingData from "./components/LoadingData";
+import ProfileDetails from "./routes/ProfileDetails";
 
 interface ProfileContextInterface {
   profile: Profile | undefined;
@@ -61,6 +62,7 @@ const AppRoutes = () => {
             <Route path="/" element={<Responses />} />
             <Route path="manage" element={<RoleManagment />} />
             <Route path="surveys" element={<Surveys />} />
+            <Route path="profile" element={<ProfileDetails />} />
             <Route path="companies/new" element={<CompaniesNew />} />
             <Route path="companies/:id" element={<CompaniesManagment />} />
             <Route path="companies/:id/team">

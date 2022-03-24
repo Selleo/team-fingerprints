@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Patch,
@@ -17,6 +18,7 @@ import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { Roles } from 'src/role/decorators/roles.decorator';
 import { UserDetailI } from './interfaces/user.interface';
+import { ValidateEmail } from 'src/company/dto/company.dto';
 
 @ApiTags('users')
 @Controller({ path: 'users', version: '1' })
@@ -63,5 +65,11 @@ export class UsersController {
     @Body() updateUserData: UpdateUserDto,
   ): Promise<User> {
     return await this.userService.updateUser(userId, updateUserData);
+  }
+
+  @Delete()
+  @Roles([RoleType.SUPER_ADMIN])
+  async removeUserByEmail(@Body() { email }: ValidateEmail) {
+    return await this.userService.removeUserByEmail(email);
   }
 }

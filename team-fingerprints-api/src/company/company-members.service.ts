@@ -1,10 +1,17 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MailService } from 'src/mail/mail.service';
 import { Role } from 'src/role/models/role.model';
 import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
+import { CompanyService } from './company.service';
 import { Company } from './models/company.model';
 
 @Injectable()
@@ -13,6 +20,8 @@ export class CompanyMembersService {
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
     private readonly usersService: UsersService,
     private readonly roleService: RoleService,
+    private readonly mailService: MailService,
+    private readonly companyService: CompanyService,
   ) {}
 
   async isUserInCompanyDomain(email: string): Promise<Company> {
@@ -54,10 +63,17 @@ export class CompanyMembersService {
     });
     if (roleDocument) return;
 
-    return await this.roleService.createRoleDocument(
+    const newRoleDocument = await this.roleService.createRoleDocument(
       { email },
       { email, companyId, role: RoleType.USER },
     );
+
+    if (!newRoleDocument) throw new InternalServerErrorException();
+
+    const company = await this.companyService.getCompanyById(companyId);
+
+    this.mailService.inviteToCompanyMail(email, company.name);
+    return newRoleDocument;
   }
 
   async addMemberToCompanyByEmail(

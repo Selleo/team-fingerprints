@@ -7,16 +7,12 @@ import {
   Processor,
 } from '@nestjs/bull';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Job } from 'bull';
 
 @Processor('mailsend')
 export class MailProcessor {
   private readonly logger = new Logger(this.constructor.name);
-  constructor(
-    private readonly mailerService: MailerService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly mailerService: MailerService) {}
 
   @OnQueueActive()
   onActive(job: Job) {
@@ -44,20 +40,17 @@ export class MailProcessor {
     );
   }
 
-  @Process('new-account')
-  async newAccountMail(job: Job) {
-    console.log('new-account');
-    console.log({ job: job.data.to });
-
+  @Process('new-user')
+  async newUserMail(job: Job) {
     try {
       const success = await this.mailerService.sendMail({
         to: job.data.to,
         from: 'fingerprints@selleo.com',
-        subject: 'team fingerprints - testing activation mail',
-        text: `Siema ${job.data.to}`,
-        html: `
-          Siema
-          `,
+        subject:
+          'Welcome to Selleo Team Fingerprints - testing new account mail',
+        html: `<p>Hi ${job.data.to} in <b>Selleo Team Fingerprint</b></p>
+          <p><a href="https://teamfingerprints.selleo.com/">Team Fingerprints</a></p>
+        `,
       });
       return success;
     } catch (error) {
@@ -65,15 +58,48 @@ export class MailProcessor {
     }
   }
 
-  @Process('change-status')
-  async onChangeOrderStatusMail(job: Job) {
+  @Process('invite-to-company')
+  async inviteToCompanyMail(job: Job) {
     try {
-      const success = this.mailerService.sendMail({
+      const success = await this.mailerService.sendMail({
         to: job.data.to,
-        from: 'yetiasgii@gmail.com',
-        subject: 'Shop - testing status mail',
-        text: `Order status has changed`,
-        html: `<b>Order status has changed: ${job.data.status}</b>`,
+        from: 'fingerprints@selleo.com',
+        subject: `You were invited to ${job.data.companyName} company - testing new account mail`,
+        html: `<p>Hi ${job.data.to}, you were invited to <b> ${job.data.companyName} company</b></p>
+        <p><a href="https://teamfingerprints.selleo.com/manage">Team Fingerprints</a></p>
+        `,
+      });
+      return success;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Process('invite-to-team')
+  async inviteToTeamMail(job: Job) {
+    try {
+      const success = await this.mailerService.sendMail({
+        to: job.data.to,
+        from: 'fingerprints@selleo.com',
+        subject: `You were invited to ${job.data.companyName} company - testing new account mail`,
+        html: `<p>Hi ${job.data.to}, you were invited to <b> ${job.data.teamName} team</b> in ${job.data.companyName} company</p>
+        <p><a href="https://teamfingerprints.selleo.com/manage">Team Fingerprints</a></p>`,
+      });
+      return success;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Process('new-team-leader')
+  async newTeamLeaderMail(job: Job) {
+    try {
+      const success = await this.mailerService.sendMail({
+        to: job.data.to,
+        from: 'fingerprints@selleo.com',
+        subject: `You you became a team leader in ${job.data.companyName} company - testing new account mail`,
+        html: `<p>Hi ${job.data.to}, you became a team leader in <b> ${job.data.teamName} team</b> in ${job.data.companyName} company</p>
+        <p><a href="https://teamfingerprints.selleo.com/manage">Team Fingerprints</a></p>`,
       });
       return success;
     } catch (error) {

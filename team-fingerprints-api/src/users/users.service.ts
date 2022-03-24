@@ -169,4 +169,21 @@ export class UsersService {
   async removeUser(userId: string): Promise<User> {
     return await this.userModel.findOneAndDelete({ _id: userId });
   }
+
+  async removeUserByEmail(email: string) {
+    const user = await this.getUserByEmail(email);
+    if (!user) throw new NotFoundException('User does not exist');
+
+    const roleDocuments = await this.roleService.findAllRoleDocuments({
+      email,
+    });
+
+    await Promise.all(
+      roleDocuments.map(async (roleDocument) => {
+        return await this.roleService.removeRoleDocumentById(roleDocument);
+      }),
+    );
+
+    return await this.removeUser(user._id);
+  }
 }

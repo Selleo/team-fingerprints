@@ -17,6 +17,7 @@ import * as Joi from 'joi';
 import { SurveyResultModule } from './survey-result/survey-result.module';
 import { FilterModule } from './filter/filter.module';
 import { BullModule } from '@nestjs/bull';
+import { MailModule } from './mail/mail.module';
 
 const envValidaion = Joi.object({
   NODE_ENV: Joi.string()
@@ -46,21 +47,23 @@ const mongooseModuleConfig = {
   }),
 };
 
-console.log({ data: process.env.REDIS_HOST });
-
-const bullModuleConfig = {
-  redis: {
-    port: 6379,
-    host: 'localhost',
-    password: 'redis',
-  },
-};
-
 @Module({
   imports: [
-    ConfigModule.forRoot(configModuleConfig),
     MongooseModule.forRootAsync(mongooseModuleConfig),
-    BullModule.forRoot(bullModuleConfig),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          redis: {
+            port: Number(configService.get<string>('REDIS_PORT')) ?? 6379,
+            host: configService.get<string>('REDIS_HOST') ?? 'localhost',
+            password: configService.get<string>('REDIS_PASSWORD') ?? 'redis',
+          },
+        };
+      },
+    }),
+    ConfigModule.forRoot(configModuleConfig),
     RouterModule.register(routes),
     SurveyModule,
     CategoryModule,
@@ -74,6 +77,7 @@ const bullModuleConfig = {
     AuthModule,
     SurveyResultModule,
     FilterModule,
+    MailModule,
   ],
 })
 export class AppModule {}

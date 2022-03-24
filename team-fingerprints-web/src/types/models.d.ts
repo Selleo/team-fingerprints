@@ -111,6 +111,7 @@ export type Profile = {
   privileges: ComplexRole[];
   email: string;
   id: string;
+  userDetails: { [key: string]: string | null };
 };
 
 export type QuestionWithAnswers = { answer: Answer; question: Question };
@@ -123,4 +124,27 @@ export type AdditionalData = {
   categories: CategoryResults[];
   id: string;
   name: string;
+};
+
+export type Filter = {
+  _id: string;
+  filterPath: string;
+  name: string;
+  values: FilterValue[];
+};
+
+export type FilterValue = {
+  _id: string;
+  value: string;
+};
+
+export type FormData = {
+  [key: string]: string;
+};
+
+export type ProfileSelectorProp = {
+  item: Filter;
+  handleChange: (e: string | ChangeEvent<any>) => any;
+  handleSubmit: () => void;
+  values: FormData;
 };

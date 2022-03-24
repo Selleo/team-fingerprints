@@ -3,7 +3,9 @@ import { ResponseItem } from "../../../types/models";
 import StatusIcon from "./StatusIcon";
 import StatusInfo from "./StatusInfo";
 
-const SurveyItem = ({ item }: { item: ResponseItem }) => {
+type typeProps = { item: ResponseItem };
+
+const SurveyItem = ({ item }: typeProps) => {
   const navigate = useNavigate();
   const { _id, title, completeStatus } = item.survey;
 
@@ -15,8 +17,9 @@ const SurveyItem = ({ item }: { item: ResponseItem }) => {
       <StatusIcon status={completeStatus} />
       <span className="responses__survey__name">
         {title}
-        {completeStatus === "new" &&
-          <span className="responses__survey__new-indicator">New</span>}
+        {completeStatus === "new" && (
+          <span className="responses__survey__new-indicator">New</span>
+        )}
       </span>
       <StatusInfo status={completeStatus} />
     </li>

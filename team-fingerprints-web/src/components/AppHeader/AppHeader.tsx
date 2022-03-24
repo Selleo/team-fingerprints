@@ -6,6 +6,7 @@ import { ReactComponent as LogoutIcon } from "../../assets/Logout.svg";
 import { ReactComponent as GearIcon } from "../../assets/Gear.svg";
 import { ReactComponent as PencilIcon } from "../../assets/Pencil2.svg";
 import { ReactComponent as LogoIcon } from "../../assets/Logo.svg";
+import { ReactComponent as UserIcon } from "../../assets/User.svg";
 
 import "./styles.sass";
 import { queryClient } from "../../App";
@@ -45,6 +46,16 @@ const AppHeader = () => {
                 <GearIcon />
               </div>
               <span>Manage Roles and Companies</span>
+            </button>
+            <button
+              onClick={() => {
+                navigate("profile");
+              }}
+            >
+              <div className="svg-wrap">
+                <UserIcon />
+              </div>
+              <span>Profile</span>
             </button>
             <button
               onClick={() => {

@@ -60,8 +60,8 @@ const ProfileDetails = () => {
     enableReinitialize: true,
     initialValues,
     onSubmit: (values) => {
-      const valuesWithoutEmpites = omitBy(values, isEmpty);
-      updateMutation.mutate(valuesWithoutEmpites);
+      const valuesWithoutEmpties = omitBy(values, isEmpty);
+      updateMutation.mutate(valuesWithoutEmpties);
     },
   });
 

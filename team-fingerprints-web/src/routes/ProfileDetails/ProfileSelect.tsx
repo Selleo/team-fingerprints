@@ -1,8 +1,8 @@
 import { Select } from "@mantine/core";
 import { useCallback, useMemo } from "react";
-import { ProfileSelector } from "../../types/models";
+import { ProfileSelectorProp } from "../../types/models";
 
-const ProfileSelect = (props: ProfileSelector) => {
+const ProfileSelect = (props: ProfileSelectorProp) => {
   const { item, handleChange, handleSubmit, values } = props;
 
   const itemSelect = useMemo(() => {

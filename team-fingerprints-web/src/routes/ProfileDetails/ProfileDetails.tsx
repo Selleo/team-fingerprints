@@ -69,8 +69,15 @@ const ProfileDetails = () => {
     if (isLoading)
       return (
         <>
-          {times(3, () => (
-            <Skeleton height={73} width={560} mt={6} radius="md" animate />
+          {times(3, (index: number) => (
+            <Skeleton
+              key={index}
+              height={73}
+              width={560}
+              mt={6}
+              radius="md"
+              animate
+            />
           ))}
         </>
       );

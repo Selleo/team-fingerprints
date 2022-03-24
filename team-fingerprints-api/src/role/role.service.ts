@@ -73,7 +73,7 @@ export class RoleService {
 
   async removeRoleDocumentById(roleDocument: Role): Promise<Role> {
     return await this.roleModel
-      .findByIdAndDelete(roleDocument._id, {
+      .findByIdAndDelete(roleDocument._id.toString(), {
         new: true,
       })
       .exec();

@@ -35,7 +35,6 @@ export class SurveyAnswerService {
       )
       .exec();
   }
-
   private async changeAnswer(
     userId: string,
     surveyId: string,
@@ -43,8 +42,34 @@ export class SurveyAnswerService {
   ): Promise<User | HttpException> {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
       throw new ForbiddenException();
+    let updatedAnswer;
+    if (value === 0) {
+      updatedAnswer = await this.userModel
+        .findOneAndUpdate(
+          { _id: userId },
+          {
+            $pull: {
+              'surveysAnswers.$[survey].answers': { questionId },
+            },
+          },
+          {
+            arrayFilters: [{ 'survey.surveyId': surveyId }],
+            new: true,
+          },
+        )
+        .exec();
 
-    return await this.userModel
+      await this.userModel
+        .updateOne(
+          { _id: userId, 'surveysAnswers.surveyId': surveyId },
+          {
+            $inc: { 'surveysAnswers.$.amountOfAnswers': -1 },
+          },
+        )
+        .exec();
+    }
+
+    updatedAnswer = await this.userModel
       .findOneAndUpdate(
         { _id: userId },
         {
@@ -61,6 +86,7 @@ export class SurveyAnswerService {
         },
       )
       .exec();
+    return updatedAnswer;
   }
 
   async saveUserSurveyAnswer(

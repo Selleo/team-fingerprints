@@ -8,7 +8,7 @@ export class MailService {
 
   async newAccountMail(to: string): Promise<boolean> {
     try {
-      this.mailQueue.add('new-account', {
+      this.mailQueue.add('new-user', {
         to,
       });
       return true;
@@ -17,10 +17,45 @@ export class MailService {
     }
   }
 
-  async setNewPasswordPasswordMail(to: string): Promise<boolean> {
+  async inviteToCompanyMail(to: string, companyName: string): Promise<boolean> {
     try {
-      this.mailQueue.add('reset-password', {
+      this.mailQueue.add('invite-to-company', {
         to,
+        companyName,
+      });
+      return true;
+    } catch (errot) {
+      return false;
+    }
+  }
+
+  async inviteToTeamMail(
+    to: string,
+    companyName: string,
+    teamName: string,
+  ): Promise<boolean> {
+    try {
+      this.mailQueue.add('invite-to-team', {
+        to,
+        companyName,
+        teamName,
+      });
+      return true;
+    } catch (errot) {
+      return false;
+    }
+  }
+
+  async newTeamLeaderMail(
+    to: string,
+    companyName: string,
+    teamName: string,
+  ): Promise<boolean> {
+    try {
+      this.mailQueue.add('new-team-leader', {
+        to,
+        companyName,
+        teamName,
       });
       return true;
     } catch (errot) {

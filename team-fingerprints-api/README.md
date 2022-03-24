@@ -1,3 +1,13 @@
+## Setup app
+Run redis with docker before starting app
+```bash
+$ docker-compose up --build
+```
+or
+```bash
+$ docker-compose up -d
+```
+
 ## Running the app
 
 ```bash

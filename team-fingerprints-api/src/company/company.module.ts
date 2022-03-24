@@ -7,12 +7,14 @@ import { CompanyService } from './company.service';
 import { Company, CompanySchema } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 import { TeamModule } from './team/team.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     forwardRef(() => RoleModule),
     forwardRef(() => TeamModule),
+    forwardRef(() => MailModule),
     MongooseModule.forFeature([
       {
         name: Company.name,

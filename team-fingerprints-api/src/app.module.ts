@@ -53,15 +53,13 @@ const mongooseModuleConfig = {
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          redis: {
-            port: Number(configService.get<string>('REDIS_PORT')) ?? 6379,
-            host: configService.get<string>('REDIS_HOST') ?? 'localhost',
-            password: configService.get<string>('REDIS_PASSWORD') ?? 'redis',
-          },
-        };
-      },
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          port: Number(configService.get<string>('REDIS_PORT') ?? 6379),
+          host: configService.get<string>('REDIS_HOST') ?? 'localhost',
+          password: configService.get<string>('REDIS_PASSWORD') ?? '',
+        },
+      }),
     }),
     ConfigModule.forRoot(configModuleConfig),
     RouterModule.register(routes),

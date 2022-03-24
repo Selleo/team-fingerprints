@@ -23,7 +23,7 @@ import { MailService } from './mail.service';
           },
         },
         defaults: {
-          from: 'fingerprints@selleo.com',
+          from: configService.get<string>('MAIL_USER'),
         },
         template: {
           dir: process.cwd() + '/templates',
@@ -36,15 +36,6 @@ import { MailService } from './mail.service';
     }),
     BullModule.registerQueueAsync({
       name: 'mailsend',
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        redis: {
-          port: 6379,
-          host: configService.get<string>('REDIS_HOST') ?? 'localhost',
-          password: configService.get<string>('REDIS_PASSWORD') ?? 'redis',
-        },
-      }),
     }),
   ],
   providers: [MailService, MailProcessor],

@@ -5,17 +5,21 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Role } from 'src/role/models/role.model';
-// import { MailService } from 'src/mail/mail.service';
+import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
+import { CompanyService } from '../company.service';
+import { TeamService } from './team.service';
 
 @Injectable()
 export class TeamMembersService {
   constructor(
     private readonly usersService: UsersService,
-    // private readonly mailService: MailService,
+    private readonly mailService: MailService,
     private readonly roleService: RoleService,
+    private readonly companyService: CompanyService,
+    private readonly teamService: TeamService,
   ) {}
 
   async isLeaderInTeam(teamId: string): Promise<string | boolean> {
@@ -83,23 +87,12 @@ export class TeamMembersService {
 
     if (!newRoleDocument) throw new InternalServerErrorException();
 
+    const company = await this.companyService.getCompanyById(companyId);
+    const team = await this.teamService.getTeam(companyId, teamId);
+
+    this.mailService.inviteToTeamMail(email, company.name, team.name);
+
     return newRoleDocument;
-
-    // await this.mailService.sendEmail();
-
-    // const message = (email: string) => `
-    //   <html>
-    //     <body>
-    //       <h3>Team invitation for ${email}</h3>
-    //     </body>
-    //   </html>
-    // `;
-
-    // await this.mailService.sendMail(
-    //   email,
-    //   `Team invitation for ${email}`,
-    //   message(email),
-    // );
   }
 
   async addMemberToTeamByEmail(
@@ -181,6 +174,11 @@ export class TeamMembersService {
     );
 
     if (!newTeamLeader) throw new InternalServerErrorException();
+
+    const company = await this.companyService.getCompanyById(companyId);
+    const team = await this.teamService.getTeam(companyId, teamId);
+
+    this.mailService.newTeamLeaderMail(leaderEmail, company.name, team.name);
 
     return newTeamLeader;
   }

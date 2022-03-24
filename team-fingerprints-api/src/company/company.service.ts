@@ -52,7 +52,7 @@ export class CompanyService {
 
   async createCompany(
     userId: string,
-    { name, description, domain }: CreateCompanyDto,
+    { name, description, domain, pointColor, pointShape }: CreateCompanyDto,
   ): Promise<Company | HttpException> {
     if (!isDomainValid(domain)) throw new BadRequestException('Invalid domain');
 
@@ -64,7 +64,11 @@ export class CompanyService {
       name,
       description,
       domain: domain.toLowerCase(),
+      pointColor,
+      pointShape,
     });
+
+    await newCompany.save();
 
     const user = await this.usersService.getUser(userId);
     const roleDocument = await this.roleService.createRoleDocument(user, {

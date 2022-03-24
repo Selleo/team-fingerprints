@@ -18,7 +18,7 @@ export class QuestionAnswerDto implements QuestionAnswerI {
 
   @ApiProperty()
   @IsInt()
-  @Min(1)
+  @Min(0)
   @Max(5)
   @IsNotEmpty()
   readonly value: number;

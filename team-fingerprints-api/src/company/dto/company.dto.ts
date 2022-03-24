@@ -29,14 +29,12 @@ export class CreateCompanyDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
-  readonly pointShape?: string;
+  readonly pointShape: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
-  readonly pointColor?: string;
+  readonly pointColor: string;
 }
 
 export class UpdateCompanyDto {

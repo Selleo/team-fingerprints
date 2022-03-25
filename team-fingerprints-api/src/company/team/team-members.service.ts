@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   HttpException,
   Injectable,
   InternalServerErrorException,
@@ -12,7 +11,6 @@ import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
 import { CompanyService } from '../company.service';
 import { TeamService } from './team.service';
-import { isEmail } from 'class-validator';
 
 @Injectable()
 export class TeamMembersService {
@@ -67,41 +65,34 @@ export class TeamMembersService {
   async addUserToTeamWhitelist(
     companyId: string,
     teamId: string,
-    emails: string[],
-  ) {
-    if (!emails.every((el) => isEmail(el))) {
-      throw new BadRequestException('Invalid email');
-    }
+    email: string,
+  ): Promise<Role | HttpException> {
+    const roleDocument = await this.roleService.findOneRoleDocument({
+      email,
+      companyId,
+      teamId,
+    });
 
-    return await Promise.all(
-      emails.map(async (email) => {
-        const roleDocument = await this.roleService.findOneRoleDocument({
-          email,
-          companyId,
-          teamId,
-        });
+    if (roleDocument) return roleDocument;
 
-        if (roleDocument) return email;
-
-        const newRoleDocument = await this.roleService.createRoleDocument(
-          { email },
-          {
-            email,
-            companyId,
-            teamId,
-            role: RoleType.USER,
-          },
-        );
-
-        if (!newRoleDocument) throw new InternalServerErrorException();
-
-        const company = await this.companyService.getCompanyById(companyId);
-        const team = await this.teamService.getTeam(companyId, teamId);
-
-        this.mailService.inviteToTeamMail(email, company.name, team.name);
-        return email;
-      }),
+    const newRoleDocument = await this.roleService.createRoleDocument(
+      { email },
+      {
+        email,
+        companyId,
+        teamId,
+        role: RoleType.USER,
+      },
     );
+
+    if (!newRoleDocument) throw new InternalServerErrorException();
+
+    const company = await this.companyService.getCompanyById(companyId);
+    const team = await this.teamService.getTeam(companyId, teamId);
+
+    this.mailService.inviteToTeamMail(email, company.name, team.name);
+
+    return newRoleDocument;
   }
 
   async addMemberToTeamByEmail(

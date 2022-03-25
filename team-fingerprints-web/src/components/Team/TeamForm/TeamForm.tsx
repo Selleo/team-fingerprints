@@ -1,12 +1,5 @@
-import { useEffect, useRef } from "react";
-import {
-  TextInput,
-  Button,
-  Textarea,
-  Select,
-  ColorPicker,
-  Text,
-} from "@mantine/core";
+import { useEffect, useRef } from 'react'
+import { TextInput, Button, Textarea } from "@mantine/core";
 import { useFormik } from "formik";
 import { Team } from "../../../types/models";
 import { useStyles } from "./styles";
@@ -18,26 +11,21 @@ const TeamForm = ({
   initialValues?: Partial<Team>;
   onSubmit: (values: Partial<Team>) => void;
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const { classes } = useStyles();
 
   const { handleSubmit, handleChange, values } = useFormik<Partial<Team>>({
-    initialValues: initialValues || {
-      name: "",
-      description: "",
-      pointShape: "trapeze",
-      pointColor: "#a1a1a1",
-    },
+    initialValues: initialValues || { name: "", description: "" },
     onSubmit,
   });
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      inputRef && inputRef.current!.focus();
+    const timeoutId = setTimeout(() => { 
+      inputRef && inputRef.current!.focus() 
     }, 1);
 
-    return () => clearTimeout(timeoutId);
-  }, []);
+    return () => clearTimeout(timeoutId)
+  }, [])
 
   return (
     <form onSubmit={handleSubmit}>
@@ -58,25 +46,6 @@ const TeamForm = ({
         onChange={handleChange("description")}
       />
 
-      <Select
-        label="Shape"
-        placeholder="Pick one"
-        data={[
-          { value: "triangle", label: "triangle" },
-          { value: "square", label: "square" },
-          { value: "circle", label: "circle" },
-          { value: "trapeze", label: "trapeze" },
-        ]}
-        onChange={(e: string) => handleChange("pointShape")(e)}
-        value={values.pointShape}
-      />
-      <Text>Shape color</Text>
-      <ColorPicker
-        format="hex"
-        value={values.pointColor}
-        onChange={handleChange("pointColor")}
-        size="md"
-      />
       <Button className={classes.submitButton} type="submit">
         Send
       </Button>

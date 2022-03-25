@@ -53,9 +53,7 @@ const CompaniesManagment = () => {
 
   const addEmailToWhitelist = useMutation(
     (email: string) => {
-      return axios.post<string>(`/companies/${companyId}/member`, {
-        emails: [email],
-      });
+      return axios.post<string>(`/companies/${companyId}/member`, { email });
     },
     {
       onSuccess: () => {

@@ -24,11 +24,13 @@ import { ProfileContext } from "../../../routes";
 import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
 
 import "./styles.sass";
+import SingleTeamResult from "./SingleTeamResult";
 
 type ResultsPerCompany = {
   [key: string]: {
     role: ComplexRole;
     categoriesArray: any[];
+    team: boolean;
   };
 };
 
@@ -60,57 +62,33 @@ export default function Edit() {
     return data;
   });
 
-  // const { isLoading: isLoadingSurveyResultsAll, data: serveyResultsAll } =
-  //   useQuery<any, Error>(`surveyResultsAll-${surveyId}`, async () => {
-  //     const { data } = await axios.get<any>(
-  //       `/survey-results/${surveyId}/companies`
-  //     );
-  //     return data;
-  //   });
-
-  // const { isLoading: isLoadingTeamResults, data: serveyResultsTeam } = useQuery<
-  //   any,
-  //   Error
-  // >(`surveyResultsAll-${surveyId}-${profile?.company?._id}`, async () => {
-  //   if (profile?.team?._id) {
-  //     const { data } = await axios.get<any>(
-  //       `/survey-results/${surveyId}/companies/${profile?.company?._id}/team/${profile?.team?._id}`
-  //     );
-  //     return data;
-  //   } else return null;
-  // });
-
   const additionalData = useMemo(() => {
     let tmp: AdditionalData[] = [];
     let visibility = {};
-    // if (serveyResultsAll) {
-    //   tmp.push({
-    //     categories: values(serveyResultsAll),
-    //     color: "orange",
-    //     icon: "square",
-    //   });
-    // }
-    // if (profile?.team?._id && serveyResultsTeam) {
-    //   const id = "team";
-    //   tmp.push({
-    //     categories: values(serveyResultsTeam),
-    //     color: "yellow",
-    //     icon: "square",
-    //     id,
-    //   });
-    //   visibility = { ...visibility, [id]: true };
-    // }
+
     if (!isEmpty(companiesResults)) {
-      each(keys(companiesResults), (companyId) => {
-        const dataAndRoleForCompany = companiesResults[companyId];
-        tmp.push({
-          categories: dataAndRoleForCompany.categoriesArray,
-          color: dataAndRoleForCompany.role.company.pointColor,
-          icon: dataAndRoleForCompany.role.company.pointShape,
-          id: companyId,
-          name: dataAndRoleForCompany.role.company.name,
-        });
-        visibility = { ...visibility, [companyId]: true };
+      each(keys(companiesResults), (companyOrTeamId) => {
+        const dataAndRoleForCompany = companiesResults[companyOrTeamId];
+
+        if (dataAndRoleForCompany.team) {
+          tmp.push({
+            categories: dataAndRoleForCompany.categoriesArray,
+            color: dataAndRoleForCompany.role.team.pointColor,
+            icon: dataAndRoleForCompany.role.team.pointShape,
+            id: companyOrTeamId,
+            name: `${dataAndRoleForCompany.role.company.name} / ${dataAndRoleForCompany.role.team.name}`,
+          });
+        } else {
+          tmp.push({
+            categories: dataAndRoleForCompany.categoriesArray,
+            color: dataAndRoleForCompany.role.company.pointColor,
+            icon: dataAndRoleForCompany.role.company.pointShape,
+            id: companyOrTeamId,
+            name: dataAndRoleForCompany.role.company.name,
+          });
+        }
+
+        visibility = { ...visibility, [companyOrTeamId]: true };
       });
     }
     setVisibleData(visibility);
@@ -164,7 +142,16 @@ export default function Edit() {
     (role: ComplexRole) => (companyId: string, categoriesArray: any[]) => {
       setCompaniesResult((prev) => ({
         ...prev,
-        [companyId]: { categoriesArray, role },
+        [companyId]: { categoriesArray, role, team: false },
+      }));
+    };
+
+  const setDataForTeam =
+    (role: ComplexRole) =>
+    (_companyId: string, teamId: string, categoriesArray: any[]) => {
+      setCompaniesResult((prev) => ({
+        ...prev,
+        [teamId]: { categoriesArray, role, team: true },
       }));
     };
 
@@ -172,69 +159,87 @@ export default function Edit() {
     () =>
       surveyIsFinished ? (
         <>
-          <div className="survey-response__finished">
-            <div className="survey-response__description">
-              <h5 className="survey-response__description__info">Results</h5>
-              <h1 className="survey-response__description__title">
-                {survey?.title || "Survey Name"}
-              </h1>
-              <div className="survey-response__description__copy">
-                Compare your results with the company, the world or other
-                employees. To display the data on the chart, turn on the switch
-                next to the category name.
-              </div>
+          <div className="survey-response__description">
+            <h5 className="survey-response__description__info">Results</h5>
+            <h1 className="survey-response__description__title">
+              {survey?.title || "Survey Name"}
+            </h1>
+            <div className="survey-response__description__copy">
+              Compare your results with the company, the world or other
+              employees. To display the data on the chart, turn on the switch
+              next to the category name.
             </div>
-            <div className="survey-response__legend">
-              <div className="survey-response__legend__item survey-response__legend__item--first">
-                <div className="survey-response__legend__item__icon">
-                  <CircleIcon stroke="#32A89C" />
-                </div>
-                <span>You</span>
-                <Switch value={showMyResults} setValue={setShowMyResults} />
+          </div>
+          <div className="survey-response__legend">
+            <div className="survey-response__legend__item survey-response__legend__item--first">
+              <div className="survey-response__legend__item__icon">
+                <CircleIcon stroke={"#32A89C"} />
               </div>
-              {keys(visibleData).map((key) => {
-                const singleVisibleData = additionalData.find(
-                  (el) => el.id === key
-                );
-                return (
-                  <div className="survey-response__legend__item survey-response__legend__item--first">
-                    <div className="survey-response__legend__item__icon">
-                      <ColoredShape
-                        shape={singleVisibleData?.icon}
-                        color={singleVisibleData?.color}
-                      />
-                    </div>
-                    <span>{singleVisibleData?.name}</span>
-                    <Switch
-                      value={!!visibleData[key]}
-                      setValue={() =>
-                        setVisibleData({
-                          ...visibleData,
-                          [key]: !visibleData[key],
-                        })
-                      }
+              <span>You</span>
+              <Switch value={showMyResults} setValue={setShowMyResults} />
+            </div>
+            {keys(visibleData).map((key) => {
+              const singleVisibleData = additionalData.find(
+                (el) => el.id === key
+              );
+              return (
+                <div className="survey-response__legend__item survey-response__legend__item--first">
+                  <div className="survey-response__legend__item__icon">
+                    <ColoredShape
+                      shape={singleVisibleData?.icon}
+                      color={singleVisibleData?.color}
                     />
                   </div>
-                );
-              })}
-            </div>
-
-            <Chart
-              data={surveyFinished}
-              additionalData={filteredAdditionalData}
-              showMe={showMyResults}
-            />
+                  <span>{singleVisibleData?.name}</span>
+                  <Switch
+                    value={!!visibleData[key]}
+                    setValue={() =>
+                      setVisibleData({
+                        ...visibleData,
+                        [key]: !visibleData[key],
+                      })
+                    }
+                  />
+                </div>
+              );
+            })}
           </div>
+
+          <Chart
+            data={surveyFinished}
+            additionalData={filteredAdditionalData}
+            showMe={showMyResults}
+          />
         </>
       ) : (
-        <QuestionResponse
-          questionsWithAnswers={questionsWithAnswers}
-          refetch={refetch}
-          disabled={surveyIsFinished}
-          surveyId={surveyId || ""}
-          finishSurvey={finishSurvey.mutate}
-          surveyTitle={survey?.title}
-        />
+        <Center>
+          <div style={{ width: "50vw" }}>
+            <ul>
+              {questionsWithAnswers.map(({ answer, question }) => (
+                <QuestionResponse
+                  answer={answer ? toNumber(answer.value) : undefined}
+                  disabled={surveyIsFinished}
+                  key={question.title}
+                  question={question}
+                  refetch={refetch}
+                  surveyId={surveyId || ""}
+                />
+              ))}
+            </ul>
+
+            {!surveyIsFinished && (
+              <Button
+                onClick={() => finishSurvey.mutate()}
+                disabled={!buttonActive}
+                fullWidth
+                color="green"
+                style={{ marginBottom: "20px", marginTop: "10px" }}
+              >
+                Submit responses
+              </Button>
+            )}
+          </div>
+        </Center>
       ),
     [
       surveyIsFinished,
@@ -281,6 +286,14 @@ export default function Edit() {
               surveyId={surveyId}
               companyId={role.company?._id}
               setDataForCompany={setDataForCompany(role)}
+            />
+          )}
+          {surveyId && role.team?._id && (
+            <SingleTeamResult
+              surveyId={surveyId}
+              companyId={role.company?._id}
+              teamId={role.team?._id}
+              setDataForTeam={setDataForTeam(role)}
             />
           )}
         </>

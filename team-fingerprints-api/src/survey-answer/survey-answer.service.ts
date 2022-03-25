@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   forwardRef,
   HttpException,
@@ -14,6 +15,7 @@ import { QuestionAnswerDto } from './dto/question-answer.dto';
 import { SurveyCompleteStatus } from './survey-answer.type';
 import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
+import { SurveyService } from 'src/survey/survey.service';
 
 @Injectable()
 export class SurveyAnswerService {
@@ -23,6 +25,7 @@ export class SurveyAnswerService {
     @Inject(forwardRef(() => SurveyResultService))
     private readonly surveyResultService: SurveyResultService,
     private readonly surveySummarizeService: SurveySummarizeService,
+    private readonly surveyService: SurveyService,
   ) {}
 
   async getUserAnswers(userId: string, surveyId: string): Promise<User> {
@@ -89,6 +92,11 @@ export class SurveyAnswerService {
     return updatedAnswer;
   }
 
+  async surveyIsArchived(surveyId: string): Promise<boolean> {
+    const survey = await this.surveyService.getSurvey(surveyId);
+    return survey.archived ? true : false;
+  }
+
   async saveUserSurveyAnswer(
     userId: string,
     surveyId: string,
@@ -96,6 +104,10 @@ export class SurveyAnswerService {
   ) {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
       throw new ForbiddenException();
+
+    if (await this.surveyIsArchived(surveyId)) {
+      throw new BadRequestException('Can not answer archived survey');
+    }
 
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {

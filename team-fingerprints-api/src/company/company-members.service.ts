@@ -39,7 +39,6 @@ export class CompanyMembersService {
     const user = await this.usersService.getUserByEmail(email);
 
     const roleDocumentExists = await this.roleService.findOneRoleDocument({
-      userId: user._id,
       email,
       companyId: company._id,
     });

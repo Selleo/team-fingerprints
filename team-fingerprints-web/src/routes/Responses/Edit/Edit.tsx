@@ -158,57 +158,59 @@ export default function Edit() {
     () =>
       surveyIsFinished ? (
         <>
-          <div className="survey-response__description">
-            <h5 className="survey-response__description__info">Results</h5>
-            <h1 className="survey-response__description__title">
-              {survey?.title || "Survey Name"}
-            </h1>
-            <div className="survey-response__description__copy">
-              Compare your results with the company, the world or other
-              employees. To display the data on the chart, turn on the switch
-              next to the category name.
-            </div>
-          </div>
-          <div className="survey-response__legend">
-            <div className="survey-response__legend__item survey-response__legend__item--first">
-              <div className="survey-response__legend__item__icon">
-                <CircleIcon stroke={"#32A89C"} />
+          <div className="survey-response__finished">
+            <div className="survey-response__description">
+              <h5 className="survey-response__description__info">Results</h5>
+              <h1 className="survey-response__description__title">
+                {survey?.title || "Survey Name"}
+              </h1>
+              <div className="survey-response__description__copy">
+                Compare your results with the company, the world or other
+                employees. To display the data on the chart, turn on the switch
+                next to the category name.
               </div>
-              <span>You</span>
-              <Switch value={showMyResults} setValue={setShowMyResults} />
             </div>
-            {keys(visibleData).map((key) => {
-              const singleVisibleData = additionalData.find(
-                (el) => el.id === key
-              );
-              return (
-                <div className="survey-response__legend__item survey-response__legend__item--first">
-                  <div className="survey-response__legend__item__icon">
-                    <ColoredShape
-                      shape={singleVisibleData?.icon}
-                      color={singleVisibleData?.color}
+            <div className="survey-response__legend">
+              <div className="survey-response__legend__item survey-response__legend__item--first">
+                <div className="survey-response__legend__item__icon">
+                  <CircleIcon stroke={"#32A89C"} />
+                </div>
+                <span>You</span>
+                <Switch value={showMyResults} setValue={setShowMyResults} />
+              </div>
+              {keys(visibleData).map((key) => {
+                const singleVisibleData = additionalData.find(
+                  (el) => el.id === key
+                );
+                return (
+                  <div className="survey-response__legend__item survey-response__legend__item--first">
+                    <div className="survey-response__legend__item__icon">
+                      <ColoredShape
+                        shape={singleVisibleData?.icon}
+                        color={singleVisibleData?.color}
+                      />
+                    </div>
+                    <span>{singleVisibleData?.name}</span>
+                    <Switch
+                      value={!!visibleData[key]}
+                      setValue={() =>
+                        setVisibleData({
+                          ...visibleData,
+                          [key]: !visibleData[key],
+                        })
+                      }
                     />
                   </div>
-                  <span>{singleVisibleData?.name}</span>
-                  <Switch
-                    value={!!visibleData[key]}
-                    setValue={() =>
-                      setVisibleData({
-                        ...visibleData,
-                        [key]: !visibleData[key],
-                      })
-                    }
-                  />
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          <Chart
-            data={surveyFinished}
-            additionalData={filteredAdditionalData}
-            showMe={showMyResults}
-          />
+            <Chart
+              data={surveyFinished}
+              additionalData={filteredAdditionalData}
+              showMe={showMyResults}
+            />
+          </div>
         </>
       ) : (
         <QuestionResponse

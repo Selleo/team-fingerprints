@@ -24,11 +24,13 @@ import { ProfileContext } from "../../../routes";
 import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
 
 import "./styles.sass";
+import SingleTeamResult from "./SingleTeamResult";
 
 type ResultsPerCompany = {
   [key: string]: {
     role: ComplexRole;
     categoriesArray: any[];
+    team: boolean;
   };
 };
 
@@ -60,57 +62,33 @@ export default function Edit() {
     return data;
   });
 
-  // const { isLoading: isLoadingSurveyResultsAll, data: serveyResultsAll } =
-  //   useQuery<any, Error>(`surveyResultsAll-${surveyId}`, async () => {
-  //     const { data } = await axios.get<any>(
-  //       `/survey-results/${surveyId}/companies`
-  //     );
-  //     return data;
-  //   });
-
-  // const { isLoading: isLoadingTeamResults, data: serveyResultsTeam } = useQuery<
-  //   any,
-  //   Error
-  // >(`surveyResultsAll-${surveyId}-${profile?.company?._id}`, async () => {
-  //   if (profile?.team?._id) {
-  //     const { data } = await axios.get<any>(
-  //       `/survey-results/${surveyId}/companies/${profile?.company?._id}/team/${profile?.team?._id}`
-  //     );
-  //     return data;
-  //   } else return null;
-  // });
-
   const additionalData = useMemo(() => {
     let tmp: AdditionalData[] = [];
     let visibility = {};
-    // if (serveyResultsAll) {
-    //   tmp.push({
-    //     categories: values(serveyResultsAll),
-    //     color: "orange",
-    //     icon: "square",
-    //   });
-    // }
-    // if (profile?.team?._id && serveyResultsTeam) {
-    //   const id = "team";
-    //   tmp.push({
-    //     categories: values(serveyResultsTeam),
-    //     color: "yellow",
-    //     icon: "square",
-    //     id,
-    //   });
-    //   visibility = { ...visibility, [id]: true };
-    // }
+
     if (!isEmpty(companiesResults)) {
-      each(keys(companiesResults), (companyId) => {
-        const dataAndRoleForCompany = companiesResults[companyId];
-        tmp.push({
-          categories: dataAndRoleForCompany.categoriesArray,
-          color: dataAndRoleForCompany.role.company.pointColor,
-          icon: dataAndRoleForCompany.role.company.pointShape,
-          id: companyId,
-          name: dataAndRoleForCompany.role.company.name,
-        });
-        visibility = { ...visibility, [companyId]: true };
+      each(keys(companiesResults), (companyOrTeamId) => {
+        const dataAndRoleForCompany = companiesResults[companyOrTeamId];
+
+        if (dataAndRoleForCompany.team) {
+          tmp.push({
+            categories: dataAndRoleForCompany.categoriesArray,
+            color: dataAndRoleForCompany.role.team.pointColor,
+            icon: dataAndRoleForCompany.role.team.pointShape,
+            id: companyOrTeamId,
+            name: `${dataAndRoleForCompany.role.company.name} / ${dataAndRoleForCompany.role.team.name}`,
+          });
+        } else {
+          tmp.push({
+            categories: dataAndRoleForCompany.categoriesArray,
+            color: dataAndRoleForCompany.role.company.pointColor,
+            icon: dataAndRoleForCompany.role.company.pointShape,
+            id: companyOrTeamId,
+            name: dataAndRoleForCompany.role.company.name,
+          });
+        }
+
+        visibility = { ...visibility, [companyOrTeamId]: true };
       });
     }
     setVisibleData(visibility);
@@ -164,7 +142,16 @@ export default function Edit() {
     (role: ComplexRole) => (companyId: string, categoriesArray: any[]) => {
       setCompaniesResult((prev) => ({
         ...prev,
-        [companyId]: { categoriesArray, role },
+        [companyId]: { categoriesArray, role, team: false },
+      }));
+    };
+
+  const setDataForTeam =
+    (role: ComplexRole) =>
+    (_companyId: string, teamId: string, categoriesArray: any[]) => {
+      setCompaniesResult((prev) => ({
+        ...prev,
+        [teamId]: { categoriesArray, role, team: true },
       }));
     };
 
@@ -299,6 +286,14 @@ export default function Edit() {
               surveyId={surveyId}
               companyId={role.company?._id}
               setDataForCompany={setDataForCompany(role)}
+            />
+          )}
+          {surveyId && role.team?._id && (
+            <SingleTeamResult
+              surveyId={surveyId}
+              companyId={role.company?._id}
+              teamId={role.team?._id}
+              setDataForTeam={setDataForTeam(role)}
             />
           )}
         </>

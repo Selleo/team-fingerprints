@@ -1,8 +1,7 @@
 import { useContext, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { each, find, flatMapDeep, isEmpty, keys, size, toNumber } from "lodash";
-import { Button, Center } from "@mantine/core";
+import { each, find, flatMapDeep, isEmpty, keys, size } from "lodash";
 import axios from "axios";
 
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
@@ -11,7 +10,7 @@ import ErrorLoading from "../../../components/ErrorLoading";
 import SingleCompanyResult from "./SingleCompanyResult/SingleCompanyResult";
 import ColoredShape from "../../../components/ColoredShape";
 import Chart from "../../../components/Chart";
-import QuestionResponse from "../../../components/Response/QuestionResponse/QuestionResponse";
+import QuestionResponse from "../../../components/Response/QuestionResponse";
 import BackToScreen from "../../../components/BackToScreen/BackToScreen";
 
 import {
@@ -212,34 +211,14 @@ export default function Edit() {
           />
         </>
       ) : (
-        <Center>
-          <div style={{ width: "50vw" }}>
-            <ul>
-              {questionsWithAnswers.map(({ answer, question }) => (
-                <QuestionResponse
-                  answer={answer ? toNumber(answer.value) : undefined}
-                  disabled={surveyIsFinished}
-                  key={question.title}
-                  question={question}
-                  refetch={refetch}
-                  surveyId={surveyId || ""}
-                />
-              ))}
-            </ul>
-
-            {!surveyIsFinished && (
-              <Button
-                onClick={() => finishSurvey.mutate()}
-                disabled={!buttonActive}
-                fullWidth
-                color="green"
-                style={{ marginBottom: "20px", marginTop: "10px" }}
-              >
-                Submit responses
-              </Button>
-            )}
-          </div>
-        </Center>
+        <QuestionResponse
+          questionsWithAnswers={questionsWithAnswers}
+          refetch={refetch}
+          disabled={surveyIsFinished}
+          surveyId={surveyId || ""}
+          finishSurvey={finishSurvey.mutate}
+          surveyTitle={survey?.title}
+        />
       ),
     [
       surveyIsFinished,

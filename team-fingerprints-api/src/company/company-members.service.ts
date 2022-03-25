@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   HttpException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { isEmail } from 'class-validator';
 import { Model } from 'mongoose';
 import { MailService } from 'src/mail/mail.service';
 import { Role } from 'src/role/models/role.model';
@@ -52,28 +54,33 @@ export class CompanyMembersService {
     });
   }
 
-  async addUserToCompanyWhitelist(
-    email: string,
-    companyId: string,
-  ): Promise<Role | HttpException> {
-    const roleDocument = await this.roleService.findOneRoleDocument({
-      email,
-      companyId,
-      role: RoleType.USER,
-    });
-    if (roleDocument) return;
+  async addUsersToCompanyWhitelist(emails: string[], companyId: string) {
+    if (!emails.every((el) => isEmail(el))) {
+      throw new BadRequestException('Invalid email');
+    }
 
-    const newRoleDocument = await this.roleService.createRoleDocument(
-      { email },
-      { email, companyId, role: RoleType.USER },
+    return await Promise.all(
+      emails.map(async (email) => {
+        const roleDocument = await this.roleService.findOneRoleDocument({
+          email,
+          companyId,
+          role: RoleType.USER,
+        });
+        if (roleDocument) return email;
+
+        const newRoleDocument = await this.roleService.createRoleDocument(
+          { email },
+          { email, companyId, role: RoleType.USER },
+        );
+
+        if (!newRoleDocument) throw new InternalServerErrorException();
+
+        const company = await this.companyService.getCompanyById(companyId);
+
+        this.mailService.inviteToCompanyMail(email, company.name);
+        return email;
+      }),
     );
-
-    if (!newRoleDocument) throw new InternalServerErrorException();
-
-    const company = await this.companyService.getCompanyById(companyId);
-
-    this.mailService.inviteToCompanyMail(email, company.name);
-    return newRoleDocument;
   }
 
   async addMemberToCompanyByEmail(

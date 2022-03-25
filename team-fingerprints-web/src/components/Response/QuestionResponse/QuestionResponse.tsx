@@ -49,6 +49,13 @@ export default function QuestionResponse({
     return result;
   }, [questionIndex, numberOfQuestions]);
 
+  const dotPosition = (value: any) => {
+    const x = value - 1;
+    const result = (x / 4) * 100 + "%";
+
+    return result;
+  };
+
   const changeQuestion = (value: number) => {
     setQuestionIndex(value);
     setLiveValue(questionsWithAnswers[value].answer?.value);
@@ -137,6 +144,7 @@ export default function QuestionResponse({
           <label
             className="survey-response__survey__answers__wrapper"
             htmlFor={option.value}
+            style={{ left: dotPosition(option.value) }}
           >
             <span className="survey-response__survey__answers__label">
               {option.label}
@@ -160,6 +168,15 @@ export default function QuestionResponse({
             ></input>
           </label>
         ))}
+        {liveValue && (
+          <div
+            className="survey-response__survey__answers--checked"
+            onClick={() => {
+              setLiveValue("");
+            }}
+            style={{ left: dotPosition(liveValue) }}
+          ></div>
+        )}
       </div>
       <div className="survey-response__survey__nav">
         <div>{questionIndex > 0 && previousButton()}</div>

@@ -14,6 +14,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import TeamForm from "../../components/Team/TeamForm/TeamForm";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import ErrorLoading from "../../components/ErrorLoading";
+import ColoredShape from "../../components/ColoredShape";
 
 type TeamResponse = {
   team: Team;
@@ -49,7 +50,7 @@ const TeamManagment = () => {
     (email: string) => {
       return axios.post<string>(
         `/companies/${companyId}/teams/${teamId}/member`,
-        { email }
+        { emails: [email] }
       );
     },
     {
@@ -63,10 +64,10 @@ const TeamManagment = () => {
 
   const editTeamMuatation = useMutation(
     (team: Partial<Team>) => {
-      return axios.patch<string>(`/companies/${companyId}/teams/${teamId}`, {
-        name: team.name,
-        description: team.description,
-      });
+      return axios.patch<string>(
+        `/companies/${companyId}/teams/${teamId}`,
+        team
+      );
     },
     {
       onSuccess: () => {
@@ -144,7 +145,14 @@ const TeamManagment = () => {
   return (
     <>
       <div className={classes.header}>
-        <h1 className={classes.headerTitle}>Team Managment</h1>
+        <h1 className={classes.headerTitle}>
+          Team Managment
+          <ColoredShape
+            className={classes.teamShape}
+            color={team?.pointColor}
+            shape={team?.pointShape}
+          />
+        </h1>
 
         <Group>
           <Button

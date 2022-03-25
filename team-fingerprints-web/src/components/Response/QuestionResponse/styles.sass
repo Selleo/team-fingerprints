@@ -31,8 +31,8 @@
     display: flex
     justify-content: space-between
     height: 110px
-    padding: 0 10px
     position: relative
+    margin: 0 30px
     margin-bottom: 70px
 
     &::after
@@ -40,8 +40,8 @@
       position: absolute
       content: ""
       z-index: -1
-      width: 92%
-      left: 25px
+      width: 100%
+      left: 0px
       top: 82px
 
     &__wrapper
@@ -49,6 +49,8 @@
       flex-direction: column
       align-items: center
       gap: 21px
+      position: absolute
+      transform: translateX(-50%)
 
     &__input
       width: 28px
@@ -57,21 +59,25 @@
       background-color: #121212
       border: 4px solid #4F4F4F
       cursor: pointer
-      transition: border 0.1s
 
       &:hover
         border: 4px solid #32A89C
 
-    .--checked
+    &--checked
       border: 8px solid #32A89C
       width: 35px
       height: 35px
-      position: relative
-      bottom: 5px
+      border-radius: 100%
+      left: 25%
+      bottom: 8px
+      position: absolute
+      transform: translateX(-50%)
+      transition: left 0.2s linear
+      cursor: pointer
 
     &__label
       display: flex
-      max-width: 50px
+      max-width: 35px
       justify-content: center
       text-align: center
       align-items: center

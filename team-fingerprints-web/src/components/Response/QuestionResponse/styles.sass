@@ -52,6 +52,18 @@
       position: absolute
       transform: translateX(-50%)
 
+    &__label
+      display: flex
+      max-width: 35px
+      justify-content: center
+      text-align: center
+      align-items: center
+      height: 50px
+      cursor: pointer
+
+    &__label:hover + &__input
+      border: 4px solid #32A89C
+
     &__input
       width: 28px
       height: 28px
@@ -72,16 +84,8 @@
       bottom: 8px
       position: absolute
       transform: translateX(-50%)
-      transition: left 0.2s linear
+      transition: left 0.2s ease-out
       cursor: pointer
-
-    &__label
-      display: flex
-      max-width: 35px
-      justify-content: center
-      text-align: center
-      align-items: center
-      height: 50px
 
   &__nav
     display: flex

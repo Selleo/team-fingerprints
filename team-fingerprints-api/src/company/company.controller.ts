@@ -63,10 +63,10 @@ export class CompanyController {
   @Roles([RoleType.COMPANY_ADMIN], false)
   async addUserToCompanyWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
-    @Body() { email }: ValidateEmail,
+    @Body('emails') emails: string[],
   ) {
-    return await this.companyMembersService.addUserToCompanyWhitelist(
-      email,
+    return await this.companyMembersService.addUsersToCompanyWhitelist(
+      emails,
       companyId,
     );
   }

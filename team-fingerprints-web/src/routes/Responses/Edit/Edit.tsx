@@ -157,7 +157,7 @@ export default function Edit() {
   const renderContent = useMemo(
     () =>
       surveyIsFinished ? (
-        <>
+        <div className="survey-response__finished">
           <div className="survey-response__description">
             <h5 className="survey-response__description__info">Results</h5>
             <h1 className="survey-response__description__title">
@@ -209,7 +209,7 @@ export default function Edit() {
             additionalData={filteredAdditionalData}
             showMe={showMyResults}
           />
-        </>
+        </div>
       ) : (
         <QuestionResponse
           questionsWithAnswers={questionsWithAnswers}

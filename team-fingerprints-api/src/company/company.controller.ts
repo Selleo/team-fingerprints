@@ -37,6 +37,7 @@ export class CompanyController {
   }
 
   @Get(':companyId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.USER])
   async getCompany(@Param('companyId', ValidateObjectId) companyId: string) {
     return await this.companyService.getCompany(companyId);
   }

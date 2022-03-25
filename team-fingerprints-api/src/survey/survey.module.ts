@@ -8,7 +8,7 @@ import { SurveyService } from './survey.service';
 
 @Module({
   imports: [
-    forwardRef(() => SurveyAnswerModule),
+    SurveyAnswerModule,
     forwardRef(() => RoleModule),
     MongooseModule.forFeature([
       {

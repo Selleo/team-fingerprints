@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,7 +15,6 @@ import { RoleService } from 'src/role/role.service';
 export class SurveyService {
   constructor(
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
-    @Inject(forwardRef(() => SurveyAnswerService))
     private readonly surveyAnswerService: SurveyAnswerService,
     private readonly roleService: RoleService,
   ) {}

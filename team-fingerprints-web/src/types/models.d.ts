@@ -54,8 +54,6 @@ export type Team = {
   emailWhitelist: string[];
   description: string;
   teamLeader?: TeamLead;
-  pointShape: Shape;
-  pointColor: string;
 };
 
 export type Company = {
@@ -87,8 +85,6 @@ type ComplexRole = {
   team: {
     _id: string;
     name: string;
-    pointShape: Shape;
-    pointColor: string;
   };
   company: {
     _id: string;

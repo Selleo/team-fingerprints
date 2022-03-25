@@ -21,7 +21,4 @@ export const useStyles = createStyles((theme) => ({
     marginBottom: "10px",
     marginRight: "10px",
   },
-  teamShape: {
-    marginLeft: "20px",
-  },
 }));

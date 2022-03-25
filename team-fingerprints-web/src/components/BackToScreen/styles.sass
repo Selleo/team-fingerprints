@@ -9,6 +9,14 @@
     flex-direction: row
     cursor: pointer
 
+    svg
+      position: relative
+      left: 0
+
+    &:hover svg
+      left: -10px
+      transition: left 0.2s ease-out
+
     span
       color: $color-primary
       margin-left: 8px

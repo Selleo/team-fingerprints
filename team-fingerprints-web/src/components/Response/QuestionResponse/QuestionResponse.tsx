@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import classNames from "classnames";
 import { useMutation } from "react-query";
 import { toNumber } from "lodash";
@@ -56,6 +56,20 @@ export default function QuestionResponse({
     return result;
   };
 
+  useEffect(() => {
+    const questionWithoutAnserw = questionsWithAnswers?.findIndex(
+      (item) => !item.answer || !item.answer.value
+    );
+
+    if (questionWithoutAnserw > -1) {
+      setQuestionIndex(questionWithoutAnserw);
+      setLiveValue(questionsWithAnswers[questionWithoutAnserw].answer?.value);
+    } else {
+      setQuestionIndex(numberOfQuestions - 1);
+      setLiveValue(questionsWithAnswers[numberOfQuestions - 1].answer?.value);
+    }
+  }, []);
+
   const changeQuestion = (value: number) => {
     setQuestionIndex(value);
     setLiveValue(questionsWithAnswers[value].answer?.value);
@@ -86,7 +100,7 @@ export default function QuestionResponse({
   const previousButton = () => {
     return (
       <button
-        className="survey-response__survey__nav__button"
+        className="survey-response__survey__nav__button --back"
         onClick={() => {
           changeQuestion(questionIndex - 1);
         }}
@@ -109,10 +123,14 @@ export default function QuestionResponse({
     );
   };
 
+  const submitResponse = () => {
+    window.confirm("Do you want to finish the survey?") && finishSurvey();
+  };
+
   const submitButton = () => {
     return (
       <button
-        onClick={() => finishSurvey()}
+        onClick={submitResponse}
         disabled={disabled}
         className="survey-response__survey__nav__button--submit"
       >
@@ -135,7 +153,12 @@ export default function QuestionResponse({
           {questionIndex + 1}/{numberOfQuestions}
         </h4>
       </div>
-      <Progress size="sm" value={progress} color="#32A89C" />
+      <Progress
+        size="sm"
+        value={progress}
+        color="#32A89C"
+        style={{ backgroundColor: "#292929" }}
+      />
       <h3 className="survey-response__survey__title">
         {currentQuestion.question.title}
       </h3>
@@ -172,7 +195,7 @@ export default function QuestionResponse({
           <div
             className="survey-response__survey__answers--checked"
             onClick={() => {
-              setLiveValue("");
+              setAndSaveNewValue("");
             }}
             style={{ left: dotPosition(liveValue) }}
           ></div>

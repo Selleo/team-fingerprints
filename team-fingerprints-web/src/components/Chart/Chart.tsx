@@ -158,14 +158,6 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
       ctx.strokeStyle = "#FFFFFF1A";
       ctx.stroke();
       ctx.closePath();
-      ctx.beginPath();
-      ctx.arc(displayWidth / 2, positionOfLine, 4, 0, 2 * Math.PI, true);
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = "#FFFFFF1A";
-      ctx.stroke();
-      ctx.fillStyle = "#FFFFFF1A";
-      ctx.fill();
-      ctx.closePath();
     });
 
     showMe && renderResults(userMappedTrendsData, ctx, "#32A89C", "circle");

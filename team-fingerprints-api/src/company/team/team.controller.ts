@@ -77,16 +77,16 @@ export class TeamController {
   async addUserToTeamWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('emails') emails: string[],
+    @Body() { email }: ValidateEmail,
   ) {
-    await this.companyMembersService.addUsersToCompanyWhitelist(
-      emails,
+    await this.companyMembersService.addUserToCompanyWhitelist(
+      email,
       companyId,
     );
     return await this.teamMembersService.addUserToTeamWhitelist(
       companyId,
       teamId,
-      emails,
+      email,
     );
   }
 

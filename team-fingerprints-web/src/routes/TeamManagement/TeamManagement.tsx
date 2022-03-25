@@ -49,7 +49,7 @@ const TeamManagment = () => {
     (email: string) => {
       return axios.post<string>(
         `/companies/${companyId}/teams/${teamId}/member`,
-        { email }
+        { emails: [email] }
       );
     },
     {

@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { isEmail } from 'class-validator';
 import { Model } from 'mongoose';
 import { User } from 'src/users/models/user.model';
 import { RoleI } from './interfaces/role.interface';
@@ -84,13 +86,13 @@ export class RoleService {
 
     if (!roleDocumentToRemove) throw new NotFoundException();
 
-    const adminRemovalRole = await this.findOneRoleDocument({
+    const companyAdminRemovalRole = await this.findOneRoleDocument({
       companyId: roleDocumentToRemove.companyId,
       userId: currentUserId,
       role: RoleType.COMPANY_ADMIN,
     });
 
-    if (adminRemovalRole) {
+    if (companyAdminRemovalRole) {
       return await this.removeRoleDocumentById(roleDocumentToRemove);
     }
 
@@ -104,6 +106,35 @@ export class RoleService {
       return await this.removeRoleDocumentById(roleDocumentToRemove);
     }
 
+    const superAdminRemovalRole = await this.findOneRoleDocument({
+      userId: currentUserId,
+      role: RoleType.SUPER_ADMIN,
+    });
+
+    if (superAdminRemovalRole) {
+      return await this.removeRoleDocumentById(roleDocumentToRemove);
+    }
+
     throw new UnauthorizedException();
+  }
+
+  async addSuperAdmin(email: string) {
+    if (!isEmail(email)) throw new BadRequestException('Invalid email');
+
+    const roleDocumenExists = await this.findOneRoleDocument({
+      email,
+      role: RoleType.SUPER_ADMIN,
+    });
+
+    if (roleDocumenExists)
+      throw new BadRequestException('This user has already suer_admin role');
+
+    const roleDocument = await this.roleModel.create({
+      email,
+      role: RoleType.SUPER_ADMIN,
+    });
+    if (!roleDocument) throw new InternalServerErrorException();
+    await roleDocument.save();
+    return roleDocument;
   }
 }

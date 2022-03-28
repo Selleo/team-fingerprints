@@ -65,4 +65,13 @@ export class CompanyController {
       companyId,
     );
   }
+
+  @Post(':companyId/companyAdmin')
+  @Roles([RoleType.COMPANY_ADMIN])
+  async addCompanyAdmin(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Body('email') email: string,
+  ) {
+    return await this.companyMembersService.addCompanyAdmin(email, companyId);
+  }
 }

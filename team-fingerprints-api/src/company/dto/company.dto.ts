@@ -24,7 +24,8 @@ export class CreateCompanyDto {
   @IsString()
   @IsFQDN()
   @IsNotEmpty()
-  readonly domain: string;
+  @IsOptional()
+  readonly domain?: string;
 
   @ApiProperty()
   @IsString()

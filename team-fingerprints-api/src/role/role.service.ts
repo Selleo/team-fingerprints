@@ -118,7 +118,7 @@ export class RoleService {
     throw new UnauthorizedException();
   }
 
-  async addSuperAdmin(email: string) {
+  async addSuperAdminRole(email: string) {
     if (!isEmail(email)) throw new BadRequestException('Invalid email');
 
     const roleDocumenExists = await this.findOneRoleDocument({
@@ -132,6 +132,17 @@ export class RoleService {
     const roleDocument = await this.roleModel.create({
       email,
       role: RoleType.SUPER_ADMIN,
+    });
+    if (!roleDocument) throw new InternalServerErrorException();
+    await roleDocument.save();
+    return roleDocument;
+  }
+
+  async addCompanyAdminRole(email: string, companyId: string) {
+    const roleDocument = await this.roleModel.create({
+      email,
+      companyId,
+      role: RoleType.COMPANY_ADMIN,
     });
     if (!roleDocument) throw new InternalServerErrorException();
     await roleDocument.save();

@@ -1,15 +1,12 @@
 import {
   BadRequestException,
-  HttpException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isEmail } from 'class-validator';
 import { Model } from 'mongoose';
 import { MailService } from 'src/mail/mail.service';
-import { Role } from 'src/role/models/role.model';
 import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'src/role/role.type';
 import { UsersService } from 'src/users/users.service';
@@ -86,21 +83,20 @@ export class CompanyMembersService {
     );
   }
 
-  async addMemberToCompanyByEmail(
-    email: string,
-    companyId: string,
-  ): Promise<Role | HttpException> {
-    const roleDocument = await this.roleService.findOneRoleDocument({
+  async addCompanyAdmin(email: string, companyId: string) {
+    if (!isEmail(email)) throw new BadRequestException('Invalid email');
+
+    const roleDocumentExists = await this.roleService.findOneRoleDocument({
       email,
       companyId,
+      role: RoleType.COMPANY_ADMIN,
     });
 
-    if (!roleDocument) throw new NotFoundException();
+    if (roleDocumentExists)
+      throw new BadRequestException(
+        'This user has already company_admin role in this company',
+      );
 
-    const user = await this.usersService.getUserByEmail(email);
-
-    return await this.roleService.updateRoleDocument(roleDocument, {
-      userId: user._id,
-    });
+    return await this.roleService.addCompanyAdminRole(email, companyId);
   }
 }

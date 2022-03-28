@@ -14,7 +14,7 @@ export class RoleController {
   @Post('superAdmin')
   @Roles([RoleType.SUPER_ADMIN])
   async addSuperAdmin(@Body('email') email: string) {
-    return await this.roleService.addSuperAdmin(email);
+    return await this.roleService.addSuperAdminRole(email);
   }
 
   @Delete('/:roleId/leave')

@@ -12,6 +12,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'src/role/role.type';
+import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './models/company.model';
@@ -26,6 +27,7 @@ export class CompanyService {
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly roleService: RoleService,
+    private readonly tfConfigService: TfConfigService,
   ) {}
   async getCompaneis(): Promise<Company[]> {
     const companies = await this.companyModel.find({}).exec();
@@ -55,6 +57,16 @@ export class CompanyService {
     { name, description, domain, pointColor, pointShape }: CreateCompanyDto,
   ): Promise<Company | HttpException> {
     if (!isDomainValid(domain)) throw new BadRequestException('Invalid domain');
+
+    interface DomainBlacklist {
+      domains: string[];
+    }
+
+    const data: DomainBlacklist =
+      await this.tfConfigService.getEmailBlackList();
+
+    if (data?.domains.includes(domain))
+      throw new BadRequestException('Can not add this domain to your company');
 
     if (await this.isDomainTaken(domain)) {
       throw new ForbiddenException(`Domain ${domain} is already taken.`);

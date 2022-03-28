@@ -8,6 +8,7 @@ import { Company, CompanySchema } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 import { TeamModule } from './team/team.module';
 import { MailModule } from 'src/mail/mail.module';
+import { TfConfigModule } from 'src/tf-config/tf-config.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MailModule } from 'src/mail/mail.module';
     forwardRef(() => RoleModule),
     forwardRef(() => TeamModule),
     forwardRef(() => MailModule),
+    TfConfigModule,
     MongooseModule.forFeature([
       {
         name: Company.name,

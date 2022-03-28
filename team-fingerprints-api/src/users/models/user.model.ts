@@ -6,7 +6,7 @@ import {
   UserSurveyAnswerSchema,
 } from './user-survey-answer.model';
 
-@Schema({ autoIndex: true, timestamps: true })
+@Schema({ autoIndex: false, timestamps: true })
 export class User extends Document implements UserI {
   _id?: string;
 

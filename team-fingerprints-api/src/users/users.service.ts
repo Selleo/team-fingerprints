@@ -9,8 +9,9 @@ import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/models/role.model';
-import { UserDetailI } from './interfaces/user.interface';
+import { UserDetailI, UserSurveyAnswerI } from './interfaces/user.interface';
 import { FilterService } from 'src/filter/filter.service';
+import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 
 @Injectable()
 export class UsersService {
@@ -178,13 +179,15 @@ export class UsersService {
     );
   }
 
-  async removeUser(userId: string): Promise<User> {
-    return await this.userModel.findOneAndDelete({ _id: userId });
-  }
-
   async removeUserByEmail(email: string) {
     const user = await this.getUserByEmail(email);
     if (!user) throw new NotFoundException('User does not exist');
+
+    user.email = new mongoose.Types.ObjectId().toString();
+    user.pictureUrl = '';
+    user.lastName = '';
+    user.firstName = '';
+    user.authId = '';
 
     const roleDocuments = await this.roleService.findAllRoleDocuments({
       email,
@@ -196,6 +199,22 @@ export class UsersService {
       }),
     );
 
-    return await this.removeUser(user._id);
+    const { surveysAnswers } = user;
+    const surveyIds: boolean[] = surveysAnswers
+      .map(
+        (el: UserSurveyAnswerI) =>
+          el.completeStatus === SurveyCompleteStatus.FINISHED,
+      )
+      .filter(Boolean);
+
+    if (!surveyIds || surveyIds.length <= 0) {
+      return await this.userModel
+        .findByIdAndRemove(user._id, { new: true })
+        .exec();
+    }
+
+    return await this.userModel
+      .findByIdAndUpdate(user._id, user, { new: true })
+      .exec();
   }
 }

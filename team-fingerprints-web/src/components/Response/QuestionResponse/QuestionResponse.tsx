@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import classNames from "classnames";
 import { useMutation } from "react-query";
 import { toNumber } from "lodash";
@@ -49,10 +49,29 @@ export default function QuestionResponse({
     return result;
   }, [questionIndex, numberOfQuestions]);
 
+  const dotPosition = (value: any) => {
+    const x = value - 1;
+    const result = (x / (OPTIONS.length - 1)) * 100 + "%";
+
+    return result;
+  };
+
   const changeQuestion = (value: number) => {
     setQuestionIndex(value);
     setLiveValue(questionsWithAnswers[value].answer?.value);
   };
+
+  useEffect(() => {
+    const indexOfFirstQuestionWithoutAnswer = questionsWithAnswers?.findIndex(
+      (item) => !item.answer || !item.answer.value
+    );
+
+    if (indexOfFirstQuestionWithoutAnswer > -1) {
+      changeQuestion(indexOfFirstQuestionWithoutAnswer);
+    } else {
+      changeQuestion(numberOfQuestions - 1);
+    }
+  }, []);
 
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
@@ -79,12 +98,12 @@ export default function QuestionResponse({
   const previousButton = () => {
     return (
       <button
-        className="survey-response__survey__nav__button"
+        className="survey-response__survey__nav__button --previous"
         onClick={() => {
           changeQuestion(questionIndex - 1);
         }}
       >
-        <LeftArrowGray /> Previous
+        <LeftArrowGray className="left-arrow" /> Previous
       </button>
     );
   };
@@ -97,15 +116,19 @@ export default function QuestionResponse({
           changeQuestion(questionIndex + 1);
         }}
       >
-        Next <RightArrow />
+        Next <RightArrow className="right-arrow" />
       </button>
     );
+  };
+
+  const submitResponse = () => {
+    window.confirm("Do you want to finish the survey?") && finishSurvey();
   };
 
   const submitButton = () => {
     return (
       <button
-        onClick={() => finishSurvey()}
+        onClick={submitResponse}
         disabled={disabled}
         className="survey-response__survey__nav__button--submit"
       >
@@ -128,7 +151,12 @@ export default function QuestionResponse({
           {questionIndex + 1}/{numberOfQuestions}
         </h4>
       </div>
-      <Progress size="sm" value={progress} color="#32A89C" />
+      <Progress
+        size="sm"
+        value={progress}
+        color="#32A89C"
+        style={{ backgroundColor: "#292929" }}
+      />
       <h3 className="survey-response__survey__title">
         {currentQuestion.question.title}
       </h3>
@@ -137,6 +165,7 @@ export default function QuestionResponse({
           <label
             className="survey-response__survey__answers__wrapper"
             htmlFor={option.value}
+            style={{ left: dotPosition(option.value) }}
           >
             <span className="survey-response__survey__answers__label">
               {option.label}
@@ -160,6 +189,15 @@ export default function QuestionResponse({
             ></input>
           </label>
         ))}
+        {liveValue && (
+          <div
+            className="survey-response__survey__answers--checked"
+            onClick={() => {
+              setAndSaveNewValue("");
+            }}
+            style={{ left: dotPosition(liveValue) }}
+          ></div>
+        )}
       </div>
       <div className="survey-response__survey__nav">
         <div>{questionIndex > 0 && previousButton()}</div>

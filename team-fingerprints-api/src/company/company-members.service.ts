@@ -33,10 +33,12 @@ export class CompanyMembersService {
   }
 
   async handleUserInCompanyDomain(email: string) {
+    const user = await this.usersService.getUserByEmail(email);
+
+    if (user.inCompany) return;
+
     const company = await this.isUserInCompanyDomain(email);
     if (!company) return;
-
-    const user = await this.usersService.getUserByEmail(email);
 
     const roleDocumentExists = await this.roleService.findOneRoleDocument({
       email,
@@ -51,6 +53,8 @@ export class CompanyMembersService {
       companyId: company._id,
       role: RoleType.USER,
     });
+
+    await this.usersService.userInCompany(user._id);
   }
 
   async addUsersToCompanyWhitelist(emails: string[], companyId: string) {
@@ -98,17 +102,5 @@ export class CompanyMembersService {
     return await this.roleService.updateRoleDocument(roleDocument, {
       userId: user._id,
     });
-  }
-
-  async removeCompanyMemberByEmail(email: string, companyId: string) {
-    const roleDocuments = await this.roleService.findAllRoleDocuments({
-      email,
-      companyId,
-    });
-
-    if (!roleDocuments || roleDocuments.length <= 0)
-      throw new NotFoundException();
-
-    return await this.usersService.getUserByEmail(email);
   }
 }

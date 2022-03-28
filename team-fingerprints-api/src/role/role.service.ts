@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -15,20 +14,8 @@ import { RoleType } from './role.type';
 @Injectable()
 export class RoleService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Role.name) private readonly roleModel: Model<Role>,
   ) {}
-
-  async changeUserRole(userId: string, role: RoleType) {
-    if (role.toString() in RoleType) {
-      return await this.userModel.findOneAndUpdate(
-        { _id: userId },
-        { role },
-        { new: true },
-      );
-    }
-    throw new BadRequestException();
-  }
 
   async createRoleDocument(
     user: Partial<User>,

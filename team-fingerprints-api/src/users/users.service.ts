@@ -166,6 +166,18 @@ export class UsersService {
     );
   }
 
+  async userInCompany(userId: string) {
+    return await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      {
+        $set: {
+          inCompany: true,
+        },
+      },
+      { new: true },
+    );
+  }
+
   async removeUser(userId: string): Promise<User> {
     return await this.userModel.findOneAndDelete({ _id: userId });
   }

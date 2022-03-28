@@ -14,6 +14,7 @@ export interface UserI {
   pictureUrl?: string;
   surveysAnswers: UserSurveyAnswerI[];
   userDetails?: UserDetailI[];
+  inCompany: boolean;
 }
 
 export interface UserSurveyAnswerI {

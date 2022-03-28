@@ -18,6 +18,7 @@ import { SurveyResultModule } from './survey-result/survey-result.module';
 import { FilterModule } from './filter/filter.module';
 import { BullModule } from '@nestjs/bull';
 import { MailModule } from './mail/mail.module';
+import { TfConfigModule } from './tf-config/tf-config.module';
 
 const envValidaion = Joi.object({
   NODE_ENV: Joi.string()
@@ -76,6 +77,7 @@ const mongooseModuleConfig = {
     SurveyResultModule,
     FilterModule,
     MailModule,
+    TfConfigModule,
   ],
 })
 export class AppModule {}

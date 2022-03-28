@@ -25,6 +25,9 @@ export class User extends Document implements UserI {
   @Prop()
   pictureUrl?: string;
 
+  @Prop({ default: false })
+  inCompany: boolean;
+
   @Prop({
     type: [UserSurveyAnswerSchema],
     default: [],

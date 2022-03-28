@@ -14,7 +14,7 @@ const BackToScreen: FC<IProps> = ({ name = "Dashboard" }) => {
 
   return (
     <div onClick={() => navigate(-1)} className="back__wrapper">
-      <LeftArrowIcon />
+      <LeftArrowIcon className="left-arrow" />
       <span>Back do {name}</span>
     </div>
   );

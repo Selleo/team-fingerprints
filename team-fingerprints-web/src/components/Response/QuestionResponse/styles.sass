@@ -31,8 +31,8 @@
     display: flex
     justify-content: space-between
     height: 110px
-    padding: 0 10px
     position: relative
+    margin: 0 30px
     margin-bottom: 70px
 
     &::after
@@ -40,8 +40,8 @@
       position: absolute
       content: ""
       z-index: -1
-      width: 92%
-      left: 25px
+      width: 100%
+      left: 0px
       top: 82px
 
     &__wrapper
@@ -49,6 +49,20 @@
       flex-direction: column
       align-items: center
       gap: 21px
+      position: absolute
+      transform: translateX(-50%)
+
+    &__label
+      display: flex
+      max-width: 35px
+      justify-content: center
+      text-align: center
+      align-items: center
+      height: 50px
+      cursor: pointer
+
+    &__label:hover + &__input
+      border: 4px solid #32A89C
 
     &__input
       width: 28px
@@ -57,25 +71,21 @@
       background-color: #121212
       border: 4px solid #4F4F4F
       cursor: pointer
-      transition: border 0.1s
 
       &:hover
         border: 4px solid #32A89C
 
-    .--checked
+    &--checked
       border: 8px solid #32A89C
       width: 35px
       height: 35px
-      position: relative
-      bottom: 5px
-
-    &__label
-      display: flex
-      max-width: 50px
-      justify-content: center
-      text-align: center
-      align-items: center
-      height: 50px
+      border-radius: 100%
+      left: 25%
+      bottom: 8px
+      position: absolute
+      transform: translateX(-50%)
+      transition: left 300ms ease-out
+      cursor: pointer
 
   &__nav
     display: flex
@@ -101,7 +111,35 @@
         border-radius: 12px
         cursor: pointer
 
+    .--previous
+      .left-arrow
+        position: relative
+        left: 0
+
+      &:hover .left-arrow
+        left: -8px
+        transition: left 300ms ease-out
+
     .--next
       border: 1px solid #32A89C
       background-color: #121212
       color: #32A89C
+      animation: next 300ms
+
+      .right-arrow
+        position: relative
+        left: 0
+
+      &:hover .right-arrow
+        left: 8px
+        transition: left 300ms ease-out
+
+
+
+// animations
+
+@keyframes next
+  0%
+    width: 0
+  100%
+    width: 100%

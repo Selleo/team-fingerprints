@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   Param,
@@ -13,11 +12,7 @@ import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'src/role/role.type';
 import { CompanyService } from './company.service';
-import {
-  ValidateEmail,
-  CreateCompanyDto,
-  UpdateCompanyDto,
-} from './dto/company.dto';
+import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { Company } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 import { Roles } from 'src/role/decorators/roles.decorator';
@@ -67,18 +62,6 @@ export class CompanyController {
   ) {
     return await this.companyMembersService.addUsersToCompanyWhitelist(
       emails,
-      companyId,
-    );
-  }
-
-  @Delete(':companyId/member')
-  @Roles([RoleType.COMPANY_ADMIN], false)
-  async removeCompanyMemberByEmail(
-    @Param('companyId', ValidateObjectId) companyId: string,
-    @Body() { email }: ValidateEmail,
-  ) {
-    return await this.companyMembersService.removeCompanyMemberByEmail(
-      email,
       companyId,
     );
   }

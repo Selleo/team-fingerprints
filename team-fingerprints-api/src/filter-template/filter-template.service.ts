@@ -100,4 +100,40 @@ export class FilterTemplateService {
       return teams.filter((team) => team._id.toString() === teamId);
     }
   }
+
+  async removeFilterTemplate(
+    filterId: string,
+    companyId: string,
+    teamId: string | null = null,
+  ) {
+    if (!teamId || teamId.length <= 0) {
+      const company = await this.companyModel.findOneAndUpdate(
+        { _id: companyId, filterTemplates: { _id: filterId } },
+        { $pull: { 'filterTemplates._id': filterId } },
+        { new: true },
+      );
+      return company?.filterTemplates;
+    } else {
+      const { teams } = await this.companyModel.findOneAndUpdate(
+        {
+          _id: companyId,
+          'teams.$.filterTemplates._id': filterId,
+        },
+        {
+          $pull: {
+            'teams.$[teamId].filterTemplates': { _id: filterId },
+          },
+        },
+        {
+          arrayFilters: [
+            { 'teamId._id': teamId },
+            { 'filterId._id': filterId },
+          ],
+          new: true,
+        },
+      );
+
+      return teams.filter((team) => team._id.toString() === teamId);
+    }
+  }
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { FilterTemplateService } from './filter-template.service';
 
@@ -37,6 +45,17 @@ export class FilterTemplateController {
     );
   }
 
+  @Delete(':companyId/filters/:filterId')
+  async removeFilterTemplateFromCompany(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('filterId', ValidateObjectId) filterId: string,
+  ) {
+    return await this.filterTemplateService.removeFilterTemplate(
+      filterId,
+      companyId,
+    );
+  }
+
   @Get(':companyId/teams/:teamId')
   async getFilterTemplatesForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -60,6 +79,7 @@ export class FilterTemplateController {
       teamId,
     );
   }
+
   @Put(':companyId/teams/:teamId/filters/:filterId')
   async updateFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -69,6 +89,19 @@ export class FilterTemplateController {
   ) {
     return await this.filterTemplateService.updateFilterTemplate(
       templateFilterData,
+      filterId,
+      companyId,
+      teamId,
+    );
+  }
+
+  @Delete(':companyId/teams/:teamId/filters/:filterId')
+  async removeFilterTemplateFromTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+    @Param('filterId', ValidateObjectId) filterId: string,
+  ) {
+    return await this.filterTemplateService.removeFilterTemplate(
       filterId,
       companyId,
       teamId,

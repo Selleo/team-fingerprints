@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { FilterTemplateService } from './filter-template.service';
 
@@ -6,8 +6,15 @@ import { FilterTemplateService } from './filter-template.service';
 export class FilterTemplateController {
   constructor(private readonly filterTemplateService: FilterTemplateService) {}
 
+  @Get(':companyId')
+  async getFilterTemplatesForCompany(
+    @Param('companyId', ValidateObjectId) companyId: string,
+  ) {
+    return await this.filterTemplateService.getFilterTemplates(companyId);
+  }
+
   @Post(':companyId')
-  async createFilterTemplateForTeam(
+  async createFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() templateFilterData: any,
   ) {
@@ -17,8 +24,19 @@ export class FilterTemplateController {
     );
   }
 
+  @Get(':companyId/teams/:teamId')
+  async getFilterTemplatesForTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+  ) {
+    return await this.filterTemplateService.getFilterTemplates(
+      companyId,
+      teamId,
+    );
+  }
+
   @Post(':companyId/teams/:teamId')
-  async createFilterTemplateForCompany(
+  async createFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() templateFilterData: any,

@@ -1,7 +1,18 @@
 import { useContext, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { each, find, flatMapDeep, isEmpty, keys, size } from "lodash";
+import {
+  each,
+  find,
+  first,
+  flatMapDeep,
+  get,
+  isEmpty,
+  keys,
+  last,
+  size,
+  sortBy,
+} from "lodash";
 import axios from "axios";
 
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
@@ -122,10 +133,19 @@ export default function Edit() {
     return data;
   });
 
-  const questions = flatMapDeep(
-    survey?.categories.map((category) =>
-      category.trends.map((trend) => trend.questions)
-    )
+  const questions = sortBy(
+    flatMapDeep(
+      survey?.categories.map((category) =>
+        category.trends.map((trend) => trend.questions)
+      )
+    ),
+    (question) => {
+      const middleIndex = size(question._id) / 2 - 5;
+      if (middleIndex >= 0) {
+        return `${last(question._id)}${get(question._id, middleIndex)}`;
+      }
+      return last(question._id);
+    }
   );
 
   const allResponses = surveyResponse?.surveysAnswers?.[0].answers;

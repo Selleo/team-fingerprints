@@ -25,7 +25,9 @@ const Responses = () => {
     }
   );
 
-  const filtredByPublic = data?.filter((survey) => survey.isPublic)
+  const filtredByPublic = data
+    ?.filter((survey) => survey.isPublic)
+    .filter((survey) => !survey.archived);
 
   useEffect(() => {
     if (data?.length === 1) {

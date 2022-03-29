@@ -23,6 +23,9 @@ export class Company extends Document {
 
   @Prop({ default: '', required: true, unique: true })
   domain: string;
+
+  @Prop({ default: [], required: false })
+  filterTemplates: any[];
 }
 
 export const CompanySchema = SchemaFactory.createForClass(Company);

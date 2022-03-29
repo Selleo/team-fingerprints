@@ -25,7 +25,7 @@ export class FilterTemplateService {
     return team.filterTemplates;
   }
 
-  async createTemplateFilter(
+  async createFilterTemplate(
     templateFilterData: any,
     companyId: string,
     teamId: string | null = null,
@@ -53,6 +53,48 @@ export class FilterTemplateService {
           },
         },
         { new: true },
+      );
+
+      return teams.filter((team) => team._id.toString() === teamId);
+    }
+  }
+
+  async updateFilterTemplate(
+    templateFilterData: any,
+    filterId: string,
+    companyId: string,
+    teamId: string | null = null,
+  ) {
+    const newFilterTemplate = {
+      _id: new mongoose.Types.ObjectId(filterId).toString(),
+      ...templateFilterData,
+    };
+
+    if (!teamId || teamId.length <= 0) {
+      const { filterTemplates } = await this.companyModel.findOneAndUpdate(
+        { _id: companyId, 'filterTemplates._id': filterId },
+        { $set: { 'filterTemplates.$': newFilterTemplate } },
+        { new: true },
+      );
+      return filterTemplates;
+    } else {
+      const { teams } = await this.companyModel.findOneAndUpdate(
+        {
+          _id: companyId,
+          'teams.$.filterTemplates._id': filterId,
+        },
+        {
+          $set: {
+            'teams.$[teamId].filterTemplates.$[filterId]': newFilterTemplate,
+          },
+        },
+        {
+          arrayFilters: [
+            { 'teamId._id': teamId },
+            { 'filterId._id': filterId },
+          ],
+          new: true,
+        },
       );
 
       return teams.filter((team) => team._id.toString() === teamId);

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { FilterTemplateService } from './filter-template.service';
 
@@ -18,8 +18,21 @@ export class FilterTemplateController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() templateFilterData: any,
   ) {
-    return await this.filterTemplateService.createTemplateFilter(
+    return await this.filterTemplateService.createFilterTemplate(
       templateFilterData,
+      companyId,
+    );
+  }
+
+  @Put(':companyId/filters/:filterId')
+  async updateFilterTemplateForCompany(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('filterId', ValidateObjectId) filterId: string,
+    @Body() templateFilterData: any,
+  ) {
+    return await this.filterTemplateService.updateFilterTemplate(
+      templateFilterData,
+      filterId,
       companyId,
     );
   }
@@ -41,8 +54,22 @@ export class FilterTemplateController {
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() templateFilterData: any,
   ) {
-    return await this.filterTemplateService.createTemplateFilter(
+    return await this.filterTemplateService.createFilterTemplate(
       templateFilterData,
+      companyId,
+      teamId,
+    );
+  }
+  @Put(':companyId/teams/:teamId/filters/:filterId')
+  async updateFilterTemplateForTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+    @Param('filterId', ValidateObjectId) filterId: string,
+    @Body() templateFilterData: any,
+  ) {
+    return await this.filterTemplateService.updateFilterTemplate(
+      templateFilterData,
+      filterId,
       companyId,
       teamId,
     );

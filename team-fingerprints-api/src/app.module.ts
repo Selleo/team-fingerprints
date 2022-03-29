@@ -19,6 +19,7 @@ import { FilterModule } from './filter/filter.module';
 import { BullModule } from '@nestjs/bull';
 import { MailModule } from './mail/mail.module';
 import { TfConfigModule } from './tf-config/tf-config.module';
+import { FilterTemplateModule } from './filter-template/filter-template.module';
 
 const envValidaion = Joi.object({
   NODE_ENV: Joi.string()
@@ -78,6 +79,7 @@ const mongooseModuleConfig = {
     FilterModule,
     MailModule,
     TfConfigModule,
+    FilterTemplateModule,
   ],
 })
 export class AppModule {}

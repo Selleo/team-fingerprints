@@ -15,5 +15,8 @@ export class Team {
 
   @Prop({ default: '' })
   pointColor: string;
+
+  @Prop({ default: [], required: false })
+  filterTemplates: any[];
 }
 export const TeamSchema = SchemaFactory.createForClass(Team);

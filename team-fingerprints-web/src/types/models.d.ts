@@ -4,6 +4,7 @@ export type Survey = {
   _id: string;
   createdAt: string;
   completeStatus: string;
+  archived: boolean;
 };
 
 export type Category = {

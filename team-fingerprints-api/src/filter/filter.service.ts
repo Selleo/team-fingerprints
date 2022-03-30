@@ -76,6 +76,14 @@ export class FilterService {
     return await this.filterModel.findById(filterId);
   }
 
+  async getFilterValue(filterPath: string, valueId: string) {
+    const filter = await this.getFilterByFilterPath(filterPath);
+    const { value, _id } = filter.values.find(
+      (el) => el._id.toString() === valueId,
+    );
+    return { value, _id: _id.toString() };
+  }
+
   async addFilterValue(filterId: string, value: string) {
     const filter = await this.filterExists(filterId);
     if (!filter) throw new NotFoundException();

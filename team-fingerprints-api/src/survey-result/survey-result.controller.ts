@@ -1,14 +1,11 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { Roles } from 'src/role/decorators/roles.decorator';
-import { RoleType } from 'src/role/role.type';
 import { SurveyResultService } from './survey-result.service';
 
 @Controller({ path: 'survey-results', version: '1' })
 export class SurveyResultController {
   constructor(private readonly surveyResultService: SurveyResultService) {}
 
-  @Roles([RoleType.SUPER_ADMIN])
   @Get(':surveyId/companies')
   async getAvgResultForAllCompanies(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -43,6 +40,31 @@ export class SurveyResultController {
     return await this.surveyResultService.getSurveyResultForUser(
       surveyId,
       userId,
+    );
+  }
+
+  @Get('companies/filters')
+  async getAvailableFiltersForCompanies() {
+    return await this.surveyResultService.getAvailableFiltersForCompanies();
+  }
+
+  @Get('companies/:companyId/filters')
+  async getAvailableFiltersForCompany(
+    @Param('companyId', ValidateObjectId) companyId: string,
+  ) {
+    return await this.surveyResultService.getAvailableFiltersForCompany(
+      companyId,
+    );
+  }
+
+  @Get('companies/:companyId/teams/:teamId/filters')
+  async getAvailableFiltersForTeam(
+    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('teamId', ValidateObjectId) teamId: string,
+  ) {
+    return await this.surveyResultService.getAvailableFiltersForTeam(
+      companyId,
+      teamId,
     );
   }
 }

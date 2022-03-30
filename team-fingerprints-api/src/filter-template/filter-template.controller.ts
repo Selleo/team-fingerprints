@@ -8,6 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
 import { FilterTemplateService } from './filter-template.service';
 
 @Controller({ path: 'filter-template', version: '1' })
@@ -24,10 +25,13 @@ export class FilterTemplateController {
   @Post(':companyId')
   async createFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
-    @Body() templateFilterData: any,
+    @Body('templateFilter') templateFilter: any,
+    @Body('templateFilterConfig')
+    templateFilterConfig: TemplateFilterConfigDto,
   ) {
     return await this.filterTemplateService.createFilterTemplate(
-      templateFilterData,
+      templateFilter,
+      templateFilterConfig,
       companyId,
     );
   }
@@ -36,10 +40,13 @@ export class FilterTemplateController {
   async updateFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
-    @Body() templateFilterData: any,
+    @Body('templateFilter') templateFilter: any,
+    @Body('templateFilterConfig')
+    templateFilterConfig: TemplateFilterConfigDto,
   ) {
     return await this.filterTemplateService.updateFilterTemplate(
-      templateFilterData,
+      templateFilter,
+      templateFilterConfig,
       filterId,
       companyId,
     );
@@ -71,10 +78,13 @@ export class FilterTemplateController {
   async createFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body() templateFilterData: any,
+    @Body('templateFilter') templateFilter: any,
+    @Body('templateFilterConfig')
+    templateFilterConfig: TemplateFilterConfigDto,
   ) {
     return await this.filterTemplateService.createFilterTemplate(
-      templateFilterData,
+      templateFilter,
+      templateFilterConfig,
       companyId,
       teamId,
     );
@@ -85,10 +95,13 @@ export class FilterTemplateController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
-    @Body() templateFilterData: any,
+    @Body('templateFilter') templateFilter: any,
+    @Body('templateFilterConfig')
+    templateFilterConfig: TemplateFilterConfigDto,
   ) {
     return await this.filterTemplateService.updateFilterTemplate(
-      templateFilterData,
+      templateFilter,
+      templateFilterConfig,
       filterId,
       companyId,
       teamId,

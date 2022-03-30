@@ -39,6 +39,10 @@ export class SurveyService {
     return await Promise.all(surveysWithCompleteStatus);
   }
 
+  async getSurveys() {
+    return await this.surveyModel.find({ isPublic: true, archived: false });
+  }
+
   async getSurveyByRole(surveyId: string, userId: string): Promise<Survey> {
     const roleDocuments = await this.roleService.findAllRoleDocuments({
       userId,

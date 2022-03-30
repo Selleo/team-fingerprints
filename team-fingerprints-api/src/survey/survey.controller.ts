@@ -15,6 +15,7 @@ import { SurveyService } from './survey.service';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { Roles } from 'src/role/decorators/roles.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @ApiTags('surveys')
 @Controller({ version: '1' })
@@ -26,6 +27,12 @@ export class SurveyController {
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
     return await this.surveyService.getSurveysByRole(userId);
+  }
+
+  @Public()
+  @Get('public')
+  async getSurveys(): Promise<(Survey & 'completeStatus')[] | Survey[]> {
+    return await this.surveyService.getSurveys();
   }
 
   @Get('/:surveyId')

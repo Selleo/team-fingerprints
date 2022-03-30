@@ -49,19 +49,44 @@ export class SurveyResultService {
     return result;
   }
 
-  async getAvgResultForAllCompanies(surveyId: string) {
+  async getAvgResultForAllCompanies(surveyId: string, queries: any) {
     const usersIds = await this.getUsersIds();
-    return await this.countPoints(surveyId, usersIds);
+    if (!usersIds || usersIds.length <= 0)
+      throw new NotFoundException('Users was not found');
+
+    const filteredUsersIds = await this.getUsersIdsByUserDetails(
+      usersIds,
+      queries,
+    );
+    return await this.countPoints(surveyId, filteredUsersIds);
   }
 
-  async getAvgResultForCompany(surveyId: string, companyId: string) {
+  async getAvgResultForCompany(
+    surveyId: string,
+    companyId: string,
+    queries: any,
+  ) {
     const usersIds = await this.getUsersIds({ companyId });
-    return await this.countPoints(surveyId, usersIds);
+    if (!usersIds || usersIds.length <= 0)
+      throw new NotFoundException('Users was not found');
+
+    const filteredUsersIds = await this.getUsersIdsByUserDetails(
+      usersIds,
+      queries,
+    );
+    return await this.countPoints(surveyId, filteredUsersIds);
   }
 
-  async getAvgResultForTeam(surveyId: string, teamId: string) {
+  async getAvgResultForTeam(surveyId: string, teamId: string, queries: any) {
     const usersIds = await this.getUsersIds({ teamId });
-    return await this.countPoints(surveyId, usersIds);
+    if (!usersIds || usersIds.length <= 0)
+      throw new NotFoundException('Users was not found');
+
+    const filteredUsersIds = await this.getUsersIdsByUserDetails(
+      usersIds,
+      queries,
+    );
+    return await this.countPoints(surveyId, filteredUsersIds);
   }
 
   async countPoints(surveyId: string, usersIds: string[]) {
@@ -141,6 +166,19 @@ export class SurveyResultService {
     });
 
     return surveyResult;
+  }
+
+  async getUsersIdsByUserDetails(usersIds: string[], queries: any) {
+    if (Object.keys(queries).length <= 0) return usersIds;
+    const users = (
+      await Promise.all(
+        usersIds.map(async (id) => {
+          return await this.usersService.getUserByUserDetails(id, queries);
+        }),
+      )
+    ).filter(Boolean);
+
+    return users.map((user) => user._id.toString());
   }
 
   async getUsersIds(
@@ -232,16 +270,22 @@ export class SurveyResultService {
 
   async getAvailableFiltersForCompanies() {
     const usersIds = await this.getUsersIds();
+    if (!usersIds || usersIds.length <= 0)
+      throw new NotFoundException('There are not available filters');
     return await this.getAvailableFilters(usersIds);
   }
 
   async getAvailableFiltersForCompany(companyId: string) {
     const usersIds = await this.getUsersIds({ companyId });
+    if (!usersIds || usersIds.length <= 0)
+      throw new NotFoundException('There are not available filters');
     return await this.getAvailableFilters(usersIds);
   }
 
   async getAvailableFiltersForTeam(companyId: string, teamId: string) {
     const usersIds = await this.getUsersIds({ companyId, teamId });
+    if (!usersIds || usersIds.length <= 0)
+      throw new NotFoundException('There are not available filters');
     return await this.getAvailableFilters(usersIds);
   }
 }

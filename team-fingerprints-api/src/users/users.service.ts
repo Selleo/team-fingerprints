@@ -39,6 +39,21 @@ export class UsersService {
     return await this.userModel.find({});
   }
 
+  async getUserByUserDetails(_id: string, queries: any) {
+    const paths = Object.keys(queries);
+    if (paths.length <= 0) return;
+
+    const query = [];
+    paths.forEach((path) => {
+      query[`userDetails.${path}`] = queries[path];
+    });
+
+    return await this.userModel.findOne({
+      _id,
+      ...query,
+    });
+  }
+
   async getUsersByIds(userIds: string[]): Promise<UserProfileI[]> {
     if (!userIds || userIds.length <= 0) return [];
     const profiles = userIds?.map(async (id) => {

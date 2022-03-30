@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Public } from 'src/common/decorators/public.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { SurveyResultService } from './survey-result.service';
 
@@ -6,6 +7,7 @@ import { SurveyResultService } from './survey-result.service';
 export class SurveyResultController {
   constructor(private readonly surveyResultService: SurveyResultService) {}
 
+  @Public()
   @Get(':surveyId/companies')
   async getAvgResultForAllCompanies(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -54,6 +56,7 @@ export class SurveyResultController {
     );
   }
 
+  @Public()
   @Get('companies/filters')
   async getAvailableFiltersForCompanies() {
     return await this.surveyResultService.getAvailableFiltersForCompanies();

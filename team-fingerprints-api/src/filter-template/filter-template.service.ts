@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Company } from 'src/company/models/company.model';
 import * as mongoose from 'mongoose';
 import { Team } from 'src/company/models/team.model';
+import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
 
 @Injectable()
 export class FilterTemplateService {
@@ -27,6 +28,7 @@ export class FilterTemplateService {
 
   async createFilterTemplate(
     templateFilterData: any,
+    templateFilterConfig: TemplateFilterConfigDto,
     companyId: string,
     teamId: string | null = null,
   ) {
@@ -38,18 +40,25 @@ export class FilterTemplateService {
     if (!teamId || teamId.length <= 0) {
       return await this.companyModel.findOneAndUpdate(
         { _id: companyId },
-        { $push: { filterTemplates } },
+        {
+          $push: {
+            filterTemplates: { ...filterTemplates, ...templateFilterConfig },
+          },
+        },
         { new: true },
       );
     } else {
       const { teams } = await this.companyModel.findOneAndUpdate(
         {
           _id: companyId,
-          'teams.$': teamId,
+          'teams._id': teamId,
         },
         {
           $push: {
-            'teams.$.filterTemplates': filterTemplates,
+            'teams.$.filterTemplates': {
+              ...filterTemplates,
+              ...templateFilterConfig,
+            },
           },
         },
         { new: true },
@@ -61,6 +70,7 @@ export class FilterTemplateService {
 
   async updateFilterTemplate(
     templateFilterData: any,
+    templateFilterConfig: TemplateFilterConfigDto,
     filterId: string,
     companyId: string,
     teamId: string | null = null,
@@ -73,7 +83,14 @@ export class FilterTemplateService {
     if (!teamId || teamId.length <= 0) {
       const { filterTemplates } = await this.companyModel.findOneAndUpdate(
         { _id: companyId, 'filterTemplates._id': filterId },
-        { $set: { 'filterTemplates.$': newFilterTemplate } },
+        {
+          $set: {
+            'filterTemplates.$': {
+              ...newFilterTemplate,
+              ...templateFilterConfig,
+            },
+          },
+        },
         { new: true },
       );
       return filterTemplates;
@@ -85,7 +102,10 @@ export class FilterTemplateService {
         },
         {
           $set: {
-            'teams.$[teamId].filterTemplates.$[filterId]': newFilterTemplate,
+            'teams.$[teamId].filterTemplates.$[filterId]': {
+              ...newFilterTemplate,
+              ...templateFilterConfig,
+            },
           },
         },
         {

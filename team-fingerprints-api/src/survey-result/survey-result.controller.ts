@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { SurveyResultService } from './survey-result.service';
 
@@ -9,18 +9,24 @@ export class SurveyResultController {
   @Get(':surveyId/companies')
   async getAvgResultForAllCompanies(
     @Param('surveyId', ValidateObjectId) surveyId: string,
+    @Query() queries: any,
   ) {
-    return await this.surveyResultService.getAvgResultForAllCompanies(surveyId);
+    return await this.surveyResultService.getAvgResultForAllCompanies(
+      surveyId,
+      queries,
+    );
   }
 
   @Get(':surveyId/companies/:companyId')
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
+    @Query() queries: any,
   ) {
     return await this.surveyResultService.getAvgResultForCompany(
       surveyId,
       companyId,
+      queries,
     );
   }
 
@@ -28,8 +34,13 @@ export class SurveyResultController {
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
+    @Query() queries: any,
   ) {
-    return await this.surveyResultService.getAvgResultForTeam(surveyId, teamId);
+    return await this.surveyResultService.getAvgResultForTeam(
+      surveyId,
+      teamId,
+      queries,
+    );
   }
 
   @Get(':surveyId/companies/:companyId/teams/:teamId/users/:userId')

@@ -1,6 +1,13 @@
 import { Select } from "@mantine/core";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, memo } from "react";
 import { ProfileSelectorProp } from "../../types/models";
+
+const classes = {
+  root: "profile__detail__select",
+  label: "profile__detail__select__label",
+};
+
+const MemoizedSelect = memo(Select);
 
 const ProfileSelect = (props: ProfileSelectorProp) => {
   const { item, handleChange, handleSubmit, values } = props;
@@ -27,11 +34,8 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
 
   return (
     <li className="profile__detail">
-      <Select
-        classNames={{
-          root: "profile__detail__select",
-          label: "profile__detail__select__label",
-        }}
+      <MemoizedSelect
+        classNames={classes}
         label={item.name}
         placeholder="Pick one"
         data={itemSelect}

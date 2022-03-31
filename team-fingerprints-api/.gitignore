@@ -3,6 +3,7 @@
 /node_modules
 .env.*
 team-map.json
+/old
 
 # Logs
 logs

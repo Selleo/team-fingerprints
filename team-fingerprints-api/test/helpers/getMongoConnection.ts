@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '../../.env.test' });
 
 export async function getMongoConnection() {
-  const conn = mongoose.createConnection(
-    'mongodb+srv://murmeltier:4ixQiIg7p9B5fVGIrAvu@selleo-team-fingerprint.zrkzt.mongodb.net/selleoTeamFingerprint-testing?retryWrites=true&w=majority',
-  );
-
+  const conn = mongoose.createConnection(process.env.MONGODB_URI);
   return conn;
 }

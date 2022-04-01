@@ -68,10 +68,10 @@ describe('UsersController', () => {
 
       expect(body.length).toBe(1);
 
-      const { email, id, privileges } = body[0];
+      const { email, _id, privileges } = body[0];
 
       expect(email).toEqual(baseUserData().email);
-      expect(id).toEqual(baseUserId);
+      expect(_id).toEqual(baseUserId);
       expect(privileges.length).toBe(1);
       expect(privileges[0].role).toEqual(RoleType.SUPER_ADMIN);
       expect(privileges[0].roleId).toEqual(role._id.toString());
@@ -138,10 +138,10 @@ describe('UsersController', () => {
         role: RoleType.SUPER_ADMIN,
       });
 
-      const { email, id, privileges } = body;
+      const { email, _id, privileges } = body;
 
       expect(email).toEqual(baseUserData().email);
-      expect(id).toEqual(baseUserId);
+      expect(_id).toEqual(baseUserId);
       expect(body.userDetails.country).toEqual(userDetails.country);
       expect(body.userDetails.yearOfExperience).toEqual(
         userDetails.yearOfExperience,

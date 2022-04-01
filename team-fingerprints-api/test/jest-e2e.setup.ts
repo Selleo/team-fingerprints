@@ -15,7 +15,7 @@ let baseUser: User;
 
 jest.setTimeout(20000);
 
-beforeAll(async () => {
+beforeEach(async () => {
   const conn = await getMongoConnection();
   await conn.dropDatabase();
 

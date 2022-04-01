@@ -148,6 +148,8 @@ export class UsersService {
           const filterExists = await this.filterService.getFilterByFilterPath(
             key,
           );
+          if (!filterExists)
+            throw new NotFoundException(`${key} filter does not exist`);
           const filterValue = filterExists.values.find(
             (el) => el._id.toString() === userDetails[key],
           );

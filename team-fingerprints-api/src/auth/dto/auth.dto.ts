@@ -7,7 +7,7 @@ export class ResponseAuthDto implements UserProfileI {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  id: string;
+  _id: string;
 
   @ApiProperty()
   @IsString()

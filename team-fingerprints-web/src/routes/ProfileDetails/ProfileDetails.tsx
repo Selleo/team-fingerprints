@@ -31,7 +31,7 @@ const ProfileDetails = () => {
 
   const updateMutation = useMutation(
     async (data: FormData) => {
-      return axios.put(`/users/details`, data);
+      return axios.post(`/users/details`, data);
     },
     {
       onSuccess: () => {

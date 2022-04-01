@@ -78,14 +78,14 @@ describe('UsersController', () => {
     });
   });
 
-  describe('PUT /users/details - sets user details for current user', () => {
+  describe('POST /users/details - sets user details for current user', () => {
     it('should throw - 404 Not Found', async () => {
       const userDetails: UserDetailI = {
         country: '324242323',
         yearOfExperience: '3423534',
       };
       await request(app.getHttpServer())
-        .put('/users/details')
+        .post('/users/details')
         .send(userDetails)
         .expect(404);
     });
@@ -126,7 +126,7 @@ describe('UsersController', () => {
       };
 
       const { body } = await request(app.getHttpServer())
-        .put('/users/details')
+        .post('/users/details')
         .send(userDetails)
         .expect(200);
 

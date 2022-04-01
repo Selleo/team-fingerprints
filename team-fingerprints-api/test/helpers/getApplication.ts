@@ -7,6 +7,5 @@ export async function getApplication() {
   if (!app) {
     app = await createTestingModule();
   }
-
   return app;
 }

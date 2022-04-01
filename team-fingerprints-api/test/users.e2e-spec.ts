@@ -128,7 +128,7 @@ describe('UsersController', () => {
       const { body } = await request(app.getHttpServer())
         .post('/users/details')
         .send(userDetails)
-        .expect(200);
+        .expect(201);
 
       baseUser = await getBaseUser(userModel);
       const baseUserId = baseUser._id.toString();

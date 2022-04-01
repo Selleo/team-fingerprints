@@ -3,7 +3,11 @@ import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '../../.env.test' });
 
+let conn: mongoose.Connection;
+
 export async function getMongoConnection() {
-  const conn = mongoose.createConnection(process.env.MONGODB_URI);
+  if (!conn) {
+    conn = mongoose.createConnection(process.env.MONGODB_URI);
+  }
   return conn;
 }

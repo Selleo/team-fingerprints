@@ -5,9 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/models/user.model';
 import { AuthService } from './auth.service';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { ConfigService } from '@nestjs/config';
 
 interface authPayload {
   iss: string;
@@ -24,18 +22,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly userService: UsersService,
     private readonly authService: AuthService,
+    private readonly configService: ConfigService,
   ) {
     super({
       secretOrKeyProvider: passportJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `${process.env.AUTH0_DOMAIN}.well-known/jwks.json`,
+        jwksUri: `${configService.get<string>(
+          'AUTH0_DOMAIN',
+        )}.well-known/jwks.json`,
       }),
 
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      audience: process.env.AUTH0_AUDIENCE,
-      issuer: process.env.AUTH0_ISSUER,
+      audience: configService.get<string>('AUTH0_AUDIENCE'),
+      issuer: configService.get<string>('AUTH0_ISSUER'),
       algorithms: ['RS256'],
     });
   }

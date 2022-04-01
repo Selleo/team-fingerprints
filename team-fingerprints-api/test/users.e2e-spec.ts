@@ -1,218 +1,50 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { createUser } from './factories';
+import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
-import { CompanyModule } from 'src/company/company.module';
-import { AppModule } from 'src/app.module';
-import { RoleType } from 'src/role/role.type';
-import * as mongoose from 'mongoose';
-import { UsersModule } from 'src/users/users.module';
-import { RoleModule } from 'src/role/role.module';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/users/models/user.model';
-import { UsersService } from 'src/users/users.service';
-import { TeamModule } from 'src/company/team/team.module';
-import { CreateUserDto } from 'src/users/dto/user.dto';
-import { UserProfileI } from 'src/auth/interfaces/auth.interface';
+import { baseUserData } from './helpers/data/baseUserData';
 
-const userData: CreateUserDto = {
-  email: 'yetiasg@gmail.com',
-  firstName: 'Kinny',
-  lastName: 'Zimmer',
-  authId: 'sdfh2hfefowhefnjkswfbnw',
+const authToken = () => {
+  return `Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlM0ZVVpMFVfdVlnYlpjbV9fSXBDYSJ9.eyJpc3MiOiJodHRwczovL2Rldi1sbGt0ZTQxbS51cy5hdXRoMC5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDU5ODkyODA1NTgxNDkzOTIyMjIiLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAwLyIsImh0dHBzOi8vZGV2LWxsa3RlNDFtLnVzLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2NDg3MjQ3MDQsImV4cCI6MTY0ODgxMTEwNCwiYXpwIjoiZ3FHWVFOaXM2SldmbXBkTlE1dG14Vlc5N1NHUHp6dmwiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIn0.H5sUgI3UOp5YamYnHkjOrHhwcz4D2tZrR1ZdA9vCjCEy-W8uO0-HLD2E2BwImSA6Fo7KPybnb5M7Li9DHx9f9Vy7M69qtw3wGFGaBAOCXQWXqM1ye3PrljI7pOkgeOsmd_yHS9MdLyNrlZLeQOSZAT0OhPwzl9tQozAxthFdR20keswc8N2UgrmSDSEfCcPvW2apIkdrHQ9Et9_9F3MUg6Uonm_F4uJ4PgMdfV_4mQXwiX4xQFtyEV5IKBkdsyOmv0juIAhkY2nYrSSVB6irzHFKndfea3kExB1R8FW0Top-N8XeHPkuKKUDdfRqnUaa5EQ40aMQodcSDZdhqJNMLg`;
 };
 
-let user: Partial<User> = {
-  email: userData.email,
-  firstName: userData.firstName,
-  lastName: userData.lastName,
-  authId: userData.authId,
-  role: RoleType.USER,
-  companyId: '',
-  surveysAnswers: [],
-};
-
-const userProfile = (
-  userId: string,
-  role: RoleType,
-): Partial<UserProfileI> => ({
-  id: userId,
-  email: user.email,
-  role,
-  canCreateTeam: false,
-  company: {} as any,
-  team: {} as any,
-});
-
-describe('Company controller (e2e)', () => {
+describe('UsersController', () => {
   let app: INestApplication;
-  let userModel: any;
-  let userId: string;
+
+  jest.setTimeout(20000);
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        UsersModule,
-        CompanyModule,
-        RoleModule,
-        TeamModule,
-        MongooseModule.forFeature([
-          {
-            name: User.name,
-            schema: UserSchema,
-          },
-        ]),
-      ],
-      providers: [UsersService],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    userModel = moduleFixture.get(getModelToken(User.name));
-    await app.init();
+    app = await getApplication();
   });
 
-  describe('POST /teams - create company', () => {
-    it('returns true', async () => {
-      return true;
+  beforeEach(async () => {
+    app = await getApplication();
+  });
+
+  describe('GET /users', () => {
+    it('should return empty array', async () => {
+      const { body } = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', authToken());
+      expect(body).toMatchObject(baseUserData());
     });
   });
 
-  afterAll(async () => {
-    await userModel.findOneAndDelete({ _id: userId });
-    await mongoose.connection.close(true);
-    await app.close();
-  });
+  describe('POST /users', () => {
+    it('create and receive new user', async () => {
+      const user = await createUser('gmail.com');
 
-  describe('POST /users - create user', () => {
-    it('returns new user', async () => {
-      return await request(app.getHttpServer())
+      const { body } = await request(app.getHttpServer())
         .post('/users')
-        .send(userData)
-        .expect(201)
-        .then(({ body }) => {
-          expect(body).toMatchObject(user);
-        });
-    });
-  });
+        .send({ ...user })
+        .set('Authorization', authToken());
 
-  describe('GET /users - get current logged in user', () => {
-    it('returns user', async () => {
-      return await request(app.getHttpServer())
-        .get('/users')
-        .expect(200)
-        .then(({ body }) => {
-          userId = new mongoose.Types.ObjectId(body._id).toString();
-          expect(body).toMatchObject(user);
-        });
-    });
-  });
-
-  describe('GET /users/all - get all existing users', () => {
-    it('returns array of users', async () => {
-      return await request(app.getHttpServer())
-        .get('/users')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toMatchObject(user);
-        });
-    });
-  });
-
-  describe('GET /users/profiles - get users profiles by given ids', () => {
-    describe('Profile of user who can not create team', () => {
-      it('returns profile for TEAM_LEADER', async () => {
-        await userModel.findOneAndUpdate(
-          { _id: userId },
-          { role: RoleType.TEAM_LEADER },
-        );
-        await request(app.getHttpServer())
-          .post('/users/profiles')
-          .send([userId])
-          .expect(201)
-          .then(({ body }) => {
-            expect(body.length).toBe(1);
-            expect(body[0]).toMatchObject(
-              userProfile(userId, RoleType.TEAM_LEADER),
-            );
-          })
-          .finally(async () => {
-            await userModel.findOneAndUpdate(
-              { _id: userId },
-              { role: RoleType.USER },
-            );
-          });
+      expect(body).toMatchObject({
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        authId: user.authId,
       });
-
-      it('returns profile for COMPANY_ADMIN', async () => {
-        await userModel.findOneAndUpdate(
-          { _id: userId },
-          { role: RoleType.COMPANY_ADMIN },
-        );
-        return await request(app.getHttpServer())
-          .post('/users/profiles')
-          .send([userId])
-          .expect(201)
-          .then(({ body }) => {
-            expect(body.length).toBe(1);
-            expect(body[0]).toMatchObject(
-              userProfile(userId, RoleType.COMPANY_ADMIN),
-            );
-          })
-          .finally(async () => {
-            await userModel.findOneAndUpdate(
-              { _id: userId },
-              { role: RoleType.USER },
-            );
-          });
-      });
-    });
-  });
-
-  describe('PATCH /users', () => {
-    it('return updated user', async () => {
-      const dataToUpdate = {
-        firstName: 'Bede',
-        lastName: 'Os',
-      };
-
-      return await request(app.getHttpServer())
-        .patch('/users')
-        .send({
-          firstName: dataToUpdate.firstName,
-          lastName: dataToUpdate.lastName,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toMatchObject({ ...user, ...dataToUpdate });
-        })
-        .finally(() => {
-          user = { ...user, ...dataToUpdate };
-        });
-    });
-  });
-
-  describe('GET /users/all - returns all existing users', () => {
-    it('returns emty array', async () => {
-      await userModel.findOneAndUpdate(
-        { _id: userId },
-        { role: RoleType.TEAM_LEADER },
-      );
-      return request(app.getHttpServer())
-        .get('/users/all')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.length).toBe(1);
-          expect(body[0]).toMatchObject({
-            ...user,
-            role: RoleType.TEAM_LEADER,
-          });
-        })
-        .finally(async () => {
-          await userModel.findOneAndUpdate(
-            { _id: userId },
-            { role: RoleType.USER },
-          );
-        });
     });
   });
 });

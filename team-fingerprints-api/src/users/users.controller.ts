@@ -6,7 +6,6 @@ import {
   HttpException,
   Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
@@ -44,7 +43,7 @@ export class UsersController {
     return await this.userService.getUsersByIds(userIds);
   }
 
-  @Put('/details')
+  @Post('/details')
   async setUserDetails(
     @CurrentUserId(ValidateObjectId) userId: string,
     @Body() userDetais: UserDetailI,

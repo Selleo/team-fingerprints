@@ -53,11 +53,13 @@
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
     "rimraf": "^3.0.2",
+    "rosie": "^2.1.0",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.3.0",
     "utility-types": "^3.10.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^6.1.1",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.3.1",
@@ -68,6 +70,7 @@
     "@types/node": "^16.0.0",
     "@types/nodemailer": "^6.4.4",
     "@types/passport-jwt": "^3.0.6",
+    "@types/rosie": "^0.0.40",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",

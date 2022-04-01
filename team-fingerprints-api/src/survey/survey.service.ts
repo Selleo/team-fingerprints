@@ -12,6 +12,10 @@ import { RoleType } from 'src/role/role.type';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 import { RoleService } from 'src/role/role.service';
+import * as mongoose from 'mongoose';
+import { Category } from './models/category.model';
+import { Question } from './models/question.model';
+import { Trend } from './models/trend.model';
 
 @Injectable()
 export class SurveyService {
@@ -61,7 +65,34 @@ export class SurveyService {
   }
 
   async createSurvey({ title }: CreateSurveyDto): Promise<Survey> {
-    return await this.surveyModel.create({ title });
+    return await (await this.surveyModel.create({ title })).save();
+  }
+
+  async duplicateSurvey(surveyId: string, { title }: CreateSurveyDto) {
+    const existingSurvey = await this.getSurvey(surveyId);
+
+    const categories = existingSurvey.categories.map((category: Category) => ({
+      title: category.title,
+      _id: new mongoose.Types.ObjectId(),
+      trends: category.trends.map((trend: Trend) => ({
+        primary: trend.primary,
+        secondary: trend.secondary,
+        _id: new mongoose.Types.ObjectId(),
+        questions: trend.questions.map((question: Question) => ({
+          primary: question.primary,
+          title: question.title,
+          _id: new mongoose.Types.ObjectId(),
+        })),
+      })),
+    }));
+
+    const newSurvey = await this.surveyModel.create({
+      title,
+      categories,
+      amountOfQuestions: existingSurvey.amountOfQuestions,
+    });
+
+    return await newSurvey.save();
   }
 
   async updateSurvey(

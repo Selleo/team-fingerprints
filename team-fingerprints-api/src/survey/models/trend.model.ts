@@ -5,6 +5,8 @@ import { Question, QuestionSchema } from './question.model';
 
 @Schema()
 export class Trend implements TrendI {
+  _id?: string;
+
   @ApiProperty()
   @Prop({ required: true })
   primary: string;

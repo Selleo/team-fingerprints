@@ -2,7 +2,7 @@ import { RoleType } from 'src/role/role.type';
 import { UserDetailI } from 'src/users/interfaces/user.interface';
 
 export interface UserProfileI {
-  readonly id: string;
+  readonly _id: string;
   readonly email: string;
   readonly userDetails: UserDetailI[];
   readonly privileges: PrivilegeI[];

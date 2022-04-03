@@ -35,7 +35,7 @@ export class SurveyController {
     return await this.surveyService.getSurveys();
   }
 
-  @Get('/:surveyId')
+  @Get(':surveyId')
   async getSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @CurrentUserId(ValidateObjectId) userId: string,
@@ -49,7 +49,16 @@ export class SurveyController {
     return await this.surveyService.createSurvey(surveyDto);
   }
 
-  @Patch('/:surveyId')
+  @Post(':surveyId/duplicate')
+  @Roles([RoleType.SUPER_ADMIN])
+  async duplicateSurvey(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
+    @Body() surveyDto: CreateSurveyDto,
+  ): Promise<Survey> {
+    return await this.surveyService.duplicateSurvey(surveyId, surveyDto);
+  }
+
+  @Patch(':surveyId')
   @Roles([RoleType.SUPER_ADMIN])
   async updateSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -58,7 +67,7 @@ export class SurveyController {
     return await this.surveyService.updateSurvey(surveyId, surveyDto);
   }
 
-  @Delete('/:surveyId')
+  @Delete(':surveyId')
   @Roles([RoleType.SUPER_ADMIN])
   async removeSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,

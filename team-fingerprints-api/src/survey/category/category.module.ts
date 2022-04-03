@@ -21,5 +21,6 @@ import { TrendModule } from './trend/trend.module';
   ],
   controllers: [CategoryController],
   providers: [CategoryService],
+  exports: [CategoryService],
 })
 export class CategoryModule {}

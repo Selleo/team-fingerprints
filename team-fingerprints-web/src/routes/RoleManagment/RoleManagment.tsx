@@ -35,7 +35,7 @@ export const RoleManagment = () => {
   const goToManage = (item: ComplexRole) => {
     switch (item.role) {
       case "SUPER_ADMIN":
-        navigate("/surveys");
+        navigate("/admin/surveys");
         break;
       case "COMPANY_ADMIN":
         navigate(`/companies/${item.company?._id}`);

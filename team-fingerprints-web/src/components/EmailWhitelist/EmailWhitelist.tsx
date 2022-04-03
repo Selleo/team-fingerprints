@@ -1,6 +1,7 @@
 import { Button, Table, Badge } from "@mantine/core";
 import { groupBy, keys, map } from "lodash";
 import { FC, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { ProfileContext } from "../../routes";
 import { CompanyRole, Team } from "../../types/models";
 
@@ -12,6 +13,7 @@ interface IProps {
 
 const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
   const { profile } = useContext(ProfileContext);
+  const navigate = useNavigate();
   const grouped = groupBy(roles, "email");
   const rows = map(keys(grouped), (email) => {
     const roles = grouped[email];
@@ -44,7 +46,9 @@ const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
               <td>{teams?.find((team) => team._id === role.teamId)?.name}</td>
               <td>
                 {thatsMe ? (
-                  <span>thats you!</span>
+                  <Button onClick={() => navigate("/manage")} color="blue">
+                    Self role managment
+                  </Button>
                 ) : (
                   <Button onClick={() => onRemove?.(role._id)} color="red">
                     Remove

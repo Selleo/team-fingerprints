@@ -48,7 +48,10 @@ const SurveyItem = ({ item }: { item: Survey }) => {
         <td>{item.title}</td>
         <td>{item.isPublic ? "public" : "not public"}</td>
         <td>
-          <Button onClick={() => navigate(`/survey/${item._id}`)} color="green">
+          <Button
+            onClick={() => navigate(`/admin/survey/${item._id}`)}
+            color="green"
+          >
             Show
           </Button>
           <Button

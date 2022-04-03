@@ -5,6 +5,8 @@ import { Trend, TrendSchema } from './trend.model';
 
 @Schema()
 export class Category implements CategoryI {
+  _id?: string;
+
   @ApiProperty()
   @Prop({ required: true })
   title: string;

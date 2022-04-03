@@ -67,7 +67,7 @@ export class UsersService {
   async getUserProfile(userId: string): Promise<UserProfileI> {
     const user = await this.getUser(userId);
     const profile: UserProfileI = {
-      id: user._id,
+      _id: user._id,
       email: user.email,
       userDetails: user.userDetails,
       privileges: [],
@@ -88,7 +88,7 @@ export class UsersService {
           const company = await this.companyService.getCompanyById(
             roleDocument.companyId,
           );
-          if (company?.id) {
+          if (company?._id) {
             privilege = {
               ...privilege,
               company: {

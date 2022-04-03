@@ -115,7 +115,7 @@ type CompanyRole = {
 export type Profile = {
   privileges: ComplexRole[];
   email: string;
-  id: string;
+  _id: string;
   userDetails: { [key: string]: string | null };
 };
 

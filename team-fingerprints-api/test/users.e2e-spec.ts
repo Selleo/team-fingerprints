@@ -68,24 +68,24 @@ describe('UsersController', () => {
 
       expect(body.length).toBe(1);
 
-      const { email, id, privileges } = body[0];
+      const { email, _id, privileges } = body[0];
 
       expect(email).toEqual(baseUserData().email);
-      expect(id).toEqual(baseUserId);
+      expect(_id).toEqual(baseUserId);
       expect(privileges.length).toBe(1);
       expect(privileges[0].role).toEqual(RoleType.SUPER_ADMIN);
       expect(privileges[0].roleId).toEqual(role._id.toString());
     });
   });
 
-  describe('PUT /users/details - sets user details for current user', () => {
+  describe('POST /users/details - sets user details for current user', () => {
     it('should throw - 404 Not Found', async () => {
       const userDetails: UserDetailI = {
         country: '324242323',
         yearOfExperience: '3423534',
       };
       await request(app.getHttpServer())
-        .put('/users/details')
+        .post('/users/details')
         .send(userDetails)
         .expect(404);
     });
@@ -126,9 +126,9 @@ describe('UsersController', () => {
       };
 
       const { body } = await request(app.getHttpServer())
-        .put('/users/details')
+        .post('/users/details')
         .send(userDetails)
-        .expect(200);
+        .expect(201);
 
       baseUser = await getBaseUser(userModel);
       const baseUserId = baseUser._id.toString();
@@ -138,10 +138,10 @@ describe('UsersController', () => {
         role: RoleType.SUPER_ADMIN,
       });
 
-      const { email, id, privileges } = body;
+      const { email, _id, privileges } = body;
 
       expect(email).toEqual(baseUserData().email);
-      expect(id).toEqual(baseUserId);
+      expect(_id).toEqual(baseUserId);
       expect(body.userDetails.country).toEqual(userDetails.country);
       expect(body.userDetails.yearOfExperience).toEqual(
         userDetails.yearOfExperience,

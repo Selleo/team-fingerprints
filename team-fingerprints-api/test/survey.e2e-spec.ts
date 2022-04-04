@@ -140,6 +140,35 @@ describe('SurveyController', () => {
     });
   });
 
+  describe('POST /surveys/:surveyId/duplicate - duplicate existing survey with new title', () => {
+    it('returns duplicated survey', async () => {
+      const surveyData = {
+        title: 'Test survey',
+      };
+
+      const newSurvey = await (await surveyModel.create(surveyData)).save();
+
+      const duplicatedSurveyData = {
+        title: 'Test survey - copy',
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/surveys/${newSurvey._id.toString()}/duplicate`)
+        .send(duplicatedSurveyData)
+        .expect(201);
+
+      const { _id, title, isPublic, archived, amountOfQuestions, categories } =
+        body;
+
+      expect(_id).toBeDefined();
+      expect(title).toBe(duplicatedSurveyData.title);
+      expect(isPublic).toBe(newSurvey.isPublic);
+      expect(archived).toBe(newSurvey.archived);
+      expect(amountOfQuestions).toBe(newSurvey.amountOfQuestions);
+      expect(categories).toEqual(newSurvey.categories);
+    });
+  });
+
   describe('PATCH /surveys/:surveyId - update survey', () => {
     it('returns updated survey', async () => {
       const surveyData = {

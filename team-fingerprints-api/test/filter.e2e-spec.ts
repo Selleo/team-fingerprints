@@ -67,4 +67,24 @@ describe('FilterController', () => {
       expect(_id.toString()).toEqual(filter._id.toString());
     });
   });
+
+  describe('POST /filters - create new filter', () => {
+    it('returns new filter', async () => {
+      const filterData = {
+        name: 'Test filter',
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/filters`)
+        .send(filterData)
+        .expect(201);
+
+      const { filterPath, name, values, _id } = body;
+
+      expect(filterPath).toEqual('testFilter');
+      expect(name).toEqual(filterData.name);
+      expect(values).toEqual([]);
+      expect(_id.toString()).toBeDefined();
+    });
+  });
 });

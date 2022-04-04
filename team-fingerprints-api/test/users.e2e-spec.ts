@@ -22,8 +22,6 @@ describe('UsersController', () => {
   let userModel: Model<User>;
   let filterModel: Model<Filter>;
 
-  jest.setTimeout(20000);
-
   beforeEach(async () => {
     app = await getApplication();
     roleModel = app.get(getModelToken(Role.name));

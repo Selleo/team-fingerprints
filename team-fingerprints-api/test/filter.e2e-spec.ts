@@ -50,4 +50,21 @@ describe('FilterController', () => {
       expect(_id.toString()).toEqual(filter._id.toString());
     });
   });
+
+  describe('GET /filters/:filterId - get filter by id', () => {
+    it('returns filter by given id', async () => {
+      const filter = await createFilter(filterModel);
+
+      const { body } = await request(app.getHttpServer())
+        .get(`/filters/${filter._id.toString()}`)
+        .expect(200);
+
+      const { filterPath, name, values, _id } = body;
+
+      expect(filterPath).toEqual(filter.filterPath);
+      expect(name).toEqual(filter.name);
+      expect(values).toEqual([]);
+      expect(_id.toString()).toEqual(filter._id.toString());
+    });
+  });
 });

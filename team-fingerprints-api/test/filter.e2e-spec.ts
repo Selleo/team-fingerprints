@@ -162,4 +162,37 @@ describe('FilterController', () => {
       expect(values[0]._id.toString()).toBeDefined();
     });
   });
+
+  describe('PATCH /filters/:filterId/values/:valueId - update filter value', () => {
+    it('returns filter with updated value', async () => {
+      const filter = await createFilter();
+
+      const filterValueData: CreateFilterValueDto = {
+        value: 'Test value',
+      };
+
+      const updateFilterValueData: CreateFilterValueDto = {
+        value: 'Test value - updated',
+      };
+
+      const res = await request(app.getHttpServer())
+        .post(`/filters/${filter._id.toString()}/values`)
+        .send(filterValueData)
+        .expect(201);
+
+      const valueId = res.body.values[0]._id.toString();
+
+      const { body } = await request(app.getHttpServer())
+        .patch(`/filters/${filter._id.toString()}/values/${valueId}`)
+        .send(updateFilterValueData)
+        .expect(200);
+
+      const { values } = body;
+
+      expect(values.length).toBe(1);
+      expect(values).not.toEqual([]);
+      expect(values[0].value).toEqual(updateFilterValueData.value);
+      expect(values[0]._id.toString()).toBeDefined();
+    });
+  });
 });

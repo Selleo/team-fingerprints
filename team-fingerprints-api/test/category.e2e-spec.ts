@@ -69,4 +69,28 @@ describe('CategoryController', () => {
       expect(body.categories[0].trends.length).toBe(0);
     });
   });
+
+  describe('DELETE /surveys/:surveyId/categories - remove category from survey', () => {
+    it('returns survey without removed category', async () => {
+      const categoryData: CreateCategoryDto = {
+        title: 'Test category',
+      };
+
+      const res = await request(app.getHttpServer())
+        .post(`/surveys/${survey._id.toString()}/categories`)
+        .send(categoryData)
+        .expect(201);
+
+      const { categories } = res.body;
+
+      const { body } = await request(app.getHttpServer())
+        .delete(
+          `/surveys/${survey._id.toString()}/categories/${categories[0]._id.toString()}`,
+        )
+        .expect(200);
+
+      expect(body.categories.length).toBe(0);
+      expect(body.categories).toEqual([]);
+    });
+  });
 });

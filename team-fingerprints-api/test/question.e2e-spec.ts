@@ -105,4 +105,37 @@ describe('QuestionController', () => {
       expect(updatedQuestion.primary).toEqual(updateQuestionData.primary);
     });
   });
+
+  describe('DELETE /surveys/:surveyId/categories/:categoryId/trends/:trendId/questions/:questionId - remve question from trend', () => {
+    it('returns survey without removed question', async () => {
+      const questionData: CreateQuestionDto = {
+        title: 'Test question',
+        primary: true,
+      };
+
+      const surveyId = survey._id.toString();
+      const categoryId = survey.categories[0]._id.toString();
+      const trendId = survey.categories[0].trends[0]._id.toString();
+
+      const res = await request(app.getHttpServer())
+        .post(
+          `/surveys/${surveyId}/categories/${categoryId}/trends/${trendId}/questions`,
+        )
+        .send(questionData)
+        .expect(201);
+
+      const questionId =
+        res.body.categories[0].trends[0].questions[0]._id.toString();
+
+      const { body } = await request(app.getHttpServer())
+        .delete(
+          `/surveys/${surveyId}/categories/${categoryId}/trends/${trendId}/questions/${questionId}`,
+        )
+        .expect(200);
+
+      const questions = body.categories[0].trends[0].questions;
+
+      expect(questions.length).toBe(0);
+    });
+  });
 });

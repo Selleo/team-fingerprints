@@ -21,7 +21,7 @@ export class QuestionController {
   async createQuestion(
     @Param() params: QuestionParamsDto,
     @Body() questionDto: CreateQuestionDto,
-  ): Promise<void> {
+  ): Promise<Survey> {
     return await this.questionService.createQuestion(params, questionDto);
   }
 
@@ -39,7 +39,7 @@ export class QuestionController {
   async removeQuestion(
     @Param('questionId', ValidateObjectId) questionId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
-  ): Promise<void> {
+  ): Promise<Survey> {
     return await this.questionService.removeQuestion(surveyId, questionId);
   }
 }

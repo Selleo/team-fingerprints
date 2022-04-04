@@ -65,4 +65,44 @@ describe('QuestionController', () => {
       expect(questions[0].primary).toEqual(questionData.primary);
     });
   });
+
+  describe('PATCH /surveys/:surveyId/categories/:categoryId/trends/:trendId/questions/:questionId - update question in trend', () => {
+    it('returns survey with new question in trend', async () => {
+      const questionData: CreateQuestionDto = {
+        title: 'Test question',
+        primary: true,
+      };
+
+      const updateQuestionData: CreateQuestionDto = {
+        title: 'Test question - updated',
+        primary: false,
+      };
+
+      const surveyId = survey._id.toString();
+      const categoryId = survey.categories[0]._id.toString();
+      const trendId = survey.categories[0].trends[0]._id.toString();
+
+      const res = await request(app.getHttpServer())
+        .post(
+          `/surveys/${surveyId}/categories/${categoryId}/trends/${trendId}/questions`,
+        )
+        .send(questionData)
+        .expect(201);
+
+      const questionId =
+        res.body.categories[0].trends[0].questions[0]._id.toString();
+
+      const { body } = await request(app.getHttpServer())
+        .patch(
+          `/surveys/${surveyId}/categories/${categoryId}/trends/${trendId}/questions/${questionId}`,
+        )
+        .send(updateQuestionData)
+        .expect(200);
+
+      const updatedQuestion = body.categories[0].trends[0].questions[0];
+
+      expect(updatedQuestion.title).toEqual(updateQuestionData.title);
+      expect(updatedQuestion.primary).toEqual(updateQuestionData.primary);
+    });
+  });
 });

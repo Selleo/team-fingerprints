@@ -170,4 +170,28 @@ describe('SurveyController', () => {
       expect(categories).toEqual([]);
     });
   });
+
+  describe('DELETE /surveys/:surveyId - remove survey', () => {
+    it('returns removed survey', async () => {
+      const surveyData = {
+        title: 'Test survey',
+      };
+
+      const newSurvey = await (await surveyModel.create(surveyData)).save();
+
+      const { body } = await request(app.getHttpServer())
+        .delete(`/surveys/${newSurvey._id.toString()}`)
+        .expect(200);
+
+      const { _id, title, isPublic, archived, amountOfQuestions, categories } =
+        body;
+
+      expect(_id).toBeDefined();
+      expect(title).toBe(surveyData.title);
+      expect(isPublic).toBe(false);
+      expect(archived).toBe(false);
+      expect(amountOfQuestions).toBe(0);
+      expect(categories).toEqual([]);
+    });
+  });
 });

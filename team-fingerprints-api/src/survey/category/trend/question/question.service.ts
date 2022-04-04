@@ -27,12 +27,13 @@ export class QuestionService {
   async createQuestion(
     { surveyId, categoryId, trendId }: QuestionParamsDto,
     { title, primary }: CreateQuestionDto,
-  ): Promise<void> {
+  ): Promise<Survey> {
     await this.surveyService.canEditSurvey(surveyId);
 
+    let newQuestion: Survey;
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
-      const newQuestion = await this.surveyModel
+      newQuestion = await this.surveyModel
         .findByIdAndUpdate(
           {
             _id: surveyId,
@@ -50,6 +51,7 @@ export class QuestionService {
               { 'trend._id': trendId },
               { 'category._id': categoryId },
             ],
+            new: true,
           },
         )
         .session(session)
@@ -64,13 +66,12 @@ export class QuestionService {
           {
             $inc: { amountOfQuestions: 1 },
           },
-          { session },
+          { session, new: true },
         )
         .exec();
-
-      return newQuestion;
     });
     session.endSession();
+    return newQuestion;
   }
 
   async updateQuestion(
@@ -100,12 +101,12 @@ export class QuestionService {
     );
   }
 
-  async removeQuestion(surveyId: string, questionId: string): Promise<void> {
+  async removeQuestion(surveyId: string, questionId: string): Promise<Survey> {
     await this.surveyService.canEditSurvey(surveyId);
-
+    let removedQuestion: Survey;
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
-      const removedQuestion = await this.surveyModel
+      removedQuestion = await this.surveyModel
         .findOneAndUpdate(
           {
             'categories.trends.questions._id': questionId,
@@ -138,11 +139,10 @@ export class QuestionService {
           },
         )
         .exec();
-
-      return removedQuestion;
     });
 
     session.endSession();
+    return removedQuestion;
   }
 
   async removeQuestions(surveyId: string, questions: string[]): Promise<void> {

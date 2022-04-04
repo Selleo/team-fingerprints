@@ -39,4 +39,34 @@ describe('CategoryController', () => {
       expect(categories[0].trends.length).toBe(0);
     });
   });
+
+  describe('PATCH /surveys/:surveyId/categories - update category in survey', () => {
+    it('returns survey with updated category', async () => {
+      const categoryData: CreateCategoryDto = {
+        title: 'Test category',
+      };
+
+      const updateCategoryData: CreateCategoryDto = {
+        title: 'Test category - updated',
+      };
+
+      const res = await request(app.getHttpServer())
+        .post(`/surveys/${survey._id.toString()}/categories`)
+        .send(categoryData)
+        .expect(201);
+
+      const { categories } = res.body;
+
+      const { body } = await request(app.getHttpServer())
+        .patch(
+          `/surveys/${survey._id.toString()}/categories/${categories[0]._id.toString()}`,
+        )
+        .send(updateCategoryData)
+        .expect(200);
+
+      expect(body.categories.length).toBe(1);
+      expect(body.categories[0].title).toEqual(updateCategoryData.title);
+      expect(body.categories[0].trends.length).toBe(0);
+    });
+  });
 });

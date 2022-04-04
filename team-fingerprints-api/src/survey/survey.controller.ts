@@ -31,7 +31,7 @@ export class SurveyController {
 
   @Public()
   @Get('public')
-  async getSurveys(): Promise<(Survey & 'completeStatus')[] | Survey[]> {
+  async getSurveys(): Promise<Survey[]> {
     return await this.surveyService.getSurveys();
   }
 

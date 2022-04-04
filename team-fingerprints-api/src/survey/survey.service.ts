@@ -37,7 +37,7 @@ export class SurveyService {
           userId,
           survey._id,
         );
-      return Object.assign({ completeStatus, ...survey._doc });
+      return { completeStatus, ...survey._doc };
     });
 
     return await Promise.all(surveysWithCompleteStatus);

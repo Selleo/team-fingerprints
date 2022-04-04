@@ -1,4 +1,4 @@
-import { Button, Modal } from "@mantine/core";
+import { Button, Modal, TextInput } from "@mantine/core";
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,8 @@ import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 const SurveyItem = ({ item }: { item: Survey }) => {
   const navigate = useNavigate();
   const [modalVisible, setModalVisible] = useState(false);
+  const [duplicateModalVisible, setDuplicateModalVisible] = useState(false);
+  const [duplicationName, setDuplicationName] = useState(`${item.title} copy`);
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const deleteMutation = useMutation(
@@ -25,13 +27,31 @@ const SurveyItem = ({ item }: { item: Survey }) => {
     }
   );
 
+  const duplicate = useMutation(
+    (surveyId: string) => {
+      return axios.post(`/surveys/${surveyId}/duplicate`, {
+        title: duplicationName,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["surveysAll"]);
+        setDuplicateModalVisible(false);
+      },
+      onError: onErrorWithTitle("Can not duplciate survey"),
+    }
+  );
+
   return (
     <>
       <tr key={item._id}>
         <td>{item.title}</td>
         <td>{item.isPublic ? "public" : "not public"}</td>
         <td>
-          <Button onClick={() => navigate(`/survey/${item._id}`)} color="green">
+          <Button
+            onClick={() => navigate(`/admin/survey/${item._id}`)}
+            color="green"
+          >
             Show
           </Button>
           <Button
@@ -39,6 +59,12 @@ const SurveyItem = ({ item }: { item: Survey }) => {
             onClick={() => setModalVisible(true)}
           >
             Edit
+          </Button>
+          <Button
+            style={{ marginLeft: "10px" }}
+            onClick={() => setDuplicateModalVisible(true)}
+          >
+            Duplicate
           </Button>
           {!item.isPublic && (
             <Button
@@ -60,6 +86,23 @@ const SurveyItem = ({ item }: { item: Survey }) => {
           initialValues={item}
           onClose={() => setModalVisible(false)}
         />
+      </Modal>
+      <Modal
+        opened={duplicateModalVisible}
+        onClose={() => setDuplicateModalVisible(false)}
+        title="Duplicate survey"
+      >
+        <TextInput
+          style={{ marginBottom: "15px" }}
+          required
+          label="New survey name"
+          placeholder="New survey name"
+          value={duplicationName}
+          onChange={(e) => setDuplicationName(e.currentTarget.value)}
+        />
+        <Button onClick={() => duplicate.mutate(item._id)} type="submit">
+          Duplicate
+        </Button>
       </Modal>
     </>
   );

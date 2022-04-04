@@ -11,9 +11,11 @@ import SurveyForm from "../../components/Survey/SurveyForm";
 import axios from "axios";
 import { Survey } from "../../types/models";
 import ErrorLoading from "../../components/ErrorLoading";
+import { useNavigate } from "react-router-dom";
 
 const Surveys = () => {
   const { classes } = useStyles();
+  const navigate = useNavigate();
   const [createModalVisible, setCreateModalVisible] = useState(false);
 
   const { isLoading, error, data } = useQuery<Survey[]>(
@@ -43,6 +45,13 @@ const Surveys = () => {
           className={classes.addButton}
         >
           Add new survey
+        </Button>
+        <Button
+          onClick={() => navigate("/admin/users")}
+          color="red"
+          className={classes.addButton}
+        >
+          Remove User
         </Button>
       </div>
       <Table>

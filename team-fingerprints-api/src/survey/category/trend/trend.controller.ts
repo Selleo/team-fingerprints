@@ -15,7 +15,7 @@ import { Roles } from 'src/role/decorators/roles.decorator';
 export class TrendController {
   constructor(private readonly trendService: TrendService) {}
 
-  @Post('/')
+  @Post()
   @Roles([RoleType.SUPER_ADMIN])
   async createTrend(
     @Param() params: TrendParamsDto,

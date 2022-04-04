@@ -73,6 +73,7 @@ export class FilterService {
   }
 
   async getFilterWithValues(filterId: string) {
+    if (!(await this.filterExists(filterId))) throw new NotFoundException();
     return await this.filterModel.findById(filterId);
   }
 

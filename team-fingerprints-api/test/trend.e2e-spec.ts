@@ -56,4 +56,41 @@ describe('TrendController', () => {
       expect(trends[0].secondary).toEqual(trendData.secondary);
     });
   });
+
+  describe('PATCH /surveys/:surveyId/categories/:categoryId/trends/:trendId - update trend in trends', () => {
+    it('returns survey with category that contains updated trend', async () => {
+      const { _id, categories } = survey;
+
+      const trendData: CreateTrendDto = {
+        primary: 'Primary',
+        secondary: 'Secondary',
+      };
+
+      const updateTrendData: CreateTrendDto = {
+        primary: 'Primary - updated',
+        secondary: 'Secondary - updated',
+      };
+
+      const res = await request(app.getHttpServer())
+        .post(
+          `/surveys/${_id.toString()}/categories/${categories[0]._id.toString()}/trends`,
+        )
+        .send(trendData)
+        .expect(201);
+
+      const trendId = res.body.categories[0].trends[0]._id.toString();
+
+      const { body } = await request(app.getHttpServer())
+        .patch(
+          `/surveys/${_id.toString()}/categories/${categories[0]._id.toString()}/trends/${trendId}`,
+        )
+        .send(updateTrendData)
+        .expect(200);
+
+      const updatedTrend = body.categories[0].trends[0];
+
+      expect(updatedTrend.primary).toEqual(updateTrendData.primary);
+      expect(updatedTrend.secondary).toEqual(updateTrendData.secondary);
+    });
+  });
 });

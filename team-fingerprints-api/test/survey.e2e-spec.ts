@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { Survey } from 'src/survey/models/survey.model';
+import { UpdateSurveyDto } from 'src/survey/dto/survey.dto';
 
 describe('SurveyController', () => {
   let app: INestApplication;
@@ -134,6 +135,37 @@ describe('SurveyController', () => {
       expect(title).toBe(surveyData.title);
       expect(isPublic).toBe(false);
       expect(archived).toBe(false);
+      expect(amountOfQuestions).toBe(0);
+      expect(categories).toEqual([]);
+    });
+  });
+
+  describe('PATCH /surveys/:surveyId - update survey', () => {
+    it('returns updated survey', async () => {
+      const surveyData = {
+        title: 'Test survey',
+      };
+
+      const newSurvey = await (await surveyModel.create(surveyData)).save();
+
+      const updateData: UpdateSurveyDto = {
+        title: 'Updated survey',
+        isPublic: true,
+        archived: true,
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .patch(`/surveys/${newSurvey._id.toString()}`)
+        .send(updateData)
+        .expect(200);
+
+      const { _id, title, isPublic, archived, amountOfQuestions, categories } =
+        body;
+
+      expect(_id).toBeDefined();
+      expect(title).toBe(updateData.title);
+      expect(isPublic).toBe(updateData.isPublic);
+      expect(archived).toBe(updateData.archived);
       expect(amountOfQuestions).toBe(0);
       expect(categories).toEqual([]);
     });

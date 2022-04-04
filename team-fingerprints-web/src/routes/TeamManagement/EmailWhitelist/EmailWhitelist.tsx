@@ -1,7 +1,9 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Table, Badge, Group } from "@mantine/core";
-import { groupBy, keys } from "lodash";
-import { FC } from "react";
+import { first, groupBy, keys } from "lodash";
+import { FC, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { ProfileContext } from "../../../routes";
 import { CompanyRole } from "../../../types/models";
 
 interface IProps {
@@ -17,7 +19,15 @@ const EmailWhitelist: FC<IProps> = ({
   makeALeader,
   removeLeaderRole,
 }) => {
+  const firstRole = first(roles);
+  const { profile } = useContext(ProfileContext);
+  const currentUserIsCompanyAdmin = !!profile?.privileges.find(
+    (elem) =>
+      elem.company?._id === firstRole?.companyId &&
+      elem.role === "COMPANY_ADMIN"
+  );
   const { user } = useAuth0();
+  const navigate = useNavigate();
   const currentUserEmail = user?.email;
   const grouped = groupBy(roles, "email");
 
@@ -51,7 +61,9 @@ const EmailWhitelist: FC<IProps> = ({
               )}
               <td>
                 {thatsMe ? (
-                  <td>Go to roles managment to leave a team</td>
+                  <Button onClick={() => navigate("/manage")} color="blue">
+                    Self role managment
+                  </Button>
                 ) : (
                   <Group>
                     {
@@ -59,21 +71,25 @@ const EmailWhitelist: FC<IProps> = ({
                         Remove
                       </Button>
                     }
-                    {!isALeader && (
-                      <Button
-                        onClick={() => makeALeader?.(role.email)}
-                        color="green"
-                      >
-                        Make a leader
-                      </Button>
-                    )}
-                    {isALeader && (
-                      <Button
-                        onClick={() => removeLeaderRole?.(role.email)}
-                        color="red"
-                      >
-                        Remove leadership
-                      </Button>
+                    {currentUserIsCompanyAdmin && (
+                      <>
+                        {!isALeader && (
+                          <Button
+                            onClick={() => makeALeader?.(role.email)}
+                            color="green"
+                          >
+                            Make a leader
+                          </Button>
+                        )}
+                        {isALeader && (
+                          <Button
+                            onClick={() => removeLeaderRole?.(role.email)}
+                            color="red"
+                          >
+                            Remove leadership
+                          </Button>
+                        )}
+                      </>
                     )}
                   </Group>
                 )}

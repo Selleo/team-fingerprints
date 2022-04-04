@@ -1,4 +1,4 @@
-import { BrowserRouter } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -15,6 +15,7 @@ import "./login-gateway.sass";
 
 const LoginGateway = () => {
   const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
+  const { pathname } = useLocation();
 
   return (
     <MantineProvider
@@ -42,9 +43,7 @@ const LoginGateway = () => {
         {isAuthenticated && !isLoading ? (
           <TokenSetup>
             <QueryClientProvider client={queryClient}>
-              <BrowserRouter>
-                <AppRoutes />
-              </BrowserRouter>
+              <AppRoutes />
               <ReactQueryDevtools />
             </QueryClientProvider>
           </TokenSetup>
@@ -64,6 +63,7 @@ const LoginGateway = () => {
                 onClick={() =>
                   loginWithRedirect({
                     connection: "google-oauth2",
+                    appState: { returnTo: pathname },
                   })
                 }
               >

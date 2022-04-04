@@ -195,4 +195,30 @@ describe('FilterController', () => {
       expect(values[0]._id.toString()).toBeDefined();
     });
   });
+
+  describe('DELETE /filters/:filterId/values/:valueId - remove filter value', () => {
+    it('returns filter without removed value', async () => {
+      const filter = await createFilter();
+
+      const filterValueData: CreateFilterValueDto = {
+        value: 'Test value',
+      };
+
+      const res = await request(app.getHttpServer())
+        .post(`/filters/${filter._id.toString()}/values`)
+        .send(filterValueData)
+        .expect(201);
+
+      const valueId = res.body.values[0]._id.toString();
+
+      const { body } = await request(app.getHttpServer())
+        .delete(`/filters/${filter._id.toString()}/values/${valueId}`)
+        .expect(200);
+
+      const { values } = body;
+
+      expect(values.length).toBe(0);
+      expect(values).toEqual([]);
+    });
+  });
 });

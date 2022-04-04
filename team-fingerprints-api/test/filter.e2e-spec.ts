@@ -1,9 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { getModelToken } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { Filter } from 'src/filter/models/filter.model';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
+import { CreateFilterValueDto } from 'src/filter/dto/filter';
 
 const createFilter = async (): Promise<Filter> => {
   const filterData = {
@@ -139,6 +138,28 @@ describe('FilterController', () => {
 
       expect(body.values.length).toBe(0);
       expect(body.values).toEqual([]);
+    });
+  });
+
+  describe('POST /filters/:filterId/values - add filter value', () => {
+    it('returns filter', async () => {
+      const filter = await createFilter();
+
+      const filterValueData: CreateFilterValueDto = {
+        value: 'Test value',
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/filters/${filter._id.toString()}/values`)
+        .send(filterValueData)
+        .expect(201);
+
+      const { values } = body;
+
+      expect(values.length).toBe(1);
+      expect(values).not.toEqual([]);
+      expect(values[0].value).toEqual(filterValueData.value);
+      expect(values[0]._id.toString()).toBeDefined();
     });
   });
 });

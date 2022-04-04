@@ -5,21 +5,23 @@ import { Filter } from 'src/filter/models/filter.model';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 
-const createFilter = async (filterModel: Model<Filter>): Promise<Filter> => {
+const createFilter = async (): Promise<Filter> => {
   const filterData = {
     name: 'Test filter',
-    filterPath: 'testFilter',
   } as Partial<Filter>;
-  return await (await filterModel.create(filterData)).save();
+  const app = await getApplication();
+  const { body } = await request(app.getHttpServer())
+    .post('/filters')
+    .send(filterData);
+
+  return body;
 };
 
 describe('FilterController', () => {
   let app: INestApplication;
-  let filterModel: Model<Filter>;
 
   beforeEach(async () => {
     app = await getApplication();
-    filterModel = app.get(getModelToken(Filter.name));
   });
 
   describe('GET /filters - get all filters', () => {
@@ -33,7 +35,7 @@ describe('FilterController', () => {
     });
 
     it('returns array with one filter', async () => {
-      const filter = await createFilter(filterModel);
+      const filter = await createFilter();
 
       const { body } = await request(app.getHttpServer())
         .get('/filters')
@@ -53,7 +55,7 @@ describe('FilterController', () => {
 
   describe('GET /filters/:filterId - get filter by id', () => {
     it('returns filter by given id', async () => {
-      const filter = await createFilter(filterModel);
+      const filter = await createFilter();
 
       const { body } = await request(app.getHttpServer())
         .get(`/filters/${filter._id.toString()}`)
@@ -90,7 +92,7 @@ describe('FilterController', () => {
 
   describe('PATCH /filters/:filterId - update filter', () => {
     it('returns updated filter', async () => {
-      const filter = await createFilter(filterModel);
+      const filter = await createFilter();
 
       const filterUpdateData = {
         name: 'Test Filter Updated',
@@ -107,6 +109,36 @@ describe('FilterController', () => {
       expect(name).toEqual(filterUpdateData.name);
       expect(values).toEqual([]);
       expect(_id.toString()).toEqual(filter._id.toString());
+    });
+  });
+
+  describe('DELETE /filters/:filterId - remove filter', () => {
+    it('returns removed filter', async () => {
+      const filter = await createFilter();
+
+      const { body } = await request(app.getHttpServer())
+        .delete(`/filters/${filter._id.toString()}`)
+        .expect(200);
+
+      const { filterPath, name, values, _id } = body;
+
+      expect(filterPath).toEqual('testFilter');
+      expect(name).toEqual(filter.name);
+      expect(values).toEqual([]);
+      expect(_id.toString()).toEqual(filter._id.toString());
+    });
+  });
+
+  describe('GET /filters/:filterId/values - get filter values', () => {
+    it('returns empty array', async () => {
+      const filter = await createFilter();
+
+      const { body } = await request(app.getHttpServer())
+        .get(`/filters/${filter._id.toString()}/values`)
+        .expect(200);
+
+      expect(body.values.length).toBe(0);
+      expect(body.values).toEqual([]);
     });
   });
 });

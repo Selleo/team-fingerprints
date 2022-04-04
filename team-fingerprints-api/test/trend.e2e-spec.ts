@@ -93,4 +93,36 @@ describe('TrendController', () => {
       expect(updatedTrend.secondary).toEqual(updateTrendData.secondary);
     });
   });
+
+  describe('DELETE /surveys/:surveyId/categories/:categoryId/trends/:trendId - removes trend from trends', () => {
+    it('returns survey with category without removed trend', async () => {
+      const { _id, categories } = survey;
+
+      const trendData: CreateTrendDto = {
+        primary: 'Primary',
+        secondary: 'Secondary',
+      };
+
+      const res = await request(app.getHttpServer())
+        .post(
+          `/surveys/${_id.toString()}/categories/${categories[0]._id.toString()}/trends`,
+        )
+        .send(trendData)
+        .expect(201);
+
+      const trendId = res.body.categories[0].trends[0]._id.toString();
+
+      const { body } = await request(app.getHttpServer())
+        .delete(
+          `/surveys/${_id.toString()}/categories/${categories[0]._id.toString()}/trends/${trendId}`,
+        )
+        .send(trendData)
+        .expect(200);
+
+      const trends = body.categories[0].trends;
+
+      expect(trends.length).toBe(0);
+      expect(trends).toEqual([]);
+    });
+  });
 });

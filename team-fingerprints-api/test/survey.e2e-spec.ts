@@ -115,4 +115,27 @@ describe('SurveyController', () => {
       expect(categories).toEqual([]);
     });
   });
+
+  describe('POST /surveys - create survey', () => {
+    it('returns created survey', async () => {
+      const surveyData = {
+        title: 'Test survey',
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/surveys`)
+        .send(surveyData)
+        .expect(201);
+
+      const { _id, title, isPublic, archived, amountOfQuestions, categories } =
+        body;
+
+      expect(_id).toBeDefined();
+      expect(title).toBe(surveyData.title);
+      expect(isPublic).toBe(false);
+      expect(archived).toBe(false);
+      expect(amountOfQuestions).toBe(0);
+      expect(categories).toEqual([]);
+    });
+  });
 });

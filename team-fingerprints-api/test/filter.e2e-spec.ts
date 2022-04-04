@@ -87,4 +87,26 @@ describe('FilterController', () => {
       expect(_id.toString()).toBeDefined();
     });
   });
+
+  describe('PATCH /filters/:filterId - update filter', () => {
+    it('returns updated filter', async () => {
+      const filter = await createFilter(filterModel);
+
+      const filterUpdateData = {
+        name: 'Test Filter Updated',
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .patch(`/filters/${filter._id.toString()}`)
+        .send(filterUpdateData)
+        .expect(200);
+
+      const { filterPath, name, values, _id } = body;
+
+      expect(filterPath).toEqual('testFilterUpdated');
+      expect(name).toEqual(filterUpdateData.name);
+      expect(values).toEqual([]);
+      expect(_id.toString()).toEqual(filter._id.toString());
+    });
+  });
 });

@@ -127,12 +127,12 @@ export class FilterTemplateService {
     teamId: string | null = null,
   ) {
     if (!teamId || teamId.length <= 0) {
-      const company = await this.companyModel.findOneAndUpdate(
-        { _id: companyId, filterTemplates: { _id: filterId } },
-        { $pull: { 'filterTemplates._id': filterId } },
+      const { filterTemplates } = await this.companyModel.findOneAndUpdate(
+        { _id: companyId },
+        { $unset: { filterTemplates: { _id: filterId } } },
         { new: true },
       );
-      return company?.filterTemplates;
+      return filterTemplates;
     } else {
       const { teams } = await this.companyModel.findOneAndUpdate(
         {

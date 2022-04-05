@@ -10,9 +10,11 @@ const createCompanyWithTeam = async (
   companyModel: Model<Company>,
 ): Promise<Company> => {
   const teamData = {
+    _id: new Types.ObjectId(),
     name: 'Test team',
     pointColor: '#fffaaa',
     pointShape: 'square',
+    filterTemplates: [],
   };
 
   const companyData = {
@@ -21,6 +23,7 @@ const createCompanyWithTeam = async (
     pointShape: 'square',
     teams: [teamData],
     domain: 'example.com',
+    filterTemplates: [],
   };
 
   return await (await companyModel.create(companyData)).save();
@@ -54,14 +57,11 @@ const createFilterTemplateInCompany = async (
   companyId: string,
 ) => {
   const filterTemplateData = {
-    templateFilter: {
-      country: 'Poland',
-    },
-    templateFilterConfig: {
-      name: 'Test template filter',
-      pointColor: '#123456',
-      pointShape: 'circle',
-    },
+    _id: new Types.ObjectId().toString(),
+    country: 'Croatia',
+    name: 'Test template filter',
+    pointColor: '#123456',
+    pointShape: 'circle',
   };
 
   return await companyModel.findByIdAndUpdate(
@@ -111,10 +111,10 @@ describe('FilterTemplateController', () => {
     company = await createCompanyWithTeam(companyModel);
   });
 
-  describe('GET /filter-templates - get filter templates for company', () => {
+  describe('GET /filter-templates/:companyId/filters - get filter templates for company', () => {
     it('returns empty array', async () => {
       const { body } = await request(app.getHttpServer())
-        .get(`/filter-templates/${company._id.toString()}`)
+        .get(`/filter-templates/${company._id.toString()}/filters`)
         .expect(200);
 
       expect(body.length).toBe(0);
@@ -122,21 +122,17 @@ describe('FilterTemplateController', () => {
     });
 
     it('returns array with one filter template', async () => {
-      const companyWithTemplate = await createFilterTemplateInCompany(
-        companyModel,
-        company._id.toString(),
-      );
+      await createFilterTemplateInCompany(companyModel, company._id.toString());
 
       const { body } = await request(app.getHttpServer())
-        .get(`/filter-templates/${company._id.toString()}`)
+        .get(`/filter-templates/${company._id.toString()}/filters`)
         .expect(200);
 
       expect(body.length).toBe(1);
-      expect(body).toEqual(companyWithTemplate.filterTemplates);
     });
   });
 
-  describe('POST /filter-templates - create filter templates for company', () => {
+  describe('POST /filter-templates/:companyId/filters - create filter templates for company', () => {
     it('returns company with one filter template', async () => {
       const filterTemplateData = {
         templateFilter: {
@@ -152,7 +148,7 @@ describe('FilterTemplateController', () => {
       };
 
       const { body } = await request(app.getHttpServer())
-        .post(`/filter-templates/${company._id.toString()}`)
+        .post(`/filter-templates/${company._id.toString()}/filters`)
         .send(filterTemplateData)
         .expect(201);
 
@@ -176,6 +172,59 @@ describe('FilterTemplateController', () => {
       );
       expect(filterTemplate.level).toEqual(
         filterTemplateData.templateFilter.level,
+      );
+    });
+  });
+
+  describe('PUT /filter-templates/:companyId/filters/:filterId - update filter templates for company', () => {
+    it('returns company with one filter template', async () => {
+      const filterTemplateToUpdate = await (
+        await createFilterTemplateInCompany(
+          companyModel,
+          company._id.toString(),
+        )
+      ).filterTemplates[0];
+
+      const updateFilterTemplateData = {
+        templateFilter: {
+          country: 'Poland',
+          yearOfExperience: '<1',
+          level: 'Junior',
+        },
+        templateFilterConfig: {
+          name: 'Test template filter',
+          pointColor: '#123456',
+          pointShape: 'circle',
+        },
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .put(
+          `/filter-templates/${company._id.toString()}/filters/${filterTemplateToUpdate._id.toString()}`,
+        )
+        .send(updateFilterTemplateData)
+        .expect(200);
+
+      const filterTemplate = body[0];
+
+      expect(filterTemplate._id.toString()).toBeDefined();
+      expect(filterTemplate.name).toEqual(
+        updateFilterTemplateData.templateFilterConfig.name,
+      );
+      expect(filterTemplate.pointColor).toEqual(
+        updateFilterTemplateData.templateFilterConfig.pointColor,
+      );
+      expect(filterTemplate.pointShape).toEqual(
+        updateFilterTemplateData.templateFilterConfig.pointShape,
+      );
+      expect(filterTemplate.country).toEqual(
+        updateFilterTemplateData.templateFilter.country,
+      );
+      expect(filterTemplate.yearOfExperience).toEqual(
+        updateFilterTemplateData.templateFilter.yearOfExperience,
+      );
+      expect(filterTemplate.level).toEqual(
+        updateFilterTemplateData.templateFilter.level,
       );
     });
   });

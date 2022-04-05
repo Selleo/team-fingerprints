@@ -228,4 +228,24 @@ describe('FilterTemplateController', () => {
       );
     });
   });
+
+  describe('DELETE /filter-templates/:companyId/filters/:filterId - removes filter by id', () => {
+    it('returns company wthout removed filter template', async () => {
+      const newFilterTemplate = await (
+        await createFilterTemplateInCompany(
+          companyModel,
+          company._id.toString(),
+        )
+      ).filterTemplates[0];
+
+      const { body } = await request(app.getHttpServer())
+        .delete(
+          `/filter-templates/${company._id.toString()}/filters/${newFilterTemplate._id.toString()}`,
+        )
+        .expect(200);
+
+      expect(body.length).toBe(0);
+      expect(body).toEqual([]);
+    });
+  });
 });

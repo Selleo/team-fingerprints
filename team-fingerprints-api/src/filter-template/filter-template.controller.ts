@@ -17,7 +17,7 @@ import { FilterTemplateService } from './filter-template.service';
 export class FilterTemplateController {
   constructor(private readonly filterTemplateService: FilterTemplateService) {}
 
-  @Get(':companyId')
+  @Get(':companyId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getFilterTemplatesForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -25,7 +25,7 @@ export class FilterTemplateController {
     return await this.filterTemplateService.getFilterTemplates(companyId);
   }
 
-  @Post(':companyId')
+  @Post(':companyId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,

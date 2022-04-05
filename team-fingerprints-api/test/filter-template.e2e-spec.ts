@@ -111,10 +111,10 @@ describe('FilterTemplateController', () => {
     company = await createCompanyWithTeam(companyModel);
   });
 
-  describe('GET /filter-template - get filter templates for company', () => {
+  describe('GET /filter-templates - get filter templates for company', () => {
     it('returns empty array', async () => {
       const { body } = await request(app.getHttpServer())
-        .get(`/filter-template/${company._id.toString()}`)
+        .get(`/filter-templates/${company._id.toString()}`)
         .expect(200);
 
       expect(body.length).toBe(0);
@@ -128,11 +128,55 @@ describe('FilterTemplateController', () => {
       );
 
       const { body } = await request(app.getHttpServer())
-        .get(`/filter-template/${company._id.toString()}`)
+        .get(`/filter-templates/${company._id.toString()}`)
         .expect(200);
 
       expect(body.length).toBe(1);
       expect(body).toEqual(companyWithTemplate.filterTemplates);
+    });
+  });
+
+  describe('POST /filter-templates - create filter templates for company', () => {
+    it('returns company with one filter template', async () => {
+      const filterTemplateData = {
+        templateFilter: {
+          country: 'Poland',
+          yearOfExperience: '<1',
+          level: 'Junior',
+        },
+        templateFilterConfig: {
+          name: 'Test template filter',
+          pointColor: '#123456',
+          pointShape: 'circle',
+        },
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/filter-templates/${company._id.toString()}`)
+        .send(filterTemplateData)
+        .expect(201);
+
+      const filterTemplate = body.filterTemplates[0];
+
+      expect(filterTemplate._id.toString()).toBeDefined();
+      expect(filterTemplate.name).toEqual(
+        filterTemplateData.templateFilterConfig.name,
+      );
+      expect(filterTemplate.pointColor).toEqual(
+        filterTemplateData.templateFilterConfig.pointColor,
+      );
+      expect(filterTemplate.pointShape).toEqual(
+        filterTemplateData.templateFilterConfig.pointShape,
+      );
+      expect(filterTemplate.country).toEqual(
+        filterTemplateData.templateFilter.country,
+      );
+      expect(filterTemplate.yearOfExperience).toEqual(
+        filterTemplateData.templateFilter.yearOfExperience,
+      );
+      expect(filterTemplate.level).toEqual(
+        filterTemplateData.templateFilter.level,
+      );
     });
   });
 });

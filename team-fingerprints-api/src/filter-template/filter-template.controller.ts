@@ -69,7 +69,7 @@ export class FilterTemplateController {
     );
   }
 
-  @Get(':companyId/teams/:teamId')
+  @Get(':companyId/teams/:teamId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getFilterTemplatesForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -81,7 +81,7 @@ export class FilterTemplateController {
     );
   }
 
-  @Post(':companyId/teams/:teamId')
+  @Post(':companyId/teams/:teamId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,

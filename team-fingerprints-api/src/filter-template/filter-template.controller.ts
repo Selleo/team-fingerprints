@@ -8,14 +8,17 @@ import {
   Put,
 } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { Roles } from 'src/role/decorators/roles.decorator';
+import { RoleType } from 'src/role/role.type';
 import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
 import { FilterTemplateService } from './filter-template.service';
 
-@Controller({ path: 'filter-template', version: '1' })
+@Controller({ path: 'filter-templates', version: '1' })
 export class FilterTemplateController {
   constructor(private readonly filterTemplateService: FilterTemplateService) {}
 
   @Get(':companyId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getFilterTemplatesForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
   ) {
@@ -23,6 +26,7 @@ export class FilterTemplateController {
   }
 
   @Post(':companyId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body('templateFilter') templateFilter: any,
@@ -37,6 +41,7 @@ export class FilterTemplateController {
   }
 
   @Put(':companyId/filters/:filterId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async updateFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
@@ -53,6 +58,7 @@ export class FilterTemplateController {
   }
 
   @Delete(':companyId/filters/:filterId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeFilterTemplateFromCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
@@ -64,6 +70,7 @@ export class FilterTemplateController {
   }
 
   @Get(':companyId/teams/:teamId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getFilterTemplatesForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -75,6 +82,7 @@ export class FilterTemplateController {
   }
 
   @Post(':companyId/teams/:teamId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -91,6 +99,7 @@ export class FilterTemplateController {
   }
 
   @Put(':companyId/teams/:teamId/filters/:filterId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async updateFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -109,6 +118,7 @@ export class FilterTemplateController {
   }
 
   @Delete(':companyId/teams/:teamId/filters/:filterId')
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeFilterTemplateFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,

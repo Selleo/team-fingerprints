@@ -82,16 +82,16 @@ export class FilterTemplateService {
 
     if (!teamId || teamId.length <= 0) {
       const { filterTemplates } = await this.companyModel.findOneAndUpdate(
-        { _id: companyId, 'filterTemplates._id': filterId },
+        { _id: companyId },
         {
           $set: {
-            'filterTemplates.$': {
+            'filterTemplates.$[filterId]': {
               ...newFilterTemplate,
               ...templateFilterConfig,
             },
           },
         },
-        { new: true },
+        { arrayFilters: [{ 'filterId._id': filterId }], new: true },
       );
       return filterTemplates;
     } else {

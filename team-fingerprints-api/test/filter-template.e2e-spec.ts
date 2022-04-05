@@ -89,12 +89,12 @@ const createFilterTemplateInTeam = async (
     },
   };
 
-  return await companyModel.findOne(
-    { _id: companyId, 'teams._id': teamId },
+  return await companyModel.findByIdAndUpdate(
+    { _id: companyId },
     {
-      $put: { ' teams.$.filterTemplate': filterTemplateData },
+      $push: { 'teams.$[team].filterTemplates': filterTemplateData },
     },
-    { new: true },
+    { arrayFilters: [{ 'team._id': teamId }], new: true },
   );
 };
 
@@ -103,18 +103,22 @@ describe('FilterTemplateController', () => {
   let companyModel: Model<Company>;
   let filterModel: Model<Filter>;
   let company: Company;
+  let companyId: string;
+  let teamId: string;
 
   beforeEach(async () => {
     app = await getApplication();
     companyModel = app.get(getModelToken(Company.name));
     filterModel = app.get(getModelToken(Filter.name));
     company = await createCompanyWithTeam(companyModel);
+    companyId = company._id.toString();
+    teamId = company.teams[0]._id.toString();
   });
 
   describe('GET /filter-templates/:companyId/filters - get filter templates for company', () => {
     it('returns empty array', async () => {
       const { body } = await request(app.getHttpServer())
-        .get(`/filter-templates/${company._id.toString()}/filters`)
+        .get(`/filter-templates/${companyId}/filters`)
         .expect(200);
 
       expect(body.length).toBe(0);
@@ -122,10 +126,10 @@ describe('FilterTemplateController', () => {
     });
 
     it('returns array with one filter template', async () => {
-      await createFilterTemplateInCompany(companyModel, company._id.toString());
+      await createFilterTemplateInCompany(companyModel, companyId);
 
       const { body } = await request(app.getHttpServer())
-        .get(`/filter-templates/${company._id.toString()}/filters`)
+        .get(`/filter-templates/${companyId}/filters`)
         .expect(200);
 
       expect(body.length).toBe(1);
@@ -148,7 +152,7 @@ describe('FilterTemplateController', () => {
       };
 
       const { body } = await request(app.getHttpServer())
-        .post(`/filter-templates/${company._id.toString()}/filters`)
+        .post(`/filter-templates/${companyId}/filters`)
         .send(filterTemplateData)
         .expect(201);
 
@@ -179,10 +183,7 @@ describe('FilterTemplateController', () => {
   describe('PUT /filter-templates/:companyId/filters/:filterId - update filter templates for company', () => {
     it('returns company with one filter template', async () => {
       const filterTemplateToUpdate = await (
-        await createFilterTemplateInCompany(
-          companyModel,
-          company._id.toString(),
-        )
+        await createFilterTemplateInCompany(companyModel, companyId)
       ).filterTemplates[0];
 
       const updateFilterTemplateData = {
@@ -200,7 +201,7 @@ describe('FilterTemplateController', () => {
 
       const { body } = await request(app.getHttpServer())
         .put(
-          `/filter-templates/${company._id.toString()}/filters/${filterTemplateToUpdate._id.toString()}`,
+          `/filter-templates/${companyId}/filters/${filterTemplateToUpdate._id.toString()}`,
         )
         .send(updateFilterTemplateData)
         .expect(200);
@@ -232,20 +233,46 @@ describe('FilterTemplateController', () => {
   describe('DELETE /filter-templates/:companyId/filters/:filterId - removes filter by id', () => {
     it('returns company wthout removed filter template', async () => {
       const newFilterTemplate = await (
-        await createFilterTemplateInCompany(
-          companyModel,
-          company._id.toString(),
-        )
+        await createFilterTemplateInCompany(companyModel, companyId)
       ).filterTemplates[0];
 
       const { body } = await request(app.getHttpServer())
         .delete(
-          `/filter-templates/${company._id.toString()}/filters/${newFilterTemplate._id.toString()}`,
+          `/filter-templates/${companyId}/filters/${newFilterTemplate._id.toString()}`,
         )
         .expect(200);
 
       expect(body.length).toBe(0);
       expect(body).toEqual([]);
+    });
+  });
+
+  describe('GET /filter-templates/:companyId/teams/:teamId/filters - get filter templates for team', () => {
+    it('returns empty array', async () => {
+      const { body } = await request(app.getHttpServer())
+        .get(`/filter-templates/${companyId}/teams/${teamId}/filters`)
+        .expect(200);
+
+      expect(body.length).toBe(0);
+      expect(body).toEqual([]);
+    });
+
+    it('returns array with one filter template', async () => {
+      const companyWithFilterTemplateInTeam = await createFilterTemplateInTeam(
+        companyModel,
+        companyId,
+        teamId,
+      );
+
+      const filterTemplates =
+        companyWithFilterTemplateInTeam.teams[0].filterTemplates;
+
+      const { body } = await request(app.getHttpServer())
+        .get(`/filter-templates/${companyId}/teams/${teamId}/filters`)
+        .expect(200);
+
+      expect(body.length).toBe(1);
+      expect(body).toEqual([filterTemplates[0]]);
     });
   });
 });

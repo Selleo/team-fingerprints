@@ -151,4 +151,21 @@ describe('TeamController', () => {
       expect(team.pointShape).toEqual(updateTeamData.pointShape);
     });
   });
+
+  describe('DELETE /companies/:companyId/teams/:teamId - update team', () => {
+    it('returns company with updated team', async () => {
+      const newTeam = (
+        await createTeamInCompany(companyModel, company._id.toString())
+      ).teams[0];
+
+      const { body } = await request(app.getHttpServer())
+        .delete(
+          `/companies/${company._id.toString()}/teams/${newTeam._id.toString()}`,
+        )
+        .expect(200);
+
+      expect(body.teams.length).toBe(0);
+      expect(body.teams).toEqual([]);
+    });
+  });
 });

@@ -134,6 +134,8 @@ export class TeamMembersService {
     roleDocuments.forEach(async (doc) => {
       await this.roleService.removeRoleDocumentById(doc);
     });
+
+    return { success: true };
   }
 
   async checkEmailIfAssignedToBeLeader(

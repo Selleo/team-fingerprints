@@ -83,7 +83,7 @@ export class TeamController {
       emails,
       companyId,
     );
-    return await this.teamMembersService.addUserToTeamWhitelist(
+    return await this.teamMembersService.addUsersToTeamWhitelist(
       companyId,
       teamId,
       emails,

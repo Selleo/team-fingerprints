@@ -64,7 +64,7 @@ export class TeamMembersService {
     else roleDocument;
   }
 
-  async addUserToTeamWhitelist(
+  async addUsersToTeamWhitelist(
     companyId: string,
     teamId: string,
     emails: string[],

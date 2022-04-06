@@ -5,6 +5,7 @@ import { Company } from 'src/company/models/company.model';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { Team } from 'src/company/models/team.model';
+import { CreateTeamDto } from 'src/company/team/dto/team.dto';
 
 const createCompany = async (companyModel: Model<Company>) => {
   const companyData: Partial<Company> = {
@@ -98,6 +99,28 @@ describe('TeamController', () => {
       expect(team.pointColor).toEqual(newTeam.pointColor);
       expect(team.pointShape).toEqual(newTeam.pointShape);
       expect(team.filterTemplates).toEqual(newTeam.filterTemplates);
+    });
+  });
+
+  describe('POST /companies/:companyId/teams - create team', () => {
+    it('returns new team', async () => {
+      const teamData: CreateTeamDto = {
+        name: 'Team test',
+        pointColor: '#abc321',
+        pointShape: 'triangle',
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/companies/${company._id.toString()}/teams`)
+        .send(teamData)
+        .expect(201);
+
+      const team = body.teams[0];
+
+      expect(team._id).toBeDefined();
+      expect(team.name).toEqual(teamData.name);
+      expect(team.pointColor).toEqual(teamData.pointColor);
+      expect(team.pointShape).toEqual(teamData.pointShape);
     });
   });
 });

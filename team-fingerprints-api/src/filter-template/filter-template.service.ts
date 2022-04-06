@@ -64,7 +64,7 @@ export class FilterTemplateService {
         { new: true },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId);
+      return teams.filter((team) => team._id.toString() === teamId)[0];
     }
   }
 
@@ -82,16 +82,16 @@ export class FilterTemplateService {
 
     if (!teamId || teamId.length <= 0) {
       const { filterTemplates } = await this.companyModel.findOneAndUpdate(
-        { _id: companyId, 'filterTemplates._id': filterId },
+        { _id: companyId },
         {
           $set: {
-            'filterTemplates.$': {
+            'filterTemplates.$[filterId]': {
               ...newFilterTemplate,
               ...templateFilterConfig,
             },
           },
         },
-        { new: true },
+        { arrayFilters: [{ 'filterId._id': filterId }], new: true },
       );
       return filterTemplates;
     } else {
@@ -117,7 +117,7 @@ export class FilterTemplateService {
         },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId);
+      return teams.filter((team) => team._id.toString() === teamId)[0];
     }
   }
 
@@ -127,12 +127,12 @@ export class FilterTemplateService {
     teamId: string | null = null,
   ) {
     if (!teamId || teamId.length <= 0) {
-      const company = await this.companyModel.findOneAndUpdate(
-        { _id: companyId, filterTemplates: { _id: filterId } },
-        { $pull: { 'filterTemplates._id': filterId } },
+      const { filterTemplates } = await this.companyModel.findOneAndUpdate(
+        { _id: companyId },
+        { $unset: { filterTemplates: { _id: filterId } } },
         { new: true },
       );
-      return company?.filterTemplates;
+      return filterTemplates;
     } else {
       const { teams } = await this.companyModel.findOneAndUpdate(
         {
@@ -153,7 +153,7 @@ export class FilterTemplateService {
         },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId);
+      return teams.filter((team) => team._id.toString() === teamId)[0];
     }
   }
 }

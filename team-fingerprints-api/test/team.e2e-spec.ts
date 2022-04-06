@@ -123,4 +123,32 @@ describe('TeamController', () => {
       expect(team.pointShape).toEqual(teamData.pointShape);
     });
   });
+
+  describe('PATCH /companies/:companyId/teams/:teamId - update team', () => {
+    it('returns company with updated team', async () => {
+      const newTeam = (
+        await createTeamInCompany(companyModel, company._id.toString())
+      ).teams[0];
+
+      const updateTeamData: CreateTeamDto = {
+        name: 'Team test - updated',
+        pointColor: '#654321',
+        pointShape: 'circle',
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .patch(
+          `/companies/${company._id.toString()}/teams/${newTeam._id.toString()}`,
+        )
+        .send(updateTeamData)
+        .expect(200);
+
+      const team = body.teams[0];
+
+      expect(team._id).toBeDefined();
+      expect(team.name).toEqual(updateTeamData.name);
+      expect(team.pointColor).toEqual(updateTeamData.pointColor);
+      expect(team.pointShape).toEqual(updateTeamData.pointShape);
+    });
+  });
 });

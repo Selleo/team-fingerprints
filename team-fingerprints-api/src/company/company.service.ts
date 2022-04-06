@@ -54,7 +54,13 @@ export class CompanyService {
 
   async createCompany(
     userId: string,
-    { name, description, domain, pointColor, pointShape }: CreateCompanyDto,
+    {
+      name,
+      description = '',
+      domain,
+      pointColor,
+      pointShape,
+    }: CreateCompanyDto,
   ): Promise<Company | HttpException> {
     if (!isDomainValid(domain)) throw new BadRequestException('Invalid domain');
 
@@ -65,7 +71,7 @@ export class CompanyService {
     const data: DomainBlacklist =
       await this.tfConfigService.getEmailBlackList();
 
-    if (data?.domains.includes(domain))
+    if (data?.domains?.includes(domain))
       throw new BadRequestException('Can not add this domain to your company');
 
     if (await this.isDomainTaken(domain)) {

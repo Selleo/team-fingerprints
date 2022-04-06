@@ -284,4 +284,48 @@ describe('FilterTemplateController', () => {
       );
     });
   });
+
+  describe('PUT /filter-templates/:companyId/teams/:teamId/filters/:filterId - update filter template by id in team', () => {
+    it('returns team with new filter template', async () => {
+      const filterTemplate = (
+        await createFilterTemplateInTeam(companyModel, companyId, teamId)
+      ).teams[0].filterTemplates[0];
+
+      const updateFilterTemplateData = {
+        templateFilter: {
+          country: 'Germany',
+        },
+        templateFilterConfig: {
+          name: 'Test template filter - updated',
+          pointColor: '#123321',
+          pointShape: 'square',
+        },
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .put(
+          `/filter-templates/${companyId}/teams/${teamId}/filters/${filterTemplate._id.toString()}`,
+        )
+        .send(updateFilterTemplateData)
+        .expect(200);
+
+      const updatedFilterTemplate = body.filterTemplates[0];
+
+      expect(body._id).toBeDefined();
+      expect(body.filterTemplates.length).toBe(1);
+
+      expect(updatedFilterTemplate.country).toEqual(
+        updateFilterTemplateData.templateFilter.country,
+      );
+      expect(updatedFilterTemplate.name).toEqual(
+        updateFilterTemplateData.templateFilterConfig.name,
+      );
+      expect(updatedFilterTemplate.pointColor).toEqual(
+        updateFilterTemplateData.templateFilterConfig.pointColor,
+      );
+      expect(updatedFilterTemplate.pointShape).toEqual(
+        updateFilterTemplateData.templateFilterConfig.pointShape,
+      );
+    });
+  });
 });

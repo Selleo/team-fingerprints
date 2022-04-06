@@ -91,7 +91,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId/member')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeMemberFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -105,7 +105,7 @@ export class TeamController {
   }
 
   @Post('/:teamId/leader')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.COMPANY_ADMIN])
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -119,7 +119,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId/leader')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.COMPANY_ADMIN])
   async removeTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,

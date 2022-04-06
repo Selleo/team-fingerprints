@@ -20,6 +20,10 @@ import { Company } from './models/company.model';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isDomainValid = require('is-valid-domain');
 
+interface DomainBlacklist {
+  domains: string[];
+}
+
 @Injectable()
 export class CompanyService {
   constructor(
@@ -54,18 +58,20 @@ export class CompanyService {
 
   async createCompany(
     userId: string,
-    { name, description, domain, pointColor, pointShape }: CreateCompanyDto,
+    {
+      name,
+      description = '',
+      domain,
+      pointColor,
+      pointShape,
+    }: CreateCompanyDto,
   ): Promise<Company | HttpException> {
     if (!isDomainValid(domain)) throw new BadRequestException('Invalid domain');
-
-    interface DomainBlacklist {
-      domains: string[];
-    }
 
     const data: DomainBlacklist =
       await this.tfConfigService.getEmailBlackList();
 
-    if (data?.domains.includes(domain))
+    if (data?.domains?.includes(domain))
       throw new BadRequestException('Can not add this domain to your company');
 
     if (await this.isDomainTaken(domain)) {
@@ -96,10 +102,45 @@ export class CompanyService {
 
   async updateCompany(
     companyId: string,
-    companyDto: UpdateCompanyDto,
+    {
+      name,
+      description = '',
+      domain: companyDomain,
+      pointColor,
+      pointShape,
+    }: UpdateCompanyDto,
   ): Promise<Company> {
+    const { domain } = await this.companyModel.findById(companyId, {
+      domain: 1,
+    });
+    if (domain !== companyDomain) {
+      const data: DomainBlacklist =
+        await this.tfConfigService.getEmailBlackList();
+
+      if (data?.domains?.includes(companyDomain))
+        throw new BadRequestException(
+          'Can not add this domain to your company',
+        );
+
+      if (await this.isDomainTaken(companyDomain)) {
+        throw new ForbiddenException(
+          `Domain ${companyDomain} is already taken.`,
+        );
+      }
+    }
+
     return await this.companyModel
-      .findOneAndUpdate({ _id: companyId }, companyDto, { new: true })
+      .findOneAndUpdate(
+        { _id: companyId },
+        {
+          name,
+          description,
+          domain: companyDomain.toLowerCase(),
+          pointColor,
+          pointShape,
+        },
+        { new: true },
+      )
       .exec();
   }
 

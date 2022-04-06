@@ -54,7 +54,7 @@ describe('TeamController', () => {
     company = await createCompany(companyModel);
   });
 
-  describe('GET /teams - get all teams in company', () => {
+  describe('GET /companies/:companyId/teams - get all teams in company', () => {
     it('returns empty array', async () => {
       const { body } = await request(app.getHttpServer())
         .get(`/companies/${company._id.toString()}`)
@@ -76,6 +76,28 @@ describe('TeamController', () => {
 
       expect(teams.length).toBe(1);
       expect(teams).not.toEqual([]);
+    });
+  });
+
+  describe('GET /companies/:companyId/teams/:teamId - get team by id', () => {
+    it('returns team', async () => {
+      const newTeam = (
+        await createTeamInCompany(companyModel, company._id.toString())
+      ).teams[0];
+
+      const {
+        body: { team },
+      } = await request(app.getHttpServer())
+        .get(
+          `/companies/${company._id.toString()}/teams/${newTeam._id.toString()}`,
+        )
+        .expect(200);
+
+      expect(team._id).toEqual(newTeam._id.toString());
+      expect(team.name).toEqual(newTeam.name);
+      expect(team.pointColor).toEqual(newTeam.pointColor);
+      expect(team.pointShape).toEqual(newTeam.pointShape);
+      expect(team.filterTemplates).toEqual(newTeam.filterTemplates);
     });
   });
 });

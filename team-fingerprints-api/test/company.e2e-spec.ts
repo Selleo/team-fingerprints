@@ -4,7 +4,10 @@ import * as request from 'supertest';
 import { Model } from 'mongoose';
 import { Company } from 'src/company/models/company.model';
 import { getModelToken } from '@nestjs/mongoose';
-import { CreateCompanyDto } from 'src/company/dto/company.dto';
+import {
+  CreateCompanyDto,
+  UpdateCompanyDto,
+} from 'src/company/dto/company.dto';
 
 const createCompany = async (companyModel: Model<Company>) => {
   const companyData: Partial<Company> = {
@@ -103,6 +106,30 @@ describe('CompanyController', () => {
         .post(`/companies`)
         .send(companyData)
         .expect(400);
+    });
+  });
+
+  describe('PATCH /companies/:companyId - update company', () => {
+    it('returns new company', async () => {
+      const newCompany = await createCompany(companyModel);
+
+      const updateCompanyData: UpdateCompanyDto = {
+        name: 'Company test - updated',
+        pointColor: '#ffffff',
+        pointShape: 'circle',
+        domain: 'test.com',
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .patch(`/companies/${newCompany._id.toString()}`)
+        .send(updateCompanyData)
+        .expect(200);
+
+      expect(body.domain).toEqual(updateCompanyData.domain);
+      expect(body.description).toEqual('');
+      expect(body.pointColor).toEqual(updateCompanyData.pointColor);
+      expect(body.pointShape).toEqual(updateCompanyData.pointShape);
+      expect(body.name).toEqual(updateCompanyData.name);
     });
   });
 });

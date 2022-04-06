@@ -34,6 +34,7 @@ const envValidaion = Joi.object({
 const ENV = process.env.NODE_ENV;
 
 const configModuleConfig = {
+  isGlobal: true,
   envFilePath: ENV ? `.env.${ENV}` : `.env.development`,
   validationSchema: envValidaion,
   validationOptions: {

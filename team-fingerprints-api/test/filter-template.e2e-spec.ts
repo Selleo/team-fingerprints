@@ -328,4 +328,21 @@ describe('FilterTemplateController', () => {
       );
     });
   });
+
+  describe('DELETE /filter-templates/:companyId/teams/:teamId/filters/:filterId - remove filter template by id from team', () => {
+    it('returns team without removed filter template', async () => {
+      const filterTemplate = (
+        await createFilterTemplateInTeam(companyModel, companyId, teamId)
+      ).teams[0].filterTemplates[0];
+
+      const { body } = await request(app.getHttpServer())
+        .delete(
+          `/filter-templates/${companyId}/teams/${teamId}/filters/${filterTemplate._id.toString()}`,
+        )
+        .expect(200);
+
+      expect(body.filterTemplates.length).toBe(0);
+      expect(body.filterTemplates).toEqual([]);
+    });
+  });
 });

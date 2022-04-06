@@ -46,7 +46,7 @@ export class TeamController {
   }
 
   @Post('/')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.COMPANY_ADMIN])
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() teamDto: CreateTeamDto,
@@ -55,7 +55,7 @@ export class TeamController {
   }
 
   @Patch('/:teamId')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async updateTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -65,7 +65,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
   ): Promise<Company | HttpException> {
@@ -73,7 +73,7 @@ export class TeamController {
   }
 
   @Post('/:teamId/member')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async addUserToTeamWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,

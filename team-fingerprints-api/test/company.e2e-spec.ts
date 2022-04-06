@@ -8,6 +8,8 @@ import {
   CreateCompanyDto,
   UpdateCompanyDto,
 } from 'src/company/dto/company.dto';
+import { Role } from 'src/role/models/role.model';
+import { RoleType } from 'src/role/role.type';
 
 const createCompany = async (companyModel: Model<Company>) => {
   const companyData: Partial<Company> = {
@@ -25,10 +27,12 @@ const createCompany = async (companyModel: Model<Company>) => {
 describe('CompanyController', () => {
   let app: INestApplication;
   let companyModel: Model<Company>;
+  let roleModel: Model<Role>;
 
   beforeEach(async () => {
     app = await getApplication();
     companyModel = app.get(getModelToken(Company.name));
+    roleModel = app.get(getModelToken(Role.name));
   });
 
   describe('GET /companies - get companies', () => {
@@ -130,6 +134,30 @@ describe('CompanyController', () => {
       expect(body.pointColor).toEqual(updateCompanyData.pointColor);
       expect(body.pointShape).toEqual(updateCompanyData.pointShape);
       expect(body.name).toEqual(updateCompanyData.name);
+    });
+  });
+
+  describe('POST /companies/:companyId/member - add member to company by email', () => {
+    it('returns new company', async () => {
+      const newCompany = await createCompany(companyModel);
+
+      const members = { emails: ['kinnyzimmer@gmail.com'] };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/companies/${newCompany._id.toString()}/member`)
+        .send(members)
+        .expect(201);
+
+      const roleDocument = await roleModel
+        .findOne({
+          companyId: newCompany._id.toString(),
+          role: RoleType.USER,
+          email: members.emails[0],
+        })
+        .exec();
+
+      expect(body).toEqual(members.emails);
+      expect(roleDocument).toBeDefined();
     });
   });
 });

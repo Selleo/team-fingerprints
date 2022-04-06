@@ -6,6 +6,8 @@ import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { Team } from 'src/company/models/team.model';
 import { CreateTeamDto } from 'src/company/team/dto/team.dto';
+import { Role } from 'src/role/models/role.model';
+import { RoleType } from 'src/role/role.type';
 
 const createCompany = async (companyModel: Model<Company>) => {
   const companyData: Partial<Company> = {
@@ -47,11 +49,13 @@ const createTeamInCompany = async (
 describe('TeamController', () => {
   let app: INestApplication;
   let companyModel: Model<Company>;
+  let roleModel: Model<Role>;
   let company: Company;
 
   beforeEach(async () => {
     app = await getApplication();
     companyModel = app.get(getModelToken(Company.name));
+    roleModel = app.get(getModelToken(Role.name));
     company = await createCompany(companyModel);
   });
 
@@ -166,6 +170,39 @@ describe('TeamController', () => {
 
       expect(body.teams.length).toBe(0);
       expect(body.teams).toEqual([]);
+    });
+  });
+
+  describe('POST /companies/:companyId/teams/:teamId/member - add member to team', () => {
+    it('returns company with updated team', async () => {
+      const newTeam = (
+        await createTeamInCompany(companyModel, company._id.toString())
+      ).teams[0];
+
+      const members = { emails: ['kinnyzimmer@gmail.com'] };
+
+      const { body } = await request(app.getHttpServer())
+        .post(
+          `/companies/${company._id.toString()}/teams/${newTeam._id.toString()}/member`,
+        )
+        .send(members)
+        .expect(201);
+
+      expect(body).toEqual(members.emails);
+
+      const teamRoleDocuments = await roleModel.findOne({
+        companyId: company._id.toString(),
+        teamId: newTeam._id.toString(),
+        role: RoleType.USER,
+      });
+
+      const companyRoleDocuments = await roleModel.findOne({
+        companyId: company._id.toString(),
+        role: RoleType.USER,
+      });
+
+      expect(teamRoleDocuments).toBeDefined();
+      expect(companyRoleDocuments).toBeDefined();
     });
   });
 });

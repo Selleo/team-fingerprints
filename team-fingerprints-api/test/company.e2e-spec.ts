@@ -160,4 +160,30 @@ describe('CompanyController', () => {
       expect(roleDocument).toBeDefined();
     });
   });
+
+  describe('POST /companies/:companyId/member - add member to company by email', () => {
+    it('returns new company', async () => {
+      const newCompany = await createCompany(companyModel);
+
+      const companyAdmin = { email: 'kinnyzimmer@gmail.com' };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/companies/${newCompany._id.toString()}/companyAdmin`)
+        .send(companyAdmin)
+        .expect(201);
+
+      const roleDocument = await roleModel
+        .findOne({
+          companyId: newCompany._id.toString(),
+          role: RoleType.COMPANY_ADMIN,
+          email: companyAdmin.email,
+        })
+        .exec();
+
+      expect(body._id.toString()).toEqual(roleDocument._id.toString());
+      expect(body.companyId).toEqual(roleDocument.companyId);
+      expect(body.email).toEqual(roleDocument.email);
+      expect(body.role).toEqual(roleDocument.role);
+    });
+  });
 });

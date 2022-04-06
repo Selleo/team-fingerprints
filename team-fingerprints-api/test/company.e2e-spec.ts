@@ -48,4 +48,24 @@ describe('CompanyController', () => {
       expect(body).not.toEqual([]);
     });
   });
+
+  describe('GET /companies/:companyId - get company by id', () => {
+    it('returns company', async () => {
+      const newCompany = await createCompany(companyModel);
+
+      const { body } = await request(app.getHttpServer())
+        .get(`/companies/${newCompany._id.toString()}`)
+        .expect(200);
+
+      const { company } = body;
+
+      expect(company._id).toEqual(newCompany._id.toString());
+      expect(company.filterTemplates).toEqual(newCompany.filterTemplates);
+      expect(company.domain).toEqual(newCompany.domain);
+      expect(company.teams).toEqual(newCompany.teams);
+      expect(company.pointColor).toEqual(newCompany.pointColor);
+      expect(company.pointShape).toEqual(newCompany.pointShape);
+      expect(company.name).toEqual(newCompany.name);
+    });
+  });
 });

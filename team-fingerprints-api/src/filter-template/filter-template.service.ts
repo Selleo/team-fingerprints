@@ -64,7 +64,7 @@ export class FilterTemplateService {
         { new: true },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId);
+      return teams.filter((team) => team._id.toString() === teamId)[0];
     }
   }
 
@@ -117,7 +117,7 @@ export class FilterTemplateService {
         },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId);
+      return teams.filter((team) => team._id.toString() === teamId)[0];
     }
   }
 
@@ -153,7 +153,7 @@ export class FilterTemplateService {
         },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId);
+      return teams.filter((team) => team._id.toString() === teamId)[0];
     }
   }
 }

@@ -104,7 +104,7 @@ export class CompanyService {
     companyId: string,
     {
       name,
-      description,
+      description = '',
       domain: companyDomain,
       pointColor,
       pointShape,
@@ -113,17 +113,19 @@ export class CompanyService {
     const { domain } = await this.companyModel.findById(companyId, {
       domain: 1,
     });
-    if (domain === companyDomain) {
+    if (domain !== companyDomain) {
       const data: DomainBlacklist =
         await this.tfConfigService.getEmailBlackList();
 
-      if (data?.domains?.includes(domain))
+      if (data?.domains?.includes(companyDomain))
         throw new BadRequestException(
           'Can not add this domain to your company',
         );
 
-      if (await this.isDomainTaken(domain)) {
-        throw new ForbiddenException(`Domain ${domain} is already taken.`);
+      if (await this.isDomainTaken(companyDomain)) {
+        throw new ForbiddenException(
+          `Domain ${companyDomain} is already taken.`,
+        );
       }
     }
 
@@ -133,7 +135,7 @@ export class CompanyService {
         {
           name,
           description,
-          domain: domain.toLowerCase(),
+          domain: companyDomain.toLowerCase(),
           pointColor,
           pointShape,
         },

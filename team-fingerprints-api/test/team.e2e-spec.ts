@@ -205,4 +205,46 @@ describe('TeamController', () => {
       expect(companyRoleDocuments).toBeDefined();
     });
   });
+
+  describe('DELETE /companies/:companyId/teams/:teamId/member - remove member from team', () => {
+    it('returns company with updated team', async () => {
+      const newTeam = (
+        await createTeamInCompany(companyModel, company._id.toString())
+      ).teams[0];
+
+      const members = { emails: ['kinnyzimmer@gmail.com'] };
+
+      const response = await request(app.getHttpServer())
+        .post(
+          `/companies/${company._id.toString()}/teams/${newTeam._id.toString()}/member`,
+        )
+        .send(members)
+        .expect(201);
+
+      expect(response.body).toEqual(members.emails);
+
+      const teamRoleDocuments = await roleModel.findOne({
+        companyId: company._id.toString(),
+        teamId: newTeam._id.toString(),
+        role: RoleType.USER,
+      });
+
+      const companyRoleDocuments = await roleModel.findOne({
+        companyId: company._id.toString(),
+        role: RoleType.USER,
+      });
+
+      expect(teamRoleDocuments).toBeDefined();
+      expect(companyRoleDocuments).toBeDefined();
+
+      const { body } = await request(app.getHttpServer())
+        .delete(
+          `/companies/${company._id.toString()}/teams/${newTeam._id.toString()}/member`,
+        )
+        .send({ email: members.emails[0] })
+        .expect(200);
+
+      expect(body).toEqual({ success: true });
+    });
+  });
 });

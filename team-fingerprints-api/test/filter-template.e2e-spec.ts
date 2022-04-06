@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Company } from 'src/company/models/company.model';
-import { Filter } from 'src/filter/models/filter.model';
 import * as request from 'supertest';
 import { getApplication } from './helpers/getApplication';
 
@@ -27,29 +26,6 @@ const createCompanyWithTeam = async (
   };
 
   return await (await companyModel.create(companyData)).save();
-};
-
-const createFilterWithValue = async (
-  filterModel: Model<Filter>,
-): Promise<Filter> => {
-  const values = [
-    {
-      _id: new Types.ObjectId(),
-      value: 'Filter value 1',
-    },
-    {
-      _id: new Types.ObjectId(),
-      value: 'Filter value 2',
-    },
-  ];
-
-  const filterData = {
-    name: 'Test filter',
-    filterPath: 'testFilter',
-    values,
-  };
-
-  return await (await filterModel.create(filterData)).save();
 };
 
 const createFilterTemplateInCompany = async (
@@ -79,14 +55,11 @@ const createFilterTemplateInTeam = async (
   teamId: string,
 ) => {
   const filterTemplateData = {
-    templateFilter: {
-      country: 'Slovakia',
-    },
-    templateFilterConfig: {
-      name: 'Test template filter',
-      pointColor: '#abcdef',
-      pointShape: 'square',
-    },
+    _id: new Types.ObjectId().toString(),
+    country: 'Slovakia',
+    name: 'Test template filter',
+    pointColor: '#abcdef',
+    pointShape: 'square',
   };
 
   return await companyModel.findByIdAndUpdate(
@@ -101,7 +74,6 @@ const createFilterTemplateInTeam = async (
 describe('FilterTemplateController', () => {
   let app: INestApplication;
   let companyModel: Model<Company>;
-  let filterModel: Model<Filter>;
   let company: Company;
   let companyId: string;
   let teamId: string;
@@ -109,7 +81,6 @@ describe('FilterTemplateController', () => {
   beforeEach(async () => {
     app = await getApplication();
     companyModel = app.get(getModelToken(Company.name));
-    filterModel = app.get(getModelToken(Filter.name));
     company = await createCompanyWithTeam(companyModel);
     companyId = company._id.toString();
     teamId = company.teams[0]._id.toString();
@@ -273,6 +244,44 @@ describe('FilterTemplateController', () => {
 
       expect(body.length).toBe(1);
       expect(body).toEqual([filterTemplates[0]]);
+    });
+  });
+
+  describe('POST /filter-templates/:companyId/teams/:teamId/filters - add filter template to team', () => {
+    it('returns team with new filter template', async () => {
+      const filterTemplateData = {
+        templateFilter: {
+          country: 'Austria',
+        },
+        templateFilterConfig: {
+          name: 'Test template filter',
+          pointColor: '#431423',
+          pointShape: 'triangle',
+        },
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/filter-templates/${companyId}/teams/${teamId}/filters`)
+        .send(filterTemplateData)
+        .expect(201);
+
+      expect(body._id).toBeDefined();
+      expect(body.filterTemplates.length).toBe(1);
+
+      const filterTemplate = body.filterTemplates[0];
+
+      expect(filterTemplate.country).toEqual(
+        filterTemplateData.templateFilter.country,
+      );
+      expect(filterTemplate.name).toEqual(
+        filterTemplateData.templateFilterConfig.name,
+      );
+      expect(filterTemplate.pointColor).toEqual(
+        filterTemplateData.templateFilterConfig.pointColor,
+      );
+      expect(filterTemplate.pointShape).toEqual(
+        filterTemplateData.templateFilterConfig.pointShape,
+      );
     });
   });
 });

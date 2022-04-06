@@ -26,7 +26,7 @@ export class CompanyController {
   ) {}
 
   @Get()
-  @Roles([RoleType.USER, RoleType.COMPANY_ADMIN])
+  @Roles([RoleType.SUPER_ADMIN, RoleType.USER, RoleType.COMPANY_ADMIN])
   async getCompanies(): Promise<Company[]> {
     return await this.companyService.getCompaneis();
   }
@@ -46,7 +46,7 @@ export class CompanyController {
   }
 
   @Patch(':companyId')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN])
   async updateCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() companyDto: UpdateCompanyDto,
@@ -55,7 +55,7 @@ export class CompanyController {
   }
 
   @Post(':companyId/member')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN])
   async addUserToCompanyWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body('emails') emails: string[],
@@ -67,7 +67,7 @@ export class CompanyController {
   }
 
   @Post(':companyId/companyAdmin')
-  @Roles([RoleType.COMPANY_ADMIN])
+  @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN])
   async addCompanyAdmin(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body('email') email: string,

@@ -13,6 +13,6 @@ export class TfConfigService {
     const document = await this.tfConfigModel
       .findOne({ name: 'emailBlacklist' })
       .exec();
-    return document.data;
+    return document?.data ?? [];
   }
 }

@@ -9,7 +9,7 @@ export class Company extends Document {
   @Prop()
   name: string;
 
-  @Prop()
+  @Prop({ default: '' })
   description?: string;
 
   @Prop({ default: '' })

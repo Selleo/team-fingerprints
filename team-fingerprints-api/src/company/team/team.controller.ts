@@ -46,7 +46,7 @@ export class TeamController {
   }
 
   @Post('/')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.COMPANY_ADMIN])
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() teamDto: CreateTeamDto,
@@ -55,7 +55,7 @@ export class TeamController {
   }
 
   @Patch('/:teamId')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async updateTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -65,7 +65,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
   ): Promise<Company | HttpException> {
@@ -73,7 +73,7 @@ export class TeamController {
   }
 
   @Post('/:teamId/member')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async addUserToTeamWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -83,7 +83,7 @@ export class TeamController {
       emails,
       companyId,
     );
-    return await this.teamMembersService.addUserToTeamWhitelist(
+    return await this.teamMembersService.addUsersToTeamWhitelist(
       companyId,
       teamId,
       emails,
@@ -91,7 +91,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId/member')
-  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER], false)
+  @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeMemberFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -105,7 +105,7 @@ export class TeamController {
   }
 
   @Post('/:teamId/leader')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.COMPANY_ADMIN])
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -119,7 +119,7 @@ export class TeamController {
   }
 
   @Delete('/:teamId/leader')
-  @Roles([RoleType.COMPANY_ADMIN], false)
+  @Roles([RoleType.COMPANY_ADMIN])
   async removeTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,

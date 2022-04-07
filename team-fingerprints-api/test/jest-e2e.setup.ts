@@ -10,7 +10,7 @@ let usersModel: Model<User>;
 let roleModel: Model<Role>;
 let baseUser: User;
 
-jest.setTimeout(20000);
+jest.setTimeout(40000);
 
 beforeEach(async () => {
   const conn = await getMongoConnection();

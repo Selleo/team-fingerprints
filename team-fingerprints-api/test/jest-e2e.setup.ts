@@ -2,10 +2,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Role } from 'src/role/models/role.model';
 import { User } from 'src/users/models/user.model';
-import {
-  createBaseUser,
-  giveSuperAdminPrivileges,
-} from './helpers/createBaseUser';
+import { createBaseUser, giveSuperAdminPrivileges } from './helpers/users';
 import { getApplication } from './helpers/getApplication';
 import { getMongoConnection } from './helpers/getMongoConnection';
 
@@ -13,7 +10,7 @@ let usersModel: Model<User>;
 let roleModel: Model<Role>;
 let baseUser: User;
 
-jest.setTimeout(20000);
+jest.setTimeout(40000);
 
 beforeEach(async () => {
   const conn = await getMongoConnection();

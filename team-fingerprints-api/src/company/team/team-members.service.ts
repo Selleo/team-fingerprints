@@ -64,7 +64,7 @@ export class TeamMembersService {
     else roleDocument;
   }
 
-  async addUserToTeamWhitelist(
+  async addUsersToTeamWhitelist(
     companyId: string,
     teamId: string,
     emails: string[],
@@ -134,6 +134,8 @@ export class TeamMembersService {
     roleDocuments.forEach(async (doc) => {
       await this.roleService.removeRoleDocumentById(doc);
     });
+
+    return { success: true };
   }
 
   async checkEmailIfAssignedToBeLeader(

@@ -93,6 +93,30 @@ describe('SurveyController', () => {
     });
   });
 
+  describe('GET /surveys/:surveyId/public - get public survey by id', () => {
+    it('returns survey', async () => {
+      const surveyData = {
+        title: 'Test survey',
+        isPublic: true,
+      };
+      const newSurvey = await (await surveyModel.create(surveyData)).save();
+
+      const { body } = await request(app.getHttpServer())
+        .get(`/surveys/${newSurvey._id.toString()}/public`)
+        .expect(200);
+
+      const { _id, title, isPublic, archived, amountOfQuestions, categories } =
+        body;
+
+      expect(_id).toEqual(newSurvey._id.toString());
+      expect(title).toBe(newSurvey.title);
+      expect(isPublic).toBe(true);
+      expect(archived).toBe(false);
+      expect(amountOfQuestions).toBe(0);
+      expect(categories).toEqual([]);
+    });
+  });
+
   describe('GET /surveys/:surveyId - get survey by id', () => {
     it('returns survey', async () => {
       const surveyData = {

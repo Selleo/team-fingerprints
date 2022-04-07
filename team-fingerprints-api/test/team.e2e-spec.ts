@@ -285,4 +285,44 @@ describe('TeamController', () => {
       expect(teamRoleDocument.role).toEqual(RoleType.TEAM_LEADER);
     });
   });
+
+  describe('DELETE /companies/:companyId/teams/:teamId/leader - remove team leader', () => {
+    it('returns new leader role document', async () => {
+      const newTeam = (
+        await createTeamInCompany(companyModel, company._id.toString())
+      ).teams[0];
+
+      const email = 'kinnyzimmer@gmail.com';
+
+      await (
+        await roleModel.create({
+          role: RoleType.TEAM_LEADER,
+          companyId: company._id.toString(),
+          teamId: newTeam._id.toString(),
+          email,
+        })
+      ).save();
+
+      const { body } = await request(app.getHttpServer())
+        .delete(
+          `/companies/${company._id.toString()}/teams/${newTeam._id.toString()}/leader`,
+        )
+        .send({ email })
+        .expect(200);
+
+      const removedTeamLeaderRoleDocument = await roleModel.findOne({
+        role: RoleType.TEAM_LEADER,
+        companyId: company._id.toString(),
+        teamId: newTeam._id.toString(),
+        email,
+      });
+
+      expect(removedTeamLeaderRoleDocument).toBeNull();
+
+      expect(body.email).toEqual(email);
+      expect(body.teamId).toEqual(newTeam._id.toString());
+      expect(body.companyId).toEqual(company._id.toString());
+      expect(body.role).toEqual(RoleType.TEAM_LEADER);
+    });
+  });
 });

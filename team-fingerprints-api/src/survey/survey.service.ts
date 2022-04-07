@@ -64,6 +64,12 @@ export class SurveyService {
     return await this.surveyModel.findById(surveyId).exec();
   }
 
+  async getPublicSurveyById(surveyId: string): Promise<Survey> {
+    return await this.surveyModel
+      .findOne({ _id: surveyId, isPublic: true, archived: false })
+      .exec();
+  }
+
   async createSurvey({ title }: CreateSurveyDto): Promise<Survey> {
     return await (await this.surveyModel.create({ title })).save();
   }

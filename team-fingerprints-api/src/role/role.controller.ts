@@ -22,7 +22,7 @@ export class RoleController {
     @CurrentUserId(ValidateObjectId) userId: string,
     @Param('roleId', ValidateObjectId) roleId: string,
   ) {
-    await this.roleService.leave(userId, roleId);
+    return await this.roleService.leave(userId, roleId);
   }
 
   @Delete('/:roleId/remove')
@@ -30,6 +30,6 @@ export class RoleController {
     @CurrentUserId(ValidateObjectId) currentUserId: string,
     @Param('roleId', ValidateObjectId) roleId: string,
   ) {
-    await this.roleService.removeRole(roleId, currentUserId);
+    return await this.roleService.removeRole(roleId, currentUserId);
   }
 }

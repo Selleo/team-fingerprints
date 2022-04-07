@@ -7,6 +7,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { RoleType } from 'src/role/role.type';
 import { User } from 'src/users/models/user.model';
 import { getBaseUser } from './helpers/getBaseUser';
+import { createRandomUser } from './helpers/users';
 
 describe('RoleController', () => {
   let app: INestApplication;
@@ -66,6 +67,39 @@ describe('RoleController', () => {
 
       expect(roleDocument).toBeNull();
       expect(body.email).toEqual(baseUser.email);
+      expect(body.role).toEqual(RoleType.USER);
+      expect(body.companyId).toEqual(companyId);
+      expect(body.teamId).toEqual(teamId);
+    });
+  });
+
+  describe('DELETE /role/:roleId/remove - rmove user from company/team by removing role', () => {
+    it('terurns removed role', async () => {
+      const randomUser = await createRandomUser(userModel);
+
+      const teamId = new Types.ObjectId().toString();
+      const companyId = new Types.ObjectId().toString();
+
+      const userRoleDocument = await (
+        await roleModel.create({
+          role: RoleType.USER,
+          teamId,
+          companyId,
+          userId: randomUser._id.toString(),
+          email: randomUser.email,
+        })
+      ).save();
+
+      const { body } = await request(app.getHttpServer())
+        .delete(`/role/${userRoleDocument._id.toString()}/remove`)
+        .expect(200);
+
+      const roleDocument = await roleModel.findById(
+        userRoleDocument._id.toString(),
+      );
+
+      expect(roleDocument).toBeNull();
+      expect(body.email).toEqual(randomUser.email);
       expect(body.role).toEqual(RoleType.USER);
       expect(body.companyId).toEqual(companyId);
       expect(body.teamId).toEqual(teamId);

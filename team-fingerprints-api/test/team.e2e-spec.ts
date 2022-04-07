@@ -247,4 +247,42 @@ describe('TeamController', () => {
       expect(body).toEqual({ success: true });
     });
   });
+
+  describe('POST /companies/:companyId/teams/:teamId/leader - add leader to team', () => {
+    it('returns new leader role document', async () => {
+      const newTeam = (
+        await createTeamInCompany(companyModel, company._id.toString())
+      ).teams[0];
+
+      const email = 'kinnyzimmer@gmail.com';
+
+      await (
+        await roleModel.create({
+          role: RoleType.USER,
+          companyId: company._id.toString(),
+          teamId: newTeam._id.toString(),
+          email,
+        })
+      ).save();
+
+      const { body } = await request(app.getHttpServer())
+        .post(
+          `/companies/${company._id.toString()}/teams/${newTeam._id.toString()}/leader`,
+        )
+        .send({ email })
+        .expect(201);
+
+      expect(body.email).toEqual(email);
+
+      const teamRoleDocument = await roleModel.findOne({
+        companyId: company._id.toString(),
+        teamId: newTeam._id.toString(),
+        role: RoleType.TEAM_LEADER,
+      });
+
+      expect(teamRoleDocument.email).toEqual(email);
+      expect(teamRoleDocument.teamId).toEqual(newTeam._id.toString());
+      expect(teamRoleDocument.role).toEqual(RoleType.TEAM_LEADER);
+    });
+  });
 });

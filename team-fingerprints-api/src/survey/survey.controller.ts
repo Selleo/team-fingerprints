@@ -35,6 +35,14 @@ export class SurveyController {
     return await this.surveyService.getSurveys();
   }
 
+  @Public()
+  @Get(':surveyId/public')
+  async getSurveyById(
+    @Param('surveyId', ValidateObjectId) suveyId: string,
+  ): Promise<Survey> {
+    return await this.surveyService.getPublicSurveyById(suveyId);
+  }
+
   @Get(':surveyId')
   async getSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,

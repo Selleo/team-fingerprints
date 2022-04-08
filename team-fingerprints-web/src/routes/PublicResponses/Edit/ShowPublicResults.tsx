@@ -18,7 +18,7 @@ export default function ShowPublicResults() {
     isLoading: isLoadingSurvey,
     error: errorLoadingSurvey,
     data: survey,
-  } = useQuery<SurveyDetails, Error>(`surveyOne${surveyId}`, async () => {
+  } = useQuery<SurveyDetails, Error>(`publicSurveysList`, async () => {
     const { data } = await axios.get<SurveyDetails>(
       `/surveys/${surveyId}/public`
     );
@@ -28,7 +28,7 @@ export default function ShowPublicResults() {
   const { isLoading: isLoadingSurveyFinished, data: surveyResult } = useQuery<
     any,
     Error
-  >(`surveyFinishedOne-${surveyId}`, async () => {
+  >(`publicSurvey-${surveyId}`, async () => {
     const { data } = await axios.get<any>(
       `/survey-results/${surveyId}/companies`
     );

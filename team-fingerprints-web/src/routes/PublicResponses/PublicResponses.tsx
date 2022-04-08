@@ -1,23 +1,19 @@
-import { useEffect, useMemo } from "react";
-
-import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 import { useQuery } from "react-query";
 import { isArray, isEmpty, times } from "lodash";
 import { Skeleton } from "@mantine/core";
 import axios from "axios";
 
+import ErrorLoading from "../../components/ErrorLoading";
+import BackToScreen from "../../components/BackToScreen/BackToScreen";
+import ResponseItem from "./ResponseItem";
+
 import { Survey } from "../../types/models";
 import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 
-import ResponseItem from "./ResponseItem";
-
 import "./styles.sass";
-import ErrorLoading from "../../components/ErrorLoading";
-import BackToScreen from "../../components/BackToScreen/BackToScreen";
 
 const PublicResponses = () => {
-  const navigation = useNavigate();
-
   const { isLoading, error, data } = useQuery<Survey[]>(
     "surveysAllPublic",
     async () => {
@@ -25,17 +21,6 @@ const PublicResponses = () => {
       return response.data;
     }
   );
-
-  const filtredByPublic = data
-    ?.filter((survey) => survey.isPublic)
-    .filter((survey) => !survey.archived);
-
-  useEffect(() => {
-    if (data?.length === 1) {
-      const surveyId = data[0]?._id;
-      navigation("/surveys/" + surveyId);
-    }
-  }, [data, navigation]);
 
   const content = useMemo(() => {
     if (isLoading)
@@ -49,7 +34,7 @@ const PublicResponses = () => {
 
     if (error) return <ErrorLoading title="Can't load responses" />;
 
-    const mappedData = filtredByPublic?.map((el) => ({
+    const mappedData = data?.map((el) => ({
       survey: el,
     }));
 
@@ -66,8 +51,6 @@ const PublicResponses = () => {
       ))
     );
   }, [data, error, isLoading]);
-
-  //TODO map responses together with surveys
 
   return (
     <div className="responses">

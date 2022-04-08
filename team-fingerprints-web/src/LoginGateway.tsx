@@ -1,9 +1,13 @@
 import { useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import ShowPublicResults from "./routes/PublicResponses/Edit";
+import PublicResponses from "./routes/PublicResponses/PublicResponses";
 import { useAuth0 } from "@auth0/auth0-react";
 import { NotificationsProvider } from "@mantine/notifications";
 import { Button, Center, MantineProvider, Text, Title } from "@mantine/core";
+import WelcomeScreen from "./WelcomeScreen";
 
 import { ReactComponent as BGIcons } from "./assets/BGIcons.svg";
 
@@ -49,30 +53,25 @@ const LoginGateway = () => {
           </TokenSetup>
         ) : (
           <>
-            <Center className="login">
-              <Title order={1} className="login__header">
-                Welcome to
-                <Text className="login__header-span">Selleo Fingerprint</Text>
-              </Title>
-              <Text className="login__text">
-                Find out what the values of employees, companies and teams are.
-                Compare charts and data. Create surveys you dream about.
-              </Text>
-              <Button
-                className="login__button"
-                onClick={() =>
-                  loginWithRedirect({
-                    connection: "google-oauth2",
-                    appState: { returnTo: pathname },
-                  })
-                }
-              >
-                {isLoading ? "Loading" : "Log in"}
-              </Button>
-            </Center>
-            <div className="svg-background">
-              <BGIcons />
-            </div>
+            <QueryClientProvider client={queryClient}>
+              <Routes>
+                <Route path="/public" element={<PublicResponses />} />
+                <Route
+                  path="/"
+                  element={
+                    <WelcomeScreen
+                      loginWithRedirect={loginWithRedirect}
+                      isLoading={isLoading}
+                      pathname={pathname}
+                    />
+                  }
+                />
+                <Route
+                  path="survey/:surveyId"
+                  element={<ShowPublicResults />}
+                />
+              </Routes>
+            </QueryClientProvider>
           </>
         )}
       </NotificationsProvider>

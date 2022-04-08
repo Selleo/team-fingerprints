@@ -13,7 +13,7 @@ import { AdditionalData, Shape } from "../../types/models";
 import "./styles.sass";
 
 interface IProps {
-  data: any;
+  surveyResult: any;
   additionalData: AdditionalData[];
   showMe: boolean;
 }
@@ -45,10 +45,8 @@ const asTrends = (data: CategoryResults[]) => {
   return tmpTrends;
 };
 
-const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
+const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   const { width: screenWidth } = useWindowDimensions();
-  const dataReadyToUse = data?.surveysAnswers[0]
-    .surveyResult as CategoryResults[];
 
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
@@ -69,8 +67,8 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
   const style = { width, height };
 
   const userMappedTrendsData = useMemo<TrendToDisplay[]>(() => {
-    return asTrends(dataReadyToUse);
-  }, [dataReadyToUse]);
+    return asTrends(surveyResult);
+  }, [surveyResult]);
 
   const numberOfRows = userMappedTrendsData.length;
 
@@ -81,6 +79,7 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
       if (data.length !== numberOfRows) {
         return;
       }
+
       times(numberOfRows, (time) => {
         const positionOfLine = rowHeight / 2 + time * rowHeight;
         const result = data[time];
@@ -208,7 +207,7 @@ const Chart: FC<IProps> = ({ data, additionalData, showMe }) => {
   const renderRow = (item: TrendToDisplay, index: number) => {
     const firstRow = index === 0;
     return (
-      <tr>
+      <tr key={index}>
         <td className="tg-0left">{item.trendSecondary}</td>
         {firstRow && (
           <td className="tg-0" rowSpan={numberOfRows}>

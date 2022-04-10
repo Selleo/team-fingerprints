@@ -72,6 +72,8 @@ export default function Edit() {
     return data;
   });
 
+  const surveyResult = surveyFinished?.surveysAnswers?.[0].surveyResult;
+
   const additionalData = useMemo(() => {
     let tmp: AdditionalData[] = [];
     let visibility = {};
@@ -225,7 +227,7 @@ export default function Edit() {
           </div>
 
           <Chart
-            data={surveyFinished}
+            surveyResult={surveyResult}
             additionalData={filteredAdditionalData}
             showMe={showMyResults}
           />
@@ -256,13 +258,7 @@ export default function Edit() {
     ]
   );
 
-  if (
-    isLoadingSurvey ||
-    isLoadingSurveyResponse ||
-    isLoadingSurveyFinished
-    //|| isLoadingSurveyResultsCompany
-    //|| isLoadingTeamResults
-  ) {
+  if (isLoadingSurvey || isLoadingSurveyResponse || isLoadingSurveyFinished) {
     return <LoadingData title="Loading survey" />;
   }
 

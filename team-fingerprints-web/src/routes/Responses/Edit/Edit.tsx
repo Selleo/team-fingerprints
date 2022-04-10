@@ -122,6 +122,7 @@ export default function Edit() {
       onError: onErrorWithTitle("Can finish survey"),
     }
   );
+
   const surveyIsFinished =
     surveyFinished?.surveysAnswers?.[0].completeStatus === "finished";
 
@@ -247,19 +248,22 @@ export default function Edit() {
       survey?.title,
       showMyResults,
       visibleData,
-      surveyFinished,
+      surveyResult,
       filteredAdditionalData,
       questionsWithAnswers,
-      buttonActive,
-      additionalData,
       refetch,
       surveyId,
-      finishSurvey,
+      finishSurvey.mutate,
+      additionalData,
     ]
   );
 
   if (isLoadingSurvey || isLoadingSurveyResponse || isLoadingSurveyFinished) {
     return <LoadingData title="Loading survey" />;
+  }
+
+  if (finishSurvey.isLoading) {
+    return <LoadingData title="Calculating data" />;
   }
 
   if (errorLoadingSurvey) {

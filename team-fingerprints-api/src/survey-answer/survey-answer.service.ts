@@ -38,6 +38,7 @@ export class SurveyAnswerService {
       )
       .exec();
   }
+
   private async changeAnswer(
     userId: string,
     surveyId: string,
@@ -45,7 +46,9 @@ export class SurveyAnswerService {
   ): Promise<User | HttpException> {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
       throw new ForbiddenException();
-    let updatedAnswer;
+
+    let updatedAnswer: User;
+
     if (value === 0) {
       updatedAnswer = await this.userModel
         .findOneAndUpdate(
@@ -92,18 +95,14 @@ export class SurveyAnswerService {
     return updatedAnswer;
   }
 
-  async surveyIsArchived(surveyId: string): Promise<boolean> {
-    const survey = await this.surveyService.getSurvey(surveyId);
-    return survey.archived ? true : false;
-  }
-
   async saveUserSurveyAnswer(
     userId: string,
     surveyId: string,
     questionAnswerData: QuestionAnswerDto,
   ) {
-    if (await this.checkIfSurveyIsFinished(userId, surveyId))
-      throw new ForbiddenException();
+    if (await this.checkIfSurveyIsFinished(userId, surveyId)) {
+      throw new ForbiddenException('Survey is already finished');
+    }
 
     if (await this.surveyIsArchived(surveyId)) {
       throw new BadRequestException('Can not answer archived survey');
@@ -139,10 +138,11 @@ export class SurveyAnswerService {
           (el) => el.questionId === questionAnswerData.questionId,
         )
       ) {
-        return this.changeAnswer(userId, surveyId, questionAnswerData);
+        await session.endSession();
+        return await this.changeAnswer(userId, surveyId, questionAnswerData);
       }
 
-      const newAnswer = await this.userModel
+      const updated = await this.userModel
         .updateOne(
           { _id: userId, 'surveysAnswers.surveyId': surveyId },
           {
@@ -150,11 +150,15 @@ export class SurveyAnswerService {
               'surveysAnswers.$.answers': questionAnswerData,
             },
           },
+          {
+            new: true,
+          },
         )
         .session(session)
         .exec();
 
-      if (!newAnswer) {
+      if (!updated) {
+        session.abortTransaction();
         throw new InternalServerErrorException();
       }
 
@@ -167,9 +171,9 @@ export class SurveyAnswerService {
         )
         .session(session)
         .exec();
-      return newAnswer;
     });
-    session.endSession();
+    await session.endSession();
+    return await this.userModel.findById(userId);
   }
 
   async saveCalculatedAnswers(userId: string, surveyId, data: unknown) {
@@ -192,16 +196,20 @@ export class SurveyAnswerService {
     const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
     if (isFinished)
       return await this.surveyResultService.getSurveyResultForUser(
-        userId,
         surveyId,
+        userId,
       );
+
     await this.changeSurvayCompleteStatusToFinished(userId, surveyId);
+
     const calculatedAnswers =
       await this.surveySummarizeService.countPointsForUser(userId, surveyId);
+
     await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
+
     return await this.surveyResultService.getSurveyResultForUser(
-      userId,
       surveyId,
+      userId,
     );
   }
 
@@ -225,17 +233,9 @@ export class SurveyAnswerService {
     return surveyAnswer.completeStatus;
   }
 
-  async checkIfSurveyIsFinished(userId: string, surveyId: string) {
-    const result = await this.getSurveyCompleteStatus(userId, surveyId);
-    return result === SurveyCompleteStatus.FINISHED;
-  }
-
-  private async changeSurvayCompleteStatusToFinished(
-    userId: string,
-    surveyId: string,
-  ) {
+  async changeSurvayCompleteStatusToFinished(userId: string, surveyId: string) {
     return await this.userModel
-      .updateOne(
+      .findOneAndUpdate(
         { _id: userId },
         {
           $set: {
@@ -245,8 +245,19 @@ export class SurveyAnswerService {
         },
         {
           arrayFilters: [{ 'survey.surveyId': surveyId }],
+          new: true,
         },
       )
       .exec();
+  }
+
+  async checkIfSurveyIsFinished(userId: string, surveyId: string) {
+    const result = await this.getSurveyCompleteStatus(userId, surveyId);
+    return result === SurveyCompleteStatus.FINISHED;
+  }
+
+  async surveyIsArchived(surveyId: string): Promise<boolean> {
+    const survey = await this.surveyService.getSurvey(surveyId);
+    return survey.archived ? true : false;
   }
 }

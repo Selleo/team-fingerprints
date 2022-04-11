@@ -38,6 +38,7 @@ export class SurveyAnswerService {
       )
       .exec();
   }
+
   private async changeAnswer(
     userId: string,
     surveyId: string,

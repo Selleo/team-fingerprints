@@ -1,11 +1,12 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { CategoryI } from '../interfaces/survey.interface';
 import { Trend, TrendSchema } from './trend.model';
 
 @Schema()
 export class Category implements CategoryI {
-  _id?: string;
+  _id?: string | Types.ObjectId;
 
   @ApiProperty()
   @Prop({ required: true })

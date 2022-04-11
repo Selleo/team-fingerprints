@@ -1,11 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { SurveyI } from '../interfaces/survey.interface';
 import { Category, CategorySchema } from './category.model';
 
 @Schema({ autoIndex: true, timestamps: true })
 export class Survey extends Document implements SurveyI {
+  _id?: string | Types.ObjectId;
+
   @ApiProperty()
   @Prop({ default: '', required: true })
   title: string;

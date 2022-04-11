@@ -196,16 +196,20 @@ export class SurveyAnswerService {
     const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
     if (isFinished)
       return await this.surveyResultService.getSurveyResultForUser(
-        userId,
         surveyId,
+        userId,
       );
+
     await this.changeSurvayCompleteStatusToFinished(userId, surveyId);
+
     const calculatedAnswers =
       await this.surveySummarizeService.countPointsForUser(userId, surveyId);
+
     await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
+
     return await this.surveyResultService.getSurveyResultForUser(
-      userId,
       surveyId,
+      userId,
     );
   }
 
@@ -229,12 +233,9 @@ export class SurveyAnswerService {
     return surveyAnswer.completeStatus;
   }
 
-  private async changeSurvayCompleteStatusToFinished(
-    userId: string,
-    surveyId: string,
-  ) {
+  async changeSurvayCompleteStatusToFinished(userId: string, surveyId: string) {
     return await this.userModel
-      .updateOne(
+      .findOneAndUpdate(
         { _id: userId },
         {
           $set: {
@@ -244,6 +245,7 @@ export class SurveyAnswerService {
         },
         {
           arrayFilters: [{ 'survey.surveyId': surveyId }],
+          new: true,
         },
       )
       .exec();

@@ -46,7 +46,9 @@ export class SurveyAnswerService {
   ): Promise<User | HttpException> {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
       throw new ForbiddenException();
-    let updatedAnswer;
+
+    let updatedAnswer: User;
+
     if (value === 0) {
       updatedAnswer = await this.userModel
         .findOneAndUpdate(

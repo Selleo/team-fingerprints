@@ -8,6 +8,7 @@ import { UserSurveyAnswerI } from 'src/users/interfaces/user.interface';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 import { User } from 'src/users/models/user.model';
 import { getBaseUser } from './helpers/getBaseUser';
+import { QuestionAnswerDto } from 'src/survey-answer/dto/question-answer.dto';
 
 const surveyData: Partial<Survey> = {
   title: 'Test survey',
@@ -50,7 +51,7 @@ const createSurvey = async (
 
 const surveyAnswersData = (survey: Survey): UserSurveyAnswerI => ({
   surveyId: survey._id.toString(),
-  completeStatus: SurveyCompleteStatus.FINISHED,
+  completeStatus: SurveyCompleteStatus.PENDING,
   amountOfAnswers: 2,
   answers: [
     {
@@ -127,9 +128,99 @@ describe('SurveyAnswerController', () => {
         surveyAnswersData(survey).amountOfAnswers,
       );
       expect(surveysAnswers[0].completeStatus).toEqual(
-        surveyAnswersData(survey).completeStatus,
+        SurveyCompleteStatus.PENDING,
       );
       expect(surveysAnswers[0].surveyId).toEqual(survey._id.toString());
+    });
+  });
+
+  describe('POST /survey-answers - save user answer', () => {
+    it('returns user with new answer', async () => {
+      const questionAnswerData: QuestionAnswerDto = {
+        questionId: survey.categories[0].trends[0].questions[0]._id.toString(),
+        value: 2,
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/survey-answers/${survey._id.toString()}`)
+        .send(questionAnswerData)
+        .expect(201);
+
+      const { surveysAnswers } = body;
+
+      expect(surveysAnswers.length).toBe(1);
+      expect(surveysAnswers[0].answers.length).toBe(1);
+      expect(surveysAnswers[0].answers[0].questionId).toEqual(
+        questionAnswerData.questionId,
+      );
+      expect(surveysAnswers[0].answers[0].value).toEqual(
+        questionAnswerData.value,
+      );
+      expect(surveysAnswers[0].amountOfAnswers).toBe(1);
+      expect(surveysAnswers[0].completeStatus).toEqual(
+        SurveyCompleteStatus.PENDING,
+      );
+      expect(surveysAnswers[0].surveyId).toEqual(survey._id.toString());
+    });
+
+    it('returns user with updated answer', async () => {
+      await saveAnswersInUser(userModel, baseUser, survey);
+
+      const changeQuestionAnswerData: QuestionAnswerDto = {
+        questionId: survey.categories[0].trends[0].questions[0]._id.toString(),
+        value: 5,
+      };
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/survey-answers/${survey._id.toString()}`)
+        .send(changeQuestionAnswerData)
+        .expect(201);
+
+      expect(body).not.toEqual({});
+
+      const { surveysAnswers } = body;
+
+      expect(surveysAnswers.length).toBe(1);
+      expect(surveysAnswers[0].answers.length).toBe(2);
+      expect(surveysAnswers[0].amountOfAnswers).toBe(2);
+      expect(surveysAnswers[0].completeStatus).toEqual(
+        SurveyCompleteStatus.PENDING,
+      );
+      expect(surveysAnswers[0].surveyId).toEqual(survey._id.toString());
+      expect(surveysAnswers[0].answers[0].questionId).toEqual(
+        changeQuestionAnswerData.questionId,
+      );
+      expect(surveysAnswers[0].answers[0].value).toEqual(
+        changeQuestionAnswerData.value,
+      );
+    });
+
+    describe('Uncheck answer', () => {
+      it('returns user without unchecked answer', async () => {
+        await saveAnswersInUser(userModel, baseUser, survey);
+
+        const changeQuestionAnswerData: QuestionAnswerDto = {
+          questionId:
+            survey.categories[0].trends[0].questions[0]._id.toString(),
+          value: 0,
+        };
+
+        const { body } = await request(app.getHttpServer())
+          .post(`/survey-answers/${survey._id.toString()}`)
+          .send(changeQuestionAnswerData)
+          .expect(201);
+
+        expect(body).not.toEqual({});
+
+        const { surveysAnswers } = body;
+
+        expect(surveysAnswers.length).toBe(1);
+        expect(surveysAnswers[0].answers.length).toBe(1);
+        expect(surveysAnswers[0].amountOfAnswers).toBe(1);
+        expect(surveysAnswers[0].completeStatus).toEqual(
+          SurveyCompleteStatus.PENDING,
+        );
+      });
     });
   });
 });

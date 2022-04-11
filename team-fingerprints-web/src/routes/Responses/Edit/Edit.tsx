@@ -34,13 +34,15 @@ import { ProfileContext } from "../../../routes";
 import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
 
 import "./styles.sass";
-import SingleTeamResult from "./SingleTeamResult";
+import { SimpleTeamType } from "./SingleTeamResult/SingleTeamResult";
 
 type ResultsPerCompany = {
   [key: string]: {
     role: ComplexRole;
     categoriesArray: any[];
     team: boolean;
+    hidden: boolean;
+    teamInfo?: SimpleTeamType;
   };
 };
 
@@ -52,6 +54,15 @@ export default function Edit() {
   const [companiesResults, setCompaniesResult] = useState<ResultsPerCompany>(
     {}
   );
+  const usersTeams = profile?.privileges.reduce<string[]>((prev, curr) => {
+    const teamId = curr.team?._id;
+    if (teamId) {
+      if (!prev.find((el) => teamId === el)) {
+        return [...prev, teamId];
+      }
+    }
+    return prev;
+  }, []);
 
   const { surveyId } = useParams();
   const {
@@ -82,13 +93,13 @@ export default function Edit() {
       each(keys(companiesResults), (companyOrTeamId) => {
         const dataAndRoleForCompany = companiesResults[companyOrTeamId];
 
-        if (dataAndRoleForCompany.team) {
+        if (dataAndRoleForCompany.teamInfo) {
           tmp.push({
             categories: dataAndRoleForCompany.categoriesArray,
-            color: dataAndRoleForCompany.role.team.pointColor,
-            icon: dataAndRoleForCompany.role.team.pointShape,
-            id: companyOrTeamId,
-            name: `${dataAndRoleForCompany.role.company.name} / ${dataAndRoleForCompany.role.team.name}`,
+            color: dataAndRoleForCompany.teamInfo.pointColor,
+            icon: dataAndRoleForCompany.teamInfo.pointShape,
+            id: dataAndRoleForCompany.teamInfo.teamId,
+            name: `${dataAndRoleForCompany.role.company.name} / ${dataAndRoleForCompany.teamInfo.teamName}`,
           });
         } else {
           tmp.push({
@@ -100,7 +111,10 @@ export default function Edit() {
           });
         }
 
-        visibility = { ...visibility, [companyOrTeamId]: true };
+        visibility = {
+          ...visibility,
+          [companyOrTeamId]: !dataAndRoleForCompany.hidden,
+        };
       });
     }
     setVisibleData(visibility);
@@ -122,6 +136,7 @@ export default function Edit() {
       onError: onErrorWithTitle("Can finish survey"),
     }
   );
+
   const surveyIsFinished =
     surveyFinished?.surveysAnswers?.[0].completeStatus === "finished";
 
@@ -157,22 +172,32 @@ export default function Edit() {
     answer: find(allResponses, { questionId: question._id }),
   }));
 
-  const buttonActive = size(questions) === size(allResponses);
-
   const setDataForCompany =
-    (role: ComplexRole) => (companyId: string, categoriesArray: any[]) => {
+    (role: ComplexRole) =>
+    (companyId: string, categoriesArray: any[], hidden: boolean) => {
       setCompaniesResult((prev) => ({
         ...prev,
-        [companyId]: { categoriesArray, role, team: false },
+        [companyId]: { categoriesArray, role, team: false, hidden },
       }));
     };
 
   const setDataForTeam =
     (role: ComplexRole) =>
-    (_companyId: string, teamId: string, categoriesArray: any[]) => {
+    (
+      _companyId: string,
+      teamInfo: SimpleTeamType,
+      categoriesArray: any[],
+      hidden: boolean
+    ) => {
       setCompaniesResult((prev) => ({
         ...prev,
-        [teamId]: { categoriesArray, role, team: true },
+        [teamInfo.teamId]: {
+          categoriesArray,
+          role,
+          team: true,
+          hidden: !usersTeams?.find((el) => el === teamInfo.teamId),
+          teamInfo,
+        },
       }));
     };
 
@@ -247,19 +272,22 @@ export default function Edit() {
       survey?.title,
       showMyResults,
       visibleData,
-      surveyFinished,
+      surveyResult,
       filteredAdditionalData,
       questionsWithAnswers,
-      buttonActive,
-      additionalData,
       refetch,
       surveyId,
-      finishSurvey,
+      finishSurvey.mutate,
+      additionalData,
     ]
   );
 
   if (isLoadingSurvey || isLoadingSurveyResponse || isLoadingSurveyFinished) {
     return <LoadingData title="Loading survey" />;
+  }
+
+  if (finishSurvey.isLoading) {
+    return <LoadingData title="Calculating data" />;
   }
 
   if (errorLoadingSurvey) {
@@ -278,21 +306,18 @@ export default function Edit() {
         <>
           {surveyId && role.company?._id && (
             <SingleCompanyResult
+              key={role.roleId}
               surveyId={surveyId}
               companyId={role.company?._id}
               setDataForCompany={setDataForCompany(role)}
-            />
-          )}
-          {surveyId && role.team?._id && (
-            <SingleTeamResult
-              surveyId={surveyId}
-              companyId={role.company?._id}
-              teamId={role.team?._id}
               setDataForTeam={setDataForTeam(role)}
+              teamId={role.team?._id}
+              hidden
             />
           )}
         </>
       ))}
+      {}
     </>
   );
 }

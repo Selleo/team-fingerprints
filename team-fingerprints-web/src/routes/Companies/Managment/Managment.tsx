@@ -52,9 +52,9 @@ const CompaniesManagment = () => {
   const roles = data?.roles || ([] as CompanyRole[]);
 
   const addEmailToWhitelist = useMutation(
-    (email: string) => {
+    (emails: string[]) => {
       return axios.post<string>(`/companies/${companyId}/member`, {
-        emails: [email],
+        emails,
       });
     },
     {
@@ -167,10 +167,12 @@ const CompaniesManagment = () => {
       <Modal
         opened={whitelistModalVisible}
         onClose={() => setWhitelistModalVisible(false)}
-        title="Add email to whitelist"
+        title="Add emails to whitelist"
       >
         <EmailForm
-          onSubmit={(val) => val.email && addEmailToWhitelist.mutate(val.email)}
+          onSubmit={(val) =>
+            val.emails && addEmailToWhitelist.mutate(val.emails)
+          }
         />
       </Modal>
 

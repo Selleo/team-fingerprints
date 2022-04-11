@@ -223,4 +223,24 @@ describe('SurveyAnswerController', () => {
       });
     });
   });
+
+  describe('POST /survey-answers/:surveyId/finish - sign survey as finished and get calculated result', () => {
+    it('changes surver complete status to finished and returns calculated result', async () => {
+      await saveAnswersInUser(userModel, baseUser, survey);
+
+      const { body } = await request(app.getHttpServer())
+        .post(`/survey-answers/${survey._id.toString()}/finish`)
+        .expect(201);
+
+      const { surveysAnswers } = await userModel.findById(
+        baseUser._id.toString(),
+      );
+
+      expect(body).toBeDefined();
+      expect(body).not.toEqual({});
+      expect(surveysAnswers[0].completeStatus).toEqual(
+        SurveyCompleteStatus.FINISHED,
+      );
+    });
+  });
 });

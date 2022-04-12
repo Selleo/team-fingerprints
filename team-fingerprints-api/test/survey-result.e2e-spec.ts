@@ -422,8 +422,8 @@ describe('SurveyResultController', () => {
     });
   });
 
-  describe('GET /survey-results/companies/filters - get available filters for company', () => {
-    it('returnsavailable filters for company', async () => {
+  describe('GET /survey-results/companies/filters - get available filters for companies', () => {
+    it('returnsavailable filters for companies', async () => {
       const { body } = await request(app.getHttpServer())
         .get(`/survey-results/companies/filters`)
         .expect(200);
@@ -450,6 +450,22 @@ describe('SurveyResultController', () => {
       expect(body[1].values[1].value).toEqual(filterLevel.values[1].value);
       expect(body[1].values[1]._id).toEqual(
         filterLevel.values[1]._id.toString(),
+      );
+    });
+  });
+
+  describe('GET /survey-results/companies/:companyId/filters - get available filters for company', () => {
+    it('returnsavailable filters for company', async () => {
+      const { body } = await request(app.getHttpServer())
+        .get(`/survey-results/companies/${company1._id.toString()}/filters`)
+        .expect(200);
+
+      expect(body[0].name).toEqual(filterCountry.name);
+      expect(body[0].filterPath).toEqual(filterCountry.filterPath);
+      expect(body[0]._id).toEqual(filterCountry._id.toString());
+      expect(body[0].values[0].value).toEqual(filterCountry.values[0].value);
+      expect(body[0].values[0]._id).toEqual(
+        filterCountry.values[0]._id.toString(),
       );
     });
   });

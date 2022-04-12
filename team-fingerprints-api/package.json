@@ -82,7 +82,7 @@
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
-    "ts-jest": "^27.0.3",
+    "ts-jest": "^27.1.4",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.10.1",
@@ -94,7 +94,6 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -103,6 +102,19 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  }
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "src/(.*)": "<rootDir>/src/$1"
+    },
+    "watchPlugins": [
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
+    ],
+    "moduleDirectories": ["node_modules"]
+  },
+  "modulePaths": [
+    "<rootDir>/src",
+    "<rootDir>/node_modules"
+  ]
 }
+

@@ -469,4 +469,22 @@ describe('SurveyResultController', () => {
       );
     });
   });
+
+  describe('GET /survey-results/companies/:companyId/filters - get available filters for company', () => {
+    it('returnsavailable filters for company', async () => {
+      const { body } = await request(app.getHttpServer())
+        .get(
+          `/survey-results/companies/${company1._id.toString()}/teams/${team1._id.toString()}/filters`,
+        )
+        .expect(200);
+
+      expect(body[0].name).toEqual(filterCountry.name);
+      expect(body[0].filterPath).toEqual(filterCountry.filterPath);
+      expect(body[0]._id).toEqual(filterCountry._id.toString());
+      expect(body[0].values[0].value).toEqual(filterCountry.values[0].value);
+      expect(body[0].values[0]._id).toEqual(
+        filterCountry.values[0]._id.toString(),
+      );
+    });
+  });
 });

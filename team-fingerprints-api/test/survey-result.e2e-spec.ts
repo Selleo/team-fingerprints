@@ -228,12 +228,12 @@ const createFilter = async (filterModel: Model<Filter>, filterData: any) => {
 
 const userDatailsData = [
   {
-    country: filtersWithValuesData[0].values[0],
-    level: filtersWithValuesData[1].values[0],
+    country: filtersWithValuesData[0].values[0]._id.toString(),
+    level: filtersWithValuesData[1].values[0]._id.toString(),
   },
   {
-    country: filtersWithValuesData[0].values[1],
-    level: filtersWithValuesData[1].values[1],
+    country: filtersWithValuesData[0].values[1]._id.toString(),
+    level: filtersWithValuesData[1].values[1]._id.toString(),
   },
 ];
 
@@ -356,7 +356,7 @@ describe('SurveyResultController', () => {
   });
 
   describe('GET /survey-results/:surveyId/companies/:companyId/teams/:teamId - get survey results for team', () => {
-    it('returns survey results for user', async () => {
+    it('returns survey results for team', async () => {
       const team1Company1 = await request(app.getHttpServer())
         .get(
           `/survey-results/${survey._id.toString()}/companies/${company1._id.toString()}/teams/${team1._id.toString()}`,
@@ -383,7 +383,7 @@ describe('SurveyResultController', () => {
   });
 
   describe('GET /survey-results/:surveyId/companies/:companyId - get survey results for company', () => {
-    it('returns survey results for user', async () => {
+    it('returns survey results for company', async () => {
       const cmpny1 = await request(app.getHttpServer())
         .get(
           `/survey-results/${survey._id.toString()}/companies/${company1._id.toString()}`,
@@ -406,6 +406,19 @@ describe('SurveyResultController', () => {
       ).toMatchObject(
         surveyAnswersDataForUser(survey).surveyResult[0].avgTrends,
       );
+    });
+  });
+
+  describe('GET /survey-results/:surveyId/companies - get survey results for companies', () => {
+    it('returns survey results for companies', async () => {
+      const companies = await request(app.getHttpServer())
+        .get(`/survey-results/${survey._id.toString()}/companies`)
+        .expect(200);
+
+      expect(
+        companies.body[survey.categories[0]._id.toString()].avgTrends[0]
+          .avgTrendAnswer,
+      ).toBe(2.5);
     });
   });
 });

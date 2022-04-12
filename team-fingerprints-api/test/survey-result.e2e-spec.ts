@@ -354,4 +354,31 @@ describe('SurveyResultController', () => {
       );
     });
   });
+
+  describe('GET /survey-results/:surveyId/companies/:companyId/teams/:teamId - get survey results for team', () => {
+    it('returns survey results for user', async () => {
+      const team1Company1 = await request(app.getHttpServer())
+        .get(
+          `/survey-results/${survey._id.toString()}/companies/${company1._id.toString()}/teams/${team1._id.toString()}`,
+        )
+        .expect(200);
+
+      const team2Company2 = await request(app.getHttpServer())
+        .get(
+          `/survey-results/${survey._id.toString()}/companies/${company2._id.toString()}/teams/${team2._id.toString()}`,
+        )
+        .expect(200);
+
+      expect(
+        team1Company1.body[survey.categories[0]._id.toString()].avgTrends,
+      ).toMatchObject(
+        surveyAnswersDataForBaseUser(survey).surveyResult[0].avgTrends,
+      );
+      expect(
+        team2Company2.body[survey.categories[0]._id.toString()].avgTrends,
+      ).toMatchObject(
+        surveyAnswersDataForUser(survey).surveyResult[0].avgTrends,
+      );
+    });
+  });
 });

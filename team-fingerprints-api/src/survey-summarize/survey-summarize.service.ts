@@ -7,15 +7,15 @@ import { User } from 'src/users/models/user.model';
 @Injectable()
 export class SurveySummarizeService {
   constructor(
-    @InjectModel(User.name) private readonly User: Model<User>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
   ) {}
 
   async countPointsForUser(userId: string, surveyId: string) {
-    const userAnswersAll = await this.User.findOne({
+    const userAnswersAll = await this.userModel.findOne({
       _id: userId,
       'surveysAnswers.surveyId': surveyId,
-    }).exec();
+    });
 
     const userAnswers = userAnswersAll.surveysAnswers.find(
       (el) => el.surveyId === surveyId,

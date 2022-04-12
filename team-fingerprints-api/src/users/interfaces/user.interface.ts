@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 
 export interface QuestionAnswerI {
@@ -6,7 +7,7 @@ export interface QuestionAnswerI {
 }
 
 export interface UserI {
-  _id?: string;
+  _id?: string | Types.ObjectId;
   authId: string;
   firstName: string;
   lastName: string;

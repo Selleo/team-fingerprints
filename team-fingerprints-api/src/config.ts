@@ -2,7 +2,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 
 export const envValidaion = Joi.object({
-  NODE_ENV: Joi.string().valid('development', 'test').default('development'),
+  NODE_ENV: Joi.string()
+    .valid('development', 'production', 'test')
+    .default('development'),
   PORT: Joi.number().default(3000),
   MONGODB_URI: Joi.string().default('mongodb://localhost:27017/surveys'),
   REDIS_PORT: Joi.number().default(6379),

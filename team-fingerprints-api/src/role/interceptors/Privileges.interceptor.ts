@@ -32,12 +32,10 @@ export class PrivilegesInterceptor implements NestInterceptor {
 
     // TESTING
     if (this.configService.get<string>('NODE_ENV') === 'test') {
-      const superAdminRoleDocument = await this.roleService.findOneRoleDocument(
-        {
-          email,
-          role: RoleType.SUPER_ADMIN,
-        },
-      );
+      const superAdminRoleDocument = await this.roleService.findRoleDocument({
+        email,
+        role: RoleType.SUPER_ADMIN,
+      });
 
       if (superAdminRoleDocument) {
         request.roleDocument = superAdminRoleDocument;
@@ -47,7 +45,7 @@ export class PrivilegesInterceptor implements NestInterceptor {
 
     // Handle USER && TEAM LEADER
     if (companyId && teamId) {
-      const leaderRoleDocument = await this.roleService.findOneRoleDocument({
+      const leaderRoleDocument = await this.roleService.findRoleDocument({
         email,
         companyId,
         teamId,
@@ -58,7 +56,7 @@ export class PrivilegesInterceptor implements NestInterceptor {
         return handler.handle();
       }
 
-      const userRoleDocument = await this.roleService.findOneRoleDocument({
+      const userRoleDocument = await this.roleService.findRoleDocument({
         email,
         companyId,
         teamId,
@@ -69,12 +67,11 @@ export class PrivilegesInterceptor implements NestInterceptor {
         return handler.handle();
       }
 
-      const companyAdminRoleDocument =
-        await this.roleService.findOneRoleDocument({
-          email,
-          companyId,
-          role: RoleType.COMPANY_ADMIN,
-        });
+      const companyAdminRoleDocument = await this.roleService.findRoleDocument({
+        email,
+        companyId,
+        role: RoleType.COMPANY_ADMIN,
+      });
 
       const team = await this.teamService.getTeamById(companyId, teamId);
       if (!team) throw new UnauthorizedException();
@@ -88,12 +85,11 @@ export class PrivilegesInterceptor implements NestInterceptor {
     // Handle COMPANY_ADMIN
 
     if (companyId && (!teamId || teamId.length <= 0)) {
-      const companyAdminRoleDocument =
-        await this.roleService.findOneRoleDocument({
-          email,
-          companyId,
-          role: RoleType.COMPANY_ADMIN,
-        });
+      const companyAdminRoleDocument = await this.roleService.findRoleDocument({
+        email,
+        companyId,
+        role: RoleType.COMPANY_ADMIN,
+      });
 
       if (companyAdminRoleDocument) {
         request.roleDocument = companyAdminRoleDocument;
@@ -106,12 +102,10 @@ export class PrivilegesInterceptor implements NestInterceptor {
       (!companyId || companyId.length <= 0) &&
       (!teamId || teamId.length <= 0)
     ) {
-      const superAdminRoleDocument = await this.roleService.findOneRoleDocument(
-        {
-          email,
-          role: RoleType.SUPER_ADMIN,
-        },
-      );
+      const superAdminRoleDocument = await this.roleService.findRoleDocument({
+        email,
+        role: RoleType.SUPER_ADMIN,
+      });
 
       if (superAdminRoleDocument) {
         request.roleDocument = superAdminRoleDocument;

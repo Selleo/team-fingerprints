@@ -8,7 +8,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { User } from 'src/users/models/user.model';
 import { QuestionAnswerDto } from './dto/question-answer.dto';
@@ -214,19 +214,17 @@ export class SurveyAnswerService {
   }
 
   async getSurveyCompleteStatus(userId: string, surveyId: string) {
-    const userWithSurvey = await this.userModel
+    const user = await this.userModel
       .findOne({
-        _id: new mongoose.Types.ObjectId(userId),
+        _id: new Types.ObjectId(userId).toString(),
         'surveysAnswers.$.surveyId': surveyId,
       })
       .exec();
 
-    if (!userWithSurvey) return SurveyCompleteStatus.NEW;
-    const surveysAnswers = userWithSurvey.surveysAnswers;
+    if (!user) return SurveyCompleteStatus.NEW;
 
-    const surveyAnswer = surveysAnswers?.find(
-      (answer) =>
-        answer.surveyId === new mongoose.Types.ObjectId(surveyId).toString(),
+    const surveyAnswer = user?.surveysAnswers?.find(
+      (answer) => answer.surveyId === new Types.ObjectId(surveyId).toString(),
     );
     if (!surveyAnswer) return SurveyCompleteStatus.NEW;
 

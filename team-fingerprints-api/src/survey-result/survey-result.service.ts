@@ -28,25 +28,25 @@ export class SurveyResultService {
   ) {}
 
   async getSurveyResultForUser(surveyId: string, userId: string) {
-    const isFinished = await this.surveyAnswerService.checkIfSurveyIsFinished(
-      userId,
-      surveyId,
-    );
-    if (!isFinished) return;
+    if (
+      !(await this.surveyAnswerService.checkIfSurveyIsFinished(
+        userId,
+        surveyId,
+      ))
+    )
+      return;
 
-    const userAnswersAll = await this.userModel
+    const { surveysAnswers } = await this.userModel
       .findOne({
         _id: userId,
         'surveysAnswers.surveyId': surveyId,
       })
       .exec();
 
-    const userAnswers = userAnswersAll.surveysAnswers.find(
+    const { surveyResult } = surveysAnswers.find(
       (el) => el.surveyId === surveyId,
     );
-
-    const result = userAnswers.surveyResult;
-    return result;
+    return surveyResult;
   }
 
   async getAvgResultForAllCompanies(surveyId: string, queries: any) {
@@ -54,7 +54,7 @@ export class SurveyResultService {
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');
 
-    const filteredUsersIds = await this.getUsersIdsByUserDetails(
+    const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
       usersIds,
       queries,
     );
@@ -70,7 +70,7 @@ export class SurveyResultService {
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');
 
-    const filteredUsersIds = await this.getUsersIdsByUserDetails(
+    const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
       usersIds,
       queries,
     );
@@ -82,13 +82,15 @@ export class SurveyResultService {
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');
 
-    const filteredUsersIds = await this.getUsersIdsByUserDetails(
+    const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
       usersIds,
       queries,
     );
     return await this.countPoints(surveyId, filteredUsersIds);
   }
 
+  // todo
+  // put it into queue
   async countPoints(surveyId: string, usersIds: string[]) {
     const survey = await this.surveyModel.findById({ _id: surveyId });
     if (!survey) throw new InternalServerErrorException();
@@ -168,19 +170,6 @@ export class SurveyResultService {
     return surveyResult;
   }
 
-  async getUsersIdsByUserDetails(usersIds: string[], queries: any) {
-    if (Object.keys(queries).length <= 0) return usersIds;
-    const users = (
-      await Promise.all(
-        usersIds.map(async (id) => {
-          return await this.usersService.getUserByUserDetails(id, queries);
-        }),
-      )
-    ).filter(Boolean);
-
-    return users.map((user) => user._id.toString());
-  }
-
   async getUsersIds(
     searchParam: Partial<RoleI> | null = null,
   ): Promise<string[]> {
@@ -192,35 +181,34 @@ export class SurveyResultService {
         ...searchParam,
       });
 
-      if (roleDocuments.length <= 0) throw new NotFoundException();
+      if (roleDocuments.length <= 0) return [];
 
       return roleDocuments
         .filter(
           (value, index, array) =>
             index ===
             array.findIndex(
-              (el) => el.email === value.email && value.userId?.length > 0,
+              (roleDocument) =>
+                roleDocument.email === value.email && value.userId?.length > 0,
             ),
         )
-        .map((rolDoc) => rolDoc.userId)
+        .map((roleDocument) => roleDocument.userId)
         .filter(Boolean);
     }
   }
 
   async getAvailableFilters(usersIds: string[]) {
-    const usersDetails = (
-      await Promise.all(
-        usersIds.map(async (userId) => {
-          const user = await this.usersService.getUser(userId);
-          return user.userDetails && Object.keys(user.userDetails).length > 0
-            ? user.userDetails
-            : null;
-        }),
-      )
-    ).filter(Boolean);
+    const users = await this.userModel.find({ _id: { $in: usersIds } });
 
-    const filtersList = await this.filterService.getFiltersList();
-    const filtersPaths = filtersList.map((filter) => filter.filterPath);
+    const usersDetails = users
+      .map(({ userDetails }: User) =>
+        userDetails && Object.keys(userDetails).length > 0 ? userDetails : null,
+      )
+      .filter(Boolean);
+
+    const filtersPaths = (await this.filterService.getFiltersList()).map(
+      (filter) => filter.filterPath,
+    );
 
     const groupedFilters = [];
 

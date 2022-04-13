@@ -13,12 +13,12 @@ import { SurveyResultService } from './survey-result.service';
 
 @Module({
   imports: [
-    forwardRef(() => SurveyAnswerModule),
-    forwardRef(() => RoleModule),
     TeamModule,
     CompanyModule,
     UsersModule,
     FilterModule,
+    forwardRef(() => SurveyAnswerModule),
+    forwardRef(() => RoleModule),
     MongooseModule.forFeature([
       {
         name: User.name,

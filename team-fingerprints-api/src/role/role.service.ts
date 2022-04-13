@@ -38,9 +38,7 @@ export class RoleService {
     return roleDocument;
   }
 
-  async findOneRoleDocument(
-    searchParams: Partial<RoleI | null>,
-  ): Promise<Role> {
+  async findRoleDocument(searchParams: Partial<RoleI | null>): Promise<Role> {
     const roleDocument = await this.roleModel.findOne(searchParams).exec();
     if (!roleDocument) return null;
     return roleDocument;
@@ -80,7 +78,7 @@ export class RoleService {
   }
 
   async leave(userId: string, roleId: string) {
-    const roleDocument = await this.findOneRoleDocument({
+    const roleDocument = await this.findRoleDocument({
       _id: roleId,
       userId,
     });
@@ -91,13 +89,13 @@ export class RoleService {
   }
 
   async removeRole(roleId: string, currentUserId: string) {
-    const roleDocumentToRemove = await this.findOneRoleDocument({
+    const roleDocumentToRemove = await this.findRoleDocument({
       _id: roleId,
     });
 
     if (!roleDocumentToRemove) throw new NotFoundException();
 
-    const companyAdminRemovalRole = await this.findOneRoleDocument({
+    const companyAdminRemovalRole = await this.findRoleDocument({
       companyId: roleDocumentToRemove.companyId,
       userId: currentUserId,
       role: RoleType.COMPANY_ADMIN,
@@ -107,7 +105,7 @@ export class RoleService {
       return await this.removeRoleDocumentById(roleDocumentToRemove);
     }
 
-    const teamLeadRemovalRole = await this.findOneRoleDocument({
+    const teamLeadRemovalRole = await this.findRoleDocument({
       teamId: roleDocumentToRemove.teamId,
       userId: currentUserId,
       role: RoleType.TEAM_LEADER,
@@ -117,7 +115,7 @@ export class RoleService {
       return await this.removeRoleDocumentById(roleDocumentToRemove);
     }
 
-    const superAdminRemovalRole = await this.findOneRoleDocument({
+    const superAdminRemovalRole = await this.findRoleDocument({
       userId: currentUserId,
       role: RoleType.SUPER_ADMIN,
     });
@@ -132,7 +130,7 @@ export class RoleService {
   async addSuperAdminRole(email: string) {
     if (!isEmail(email)) throw new BadRequestException('Invalid email');
 
-    const roleDocumenExists = await this.findOneRoleDocument({
+    const roleDocumenExists = await this.findRoleDocument({
       email,
       role: RoleType.SUPER_ADMIN,
     });

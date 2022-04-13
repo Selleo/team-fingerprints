@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Survey } from 'src/survey/models/survey.model';
@@ -12,35 +16,33 @@ export class SurveySummarizeService {
   ) {}
 
   async countPointsForUser(userId: string, surveyId: string) {
-    const userAnswersAll = await this.userModel.findOne({
+    const { surveysAnswers } = await this.userModel.findOne({
       _id: userId,
       'surveysAnswers.surveyId': surveyId,
     });
 
-    const userAnswers = userAnswersAll.surveysAnswers.find(
+    const { answers, amountOfAnswers } = surveysAnswers.find(
       (el) => el.surveyId === surveyId,
     );
 
-    const { answers } = userAnswers;
+    const survey = await this.surveyModel.findById(surveyId);
+    if (!survey)
+      throw new NotFoundException(`Survey id: ${surveyId} does not exist`);
 
-    const survey = await this.surveyModel.findById({ _id: surveyId });
-    if (!survey) throw new InternalServerErrorException();
     const categories = survey.categories;
 
-    const questions = [];
+    let questions = null;
     categories.forEach((category) => {
       category.trends.forEach((trend) => {
-        trend.questions.forEach((question: any) => {
-          questions.push(question);
-        });
+        questions = trend.questions.map((question: any) => question);
       });
     });
 
     if (
       answers.length !== questions.length ||
-      userAnswers.amountOfAnswers !== survey.amountOfQuestions
+      amountOfAnswers !== survey.amountOfQuestions
     ) {
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Something went wrong');
     }
 
     const summary = [];

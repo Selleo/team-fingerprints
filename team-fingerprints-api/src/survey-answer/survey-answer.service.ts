@@ -195,10 +195,9 @@ export class SurveyAnswerService {
   async finishSurvey(userId: string, surveyId: string) {
     const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
     if (isFinished)
-      return await this.surveyResultService.getSurveyResultForUser(
-        surveyId,
+      return await this.surveyResultService.getSurveyResultForUsers(surveyId, [
         userId,
-      );
+      ]);
 
     await this.changeSurvayCompleteStatusToFinished(userId, surveyId);
 
@@ -207,10 +206,9 @@ export class SurveyAnswerService {
 
     await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
 
-    return await this.surveyResultService.getSurveyResultForUser(
-      surveyId,
+    return await this.surveyResultService.getSurveyResultForUsers(surveyId, [
       userId,
-    );
+    ]);
   }
 
   async getSurveyCompleteStatus(userId: string, surveyId: string) {

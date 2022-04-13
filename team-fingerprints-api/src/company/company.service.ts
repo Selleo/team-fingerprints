@@ -150,4 +150,17 @@ export class CompanyService {
       .exec();
     return companyByDomain ? true : false;
   }
+
+  async deleteCompany(companyId: string): Promise<Company> {
+    return await this.companyModel.findByIdAndDelete(companyId);
+  }
+
+  async deleteCompanyWithoutMembers(companyId: string): Promise<void> {
+    const roleDocuments = await this.roleService.findAllRoleDocuments({
+      companyId,
+    });
+    if (!roleDocuments || roleDocuments.length <= 0) {
+      this.deleteCompany(companyId);
+    }
+  }
 }

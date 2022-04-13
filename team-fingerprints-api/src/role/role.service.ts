@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -8,6 +10,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { isEmail } from 'class-validator';
 import { Model } from 'mongoose';
+import { CompanyService } from 'src/company/company.service';
 import { User } from 'src/users/models/user.model';
 import { RoleI } from './interfaces/role.interface';
 import { Role } from './models/role.model';
@@ -17,6 +20,8 @@ import { RoleType } from './role.type';
 export class RoleService {
   constructor(
     @InjectModel(Role.name) private readonly roleModel: Model<Role>,
+    @Inject(forwardRef(() => CompanyService))
+    private readonly companyService: CompanyService,
   ) {}
 
   async createRoleDocument(
@@ -61,11 +66,17 @@ export class RoleService {
   }
 
   async removeRoleDocumentById(roleDocument: Role): Promise<Role> {
-    return await this.roleModel
+    const deletedRoleDocument = await this.roleModel
       .findByIdAndDelete(roleDocument._id.toString(), {
         new: true,
       })
       .exec();
+    if (deletedRoleDocument) {
+      await this.companyService.deleteCompanyWithoutMembers(
+        roleDocument.companyId,
+      );
+    }
+    return deletedRoleDocument;
   }
 
   async leave(userId: string, roleId: string) {

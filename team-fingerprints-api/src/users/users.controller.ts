@@ -28,7 +28,7 @@ export class UsersController {
   async getUser(
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<User> {
-    return await this.userService.getUser(userId);
+    return await this.userService.getUserById(userId);
   }
 
   @Get('all')

@@ -31,18 +31,18 @@ export class CompanyMembersService {
 
   async handleUserInCompanyDomain(email: string) {
     const user = await this.usersService.getUserByEmail(email);
-
     if (user.inCompany) return;
 
     const company = await this.isUserInCompanyDomain(email);
     if (!company) return;
 
-    const roleDocumentExists = await this.roleService.findOneRoleDocument({
-      email,
-      companyId: company._id,
-    });
-
-    if (roleDocumentExists) return;
+    if (
+      await this.roleService.findRoleDocument({
+        email,
+        companyId: company._id,
+      })
+    )
+      return;
 
     await this.roleService.createRoleDocument(user, {
       userId: user._id,
@@ -61,7 +61,7 @@ export class CompanyMembersService {
 
     return await Promise.all(
       emails.map(async (email) => {
-        const roleDocument = await this.roleService.findOneRoleDocument({
+        const roleDocument = await this.roleService.findRoleDocument({
           email,
           companyId,
           role: RoleType.USER,
@@ -86,7 +86,7 @@ export class CompanyMembersService {
   async addCompanyAdmin(email: string, companyId: string) {
     if (!isEmail(email)) throw new BadRequestException('Invalid email');
 
-    const roleDocumentExists = await this.roleService.findOneRoleDocument({
+    const roleDocumentExists = await this.roleService.findRoleDocument({
       email,
       companyId,
       role: RoleType.COMPANY_ADMIN,

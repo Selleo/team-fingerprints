@@ -33,10 +33,9 @@ export class CompanyService {
     private readonly roleService: RoleService,
     private readonly tfConfigService: TfConfigService,
   ) {}
-  async getCompaneis(): Promise<Company[]> {
-    const companies = await this.companyModel.find({}).exec();
-    if (companies && companies.length > 0) return companies;
-    else return [];
+
+  async getCompanyById(companyId: string): Promise<Company> {
+    return await this.companyModel.findOne({ _id: companyId }).exec();
   }
 
   async getCompany(companyId: string) {
@@ -52,8 +51,10 @@ export class CompanyService {
     return { company, roles: roleDocuments };
   }
 
-  async getCompanyById(companyId: string): Promise<Company> {
-    return await this.companyModel.findOne({ _id: companyId }).exec();
+  async getCompaneis(): Promise<Company[]> {
+    const companies = await this.companyModel.find().exec();
+    if (companies && companies.length > 0) return companies;
+    else return [];
   }
 
   async createCompany(
@@ -88,7 +89,7 @@ export class CompanyService {
 
     await newCompany.save();
 
-    const user = await this.usersService.getUser(userId);
+    const user = await this.usersService.getUserById(userId);
     const roleDocument = await this.roleService.createRoleDocument(user, {
       userId: user._id,
       role: RoleType.COMPANY_ADMIN,

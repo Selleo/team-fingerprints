@@ -25,7 +25,7 @@ export class TeamMembersService {
   ) {}
 
   async isLeaderInTeam(teamId: string): Promise<string | boolean> {
-    const roleDocuments = await this.roleService.findOneRoleDocument({
+    const roleDocuments = await this.roleService.findRoleDocument({
       role: RoleType.TEAM_LEADER,
       teamId,
     });
@@ -38,7 +38,7 @@ export class TeamMembersService {
     companyId: string,
     teamId: string,
   ): Promise<Role | null> {
-    const roleDocument = await this.roleService.findOneRoleDocument({
+    const roleDocument = await this.roleService.findRoleDocument({
       email,
       teamId,
       companyId,
@@ -56,7 +56,7 @@ export class TeamMembersService {
   }
 
   async isSuperAdminByEmail(email: string) {
-    const roleDocument = await this.roleService.findOneRoleDocument({
+    const roleDocument = await this.roleService.findRoleDocument({
       email,
       role: RoleType.SUPER_ADMIN,
     });
@@ -75,7 +75,7 @@ export class TeamMembersService {
 
     return await Promise.all(
       emails.map(async (email) => {
-        const roleDocument = await this.roleService.findOneRoleDocument({
+        const roleDocument = await this.roleService.findRoleDocument({
           email,
           companyId,
           teamId,
@@ -143,7 +143,7 @@ export class TeamMembersService {
     companyId: string,
     teamId: string,
   ): Promise<Role | boolean> {
-    const roleDocument = await this.roleService.findOneRoleDocument({
+    const roleDocument = await this.roleService.findRoleDocument({
       email,
       companyId,
       teamId,
@@ -169,7 +169,7 @@ export class TeamMembersService {
     const isTeamLeader = await this.isTeamLeaderByEmail(leaderEmail, teamId);
     if (!isUserInTargetTeam || isTeamLeader) return;
 
-    const currentTeamLeader = await this.roleService.findOneRoleDocument({
+    const currentTeamLeader = await this.roleService.findRoleDocument({
       companyId,
       teamId,
       role: RoleType.TEAM_LEADER,
@@ -198,7 +198,7 @@ export class TeamMembersService {
     email: string,
     teamId: string,
   ): Promise<Role | HttpException> {
-    const roleDocument = await this.roleService.findOneRoleDocument({
+    const roleDocument = await this.roleService.findRoleDocument({
       email,
       teamId,
       role: RoleType.TEAM_LEADER,
@@ -211,7 +211,7 @@ export class TeamMembersService {
     email: string,
     teamId: string,
   ): Promise<Role | boolean> {
-    const roleDocument = await this.roleService.findOneRoleDocument({
+    const roleDocument = await this.roleService.findRoleDocument({
       email,
       teamId,
       role: RoleType.TEAM_LEADER,

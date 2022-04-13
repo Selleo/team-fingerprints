@@ -67,13 +67,15 @@ export class FilterService {
   }
 
   async removeFilter(filterId: string) {
-    if (!(await this.filterExists(filterId))) throw new NotFoundException();
+    if (!(await this.filterExists(filterId)))
+      throw new NotFoundException(`Filer does not exist`);
 
     return await this.filterModel.findByIdAndRemove(filterId);
   }
 
   async getFilterWithValues(filterId: string) {
-    if (!(await this.filterExists(filterId))) throw new NotFoundException();
+    if (!(await this.filterExists(filterId)))
+      throw new NotFoundException(`Filer does not exist`);
     return await this.filterModel.findById(filterId);
   }
 
@@ -87,7 +89,7 @@ export class FilterService {
 
   async addFilterValue(filterId: string, value: string) {
     const filter = await this.filterExists(filterId);
-    if (!filter) throw new NotFoundException();
+    if (!filter) throw new NotFoundException(`Filer does not exist`);
 
     return await this.filterModel
       .findByIdAndUpdate(

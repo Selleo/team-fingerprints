@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { PrivilegeI, UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
@@ -23,20 +23,16 @@ export class UsersService {
     private readonly filterService: FilterService,
   ) {}
 
-  async getUserByAuthId(authId: string): Promise<User> {
-    return await this.userModel.findOne({ authId });
+  async getUserById(userId: string): Promise<User> {
+    return await this.userModel.findOne({ _id: userId });
   }
 
   async getUserByEmail(email: string): Promise<User> {
     return await this.userModel.findOne({ email });
   }
 
-  async getUser(userId: string): Promise<User> {
-    return await this.userModel.findOne({ _id: userId });
-  }
-
-  async getUsersAll(): Promise<User[]> {
-    return await this.userModel.find({});
+  async getUserByAuthId(authId: string): Promise<User> {
+    return await this.userModel.findOne({ authId });
   }
 
   async getUserByUserDetails(_id: string, queries: any) {
@@ -54,20 +50,39 @@ export class UsersService {
     });
   }
 
+  async getUsersAll(): Promise<User[]> {
+    return await this.userModel.find({});
+  }
+
   async getUsersByIds(userIds: string[]): Promise<UserProfileI[]> {
     if (!userIds || userIds.length <= 0) return [];
     const profiles = userIds?.map(async (id) => {
-      if (!mongoose.Types.ObjectId.isValid(id)) return;
+      if (!Types.ObjectId.isValid(id)) return;
       const profile = await this.getUserProfile(id);
       if (profile) return profile;
     });
     return await Promise.all(profiles);
   }
 
+  async getUsersIdsByUserDetails(usersIds: string[], queries: any) {
+    if (Object.keys(queries).length <= 0) return usersIds;
+    const users = (
+      await Promise.all(
+        usersIds.map(async (id) => {
+          return await this.getUserByUserDetails(id, queries);
+        }),
+      )
+    ).filter(Boolean);
+
+    return users.map((user) => user._id.toString());
+  }
+
   async getUserProfile(userId: string): Promise<UserProfileI> {
-    const user = await this.getUser(userId);
+    const user = await this.getUserById(userId);
+    if (!user) throw new NotFoundException('User does not exist');
+
     const profile: UserProfileI = {
-      _id: user._id,
+      _id: userId,
       email: user.email,
       userDetails: user.userDetails,
       privileges: [],
@@ -162,8 +177,8 @@ export class UsersService {
     if (filterPaths.length !== filters.length)
       throw new NotFoundException('Filter not found');
 
-    const user = await this.getUser(userId);
-    if (!user) throw new NotFoundException();
+    const user = await this.getUserById(userId);
+    if (!user) throw new NotFoundException('User does not exist');
 
     await this.userModel.findOneAndUpdate(
       { _id: userId },
@@ -217,14 +232,14 @@ export class UsersService {
     );
 
     const { surveysAnswers } = user;
-    const surveyIds: boolean[] = surveysAnswers
+    const surveys: boolean[] = surveysAnswers
       .map(
         (el: UserSurveyAnswerI) =>
           el.completeStatus === SurveyCompleteStatus.FINISHED,
       )
       .filter(Boolean);
 
-    if (!surveyIds || surveyIds.length <= 0) {
+    if (!surveys || surveys.length <= 0) {
       return await this.userModel
         .findByIdAndRemove(user._id, { new: true })
         .exec();

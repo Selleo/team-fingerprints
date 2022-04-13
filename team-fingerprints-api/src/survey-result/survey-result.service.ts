@@ -27,26 +27,33 @@ export class SurveyResultService {
     private readonly filterService: FilterService,
   ) {}
 
-  async getSurveyResultForUser(surveyId: string, userId: string) {
-    if (
-      !(await this.surveyAnswerService.checkIfSurveyIsFinished(
-        userId,
-        surveyId,
-      ))
-    )
-      return;
-
-    const { surveysAnswers } = await this.userModel
-      .findOne({
-        _id: userId,
-        'surveysAnswers.surveyId': surveyId,
-      })
-      .exec();
-
-    const { surveyResult } = surveysAnswers.find(
-      (el) => el.surveyId === surveyId,
+  async getSurveyResultForUsers(surveyId: string, usersIds: string[]) {
+    usersIds = await Promise.all(
+      usersIds.map(async (userId) => {
+        if (
+          await this.surveyAnswerService.checkIfSurveyIsFinished(
+            userId,
+            surveyId,
+          )
+        )
+          return userId;
+      }),
     );
-    return surveyResult;
+
+    const users = await this.userModel.find(
+      { _id: { $in: usersIds } },
+      {
+        surveysAnswers: 1,
+      },
+    );
+
+    const usersResults = users.map((user) => {
+      return user.surveysAnswers.find(
+        (surveyAnswers) => surveyAnswers.surveyId === surveyId,
+      ).surveyResult;
+    });
+
+    return usersResults;
   }
 
   async getAvgResultForAllCompanies(surveyId: string, queries: any) {
@@ -109,13 +116,10 @@ export class SurveyResultService {
       });
     });
 
-    const entitiesResult = (
-      await Promise.all(
-        usersIds.map(async (userId: string) => {
-          return await this.getSurveyResultForUser(surveyId, userId);
-        }),
-      )
-    ).filter(Boolean);
+    const entitiesResult = await this.getSurveyResultForUsers(
+      surveyId,
+      usersIds,
+    );
 
     const entitiesResultFlat = [];
     entitiesResult.forEach((result) => {

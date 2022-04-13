@@ -46,14 +46,13 @@ export class SurveyResultController {
   }
 
   @Get(':surveyId/companies/:companyId/teams/:teamId/users/:userId')
-  async getSurveyResultForUser(
+  async getSurveyResultForUsers(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('userId', ValidateObjectId) userId: string,
   ) {
-    return await this.surveyResultService.getSurveyResultForUser(
-      surveyId,
-      userId,
-    );
+    return (
+      await this.surveyResultService.getSurveyResultForUsers(surveyId, [userId])
+    )[0];
   }
 
   @Public()

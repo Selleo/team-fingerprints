@@ -24,6 +24,10 @@ jobs:
       AUTH0_MANAGEMENT_API_TOKEN: ${{secrets.AUTH0_MANAGEMENT_API_TOKEN}}
       ENV: ${{secrets.ENV}}
       MONGODB_URI: ${{secrets.MONGODB_URI}}
+      REDIS_PORT: ${{secrets.REDIS_PORT}}
+      REDIS_HOST: ${{secrets.REDIS_HOST}}
+      REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
+      
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -36,6 +40,3 @@ jobs:
       - run: npm run build
       - run: npm run test
       - run: npm run test:e2e
-      
-    
-

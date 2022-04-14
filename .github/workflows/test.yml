@@ -22,7 +22,7 @@ jobs:
       AUTH0_DOMAIN: ${{secrets.AUTH0_DOMAIN}}
       AUTH0_ISSUER: ${{secrets.AUTH0_ISSUER}}
       AUTH0_MANAGEMENT_API_TOKEN: ${{secrets.AUTH0_MANAGEMENT_API_TOKEN}}
-      ENV: ${{secrets.ENV}}
+      NODE_ENV: ${{secrets.ENV}}
       MONGODB_URI: ${{secrets.MONGODB_URI}}
       REDIS_PORT: ${{secrets.REDIS_PORT}}
       REDIS_HOST: ${{secrets.REDIS_HOST}}

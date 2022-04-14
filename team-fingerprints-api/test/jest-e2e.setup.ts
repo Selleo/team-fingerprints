@@ -6,6 +6,9 @@ import { createBaseUser, giveSuperAdminPrivileges } from './helpers/users';
 import { getApplication } from './helpers/getApplication';
 import { getMongoConnection } from './helpers/getMongoConnection';
 
+jest.mock('cache-manager-redis-store');
+jest.mock('cache-manager');
+
 let usersModel: Model<User>;
 let roleModel: Model<Role>;
 let baseUser: User;

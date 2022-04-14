@@ -26,7 +26,7 @@ export const configModuleConfig = {
 export const mongooseModuleConfig = {
   imports: [ConfigModule],
   inject: [ConfigService],
-  useFactory: (configService: ConfigService) => ({
+  useFactory: async (configService: ConfigService) => ({
     uri: configService.get<string>('MONGODB_URI'),
   }),
 };

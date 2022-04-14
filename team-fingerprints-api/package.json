@@ -33,8 +33,11 @@
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.1.5",
+    "@types/cache-manager-redis-store": "^2.0.1",
     "axios": "^0.24.0",
     "bull": "^4.8.1",
+    "cache-manager": "^3.6.1",
+    "cache-manager-redis-store": "^2.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "dotenv": "^10.0.0",
@@ -110,11 +113,12 @@
       "jest-watch-typeahead/filename",
       "jest-watch-typeahead/testname"
     ],
-    "moduleDirectories": ["node_modules"]
+    "moduleDirectories": [
+      "node_modules"
+    ]
   },
   "modulePaths": [
     "<rootDir>/src",
     "<rootDir>/node_modules"
   ]
 }
-

@@ -46,8 +46,6 @@ const ProfileDetails = () => {
     }
   );
 
-  console.log("profile", data);
-
   const initialValues = reduce(
     data || [],
     (result: FormData, filter: Filter) => {
@@ -57,8 +55,6 @@ const ProfileDetails = () => {
     },
     {} as FormData
   );
-
-  console.log("initialValues", initialValues);
 
   const { handleSubmit, handleChange, values } = useFormik<FormData>({
     enableReinitialize: true,

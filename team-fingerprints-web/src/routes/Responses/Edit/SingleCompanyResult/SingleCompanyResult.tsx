@@ -53,7 +53,6 @@ const SingleCompanyResult: FC<IProps> = ({
     }
   }, [data]);
 
-  console.log(companyData);
   return (
     <>
       {companyData?.company?.teams?.map?.((team) => (

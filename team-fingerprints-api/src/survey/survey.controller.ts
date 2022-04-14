@@ -1,11 +1,13 @@
 import {
   Body,
+  CacheInterceptor,
   Controller,
   Delete,
   Get,
   Param,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
@@ -23,6 +25,7 @@ export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
   async getSurveysByRole(
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
@@ -31,12 +34,14 @@ export class SurveyController {
 
   @Public()
   @Get('public')
+  @UseInterceptors(CacheInterceptor)
   async getSurveys(): Promise<Survey[]> {
     return await this.surveyService.getSurveys();
   }
 
   @Public()
   @Get(':surveyId/public')
+  @UseInterceptors(CacheInterceptor)
   async getSurveyById(
     @Param('surveyId', ValidateObjectId) suveyId: string,
   ): Promise<Survey> {
@@ -44,6 +49,7 @@ export class SurveyController {
   }
 
   @Get(':surveyId')
+  @UseInterceptors(CacheInterceptor)
   async getSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @CurrentUserId(ValidateObjectId) userId: string,

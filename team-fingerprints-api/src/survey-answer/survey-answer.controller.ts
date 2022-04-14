@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  CacheInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
@@ -11,6 +19,7 @@ export class SurveyAnswerController {
   constructor(private readonly surveyAnswerService: SurveyAnswerService) {}
 
   @Get(':surveyId')
+  @UseInterceptors(CacheInterceptor)
   async getUserAnswers(
     @CurrentUserId(ValidateObjectId) userId: any,
     @Param('surveyId', ValidateObjectId) surveyId: string,

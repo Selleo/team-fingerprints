@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  CacheInterceptor,
+  Controller,
+  Get,
+  Param,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { SurveyResultService } from './survey-result.service';
@@ -9,6 +16,7 @@ export class SurveyResultController {
 
   @Public()
   @Get(':surveyId/companies')
+  @UseInterceptors(CacheInterceptor)
   async getAvgResultForAllCompanies(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Query() queries: any,
@@ -20,6 +28,7 @@ export class SurveyResultController {
   }
 
   @Get(':surveyId/companies/:companyId')
+  @UseInterceptors(CacheInterceptor)
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -33,6 +42,7 @@ export class SurveyResultController {
   }
 
   @Get(':surveyId/companies/:companyId/teams/:teamId')
+  @UseInterceptors(CacheInterceptor)
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -46,6 +56,7 @@ export class SurveyResultController {
   }
 
   @Get(':surveyId/companies/:companyId/teams/:teamId/users/:userId')
+  @UseInterceptors(CacheInterceptor)
   async getSurveyResultForUsers(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('userId', ValidateObjectId) userId: string,

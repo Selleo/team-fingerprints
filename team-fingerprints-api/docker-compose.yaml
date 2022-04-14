@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   redis:
-    image: redis
+    image: redis:alpine
     environment:
       REDIS_PASSWORD: redis
     ports:
@@ -10,3 +10,12 @@ services:
     volumes:
       - ./.docker/redis/data/:/data/
       - ./.docker/redis/logs/:/var/log/redis/
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+        - redis

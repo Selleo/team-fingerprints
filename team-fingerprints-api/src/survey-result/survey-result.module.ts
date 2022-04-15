@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bull';
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CompanyModule } from 'src/company/company.module';
@@ -31,6 +32,9 @@ import { SurveyResultService } from './survey-result.service';
         schema: SurveySchema,
       },
     ]),
+    BullModule.registerQueueAsync({
+      name: 'count-points',
+    }),
   ],
   controllers: [SurveyResultController],
   providers: [SurveyResultService],

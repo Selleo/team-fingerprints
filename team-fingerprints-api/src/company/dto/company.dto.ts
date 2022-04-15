@@ -58,13 +58,13 @@ export class UpdateCompanyDto {
   @IsOptional()
   readonly domain?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
   readonly pointShape?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
@@ -72,6 +72,7 @@ export class UpdateCompanyDto {
 }
 
 export class ValidateEmail {
+  @ApiProperty()
   @IsString()
   @IsEmail()
   @IsNotEmpty()

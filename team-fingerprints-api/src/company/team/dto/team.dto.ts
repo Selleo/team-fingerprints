@@ -1,11 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsNotEmpty, IsDefined } from 'class-validator';
 
 export class CreateTeamDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   readonly name: string;
 
+  @ApiProperty()
   @IsString()
   @IsDefined()
   @IsOptional()
@@ -25,23 +27,25 @@ export class CreateTeamDto {
 }
 
 export class UpdateTeamDto {
+  @ApiPropertyOptional()
   @IsString()
   @IsDefined()
   @IsOptional()
   readonly name?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsDefined()
   @IsOptional()
   readonly description?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
   readonly pointShape?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()

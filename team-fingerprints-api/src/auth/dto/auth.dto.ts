@@ -19,6 +19,7 @@ export class ResponseAuthDto implements UserProfileI {
   @ValidateNested()
   privileges: PrivilegeI[];
 
+  @ApiProperty()
   @ValidateNested()
   userDetails: UserDetailI[];
 }

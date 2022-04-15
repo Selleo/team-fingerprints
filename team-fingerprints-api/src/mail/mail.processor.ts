@@ -7,12 +7,16 @@ import {
   Processor,
 } from '@nestjs/bull';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Job } from 'bull';
 
 @Processor('mailsend')
 export class MailProcessor {
   private readonly logger = new Logger(this.constructor.name);
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @OnQueueActive()
   onActive(job: Job) {
@@ -63,7 +67,7 @@ export class MailProcessor {
     try {
       const success = await this.mailerService.sendMail({
         to: job.data.to,
-        from: 'fingerprints@selleo.com',
+        from: this.configService.get<string>('MAIL_USER'),
         subject: `You were invited to ${job.data.companyName} company - testing new account mail`,
         html: `<p>Hi ${job.data.to}, you were invited to <b> ${job.data.companyName} company</b></p>
         <p><a href="https://teamfingerprints.selleo.com/manage">Team Fingerprints</a></p>
@@ -80,7 +84,7 @@ export class MailProcessor {
     try {
       const success = await this.mailerService.sendMail({
         to: job.data.to,
-        from: 'fingerprints@selleo.com',
+        from: this.configService.get<string>('MAIL_USER'),
         subject: `You were invited to ${job.data.companyName} company - testing new account mail`,
         html: `<p>Hi ${job.data.to}, you were invited to <b> ${job.data.teamName} team</b> in ${job.data.companyName} company</p>
         <p><a href="https://teamfingerprints.selleo.com/manage">Team Fingerprints</a></p>`,
@@ -96,7 +100,7 @@ export class MailProcessor {
     try {
       const success = await this.mailerService.sendMail({
         to: job.data.to,
-        from: 'fingerprints@selleo.com',
+        from: this.configService.get<string>('MAIL_USER'),
         subject: `You you became a team leader in ${job.data.companyName} company - testing new account mail`,
         html: `<p>Hi ${job.data.to}, you became a team leader in <b> ${job.data.teamName} team</b> in ${job.data.companyName} company</p>
         <p><a href="https://teamfingerprints.selleo.com/manage">Team Fingerprints</a></p>`,

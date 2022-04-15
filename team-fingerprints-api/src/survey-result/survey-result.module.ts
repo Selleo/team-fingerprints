@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bull';
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CompanyModule } from 'src/company/company.module';
@@ -10,6 +11,7 @@ import { TfConfigModule } from 'src/tf-config/tf-config.module';
 import { User, UserSchema } from 'src/users/models/user.model';
 import { UsersModule } from 'src/users/users.module';
 import { SurveyResultController } from './survey-result.controller';
+import { SurveyResultProcessor } from './survey-result.processor';
 import { SurveyResultService } from './survey-result.service';
 
 @Module({
@@ -31,9 +33,12 @@ import { SurveyResultService } from './survey-result.service';
         schema: SurveySchema,
       },
     ]),
+    BullModule.registerQueueAsync({
+      name: 'count-points',
+    }),
   ],
   controllers: [SurveyResultController],
-  providers: [SurveyResultService],
+  providers: [SurveyResultService, SurveyResultProcessor],
   exports: [SurveyResultService],
 })
 export class SurveyResultModule {}

@@ -77,8 +77,7 @@ export class CompanyMembersService {
 
         const company = await this.companyService.getCompanyById(companyId);
 
-        const aaa = this.mailService.inviteToCompanyMail(email, company.name);
-        console.log({ aaa });
+        this.mailService.inviteToCompanyMail(email, company.name);
         return email;
       }),
     );

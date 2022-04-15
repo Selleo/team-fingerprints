@@ -1,3 +1,4 @@
+import { InjectQueue } from '@nestjs/bull';
 import {
   forwardRef,
   Inject,
@@ -6,6 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Queue } from 'bull';
 import { Model } from 'mongoose';
 import { FilterService } from 'src/filter/filter.service';
 import { RoleI } from 'src/role/interfaces/role.interface';
@@ -19,6 +21,7 @@ import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class SurveyResultService {
   constructor(
+    @InjectQueue('count-points') private readonly countPointsQueue: Queue,
     @Inject(forwardRef(() => SurveyAnswerService))
     private readonly surveyAnswerService: SurveyAnswerService,
     @InjectModel(User.name) private readonly userModel: Model<User>,
@@ -80,33 +83,13 @@ export class SurveyResultService {
       resultsForCompanies.counter < 3
     ) {
       return resultsForCompanies.data;
-    }
-
-    const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
-      usersIds,
-    );
-
-    const calculatedResult = await this.countPoints(surveyId, filteredUsersIds);
-
-    if (
-      resultsForCompanies &&
-      (Object.keys(resultsForCompanies.data).length > 0 ||
-        resultsForCompanies.counter >= 3)
-    ) {
+    } else {
+      const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
+        usersIds,
+      );
+      const result = await this.countPoints(surveyId, filteredUsersIds);
       return (
-        await this.tfConfigService.updateGlobalSurveysResults(
-          surveyId,
-          calculatedResult,
-        )
-      ).data;
-    }
-
-    if (!resultsForCompanies) {
-      return (
-        await this.tfConfigService.createGlobalSurveysResults(
-          surveyId,
-          calculatedResult,
-        )
+        await this.tfConfigService.createGlobalSurveysResults(surveyId, result)
       ).data;
     }
   }
@@ -139,8 +122,10 @@ export class SurveyResultService {
     return await this.countPoints(surveyId, filteredUsersIds);
   }
 
-  // todo
-  // put it into queue
+  async countPointsJob(surveyId: string) {
+    await this.countPointsQueue.add('count', { surveyId });
+  }
+
   async countPoints(surveyId: string, usersIds: string[]) {
     const survey = await this.surveyModel.findById({ _id: surveyId });
     if (!survey) throw new InternalServerErrorException();

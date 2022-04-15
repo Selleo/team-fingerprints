@@ -64,7 +64,7 @@ export class UsersService {
     return await Promise.all(profiles);
   }
 
-  async getUsersIdsByUserDetails(usersIds: string[], queries: any) {
+  async getUsersIdsByUserDetails(usersIds: string[], queries: any = {}) {
     if (Object.keys(queries).length <= 0) return usersIds;
     const users = (
       await Promise.all(

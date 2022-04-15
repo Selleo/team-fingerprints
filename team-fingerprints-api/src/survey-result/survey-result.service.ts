@@ -12,6 +12,7 @@ import { RoleI } from 'src/role/interfaces/role.interface';
 import { RoleService } from 'src/role/role.service';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 import { Survey } from 'src/survey/models/survey.model';
+import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { User } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
 
@@ -25,6 +26,7 @@ export class SurveyResultService {
     private readonly roleService: RoleService,
     private readonly usersService: UsersService,
     private readonly filterService: FilterService,
+    private readonly tfConfigService: TfConfigService,
   ) {}
 
   async getSurveyResultForUsers(surveyId: string, usersIds: string[]) {
@@ -61,11 +63,52 @@ export class SurveyResultService {
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');
 
+    if (Object.keys(queries).length > 0) {
+      const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
+        usersIds,
+        queries,
+      );
+      return await this.countPoints(surveyId, filteredUsersIds);
+    }
+
+    const resultsForCompanies =
+      await this.tfConfigService.getGlobalSurveysResults(surveyId);
+
+    if (
+      resultsForCompanies &&
+      Object.keys(resultsForCompanies.data).length > 0 &&
+      resultsForCompanies.counter < 3
+    ) {
+      return resultsForCompanies.data;
+    }
+
     const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
       usersIds,
-      queries,
     );
-    return await this.countPoints(surveyId, filteredUsersIds);
+
+    const calculatedResult = await this.countPoints(surveyId, filteredUsersIds);
+
+    if (
+      resultsForCompanies &&
+      (Object.keys(resultsForCompanies.data).length > 0 ||
+        resultsForCompanies.counter >= 3)
+    ) {
+      return (
+        await this.tfConfigService.updateGlobalSurveysResults(
+          surveyId,
+          calculatedResult,
+        )
+      ).data;
+    }
+
+    if (!resultsForCompanies) {
+      return (
+        await this.tfConfigService.createGlobalSurveysResults(
+          surveyId,
+          calculatedResult,
+        )
+      ).data;
+    }
   }
 
   async getAvgResultForCompany(

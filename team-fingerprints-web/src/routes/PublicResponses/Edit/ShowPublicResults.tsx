@@ -7,7 +7,7 @@ import LoadingData from "../../../components/LoadingData";
 import ErrorLoading from "../../../components/ErrorLoading";
 import Chart from "../../../components/Chart/Chart";
 import BackToScreen from "../../../components/BackToScreen/BackToScreen";
-import ResultsFilters from "./resultsFilters";
+import ResultsFilters from "./ResultsFilters";
 
 import { SurveyDetails } from "../../../types/models";
 
@@ -15,10 +15,10 @@ import "./styles.sass";
 
 export default function ShowPublicResults() {
   const { surveyId } = useParams();
-  const [filterValues, setFilterValues] = useState();
+  const [filterValues, setFilterValues] = useState({});
 
   const {
-    isLoading: isLoadingSurvey,
+    isLoading: isLoadingSurveys,
     error: errorLoadingSurvey,
     data: survey,
   } = useQuery<SurveyDetails, Error>("publicSurveysList", async () => {
@@ -29,7 +29,7 @@ export default function ShowPublicResults() {
   });
 
   const {
-    isLoading: isLoadingSurveyFinished,
+    isLoading: isLoadingSurvey,
     data: surveyResult,
     refetch: refetchSurveyResult,
   } = useQuery<any, Error>(["publicSurvey", surveyId], async () => {
@@ -67,7 +67,7 @@ export default function ShowPublicResults() {
     [survey?.title, surveyResult, surveyId, ResultsFilters]
   );
 
-  if (isLoadingSurvey || isLoadingSurveyFinished) {
+  if (isLoadingSurveys || isLoadingSurvey) {
     return <LoadingData title="Loading survey" />;
   }
 

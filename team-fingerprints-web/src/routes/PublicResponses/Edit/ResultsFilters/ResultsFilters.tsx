@@ -1,15 +1,16 @@
-import { useQuery } from "react-query";
 import axios from "axios";
-import { isEmpty, times, reduce, omitBy } from "lodash";
+import { useQuery } from "react-query";
+import { isEmpty, omitBy } from "lodash";
 import { useFormik } from "formik";
+import { Loader } from "@mantine/core";
+
 import FiltersSelect from "./FiltersSelect";
 import { FilterSelect } from "../../../../types/models";
-import { Loader } from "@mantine/core";
-import { Filter } from "../../../../types/models";
+
 import "./styles.sass";
 
 type Props = {
-  setFilterValues: any;
+  setFilterValues: React.Dispatch<React.SetStateAction<{}>>;
 };
 
 const ResultsFilters = ({ setFilterValues }: Props) => {
@@ -21,7 +22,11 @@ const ResultsFilters = ({ setFilterValues }: Props) => {
     return data;
   });
 
-  const initialValues = {};
+  const initialValues = {
+    _id: '',
+    value: '',
+    label: ''
+  };
 
   const { handleSubmit, handleChange, values } = useFormik({
     enableReinitialize: true,

@@ -15,4 +15,34 @@ export class TfConfigService {
       .exec();
     return document?.data ?? [];
   }
+
+  async getGlobalSurveysResults(surveyId: string) {
+    return await this.tfConfigModel.findOne({ name: surveyId }).exec();
+  }
+
+  async createGlobalSurveysResults(surveyId: string, result: unknown = {}) {
+    return await (
+      await this.tfConfigModel.create({ name: surveyId, data: result })
+    ).save();
+  }
+
+  async updateGlobalSurveysResults(surveyId: string, newResults: unknown) {
+    return await this.tfConfigModel
+      .findOneAndUpdate(
+        { name: surveyId },
+        { data: newResults, counter: 0 },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async globalSurveysResultsChangeCounter(surveyId: string) {
+    return await this.tfConfigModel
+      .findOneAndUpdate(
+        { name: surveyId },
+        { $inc: { counter: 1 } },
+        { new: true },
+      )
+      .exec();
+  }
 }

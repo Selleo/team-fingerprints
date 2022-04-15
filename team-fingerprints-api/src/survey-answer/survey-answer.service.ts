@@ -16,6 +16,7 @@ import { SurveyCompleteStatus } from './survey-answer.type';
 import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { SurveyService } from 'src/survey/survey.service';
+import { TfConfigService } from 'src/tf-config/tf-config.service';
 
 @Injectable()
 export class SurveyAnswerService {
@@ -26,6 +27,7 @@ export class SurveyAnswerService {
     private readonly surveyResultService: SurveyResultService,
     private readonly surveySummarizeService: SurveySummarizeService,
     private readonly surveyService: SurveyService,
+    private readonly tfConfigService: TfConfigService,
   ) {}
 
   async getUserAnswers(userId: string, surveyId: string): Promise<User> {
@@ -206,6 +208,7 @@ export class SurveyAnswerService {
 
     await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
 
+    await this.tfConfigService.globalSurveysResultsChangeCounter(surveyId);
     return await this.surveyResultService.getSurveyResultForUsers(surveyId, [
       userId,
     ]);

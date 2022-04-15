@@ -9,6 +9,9 @@ export class TfConfig {
 
   @Prop(raw({}))
   data: any;
+
+  @Prop({ required: false, default: 0 })
+  counter: number;
 }
 
 export const TfConfigSchema = SchemaFactory.createForClass(TfConfig);

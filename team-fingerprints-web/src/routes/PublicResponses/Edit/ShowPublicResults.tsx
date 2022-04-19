@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import axios from "axios";
@@ -7,6 +7,7 @@ import LoadingData from "../../../components/LoadingData";
 import ErrorLoading from "../../../components/ErrorLoading";
 import Chart from "../../../components/Chart/Chart";
 import BackToScreen from "../../../components/BackToScreen/BackToScreen";
+import ResultsFilters from "./ResultsFilters";
 
 import { SurveyDetails } from "../../../types/models";
 
@@ -14,8 +15,10 @@ import "./styles.sass";
 
 export default function ShowPublicResults() {
   const { surveyId } = useParams();
+  const [filterValues, setFilterValues] = useState({});
+
   const {
-    isLoading: isLoadingSurvey,
+    isLoading: isLoadingSurveys,
     error: errorLoadingSurvey,
     data: survey,
   } = useQuery<SurveyDetails, Error>("publicSurveysList", async () => {
@@ -25,15 +28,21 @@ export default function ShowPublicResults() {
     return data;
   });
 
-  const { isLoading: isLoadingSurveyFinished, data: surveyResult } = useQuery<
-    any,
-    Error
-  >(["publicSurvey", surveyId], async () => {
+  const {
+    isLoading: isLoadingSurvey,
+    data: surveyResult,
+    refetch: refetchSurveyResult,
+  } = useQuery<any, Error>(["publicSurvey", surveyId], async () => {
     const { data } = await axios.get<any>(
-      `/survey-results/${surveyId}/companies`
+      `/survey-results/${surveyId}/companies`,
+      { params: filterValues }
     );
     return data;
   });
+
+  useEffect(() => {
+    refetchSurveyResult();
+  }, [filterValues]);
 
   const renderContent = useMemo(
     () => (
@@ -47,7 +56,7 @@ export default function ShowPublicResults() {
             See trends in companies.
           </div>
         </div>
-
+        <ResultsFilters setFilterValues={setFilterValues} />
         <Chart
           surveyResult={Object.values(surveyResult || {})}
           additionalData={[]}
@@ -55,10 +64,10 @@ export default function ShowPublicResults() {
         />
       </div>
     ),
-    [survey?.title, surveyResult, surveyId]
+    [survey?.title, surveyResult, surveyId, ResultsFilters]
   );
 
-  if (isLoadingSurvey || isLoadingSurveyFinished) {
+  if (isLoadingSurveys || isLoadingSurvey) {
     return <LoadingData title="Loading survey" />;
   }
 

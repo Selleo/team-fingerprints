@@ -153,3 +153,10 @@ export type ProfileSelectorProp = {
   handleSubmit: () => void;
   values: FormData;
 };
+
+export type FilterSelect = {
+  name: string;
+  _id: string;
+  filterPath: string;
+  values: any;
+};

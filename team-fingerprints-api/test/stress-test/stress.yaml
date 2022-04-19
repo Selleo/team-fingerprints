@@ -1,0 +1,24 @@
+config:
+  target: "http://localhost:3000/v1"
+  phases:
+    - duration: 60
+      arrivalRate: 20
+      name: "Warming up"
+    - duration: 240
+      arrivalRate: 20
+      rampTo: 100
+      name: "Ramping up"
+    - duration: 500
+      arrivalRate: 100
+      name: "Sustained load"
+
+ 
+scenarios:
+  - name: "Retrieve data"
+    flow:
+      - get:
+          url: "/survey-results/companies/filters"
+      - think: 1
+      - get:
+          url: "/survey-results/623b12ef98807f8836773758/companies"
+      - think: 2

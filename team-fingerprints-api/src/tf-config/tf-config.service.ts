@@ -28,21 +28,7 @@ export class TfConfigService {
 
   async updateGlobalSurveysResults(surveyId: string, newResults: unknown) {
     return await this.tfConfigModel
-      .findOneAndUpdate(
-        { name: surveyId },
-        { data: newResults, counter: 0 },
-        { new: true },
-      )
-      .exec();
-  }
-
-  async globalSurveysResultsChangeCounter(surveyId: string) {
-    return await this.tfConfigModel
-      .findOneAndUpdate(
-        { name: surveyId },
-        { $inc: { counter: 1 } },
-        { new: true },
-      )
+      .findOneAndUpdate({ name: surveyId }, { data: newResults }, { new: true })
       .exec();
   }
 }

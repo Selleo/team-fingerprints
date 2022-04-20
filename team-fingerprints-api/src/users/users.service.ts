@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { PrivilegeI, UserProfileI } from 'src/auth/interfaces/auth.interface';
+import { PrivilegeI } from 'src/auth/interfaces/auth.interface';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
@@ -9,7 +9,11 @@ import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/models/role.model';
-import { UserDetailI, UserSurveyAnswerI } from './interfaces/user.interface';
+import {
+  UserDetailI,
+  UserProfileI,
+  UserSurveyAnswerI,
+} from './interfaces/user.interface';
 import { FilterService } from 'src/filter/filter.service';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 
@@ -56,6 +60,7 @@ export class UsersService {
 
   async getUsersByIds(userIds: string[]): Promise<UserProfileI[]> {
     if (!userIds || userIds.length <= 0) return [];
+
     const profiles = userIds?.map(async (id) => {
       if (!Types.ObjectId.isValid(id)) return;
       const profile = await this.getUserProfile(id);
@@ -165,6 +170,7 @@ export class UsersService {
           );
           if (!filterExists)
             throw new NotFoundException(`${key} filter does not exist`);
+
           const filterValue = filterExists.values.find(
             (el) => el._id.toString() === userDetails[key],
           );

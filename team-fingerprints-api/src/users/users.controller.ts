@@ -14,9 +14,8 @@ import { RoleType } from 'src/role/role.type';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
-import { UserProfileI } from 'src/auth/interfaces/auth.interface';
 import { Roles } from 'src/role/decorators/roles.decorator';
-import { UserDetailI } from './interfaces/user.interface';
+import { UserDetailI, UserProfileI } from './interfaces/user.interface';
 import { ValidateEmail } from 'src/company/dto/company.dto';
 
 @ApiTags('users')
@@ -31,7 +30,7 @@ export class UsersController {
     return await this.userService.getUserById(userId);
   }
 
-  @Get('all')
+  @Get('/all')
   @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getUsersAll(): Promise<User[]> {
     return await this.userService.getUsersAll();

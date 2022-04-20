@@ -193,8 +193,7 @@ export class SurveyAnswerService {
   }
 
   async finishSurvey(userId: string, surveyId: string) {
-    const isFinished = await this.checkIfSurveyIsFinished(userId, surveyId);
-    if (isFinished)
+    if (await this.checkIfSurveyIsFinished(userId, surveyId))
       return await this.surveyResultService.getSurveyResultForUsers(surveyId, [
         userId,
       ]);

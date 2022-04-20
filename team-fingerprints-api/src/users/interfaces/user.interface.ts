@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { PrivilegeI } from 'src/auth/interfaces/auth.interface';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 
 export interface QuestionAnswerI {
@@ -33,4 +34,11 @@ export interface UserSurveyResultI {
 
 export interface UserDetailI {
   [key: string]: string;
+}
+
+export interface UserProfileI {
+  readonly _id: string;
+  readonly email: string;
+  readonly userDetails: UserDetailI[];
+  readonly privileges: PrivilegeI[];
 }

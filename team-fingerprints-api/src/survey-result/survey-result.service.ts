@@ -33,17 +33,18 @@ export class SurveyResultService {
     private readonly tfConfigService: TfConfigService,
   ) {}
 
-  async getSurveyResultForUsers(surveyId: string, usersIds: string[]) {
+  async getUsersWhoFinishedSurvey(surveyId: string, usersIds: string[]) {
     const ids = usersIds.map((id) => new Types.ObjectId(id));
-
-    return (
-      await this.userModel.aggregate([
+    return await this.userModel
+      .aggregate([
         {
           $match: { _id: { $in: ids } },
         },
         {
           $project: {
             surveysAnswers: 1,
+            userDetails: 1,
+            email: 1,
           },
         },
         {
@@ -60,7 +61,13 @@ export class SurveyResultService {
           },
         },
       ])
-    ).map((user) => user.surveysAnswers.surveyResult);
+      .exec();
+  }
+
+  async getSurveyResultForUsers(surveyId: string, usersIds: string[]) {
+    return (await this.getUsersWhoFinishedSurvey(surveyId, usersIds)).map(
+      (user) => user.surveysAnswers.surveyResult,
+    );
   }
 
   async getAvgResultForAllCompanies(surveyId: string, queries: any) {
@@ -232,35 +239,8 @@ export class SurveyResultService {
   }
 
   async getAvailableFilters(surveyId: string, usersIds: string[]) {
-    const ids = usersIds.map((id) => new Types.ObjectId(id));
-
     const usersDetails = (
-      await this.userModel.aggregate([
-        {
-          $match: {
-            _id: { $in: ids },
-          },
-        },
-        {
-          $project: {
-            surveysAnswers: 1,
-            userDetails: 1,
-          },
-        },
-        {
-          $unwind: '$surveysAnswers',
-        },
-        {
-          $match: {
-            $and: [
-              {
-                'surveysAnswers.completeStatus': SurveyCompleteStatus.FINISHED,
-              },
-              { 'surveysAnswers.surveyId': surveyId },
-            ],
-          },
-        },
-      ])
+      await this.getUsersWhoFinishedSurvey(surveyId, usersIds)
     )
       .map(({ userDetails }: User) =>
         userDetails && Object.keys(userDetails).length > 0 ? userDetails : null,

@@ -53,20 +53,16 @@ const ResultsFilters = ({
     },
   });
 
-  const { data: surveyResult, refetch: refetchSurveyResult } = useQuery<
-    any,
-    Error
-  >(["publicSurvey", surveyId, id], async () => {
-    const { data } = await axios.get<any>(
-      `/survey-results/${surveyId}/companies`,
-      { params: currentFiltersValues }
-    );
-    return data;
-  });
-
-  useEffect(() => {
-    refetchSurveyResult();
-  }, [currentFiltersValues]);
+  const { data: surveyResult } = useQuery<any, Error>(
+    ["publicSurvey", surveyId, currentFiltersValues],
+    async () => {
+      const { data } = await axios.get<any>(
+        `/survey-results/${surveyId}/companies`,
+        { params: currentFiltersValues }
+      );
+      return data;
+    }
+  );
 
   useEffect(() => {
     const categoriesArray = lodashValues(surveyResult);

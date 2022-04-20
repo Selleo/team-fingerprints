@@ -14,7 +14,6 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
 
   const itemSelect = useMemo(() => {
     const data = [
-      { value: "", label: "" },
       ...item.values?.map((value) => ({
         value: value._id,
         label: value.value,
@@ -35,6 +34,8 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
   return (
     <li className="profile__detail">
       <MemoizedSelect
+        clearable
+        searchable
         classNames={classes}
         label={item.name}
         placeholder="Pick one"

@@ -8,8 +8,6 @@ import { ColorPicker, Select } from "@mantine/core";
 import FiltersSelect from "./FiltersSelect";
 import { CategoryResults, FilterSelect, Shape } from "../../../../types/models";
 
-import "./styles.sass";
-
 type Props = {
   setFilterValues: (filters: { index?: string; value?: Array<string> }) => void;
   id: string;
@@ -46,7 +44,7 @@ const ResultsFilters = ({
   setFilterShape,
   setFilterColor,
 }: Props) => {
-  const { handleSubmit, values, setFieldValue } = useFormik({
+  const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
     initialValues: currentFiltersValues,
     onSubmit: (values) => {
@@ -81,10 +79,10 @@ const ResultsFilters = ({
         label="Shape"
         placeholder="Pick one"
         data={[
-          { value: "triangle", label: "triangle" },
-          { value: "square", label: "square" },
-          { value: "circle", label: "circle" },
-          { value: "trapeze", label: "trapeze" },
+          { value: "triangle", label: "Triangle" },
+          { value: "square", label: "Square" },
+          { value: "circle", label: "Circle" },
+          { value: "trapeze", label: "Trapeze" },
         ]}
         onChange={(e: Shape) => setFilterShape(e)}
       />

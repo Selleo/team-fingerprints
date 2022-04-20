@@ -10,7 +10,7 @@ import LoadingData from "../../../components/LoadingData";
 import ErrorLoading from "../../../components/ErrorLoading";
 import Chart from "../../../components/Chart/Chart";
 import BackToScreen from "../../../components/BackToScreen/BackToScreen";
-import ResultsFilters from "./ResultsFilters";
+import ResultsFilters from "./ResultsFilters/ResultsFilters";
 import ColoredShape from "../../../components/ColoredShape";
 
 import { SurveyDetails } from "../../../types/models";
@@ -48,11 +48,7 @@ export default function ShowPublicResults() {
     isLoading: isLoadingSurvey,
     data: surveyResult,
     refetch: refetchSurveyResult,
-  } = useQuery<any, Error>(["publicSurvey", surveyId], async () => {
-  const { isLoading: isLoadingSurveyFinished, data: surveyResult } = useQuery<
-    any,
-    Error
-  >(["publicSurvey", surveyId, "all"], async () => {
+  } = useQuery<any, Error>(["publicSurvey", surveyId, "all"], async () => {
     const { data } = await axios.get<any>(
       `/survey-results/${surveyId}/companies`
     );

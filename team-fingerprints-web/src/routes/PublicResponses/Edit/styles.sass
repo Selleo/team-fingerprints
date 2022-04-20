@@ -15,6 +15,21 @@
     margin-right: 230px
     margin: 0 auto
 
+    &__new-filter-button
+        background-color: $color-primary
+        border: none
+        border-radius: $border-radius-sm
+        color: $color-background
+        cursor: pointer
+        display: flex
+        font-weight: $font-weight-500
+        font-size: $font-size-base
+        padding: $m-xs $m-sm
+        width: fit-content
+
+        &:hover
+          background-color: $color-primary-dark
+
   &__description
     &__info
       color: $color-white26
@@ -36,17 +51,25 @@
       letter-spacing: 0.005em
       margin-bottom: 56px
       width: 523px
-  &__legend
+
+  &__filters
     display: flex
     flex-direction: column
-    width: 270px
-    margin-bottom: 100px
+    width: 500px
+    margin-top: 20px
+    margin-bottom: 30px
 
     &__item
       border-top: 1px solid #FFFFFF1A
       display: flex
-      height: 46px
       align-items: center
+      border: none
+
+      &__collapse
+        background-color: #121212
+
+        &:hover
+          background-color: #121212
 
       &--first
         border-top: 0px solid #FFFFFF1A
@@ -61,9 +84,10 @@
         flex-wrap: nowrap
         +ellipsis
 
-
       &__icon
         display: flex
         justify-content: flex-start
         align-items: center
         width: 40px
+
+      &__selects

@@ -123,6 +123,19 @@ export type QuestionWithAnswers = { answer: Answer; question: Question };
 
 export type Shape = "triangle" | "square" | "circle" | "trapeze";
 
+export type TrendResults = {
+  avgTrendAnswer: number;
+  trendId: string;
+  trendPrimary: string;
+  trendSecondary: string;
+};
+
+export type CategoryResults = {
+  categoryId: string;
+  categoryTitile: string;
+  avgTrends: TrendResults[];
+};
+
 export type AdditionalData = {
   icon: Shape;
   color: string;

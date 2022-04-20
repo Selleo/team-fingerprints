@@ -8,11 +8,12 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Queue } from 'bull';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { FilterService } from 'src/filter/filter.service';
 import { RoleI } from 'src/role/interfaces/role.interface';
 import { RoleService } from 'src/role/role.service';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
+import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 import { Survey } from 'src/survey/models/survey.model';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { User } from 'src/users/models/user.model';
@@ -33,32 +34,33 @@ export class SurveyResultService {
   ) {}
 
   async getSurveyResultForUsers(surveyId: string, usersIds: string[]) {
-    usersIds = await Promise.all(
-      usersIds.map(async (userId) => {
-        if (
-          await this.surveyAnswerService.checkIfSurveyIsFinished(
-            userId,
-            surveyId,
-          )
-        )
-          return userId;
-      }),
-    );
+    const ids = usersIds.map((id) => new Types.ObjectId(id));
 
-    const users = await this.userModel.find(
-      { _id: { $in: usersIds } },
-      {
-        surveysAnswers: 1,
-      },
-    );
-
-    const usersResults = users.map((user) => {
-      return user.surveysAnswers.find(
-        (surveyAnswers) => surveyAnswers.surveyId === surveyId,
-      ).surveyResult;
-    });
-
-    return usersResults;
+    return (
+      await this.userModel.aggregate([
+        {
+          $match: { _id: { $in: ids } },
+        },
+        {
+          $project: {
+            surveysAnswers: 1,
+          },
+        },
+        {
+          $unwind: '$surveysAnswers',
+        },
+        {
+          $match: {
+            $and: [
+              {
+                'surveysAnswers.completeStatus': SurveyCompleteStatus.FINISHED,
+              },
+              { 'surveysAnswers.surveyId': surveyId },
+            ],
+          },
+        },
+      ])
+    ).map((user) => user.surveysAnswers.surveyResult);
   }
 
   async getAvgResultForAllCompanies(surveyId: string, queries: any) {

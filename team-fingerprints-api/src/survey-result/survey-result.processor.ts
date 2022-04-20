@@ -51,29 +51,29 @@ export class SurveyResultProcessor {
   }
 
   @Process('count')
-  async countPoints(job: Job) {
+  async countPoints({ data }: Job) {
     const usersIds = await this.surveyResultService.getUsersIds();
     const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
       usersIds,
     );
     try {
       const result = await this.surveyResultService.countPoints(
-        job.data.surveyId,
+        data.surveyId,
         filteredUsersIds,
       );
 
       const currentResults = await this.tfConfigService.getGlobalSurveysResults(
-        job.data.surveyId,
+        data.surveyId,
       );
 
       if (!currentResults) {
         await this.tfConfigService.createGlobalSurveysResults(
-          job.data.surveyId,
+          data.surveyId,
           result,
         );
       } else {
         await this.tfConfigService.updateGlobalSurveysResults(
-          job.data.surveyId,
+          data.surveyId,
           result,
         );
       }

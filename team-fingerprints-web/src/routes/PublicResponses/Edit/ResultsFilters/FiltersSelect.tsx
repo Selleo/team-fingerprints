@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import { MultiSelect } from "@mantine/core";
 import { FilterSelect } from "../../../../types/models";
-import { useMemo } from "react";
+
+import "./styles.sass";
 
 import "./styles.sass";
 
@@ -21,7 +23,7 @@ const selectClasses = {
   label: "survey-response__selects__item__label",
 };
 
-const FiltersSelect = ({ filter, setFieldValue, handleSubmit }: Props) => {
+const FiltersSelect = ({ filter, handleSubmit, setFieldValue }: Props) => {
   const itemSelect = useMemo(() => {
     const data = [
       ...filter.values?.map((value: Values) => ({

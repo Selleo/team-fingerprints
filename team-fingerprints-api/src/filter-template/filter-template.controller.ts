@@ -17,7 +17,7 @@ import { FilterTemplateService } from './filter-template.service';
 export class FilterTemplateController {
   constructor(private readonly filterTemplateService: FilterTemplateService) {}
 
-  @Get(':companyId/filters')
+  @Get('/:companyId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getFilterTemplatesForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -25,7 +25,7 @@ export class FilterTemplateController {
     return await this.filterTemplateService.getFilterTemplates(companyId);
   }
 
-  @Post(':companyId/filters')
+  @Post('/:companyId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -40,7 +40,7 @@ export class FilterTemplateController {
     );
   }
 
-  @Put(':companyId/filters/:filterId')
+  @Put('/:companyId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async updateFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -57,7 +57,7 @@ export class FilterTemplateController {
     );
   }
 
-  @Delete(':companyId/filters/:filterId')
+  @Delete('/:companyId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeFilterTemplateFromCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -69,7 +69,7 @@ export class FilterTemplateController {
     );
   }
 
-  @Get(':companyId/teams/:teamId/filters')
+  @Get('/:companyId/teams/:teamId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getFilterTemplatesForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -81,7 +81,7 @@ export class FilterTemplateController {
     );
   }
 
-  @Post(':companyId/teams/:teamId/filters')
+  @Post('/:companyId/teams/:teamId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -98,7 +98,7 @@ export class FilterTemplateController {
     );
   }
 
-  @Put(':companyId/teams/:teamId/filters/:filterId')
+  @Put('/:companyId/teams/:teamId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async updateFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -117,7 +117,7 @@ export class FilterTemplateController {
     );
   }
 
-  @Delete(':companyId/teams/:teamId/filters/:filterId')
+  @Delete('/:companyId/teams/:teamId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeFilterTemplateFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,

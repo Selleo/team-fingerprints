@@ -30,7 +30,7 @@ export class FilterController {
     return await this.filterService.getFiltersList();
   }
 
-  @Get(':filterId')
+  @Get('/:filterId')
   async getFilter(@Param('filterId', ValidateObjectId) filterId: string) {
     return await this.filterService.getFilter(filterId);
   }
@@ -41,7 +41,7 @@ export class FilterController {
     return await this.filterService.createFilter(name);
   }
 
-  @Patch(':filterId')
+  @Patch('/:filterId')
   @Roles([RoleType.SUPER_ADMIN])
   async updateFilter(
     @Param('filterId', ValidateObjectId) filterId: string,
@@ -50,20 +50,20 @@ export class FilterController {
     return await this.filterService.updateFilter(filterId, name);
   }
 
-  @Delete(':filterId')
+  @Delete('/:filterId')
   @Roles([RoleType.SUPER_ADMIN])
   async removeFilter(@Param('filterId', ValidateObjectId) filterId: string) {
     return await this.filterService.removeFilter(filterId);
   }
 
-  @Get(':filterId/values')
+  @Get('/:filterId/values')
   async getFilterWithValues(
     @Param('filterId', ValidateObjectId) filterId: string,
   ) {
     return await this.filterService.getFilterWithValues(filterId);
   }
 
-  @Post(':filterId/values')
+  @Post('/:filterId/values')
   @Roles([RoleType.SUPER_ADMIN])
   async addFilterValue(
     @Param('filterId', ValidateObjectId) filterId: string,
@@ -72,7 +72,7 @@ export class FilterController {
     return await this.filterService.addFilterValue(filterId, value);
   }
 
-  @Patch(':filterId/values/:valueId')
+  @Patch('/:filterId/values/:valueId')
   @Roles([RoleType.SUPER_ADMIN])
   async updateFilterValue(
     @Param('filterId', ValidateObjectId) filterId: string,
@@ -82,7 +82,7 @@ export class FilterController {
     return await this.filterService.updateFilterValue(filterId, valueId, value);
   }
 
-  @Delete(':filterId/values/:valueId')
+  @Delete('/:filterId/values/:valueId')
   @Roles([RoleType.SUPER_ADMIN])
   async removeFilterValue(
     @Param('filterId', ValidateObjectId) filterId: string,

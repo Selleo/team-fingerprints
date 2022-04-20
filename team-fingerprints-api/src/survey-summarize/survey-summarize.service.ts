@@ -63,6 +63,7 @@ export class SurveySummarizeService {
             }
           });
         });
+
         const avgTrendAnswer = trendCount / trend.questions.length;
         if (avgTrendAnswer) {
           avgTrends.push({
@@ -73,8 +74,8 @@ export class SurveySummarizeService {
           });
         }
       });
-      const categoryId = category._id.toString();
 
+      const categoryId = category._id.toString();
       if (summary[categoryId]) {
         summary[categoryId] = {
           categoryTitle: category.title,

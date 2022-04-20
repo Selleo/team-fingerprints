@@ -19,7 +19,7 @@ import { SurveyAnswerService } from './survey-answer.service';
 export class SurveyAnswerController {
   constructor(private readonly surveyAnswerService: SurveyAnswerService) {}
 
-  @Get(':surveyId')
+  @Get('/:surveyId')
   @UseInterceptors(CacheInterceptor)
   async getUserAnswers(
     @CurrentUserId(ValidateObjectId) userId: any,
@@ -28,7 +28,7 @@ export class SurveyAnswerController {
     return await this.surveyAnswerService.getUserAnswers(userId, surveyId);
   }
 
-  @Post(':surveyId')
+  @Post('/:surveyId')
   async saveUserSurveyAnswer(
     @CurrentUserId(ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -41,7 +41,7 @@ export class SurveyAnswerController {
     );
   }
 
-  @Post(':surveyId/finish')
+  @Post('/:surveyId/finish')
   async finishSurvey(
     @CurrentUserId(ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,

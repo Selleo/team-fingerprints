@@ -15,7 +15,7 @@ export class SurveyResultController {
   constructor(private readonly surveyResultService: SurveyResultService) {}
 
   @Public()
-  @Get(':surveyId/companies')
+  @Get('/:surveyId/companies')
   @UseInterceptors(CacheInterceptor)
   async getAvgResultForAllCompanies(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -27,7 +27,7 @@ export class SurveyResultController {
     );
   }
 
-  @Get(':surveyId/companies/:companyId')
+  @Get('/:surveyId/companies/:companyId')
   @UseInterceptors(CacheInterceptor)
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -41,7 +41,7 @@ export class SurveyResultController {
     );
   }
 
-  @Get(':surveyId/companies/:companyId/teams/:teamId')
+  @Get('/:surveyId/companies/:companyId/teams/:teamId')
   @UseInterceptors(CacheInterceptor)
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -55,7 +55,7 @@ export class SurveyResultController {
     );
   }
 
-  @Get(':surveyId/companies/:companyId/teams/:teamId/users/:userId')
+  @Get('/:surveyId/companies/:companyId/teams/:teamId/users/:userId')
   @UseInterceptors(CacheInterceptor)
   async getSurveyResultForUsers(
     @Param('surveyId', ValidateObjectId) surveyId: string,
@@ -67,12 +67,12 @@ export class SurveyResultController {
   }
 
   @Public()
-  @Get('companies/filters')
+  @Get('/companies/filters')
   async getAvailableFiltersForCompanies() {
     return await this.surveyResultService.getAvailableFiltersForCompanies();
   }
 
-  @Get('companies/:companyId/filters')
+  @Get('/companies/:companyId/filters')
   async getAvailableFiltersForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
   ) {
@@ -81,7 +81,7 @@ export class SurveyResultController {
     );
   }
 
-  @Get('companies/:companyId/teams/:teamId/filters')
+  @Get('/companies/:companyId/teams/:teamId/filters')
   async getAvailableFiltersForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,

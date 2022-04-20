@@ -1,6 +1,7 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Category } from '../models/category.model';
 import { Survey } from '../models/survey.model';
 import { SurveyService } from '../survey.service';
 import {
@@ -51,7 +52,7 @@ export class CategoryService {
   async removeCategory(surveyId: string, categoryId: string): Promise<Survey> {
     await this.surveyService.canEditSurvey(surveyId);
 
-    const { categories }: any = await this.surveyModel.findOne(
+    const { categories }: Survey = await this.surveyModel.findOne(
       {
         _id: surveyId,
       },
@@ -61,13 +62,14 @@ export class CategoryService {
     if (!categories) throw new NotFoundException();
 
     const trendsId = [];
-    categories.forEach((category) => {
+    categories.forEach((category: Category) => {
       if (category?._id.toString() === categoryId) {
         category.trends.forEach((trend) => {
           trendsId.push(trend?._id.toString());
         });
       }
     });
+
     if (trendsId) {
       trendsId.forEach(async (trendId) => {
         await this.trendService.removeTrend({ surveyId, categoryId, trendId });

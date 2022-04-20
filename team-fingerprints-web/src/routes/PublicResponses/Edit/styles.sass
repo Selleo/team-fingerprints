@@ -4,3 +4,90 @@
 .app-shell
   margin-left: 85px
   margin-right: 85px
+
+.survey-response
+  margin-top: 72px
+  display: flex
+  flex-direction: column
+
+  &__finished
+    margin-left: 230px
+    margin-right: 230px
+    margin: 0 auto
+
+    &__new-filter-button
+        background-color: $color-primary
+        border: none
+        border-radius: $border-radius-sm
+        color: $color-background
+        cursor: pointer
+        display: flex
+        font-weight: $font-weight-500
+        font-size: $font-size-base
+        padding: $m-xs $m-sm
+        width: fit-content
+
+        &:hover
+          background-color: $color-primary-dark
+
+  &__description
+    &__info
+      color: $color-white26
+      font-size: 20px
+      font-weight: 600
+      line-height: 24px
+      letter-spacing: -0.0025em
+      margin-bottob: 16px
+    &__title
+      font-size: 39px
+      font-weight: 600
+      line-height: 47px
+      letter-spacing: -0.0025em
+      margin-bottom: 32px
+    &__copy
+      font-size: 18px
+      font-weight: 400
+      line-height: 27px
+      letter-spacing: 0.005em
+      margin-bottom: 56px
+      width: 523px
+
+  &__filters
+    display: flex
+    flex-direction: column
+    width: 500px
+    margin-top: 20px
+    margin-bottom: 30px
+
+    &__item
+      border-top: 1px solid #FFFFFF1A
+      display: flex
+      align-items: center
+      border: none
+
+      &__collapse
+        background-color: #121212
+
+        &:hover
+          background-color: #121212
+
+      &--first
+        border-top: 0px solid #FFFFFF1A
+
+      span
+        flex: 1 1 40px
+        font-size: 16px
+        font-weight: 600
+        line-height: 19px
+        letter-spacing: 0em
+        margin-right: 20px
+        flex-wrap: nowrap
+        +ellipsis
+
+      &__icon
+        display: flex
+        justify-content: flex-start
+        align-items: center
+        width: 40px
+
+      &__selects

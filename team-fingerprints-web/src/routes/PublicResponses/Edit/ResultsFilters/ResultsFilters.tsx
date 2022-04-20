@@ -1,60 +1,109 @@
 import axios from "axios";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { isEmpty, omitBy } from "lodash";
+import { isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
-import { Loader } from "@mantine/core";
+import { ColorPicker, Select } from "@mantine/core";
 
 import FiltersSelect from "./FiltersSelect";
-import { FilterSelect } from "../../../../types/models";
+import { CategoryResults, FilterSelect, Shape } from "../../../../types/models";
 
 import "./styles.sass";
 
 type Props = {
-  setFilterValues: React.Dispatch<React.SetStateAction<{}>>;
+  setFilterValues: (filters: { index?: string; value?: Array<string> }) => void;
+  id: string;
+  availableFilters: [
+    {
+      filterPath: string;
+      name: string;
+      values: [
+        {
+          value: string;
+          _id: string;
+        }
+      ];
+      _id: string;
+    }
+  ];
+  currentFiltersValues: {
+    index?: string;
+    value?: Array<string>;
+  };
+  surveyId: string;
+  setFilterResults: (newFilterResults: CategoryResults[]) => void;
+  setFilterShape: (newShape: Shape) => void;
+  setFilterColor: (newColor: string) => void;
 };
 
-const ResultsFilters = ({ setFilterValues }: Props) => {
-  const { isLoading: isLoadingFiltersFinished, data: surveyFilters } = useQuery<
-    any,
-    Error
-  >(["surveyFilters"], async () => {
-    const { data } = await axios.get<any>(`/survey-results/companies/filters`);
-    return data;
-  });
-
-  const initialValues = {
-    _id: '',
-    value: '',
-    label: ''
-  };
-
-  const { handleSubmit, handleChange, values } = useFormik({
+const ResultsFilters = ({
+  setFilterValues,
+  id,
+  availableFilters,
+  currentFiltersValues,
+  surveyId,
+  setFilterResults,
+  setFilterShape,
+  setFilterColor,
+}: Props) => {
+  const { handleSubmit, values, setFieldValue } = useFormik({
     enableReinitialize: true,
-    initialValues,
+    initialValues: currentFiltersValues,
     onSubmit: (values) => {
       const valuesWithoutEmpties = omitBy(values, isEmpty);
       setFilterValues(valuesWithoutEmpties);
     },
   });
 
-  if (isLoadingFiltersFinished) {
-    return (
-      <div className="filters-loading">
-        <Loader />
-      </div>
+  const { data: surveyResult, refetch: refetchSurveyResult } = useQuery<
+    any,
+    Error
+  >(["publicSurvey", surveyId, id], async () => {
+    const { data } = await axios.get<any>(
+      `/survey-results/${surveyId}/companies`,
+      { params: currentFiltersValues }
     );
-  }
+    return data;
+  });
+
+  useEffect(() => {
+    refetchSurveyResult();
+  }, [currentFiltersValues]);
+
+  useEffect(() => {
+    const categoriesArray = lodashValues(surveyResult);
+    setFilterResults(categoriesArray);
+  }, [surveyResult]);
 
   return (
-    <div className="survey-response__filters">
-      <h3>Filters</h3>
-      {surveyFilters?.map((filter: FilterSelect) => (
+    <div className="survey-response__selects">
+      <Select
+        label="Shape"
+        placeholder="Pick one"
+        data={[
+          { value: "triangle", label: "triangle" },
+          { value: "square", label: "square" },
+          { value: "circle", label: "circle" },
+          { value: "trapeze", label: "trapeze" },
+        ]}
+        onChange={(e: Shape) => setFilterShape(e)}
+      />
+      <label className="survey-response__selects__shapes-label">
+        Shape's color
+      </label>
+      <ColorPicker
+        format="hex"
+        onChange={(e) => {
+          setFilterColor(e);
+        }}
+        size="md"
+      />
+      {availableFilters?.map((filter: FilterSelect) => (
         <FiltersSelect
           key={filter._id}
           filter={filter}
-          values={values}
-          handleChange={handleChange}
           handleSubmit={handleSubmit}
+          setFieldValue={setFieldValue}
         />
       ))}
     </div>

@@ -136,7 +136,7 @@ export class SurveyResultService {
   }
 
   async countPoints(surveyId: string, usersIds: string[]) {
-    const survey = await this.surveyModel.findById({ _id: surveyId });
+    const survey = await this.surveyModel.findById(surveyId);
     if (!survey) throw new InternalServerErrorException();
 
     const schema = [];

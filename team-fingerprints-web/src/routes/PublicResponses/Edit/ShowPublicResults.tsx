@@ -12,20 +12,19 @@ import Chart from "../../../components/Chart/Chart";
 import BackToScreen from "../../../components/BackToScreen/BackToScreen";
 import ResultsFilters from "./ResultsFilters/ResultsFilters";
 import ColoredShape from "../../../components/ColoredShape";
+import SurveyFinishedWrapper from "../../../components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 
 import { SurveyDetails } from "../../../types/models";
 import { Switch } from "../../../components/Switch";
 
-import "./styles.sass";
-
 type FiltersSet = AdditionalData & {
   visible: boolean;
   filterValues:
-    | object
-    | {
-        index: string;
-        value: Array<string>;
-      };
+  | object
+  | {
+    index: string;
+    value: Array<string>;
+  };
   collapsed: boolean;
 };
 
@@ -55,10 +54,10 @@ export default function ShowPublicResults() {
   });
 
   const { data: availableFilters } = useQuery<any, Error>(
-    ["surveyFiltersPublic"],
+    ["surveyFiltersPublic", surveyId],
     async () => {
       const { data } = await axios.get<any>(
-        `/survey-results/companies/filters`
+        `/survey-results/companies/filters/${surveyId}`
       );
       return data;
     }
@@ -93,77 +92,67 @@ export default function ShowPublicResults() {
 
   const renderContent = useMemo(
     () => (
-      <div className="survey-response__finished">
-        <div className="survey-response__description">
-          <h5 className="survey-response__description__info">Results</h5>
-          <h1 className="survey-response__description__title">
-            {survey?.title || "Survey Name"}
-          </h1>
-          <div className="survey-response__description__copy">
-            See trends in companies.
-          </div>
-          <Button
-            className="survey-response__finished__new-filter-button"
-            onClick={createFilterSet}
-          >
-            Create new filter set
-          </Button>
-          <div className="survey-response__filters">
-            {filtersSets.map((filterSet, index) => {
-              return (
-                <React.Fragment key={index}>
-                  <div className="survey-response__filters__item">
-                    <div className="survey-response__filters__item__icon">
-                      <ColoredShape
-                        shape={filterSet?.icon}
-                        color={filterSet?.color}
-                      />
-                    </div>
-                    <span>{filterSet?.name}</span>
-                    <Switch
-                      value={!!filterSet.visible}
-                      setValue={() =>
-                        changeFilterValue(index)("visible", !filterSet.visible)
-                      }
+      <SurveyFinishedWrapper surveyTitle={survey?.title} description="See trends in companies.">
+        <Button
+          className="survey-response__finished__new-filter-button"
+          onClick={createFilterSet}
+        >
+          Create new filter set
+        </Button>
+        <div className="survey-response__filters">
+          {filtersSets.map((filterSet, index) => {
+            return (
+              <React.Fragment key={index}>
+                <div className="survey-response__filters__item">
+                  <div className="survey-response__filters__item__icon">
+                    <ColoredShape
+                      shape={filterSet?.icon}
+                      color={filterSet?.color}
                     />
-                    <Button
-                      className="survey-response__filters__item__collapse"
-                      onClick={() =>
-                        changeFilterValue(index)(
-                          "collapsed",
-                          !filterSet.collapsed
-                        )
-                      }
-                    >
-                      &#8595;
-                    </Button>
                   </div>
-                  <Collapse
-                    className="survey-response__filters__item__selects"
-                    in={filterSet.collapsed}
+                  <span>{filterSet?.name}</span>
+                  <Switch
+                    value={!!filterSet.visible}
+                    setValue={() =>
+                      changeFilterValue(index)("visible", !filterSet.visible)
+                    }
+                  />
+                  <Button
+                    className="survey-response__filters__item__collapse"
+                    onClick={() =>
+                      changeFilterValue(index)(
+                        "collapsed",
+                        !filterSet.collapsed
+                      )
+                    }
                   >
-                    {surveyId && (
-                      <ResultsFilters
-                        currentFiltersValues={filterSet.filterValues}
-                        availableFilters={availableFilters}
-                        id={filterSet.id}
-                        surveyId={surveyId}
-                        changeFilterValue={changeFilterValue(index)}
-                      />
-                    )}
-                  </Collapse>
-                </React.Fragment>
-              );
-            })}
-          </div>
+                    &#8595;
+                  </Button>
+                </div>
+                <Collapse
+                  className="survey-response__filters__item__selects"
+                  in={filterSet.collapsed}
+                >
+                  {surveyId && (
+                    <ResultsFilters
+                      currentFiltersValues={filterSet.filterValues}
+                      availableFilters={availableFilters}
+                      id={filterSet.id}
+                      surveyId={surveyId}
+                      changeFilterValue={changeFilterValue(index)}
+                    />
+                  )}
+                </Collapse>
+              </React.Fragment>
+            );
+          })}
         </div>
-
         <Chart
           surveyResult={Object.values(surveyResult || {})}
           additionalData={filter(filtersSets, "visible")}
           showMe={true}
         />
-      </div>
+      </SurveyFinishedWrapper>
     ),
     [survey?.title, surveyResult, surveyId, ResultsFilters, filtersSets]
   );

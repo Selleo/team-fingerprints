@@ -11,7 +11,7 @@ import ResponseItem from "./ResponseItem";
 import { Survey } from "../../types/models";
 import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 
-import "./styles.sass";
+import "../Responses/styles.sass";
 
 const PublicResponses = () => {
   const { isLoading, error, data } = useQuery<Survey[]>(

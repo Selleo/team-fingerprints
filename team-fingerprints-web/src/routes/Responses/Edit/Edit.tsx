@@ -4,7 +4,6 @@ import { useMutation, useQuery } from "react-query";
 import {
   each,
   find,
-  first,
   flatMapDeep,
   get,
   isEmpty,
@@ -23,6 +22,7 @@ import ColoredShape from "../../../components/ColoredShape";
 import Chart from "../../../components/Chart";
 import QuestionResponse from "../../../components/Response/QuestionResponse";
 import BackToScreen from "../../../components/BackToScreen/BackToScreen";
+import SurveyFinishedWrapper from "../../../components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 
 import {
   AdditionalData,
@@ -33,7 +33,6 @@ import { Switch } from "../../../components/Switch";
 import { ProfileContext } from "../../../routes";
 import { ReactComponent as CircleIcon } from "../../../assets/shapes/Circle.svg";
 
-import "./styles.sass";
 import { SimpleTeamType } from "./SingleTeamResult/SingleTeamResult";
 
 type ResultsPerCompany = {
@@ -174,48 +173,39 @@ export default function Edit() {
 
   const setDataForCompany =
     (role: ComplexRole) =>
-    (companyId: string, categoriesArray: any[], hidden: boolean) => {
-      setCompaniesResult((prev) => ({
-        ...prev,
-        [companyId]: { categoriesArray, role, team: false, hidden },
-      }));
-    };
+      (companyId: string, categoriesArray: any[], hidden: boolean) => {
+        setCompaniesResult((prev) => ({
+          ...prev,
+          [companyId]: { categoriesArray, role, team: false, hidden },
+        }));
+      };
 
   const setDataForTeam =
     (role: ComplexRole) =>
-    (
-      _companyId: string,
-      teamInfo: SimpleTeamType,
-      categoriesArray: any[],
-      hidden: boolean
-    ) => {
-      setCompaniesResult((prev) => ({
-        ...prev,
-        [teamInfo.teamId]: {
-          categoriesArray,
-          role,
-          team: true,
-          hidden: !usersTeams?.find((el) => el === teamInfo.teamId),
-          teamInfo,
-        },
-      }));
-    };
+      (
+        _companyId: string,
+        teamInfo: SimpleTeamType,
+        categoriesArray: any[],
+        hidden: boolean
+      ) => {
+        setCompaniesResult((prev) => ({
+          ...prev,
+          [teamInfo.teamId]: {
+            categoriesArray,
+            role,
+            team: true,
+            hidden: !usersTeams?.find((el) => el === teamInfo.teamId),
+            teamInfo,
+          },
+        }));
+      };
 
   const renderContent = useMemo(
     () =>
       surveyIsFinished ? (
-        <div className="survey-response__finished">
-          <div className="survey-response__description">
-            <h5 className="survey-response__description__info">Results</h5>
-            <h1 className="survey-response__description__title">
-              {survey?.title || "Survey Name"}
-            </h1>
-            <div className="survey-response__description__copy">
-              Compare your results with the company, the world or other
-              employees. To display the data on the chart, turn on the switch
-              next to the category name.
-            </div>
-          </div>
+        <SurveyFinishedWrapper surveyTitle={survey?.title} description="Compare your results with the company, the world or other
+        employees. To display the data on the chart, turn on the switch
+        next to the category name.">
           <div className="survey-response__legend">
             <div className="survey-response__legend__item survey-response__legend__item--first">
               <div className="survey-response__legend__item__icon">
@@ -250,13 +240,12 @@ export default function Edit() {
               );
             })}
           </div>
-
           <Chart
             surveyResult={surveyResult}
             additionalData={filteredAdditionalData}
             showMe={showMyResults}
           />
-        </div>
+        </SurveyFinishedWrapper>
       ) : (
         <QuestionResponse
           questionsWithAnswers={questionsWithAnswers}
@@ -317,7 +306,7 @@ export default function Edit() {
           )}
         </>
       ))}
-      {}
+      { }
     </>
   );
 }

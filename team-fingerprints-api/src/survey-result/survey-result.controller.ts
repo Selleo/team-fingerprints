@@ -67,26 +67,32 @@ export class SurveyResultController {
   }
 
   @Public()
-  @Get('/companies/filters')
-  async getAvailableFiltersForCompanies() {
-    return await this.surveyResultService.getAvailableFiltersForCompanies();
+  @Get('/companies/filters/:surveyId')
+  async getAvailableFiltersForCompanies(@Param('surveyId') surveyId: string) {
+    return await this.surveyResultService.getAvailableFiltersForCompanies(
+      surveyId,
+    );
   }
 
-  @Get('/companies/:companyId/filters')
+  @Get('/companies/:companyId/filters/:surveyId')
   async getAvailableFiltersForCompany(
+    @Param('surveyId') surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
   ) {
     return await this.surveyResultService.getAvailableFiltersForCompany(
+      surveyId,
       companyId,
     );
   }
 
-  @Get('/companies/:companyId/teams/:teamId/filters')
+  @Get('/companies/:companyId/teams/:teamId/filters/:surveyId')
   async getAvailableFiltersForTeam(
+    @Param('surveyId') surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
   ) {
     return await this.surveyResultService.getAvailableFiltersForTeam(
+      surveyId,
       companyId,
       teamId,
     );

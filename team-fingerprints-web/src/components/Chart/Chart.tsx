@@ -50,7 +50,7 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   useEffect(() => {
     setWidth(ref.current?.clientWidth);
     setHeight(ref.current?.clientHeight);
-  }, []);
+  }, [screenWidth]);
 
   const displayWidth = Math.floor(pixelRatio * width);
   const renderingAreaWidth = displayWidth - 50;
@@ -108,7 +108,7 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
         ctx.fillStyle = "#121212";
         switch (shape) {
           case "circle":
-            ctx.arc(dotPosition, positionOfLine, 18, 0, 2 * Math.PI, true);
+            ctx.arc(dotPosition, positionOfLine, 11, 0, 2 * Math.PI, true);
             break;
           case "triangle":
             ctx.moveTo(dotPosition, positionOfLine - 15);
@@ -122,11 +122,11 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
             ctx.lineTo(dotPosition - 15, positionOfLine);
             break;
           default:
-            ctx.rect(dotPosition - 12, positionOfLine - 12, 24, 24);
+            ctx.rect(dotPosition - 12, positionOfLine - 10, 20, 20);
         }
         ctx.closePath();
         ctx.fill();
-        ctx.lineWidth = 12;
+        ctx.lineWidth = 8;
         ctx.strokeStyle = color || "#c99284";
         ctx.stroke();
       });

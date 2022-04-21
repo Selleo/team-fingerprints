@@ -10,6 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Queue } from 'bull';
 import { Model, Types } from 'mongoose';
 import { FilterService } from 'src/filter/filter.service';
+import { Filter } from 'src/filter/models/filter.model';
 import { RoleI } from 'src/role/interfaces/role.interface';
 import { RoleService } from 'src/role/role.service';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
@@ -239,17 +240,18 @@ export class SurveyResultService {
   }
 
   async getAvailableFilters(surveyId: string, usersIds: string[]) {
-    const usersDetails = (
-      await this.getUsersWhoFinishedSurvey(surveyId, usersIds)
-    )
-      .map(({ userDetails }: User) =>
-        userDetails && Object.keys(userDetails).length > 0 ? userDetails : null,
-      )
-      .filter(Boolean);
+    const usersDetails =
+      (await this.getUsersWhoFinishedSurvey(surveyId, usersIds))
+        ?.map(({ userDetails }: User) =>
+          userDetails && Object.keys(userDetails).length > 0
+            ? userDetails
+            : null,
+        )
+        .filter(Boolean) || [];
 
-    const filtersPaths = (await this.filterService.getFiltersList()).map(
-      (filter) => filter.filterPath,
-    );
+    const filters: Filter[] = await this.filterService.getFiltersList();
+
+    const filtersPaths = filters.map((filter) => filter.filterPath);
 
     const groupedFilters = [];
 
@@ -269,30 +271,29 @@ export class SurveyResultService {
       });
     });
 
-    const availableFilters = await Promise.all(
-      Object.keys(groupedFilters).map(async (path) => {
-        let values = groupedFilters[path].values.filter(
-          (item: string, index: number) =>
-            groupedFilters[path].values.indexOf(item) == index,
-        );
+    const availableFilters = Object.keys(groupedFilters).map((path) => {
+      let values = groupedFilters[path].values.filter(
+        (item: string, index: number) =>
+          groupedFilters[path].values.indexOf(item) == index,
+      );
 
-        values = await Promise.all(
-          values.map(async (value: string) => {
-            return await this.filterService.getFilterValue(path, value);
-          }),
-        );
+      values = values.map((value: string) =>
+        filters
+          .find((filter) => filter.filterPath === path)
+          .values.find((el) => el._id.toString() === value),
+      );
 
-        const { _id, name, filterPath } =
-          await this.filterService.getFilterByFilterPath(path);
+      const { _id, name, filterPath } = filters.find(
+        (filter) => filter.filterPath === path,
+      );
 
-        return {
-          _id: _id.toString(),
-          name,
-          filterPath,
-          values,
-        };
-      }),
-    );
+      return {
+        _id: _id.toString(),
+        name,
+        filterPath,
+        values,
+      };
+    });
 
     return availableFilters;
   }

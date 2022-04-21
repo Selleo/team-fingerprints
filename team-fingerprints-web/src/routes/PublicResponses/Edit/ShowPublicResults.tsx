@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { AdditionalData, CategoryResults, Shape } from "../../../types/models";
@@ -44,11 +44,10 @@ export default function ShowPublicResults() {
     return data;
   });
 
-  const {
-    isLoading: isLoadingSurvey,
-    data: surveyResult,
-    refetch: refetchSurveyResult,
-  } = useQuery<any, Error>(["publicSurvey", surveyId, "all"], async () => {
+  const { isLoading: isLoadingSurvey, data: surveyResult } = useQuery<
+    any,
+    Error
+  >(["publicSurvey", surveyId, "all"], async () => {
     const { data } = await axios.get<any>(
       `/survey-results/${surveyId}/companies`
     );
@@ -83,56 +82,14 @@ export default function ShowPublicResults() {
     ]);
   };
 
-  const toggleFiltersVisibility = (index: number) => {
-    setFiltersSets((prev) => {
-      const copy = cloneDeep(prev);
-      copy[index] = { ...copy[index], visible: !copy[index].visible };
-      return copy;
-    });
-  };
-
-  const toggleCollapse = (index: number) => {
-    setFiltersSets((prev) => {
-      const copy = cloneDeep(prev);
-      copy[index] = { ...copy[index], collapsed: !copy[index].collapsed };
-      return copy;
-    });
-  };
-
-  const setFilterValues =
-    (index: number) =>
-    (newFilterValue: { index?: string; value?: Array<string> }) => {
+  const changeFilterValue =
+    (index: number) => (valueName: string, newValue: any) => {
       setFiltersSets((prev) => {
         const copy = cloneDeep(prev);
-        copy[index] = { ...copy[index], filterValues: newFilterValue };
+        copy[index] = { ...copy[index], [valueName]: newValue };
         return copy;
       });
     };
-
-  const setFilterResults =
-    (index: number) => (newFilterResults: CategoryResults[]) => {
-      setFiltersSets((prev) => {
-        const copy = cloneDeep(prev);
-        copy[index] = { ...copy[index], categories: newFilterResults };
-        return copy;
-      });
-    };
-
-  const setFilterShape = (index: number) => (newShape: Shape) => {
-    setFiltersSets((prev) => {
-      const copy = cloneDeep(prev);
-      copy[index] = { ...copy[index], icon: newShape };
-      return copy;
-    });
-  };
-
-  const setFilterColor = (index: number) => (newColor: string) => {
-    setFiltersSets((prev) => {
-      const copy = cloneDeep(prev);
-      copy[index] = { ...copy[index], color: newColor };
-      return copy;
-    });
-  };
 
   const renderContent = useMemo(
     () => (
@@ -165,11 +122,18 @@ export default function ShowPublicResults() {
                     <span>{filterSet?.name}</span>
                     <Switch
                       value={!!filterSet.visible}
-                      setValue={() => toggleFiltersVisibility(index)}
+                      setValue={() =>
+                        changeFilterValue(index)("visible", !filterSet.visible)
+                      }
                     />
                     <Button
                       className="survey-response__filters__item__collapse"
-                      onClick={() => toggleCollapse(index)}
+                      onClick={() =>
+                        changeFilterValue(index)(
+                          "collapsed",
+                          !filterSet.collapsed
+                        )
+                      }
                     >
                       &#8595;
                     </Button>
@@ -183,11 +147,8 @@ export default function ShowPublicResults() {
                         currentFiltersValues={filterSet.filterValues}
                         availableFilters={availableFilters}
                         id={filterSet.id}
-                        setFilterValues={setFilterValues(index)}
                         surveyId={surveyId}
-                        setFilterResults={setFilterResults(index)}
-                        setFilterShape={setFilterShape(index)}
-                        setFilterColor={setFilterColor(index)}
+                        changeFilterValue={changeFilterValue(index)}
                       />
                     )}
                   </Collapse>

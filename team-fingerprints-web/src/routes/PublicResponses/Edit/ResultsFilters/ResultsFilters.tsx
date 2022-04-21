@@ -6,10 +6,9 @@ import { useFormik } from "formik";
 import { ColorPicker, Select } from "@mantine/core";
 
 import FiltersSelect from "./FiltersSelect";
-import { CategoryResults, FilterSelect, Shape } from "../../../../types/models";
+import { FilterSelect, Shape } from "../../../../types/models";
 
 type Props = {
-  setFilterValues: (filters: { index?: string; value?: Array<string> }) => void;
   id: string;
   availableFilters: [
     {
@@ -29,27 +28,21 @@ type Props = {
     value?: Array<string>;
   };
   surveyId: string;
-  setFilterResults: (newFilterResults: CategoryResults[]) => void;
-  setFilterShape: (newShape: Shape) => void;
-  setFilterColor: (newColor: string) => void;
+  changeFilterValue: (valueName: string, newValue: any) => void;
 };
 
 const ResultsFilters = ({
-  setFilterValues,
-  id,
   availableFilters,
   currentFiltersValues,
   surveyId,
-  setFilterResults,
-  setFilterShape,
-  setFilterColor,
+  changeFilterValue,
 }: Props) => {
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
     initialValues: currentFiltersValues,
     onSubmit: (values) => {
       const valuesWithoutEmpties = omitBy(values, isEmpty);
-      setFilterValues(valuesWithoutEmpties);
+      changeFilterValue("filterValues", valuesWithoutEmpties);
     },
   });
 
@@ -66,7 +59,7 @@ const ResultsFilters = ({
 
   useEffect(() => {
     const categoriesArray = lodashValues(surveyResult);
-    setFilterResults(categoriesArray);
+    changeFilterValue("categories", categoriesArray);
   }, [surveyResult]);
 
   return (
@@ -80,7 +73,7 @@ const ResultsFilters = ({
           { value: "circle", label: "Circle" },
           { value: "trapeze", label: "Trapeze" },
         ]}
-        onChange={(e: Shape) => setFilterShape(e)}
+        onChange={(e: Shape) => changeFilterValue("icon", e)}
       />
       <label className="survey-response__selects__shapes-label">
         Shape's color
@@ -88,7 +81,7 @@ const ResultsFilters = ({
       <ColorPicker
         format="hex"
         onChange={(e) => {
-          setFilterColor(e);
+          changeFilterValue("color", e);
         }}
         size="md"
       />

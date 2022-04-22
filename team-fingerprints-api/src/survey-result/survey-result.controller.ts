@@ -68,6 +68,7 @@ export class SurveyResultController {
 
   @Public()
   @Get('/companies/filters/:surveyId')
+  @UseInterceptors(CacheInterceptor)
   async getAvailableFiltersForCompanies(@Param('surveyId') surveyId: string) {
     return await this.surveyResultService.getAvailableFiltersForCompanies(
       surveyId,
@@ -75,6 +76,7 @@ export class SurveyResultController {
   }
 
   @Get('/companies/:companyId/filters/:surveyId')
+  @UseInterceptors(CacheInterceptor)
   async getAvailableFiltersForCompany(
     @Param('surveyId') surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -86,6 +88,7 @@ export class SurveyResultController {
   }
 
   @Get('/companies/:companyId/teams/:teamId/filters/:surveyId')
+  @UseInterceptors(CacheInterceptor)
   async getAvailableFiltersForTeam(
     @Param('surveyId') surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,

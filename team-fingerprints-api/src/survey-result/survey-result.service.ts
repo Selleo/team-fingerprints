@@ -1,7 +1,5 @@
 import { InjectQueue } from '@nestjs/bull';
 import {
-  forwardRef,
-  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -13,7 +11,6 @@ import { FilterService } from 'src/filter/filter.service';
 import { Filter } from 'src/filter/models/filter.model';
 import { RoleI } from 'src/role/interfaces/role.interface';
 import { RoleService } from 'src/role/role.service';
-import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 import { Survey } from 'src/survey/models/survey.model';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
@@ -24,8 +21,6 @@ import { UsersService } from 'src/users/users.service';
 export class SurveyResultService {
   constructor(
     @InjectQueue('count-points') private readonly countPointsQueue: Queue,
-    @Inject(forwardRef(() => SurveyAnswerService))
-    private readonly surveyAnswerService: SurveyAnswerService,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
     private readonly roleService: RoleService,
@@ -33,43 +28,6 @@ export class SurveyResultService {
     private readonly filterService: FilterService,
     private readonly tfConfigService: TfConfigService,
   ) {}
-
-  async getUsersWhoFinishedSurvey(surveyId: string, usersIds: string[]) {
-    const ids = usersIds.map((id) => new Types.ObjectId(id));
-    return await this.userModel
-      .aggregate([
-        {
-          $match: { _id: { $in: ids } },
-        },
-        {
-          $project: {
-            surveysAnswers: 1,
-            userDetails: 1,
-            email: 1,
-          },
-        },
-        {
-          $unwind: '$surveysAnswers',
-        },
-        {
-          $match: {
-            $and: [
-              {
-                'surveysAnswers.completeStatus': SurveyCompleteStatus.FINISHED,
-              },
-              { 'surveysAnswers.surveyId': surveyId },
-            ],
-          },
-        },
-      ])
-      .exec();
-  }
-
-  async getSurveyResultForUsers(surveyId: string, usersIds: string[]) {
-    return (await this.getUsersWhoFinishedSurvey(surveyId, usersIds)).map(
-      (user) => user.surveysAnswers.surveyResult,
-    );
-  }
 
   async getAvgResultForAllCompanies(surveyId: string, queries: any) {
     const usersIds = await this.getUsersIds();
@@ -132,13 +90,41 @@ export class SurveyResultService {
     return await this.countPoints(surveyId, filteredUsersIds);
   }
 
+  async getSurveyResultForUsers(surveyId: string, usersIds: string[]) {
+    return (await this.getUsersWhoFinishedSurvey(surveyId, usersIds)).map(
+      (user) => user.surveysAnswers.surveyResult,
+    );
+  }
+
+  async getAvailableFiltersForCompanies(surveyId: string) {
+    const usersIds = await this.getUsersForFilters();
+    return await this.getAvailableFilters(surveyId, usersIds);
+  }
+
+  async getAvailableFiltersForCompany(surveyId: string, companyId: string) {
+    const usersIds = await this.getUsersForFilters({ companyId });
+    return await this.getAvailableFilters(surveyId, usersIds);
+  }
+
+  async getAvailableFiltersForTeam(
+    surveyId: string,
+    companyId: string,
+    teamId: string,
+  ) {
+    const usersIds = await this.getUsersForFilters({ companyId, teamId });
+    return await this.getAvailableFilters(surveyId, usersIds);
+  }
+
   async countPointsJob(surveyId: string) {
     await this.countPointsQueue.add('count', { surveyId });
   }
 
   async countPoints(surveyId: string, usersIds: string[]) {
     const survey = await this.surveyModel.findById(surveyId);
-    if (!survey) throw new InternalServerErrorException();
+    if (!survey)
+      throw new InternalServerErrorException(
+        `Survey id: ${surveyId} does not exist`,
+      );
 
     const schema = [];
 
@@ -298,28 +284,41 @@ export class SurveyResultService {
     return availableFilters;
   }
 
-  async getAvailableFiltersForCompanies(surveyId: string) {
-    const usersIds = await this.getUsersIds();
-    if (!usersIds || usersIds.length <= 0)
-      throw new NotFoundException('There are not available filters');
-    return await this.getAvailableFilters(surveyId, usersIds);
+  async getUsersWhoFinishedSurvey(surveyId: string, usersIds: string[]) {
+    const ids = usersIds.map((id) => new Types.ObjectId(id));
+    return await this.userModel
+      .aggregate([
+        {
+          $match: { _id: { $in: ids } },
+        },
+        {
+          $project: {
+            surveysAnswers: 1,
+            userDetails: 1,
+            email: 1,
+          },
+        },
+        {
+          $unwind: '$surveysAnswers',
+        },
+        {
+          $match: {
+            $and: [
+              {
+                'surveysAnswers.completeStatus': SurveyCompleteStatus.FINISHED,
+              },
+              { 'surveysAnswers.surveyId': surveyId },
+            ],
+          },
+        },
+      ])
+      .exec();
   }
 
-  async getAvailableFiltersForCompany(surveyId: string, companyId: string) {
-    const usersIds = await this.getUsersIds({ companyId });
+  async getUsersForFilters(searchParam: Partial<RoleI> | null = null) {
+    const usersIds = await this.getUsersIds(searchParam);
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('There are not available filters');
-    return await this.getAvailableFilters(surveyId, usersIds);
-  }
-
-  async getAvailableFiltersForTeam(
-    surveyId: string,
-    companyId: string,
-    teamId: string,
-  ) {
-    const usersIds = await this.getUsersIds({ companyId, teamId });
-    if (!usersIds || usersIds.length <= 0)
-      throw new NotFoundException('There are not available filters');
-    return await this.getAvailableFilters(surveyId, usersIds);
+    return usersIds;
   }
 }

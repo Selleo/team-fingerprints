@@ -24,7 +24,8 @@ export class FilterService {
 
   async filterExists(filterId: string) {
     const filter = await this.filterModel.findById(filterId).exec();
-    return filter ? filter : false;
+    if (!filter) throw new NotFoundException(`Filer does not exist`);
+    else return filter;
   }
 
   async getFiltersList() {
@@ -45,8 +46,7 @@ export class FilterService {
   }
 
   async updateFilter(filterId: string, name: string) {
-    if (!(await this.filterExists(filterId)))
-      throw new NotFoundException(`Filer does not exist`);
+    await this.filterExists(filterId);
 
     const filterPath = await this.generateFilterPath(name);
 
@@ -65,22 +65,19 @@ export class FilterService {
   }
 
   async removeFilter(filterId: string) {
-    if (!(await this.filterExists(filterId)))
-      throw new NotFoundException(`Filer does not exist`);
+    await this.filterExists(filterId);
 
     return await this.filterModel.findByIdAndRemove(filterId);
   }
 
   async getFilterWithValues(filterId: string) {
-    if (!(await this.filterExists(filterId)))
-      throw new NotFoundException(`Filer does not exist`);
+    await this.filterExists(filterId);
 
     return await this.filterModel.findById(filterId);
   }
 
   async addFilterValue(filterId: string, value: string) {
-    const filter = await this.filterExists(filterId);
-    if (!filter) throw new NotFoundException(`Filer does not exist`);
+    await this.filterExists(filterId);
 
     return await this.filterModel
       .findByIdAndUpdate(
@@ -96,8 +93,7 @@ export class FilterService {
   }
 
   async updateFilterValue(filterId: string, valueId: string, value: string) {
-    const filter = await this.filterExists(filterId);
-    if (!filter) throw new NotFoundException(`Filer does not exist`);
+    await this.filterExists(filterId);
 
     return await this.filterModel
       .findOneAndUpdate(
@@ -115,8 +111,7 @@ export class FilterService {
   }
 
   async removeFilterValue(filterId: string, valueId: string) {
-    if (!(await this.filterExists(filterId)))
-      throw new NotFoundException(`Filer does not exist`);
+    await this.filterExists(filterId);
 
     return await this.filterModel
       .findOneAndUpdate(

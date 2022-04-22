@@ -39,62 +39,6 @@ export class SurveyAnswerService {
       .exec();
   }
 
-  private async changeAnswer(
-    userId: string,
-    surveyId: string,
-    { value, questionId }: QuestionAnswerDto,
-  ): Promise<User | HttpException> {
-    if (await this.checkIfSurveyIsFinished(userId, surveyId))
-      throw new ForbiddenException();
-
-    let updatedAnswer: User;
-
-    if (value === 0) {
-      updatedAnswer = await this.userModel
-        .findOneAndUpdate(
-          { _id: userId },
-          {
-            $pull: {
-              'surveysAnswers.$[survey].answers': { questionId },
-            },
-          },
-          {
-            arrayFilters: [{ 'survey.surveyId': surveyId }],
-            new: true,
-          },
-        )
-        .exec();
-
-      await this.userModel
-        .updateOne(
-          { _id: userId, 'surveysAnswers.surveyId': surveyId },
-          {
-            $inc: { 'surveysAnswers.$.amountOfAnswers': -1 },
-          },
-        )
-        .exec();
-    }
-
-    updatedAnswer = await this.userModel
-      .findOneAndUpdate(
-        { _id: userId },
-        {
-          $set: {
-            'surveysAnswers.$[survey].answers.$[question].value': value,
-          },
-        },
-        {
-          arrayFilters: [
-            { 'survey.surveyId': surveyId },
-            { 'question.questionId': questionId },
-          ],
-          new: true,
-        },
-      )
-      .exec();
-    return updatedAnswer;
-  }
-
   async saveUserSurveyAnswer(
     userId: string,
     surveyId: string,
@@ -176,22 +120,6 @@ export class SurveyAnswerService {
     return await this.userModel.findById(userId);
   }
 
-  async saveCalculatedAnswers(userId: string, surveyId, data: unknown) {
-    return await this.userModel
-      .updateOne(
-        { _id: userId },
-        {
-          $set: {
-            'surveysAnswers.$[survey].surveyResult': data,
-          },
-        },
-        {
-          arrayFilters: [{ 'survey.surveyId': surveyId }],
-        },
-      )
-      .exec();
-  }
-
   async finishSurvey(userId: string, surveyId: string) {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
       return await this.surveyResultService.getSurveyResultForUsers(surveyId, [
@@ -209,6 +137,78 @@ export class SurveyAnswerService {
     return await this.surveyResultService.getSurveyResultForUsers(surveyId, [
       userId,
     ]);
+  }
+
+  private async changeAnswer(
+    userId: string,
+    surveyId: string,
+    { value, questionId }: QuestionAnswerDto,
+  ): Promise<User | HttpException> {
+    if (await this.checkIfSurveyIsFinished(userId, surveyId))
+      throw new ForbiddenException();
+
+    let updatedAnswer: User;
+
+    if (value === 0) {
+      updatedAnswer = await this.userModel
+        .findOneAndUpdate(
+          { _id: userId },
+          {
+            $pull: {
+              'surveysAnswers.$[survey].answers': { questionId },
+            },
+          },
+          {
+            arrayFilters: [{ 'survey.surveyId': surveyId }],
+            new: true,
+          },
+        )
+        .exec();
+
+      await this.userModel
+        .updateOne(
+          { _id: userId, 'surveysAnswers.surveyId': surveyId },
+          {
+            $inc: { 'surveysAnswers.$.amountOfAnswers': -1 },
+          },
+        )
+        .exec();
+    }
+
+    updatedAnswer = await this.userModel
+      .findOneAndUpdate(
+        { _id: userId },
+        {
+          $set: {
+            'surveysAnswers.$[survey].answers.$[question].value': value,
+          },
+        },
+        {
+          arrayFilters: [
+            { 'survey.surveyId': surveyId },
+            { 'question.questionId': questionId },
+          ],
+          new: true,
+        },
+      )
+      .exec();
+    return updatedAnswer;
+  }
+
+  async saveCalculatedAnswers(userId: string, surveyId, data: unknown) {
+    return await this.userModel
+      .updateOne(
+        { _id: userId },
+        {
+          $set: {
+            'surveysAnswers.$[survey].surveyResult': data,
+          },
+        },
+        {
+          arrayFilters: [{ 'survey.surveyId': surveyId }],
+        },
+      )
+      .exec();
   }
 
   async getSurveyCompleteStatus(userId: string, surveyId: string) {

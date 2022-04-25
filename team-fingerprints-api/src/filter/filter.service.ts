@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { UserDetailI } from 'src/users/interfaces/user.interface';
 import { Filter } from './models/filter.model';
 
 @Injectable()
@@ -142,5 +143,33 @@ export class FilterService {
         },
       )
       .exec();
+  }
+
+  async validateUserDetails(userDetails: UserDetailI) {
+    const filterPaths = Object.keys(userDetails);
+    if (filterPaths.length <= 0)
+      throw new NotFoundException('No params passed');
+
+    const filter: Filter = (
+      await this.filterModel
+        .aggregate([
+          {
+            $match: {
+              filterPath: {
+                $in: filterPaths,
+              },
+            },
+          },
+          {
+            $project: {
+              filterPath: 1,
+            },
+          },
+        ])
+        .count('filterPath')
+    )[0];
+
+    if (Number(filterPaths.length) !== Number(filter?.filterPath))
+      throw new NotFoundException('Filter not found');
   }
 }

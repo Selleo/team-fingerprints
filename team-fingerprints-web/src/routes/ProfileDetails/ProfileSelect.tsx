@@ -34,8 +34,7 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
   return (
     <li className="profile__detail">
       <MemoizedSelect
-        clearable
-        searchable
+        searchable={item.filterPath === "country"}
         classNames={classes}
         label={item.name}
         placeholder="Pick one"

@@ -39,19 +39,22 @@ export class UsersService {
     return await this.userModel.findOne({ authId });
   }
 
-  async getUserByUserDetails(_id: string, queries: any) {
+  async prepareUserDetailsQuery(queries: any) {
     const paths = Object.keys(queries);
     if (paths.length <= 0) return;
 
     const query = [];
     paths.forEach((path) => {
-      query[`userDetails.${path}`] = queries[path];
+      if (Array.isArray(queries[path])) {
+        query[`userDetails.${path}`] = {
+          $in: queries[path],
+        };
+      } else {
+        query[`userDetails.${path}`] = queries[path];
+      }
     });
 
-    return await this.userModel.findOne({
-      _id,
-      ...query,
-    });
+    return query;
   }
 
   async getUsersAll(): Promise<User[]> {
@@ -71,13 +74,22 @@ export class UsersService {
 
   async getUsersIdsByUserDetails(usersIds: string[], queries: any = {}) {
     if (Object.keys(queries).length <= 0) return usersIds;
-    const users = (
-      await Promise.all(
-        usersIds.map(async (id) => {
-          return await this.getUserByUserDetails(id, queries);
-        }),
-      )
-    ).filter(Boolean);
+
+    const ids = usersIds.map((id) => new Types.ObjectId(id));
+    const query = await this.prepareUserDetailsQuery(queries);
+
+    const users = await this.userModel.aggregate([
+      {
+        $match: {
+          $and: [
+            { _id: { $in: ids } },
+            {
+              ...query,
+            },
+          ],
+        },
+      },
+    ]);
 
     return users.map((user) => user._id.toString());
   }
@@ -158,30 +170,7 @@ export class UsersService {
   }
 
   async setUserDetails(userId: string, userDetails: UserDetailI) {
-    const filterPaths = Object.keys(userDetails);
-    if (filterPaths.length <= 0)
-      throw new NotFoundException('No params passed');
-
-    const filters = (
-      await Promise.all(
-        filterPaths.map(async (key) => {
-          const filterExists = await this.filterService.getFilterByFilterPath(
-            key,
-          );
-          if (!filterExists)
-            throw new NotFoundException(`${key} filter does not exist`);
-
-          const filterValue = filterExists.values.find(
-            (el) => el._id.toString() === userDetails[key],
-          );
-          if (!filterValue) return null;
-          return filterExists;
-        }),
-      )
-    ).filter(Boolean);
-
-    if (filterPaths.length !== filters.length)
-      throw new NotFoundException('Filter not found');
+    await this.filterService.validateUserDetails(userDetails);
 
     const user = await this.getUserById(userId);
     if (!user) throw new NotFoundException('User does not exist');

@@ -4,16 +4,16 @@ import { isArray, isEmpty, times } from "lodash";
 import { Skeleton } from "@mantine/core";
 import axios from "axios";
 
-import ErrorLoading from "../../components/ErrorLoading";
-import BackToScreen from "../../components/BackToScreen/BackToScreen";
-import ResponseItem from "./ResponseItem";
+import ErrorLoading from "../../../components/ErrorLoading";
+import BackToScreen from "../../../components/BackToScreen/BackToScreen";
+import ResponseItem from "./PublicSurveyItem";
 
-import { Survey } from "../../types/models";
-import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
+import { Survey } from "../../../types/models";
+import { ReactComponent as BGIcons } from "../../../assets/BGIcons.svg";
 
-import "../Responses/styles.sass";
+import "../../Responses/styles.sass";
 
-const PublicResponses = () => {
+const PublicSurveysList = () => {
   const { isLoading, error, data } = useQuery<Survey[]>(
     "surveysAllPublic",
     async () => {
@@ -64,4 +64,4 @@ const PublicResponses = () => {
   );
 };
 
-export default PublicResponses;
+export default PublicSurveysList;

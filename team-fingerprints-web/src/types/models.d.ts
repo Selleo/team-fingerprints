@@ -144,6 +144,19 @@ export type AdditionalData = {
   name: string;
 };
 
+type FiltersSet = AdditionalData & {
+  visible: boolean;
+  filterValues: { [key: string]: Array<string> };
+
+  collapsed: boolean;
+};
+
+export type ChangeFilterValue = <T extends keyof FiltersSet>(
+  id: string,
+  valueName: T,
+  newValue: FiltersSet[T]
+) => void;
+
 export type Filter = {
   _id: string;
   filterPath: string;

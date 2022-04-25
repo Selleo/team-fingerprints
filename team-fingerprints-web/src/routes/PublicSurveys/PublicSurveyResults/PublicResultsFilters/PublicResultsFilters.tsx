@@ -6,7 +6,11 @@ import { useFormik } from "formik";
 import { ColorPicker, Select } from "@mantine/core";
 
 import FiltersSelect from "./FiltersSelect";
-import { FilterSelect, Shape } from "../../../../types/models";
+import {
+  FilterSelect,
+  Shape,
+  ChangeFilterValue,
+} from "../../../../types/models";
 
 type Props = {
   id: string;
@@ -14,35 +18,28 @@ type Props = {
     {
       filterPath: string;
       name: string;
-      values: [
-        {
-          value: string;
-          _id: string;
-        }
-      ];
+      values: { [key: string]: Array<string> };
       _id: string;
     }
   ];
-  currentFiltersValues: {
-    index?: string;
-    value?: Array<string>;
-  };
+  currentFiltersValues: { [key: string]: Array<string> };
   surveyId: string;
-  changeFilterValue: (valueName: string, newValue: any) => void;
+  changeFilterValue: ChangeFilterValue;
 };
 
-const ResultsFilters = ({
+const PublicResultsFilters = ({
   availableFilters,
   currentFiltersValues,
   surveyId,
   changeFilterValue,
+  id,
 }: Props) => {
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
     initialValues: currentFiltersValues,
     onSubmit: (values) => {
       const valuesWithoutEmpties = omitBy(values, isEmpty);
-      changeFilterValue("filterValues", valuesWithoutEmpties);
+      changeFilterValue(id, "filterValues", valuesWithoutEmpties);
     },
   });
 
@@ -59,7 +56,7 @@ const ResultsFilters = ({
 
   useEffect(() => {
     const categoriesArray = lodashValues(surveyResult);
-    changeFilterValue("categories", categoriesArray);
+    changeFilterValue(id, "categories", categoriesArray);
   }, [surveyResult]);
 
   return (
@@ -73,7 +70,7 @@ const ResultsFilters = ({
           { value: "circle", label: "Circle" },
           { value: "trapeze", label: "Trapeze" },
         ]}
-        onChange={(e: Shape) => changeFilterValue("icon", e)}
+        onChange={(e: Shape) => changeFilterValue(id, "icon", e)}
       />
       <label className="survey-response__selects__shapes-label">
         Shape's color
@@ -81,7 +78,7 @@ const ResultsFilters = ({
       <ColorPicker
         format="hex"
         onChange={(e) => {
-          changeFilterValue("color", e);
+          changeFilterValue(id, "color", e);
         }}
         size="md"
       />
@@ -97,4 +94,4 @@ const ResultsFilters = ({
   );
 };
 
-export default ResultsFilters;
+export default PublicResultsFilters;

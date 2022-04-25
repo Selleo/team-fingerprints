@@ -2,35 +2,29 @@ import axios from "axios";
 import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
-import { AdditionalData, CategoryResults, Shape } from "../../../types/models";
-import { uniqueId, cloneDeep, filter } from "lodash";
+import { uniqueId, filter } from "lodash";
 import { Button, Collapse } from "@mantine/core";
 
 import LoadingData from "../../../components/LoadingData";
 import ErrorLoading from "../../../components/ErrorLoading";
 import Chart from "../../../components/Chart/Chart";
 import BackToScreen from "../../../components/BackToScreen/BackToScreen";
-import ResultsFilters from "./ResultsFilters/ResultsFilters";
+import ResultsFilters from "./PublicResultsFilters/PublicResultsFilters";
 import ColoredShape from "../../../components/ColoredShape";
 import SurveyFinishedWrapper from "../../../components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 
-import { SurveyDetails } from "../../../types/models";
+import {
+  SurveyDetails,
+  ChangeFilterValue,
+  FiltersSet,
+} from "../../../types/models";
 import { Switch } from "../../../components/Switch";
 
-type FiltersSet = AdditionalData & {
-  visible: boolean;
-  filterValues:
-    | object
-    | {
-        index: string;
-        value: Array<string>;
-      };
-  collapsed: boolean;
-};
+type FilterSets = { [key: string]: FiltersSet };
 
-export default function ShowPublicResults() {
+export default function PublicSurveyResults() {
   const { surveyId } = useParams();
-  const [filtersSets, setFiltersSets] = useState<FiltersSet[]>([]);
+  const [filtersSets, setFiltersSets] = useState<FilterSets>({});
 
   const {
     isLoading: isLoadingSurveys,
@@ -47,7 +41,7 @@ export default function ShowPublicResults() {
     any,
     Error
   >(["publicSurvey", surveyId], async () => {
-    const { data } = await axios.get<any>(
+    const { data } = await axios.get<SurveyDetails>(
       `/survey-results/${surveyId}/companies`
     );
     return data;
@@ -56,7 +50,7 @@ export default function ShowPublicResults() {
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyFiltersPublic", surveyId],
     async () => {
-      const { data } = await axios.get<any>(
+      const { data } = await axios.get<FilterSets>(
         `/survey-results/companies/filters/${surveyId}`
       );
       return data;
@@ -66,9 +60,9 @@ export default function ShowPublicResults() {
   const createFilterSet = () => {
     const id = uniqueId();
     const lightColor = "hsl(" + Math.floor(Math.random() * 361) + ",50%,75%)";
-    setFiltersSets([
+    setFiltersSets({
       ...filtersSets,
-      {
+      [id]: {
         id: id,
         name: `Filter Set #${id}`,
         icon: "trapeze",
@@ -78,17 +72,26 @@ export default function ShowPublicResults() {
         filterValues: {},
         collapsed: false,
       },
-    ]);
+    });
   };
 
-  const changeFilterValue =
-    (index: number) => (valueName: string, newValue: any) => {
-      setFiltersSets((prev) => {
-        const copy = cloneDeep(prev);
-        copy[index] = { ...copy[index], [valueName]: newValue };
-        return copy;
-      });
+  const changeFilterValue: ChangeFilterValue = (id, valueName, newValue) => {
+    const callback = (filtersSets: FilterSets) => {
+      const newFilterSet = {
+        ...filtersSets[id],
+        [valueName]: newValue,
+      };
+
+      const newFilterSets = {
+        ...filtersSets,
+        [id]: newFilterSet,
+      };
+
+      return newFilterSets;
     };
+
+    setFiltersSets(callback);
+  };
 
   const renderContent = useMemo(
     () => (
@@ -103,9 +106,9 @@ export default function ShowPublicResults() {
           Create new filter set
         </Button>
         <div className="survey-response__filters">
-          {filtersSets.map((filterSet, index) => {
+          {Object.values(filtersSets).map((filterSet) => {
             return (
-              <React.Fragment key={index}>
+              <React.Fragment key={filterSet.id}>
                 <div className="survey-response__filters__item">
                   <div className="survey-response__filters__item__icon">
                     <ColoredShape
@@ -117,13 +120,18 @@ export default function ShowPublicResults() {
                   <Switch
                     value={!!filterSet.visible}
                     setValue={() =>
-                      changeFilterValue(index)("visible", !filterSet.visible)
+                      changeFilterValue(
+                        filterSet.id,
+                        "visible",
+                        !filterSet.visible
+                      )
                     }
                   />
                   <Button
                     className="survey-response__filters__item__collapse"
                     onClick={() =>
-                      changeFilterValue(index)(
+                      changeFilterValue(
+                        filterSet.id,
                         "collapsed",
                         !filterSet.collapsed
                       )
@@ -142,7 +150,7 @@ export default function ShowPublicResults() {
                       availableFilters={availableFilters}
                       id={filterSet.id}
                       surveyId={surveyId}
-                      changeFilterValue={changeFilterValue(index)}
+                      changeFilterValue={changeFilterValue}
                     />
                   )}
                 </Collapse>

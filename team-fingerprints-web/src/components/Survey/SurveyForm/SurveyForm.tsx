@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { TextInput, Button, Switch, Alert } from "@mantine/core";
+import { TextInput, Button, Switch, Alert, Checkbox } from "@mantine/core";
 import { BellIcon } from "@modulz/radix-icons";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
@@ -62,6 +62,8 @@ const SurveyForm = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
+  console.log("values", values);
+
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
@@ -91,6 +93,19 @@ const SurveyForm = ({
             </Alert>
           )}
         </>
+      )}
+
+      {isUpdate && (
+        <Checkbox
+          checked={values.archived}
+          onChange={(event) => {
+            setValues({ ...values, archived: event.currentTarget.checked });
+            setTouched({ archived: true });
+          }}
+          color="dark"
+          label="archive"
+          style={{ marginTop: "15px" }}
+        ></Checkbox>
       )}
 
       <Button className={classes.submitButton} type="submit">

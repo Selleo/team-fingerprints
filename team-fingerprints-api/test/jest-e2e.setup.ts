@@ -8,6 +8,7 @@ import { getMongoConnection } from './helpers/getMongoConnection';
 
 jest.mock('cache-manager-redis-store');
 jest.mock('cache-manager');
+jest.mock('bull');
 
 let usersModel: Model<User>;
 let roleModel: Model<Role>;

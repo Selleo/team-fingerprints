@@ -62,8 +62,6 @@ const SurveyForm = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
-  console.log("values", values);
-
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
@@ -86,7 +84,7 @@ const SurveyForm = ({
             color="red"
             label="public"
             style={{ marginTop: "10px", marginBottom: "10px" }}
-          ></Switch>
+          />
           {values.isPublic && (
             <Alert icon={<BellIcon />} title="Warning!" color="red">
               Remember! Public property can be changed only once!
@@ -105,7 +103,7 @@ const SurveyForm = ({
           color="dark"
           label="archive"
           style={{ marginTop: "15px" }}
-        ></Checkbox>
+        />
       )}
 
       <Button className={classes.submitButton} type="submit">

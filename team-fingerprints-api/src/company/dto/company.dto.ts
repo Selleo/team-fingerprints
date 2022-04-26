@@ -2,7 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDefined,
   IsEmail,
-  IsFQDN,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -22,8 +21,6 @@ export class CreateCompanyDto {
 
   @ApiProperty()
   @IsString()
-  @IsFQDN()
-  @IsNotEmpty()
   @IsOptional()
   readonly domain?: string;
 
@@ -52,9 +49,7 @@ export class UpdateCompanyDto {
   readonly description?: string;
 
   @ApiPropertyOptional()
-  @IsFQDN()
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   readonly domain?: string;
 

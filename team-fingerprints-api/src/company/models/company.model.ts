@@ -21,7 +21,7 @@ export class Company extends Document {
   @Prop({ type: [TeamSchema], default: [], required: true })
   teams: Team[];
 
-  @Prop({ default: '', required: true, unique: true })
+  @Prop({ default: '', required: false, unique: true })
   domain: string;
 
   @Prop({ default: [], required: false })

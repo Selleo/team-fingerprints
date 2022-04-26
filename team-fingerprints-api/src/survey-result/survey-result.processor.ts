@@ -14,7 +14,7 @@ import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UsersService } from 'src/users/users.service';
 import { SurveyResultService } from './survey-result.service';
 
-@Processor('count-points')
+@Processor('survey-results')
 export class SurveyResultProcessor {
   private readonly logger = new Logger(this.constructor.name);
   constructor(
@@ -50,7 +50,7 @@ export class SurveyResultProcessor {
     );
   }
 
-  @Process('count')
+  @Process('count-points')
   async countPoints({ data }: Job) {
     const usersIds = await this.surveyResultService.getUsersIds();
     const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
@@ -75,6 +75,33 @@ export class SurveyResultProcessor {
         await this.tfConfigService.updateGlobalSurveysResults(
           data.surveyId,
           result,
+        );
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Process('get-global-available-filters')
+  async getGlobalAvailableFilters({ data }: Job) {
+    try {
+      const filters =
+        await this.surveyResultService.getAvailableFiltersForCompanies(
+          data.surveyId,
+        );
+
+      const currentFilters =
+        await this.tfConfigService.getGlobalAvailableFilters(data.surveyId);
+
+      if (!currentFilters) {
+        await this.tfConfigService.createGlobalAvailableFilters(
+          data.surveyId,
+          filters,
+        );
+      } else {
+        await this.tfConfigService.updateGlobalAvailableFilters(
+          data.surveyId,
+          filters,
         );
       }
     } catch (error) {

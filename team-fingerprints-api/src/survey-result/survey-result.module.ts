@@ -5,7 +5,6 @@ import { CompanyModule } from 'src/company/company.module';
 import { TeamModule } from 'src/company/team/team.module';
 import { FilterModule } from 'src/filter/filter.module';
 import { RoleModule } from 'src/role/role.module';
-import { SurveyAnswerModule } from 'src/survey-answer/survey-answer.module';
 import { Survey, SurveySchema } from 'src/survey/models/survey.model';
 import { TfConfigModule } from 'src/tf-config/tf-config.module';
 import { User, UserSchema } from 'src/users/models/user.model';
@@ -17,12 +16,11 @@ import { SurveyResultService } from './survey-result.service';
 @Module({
   imports: [
     TeamModule,
-    CompanyModule,
-    UsersModule,
     FilterModule,
-    forwardRef(() => SurveyAnswerModule),
+    forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
     forwardRef(() => TfConfigModule),
+    forwardRef(() => UsersModule),
     MongooseModule.forFeature([
       {
         name: User.name,
@@ -34,7 +32,7 @@ import { SurveyResultService } from './survey-result.service';
       },
     ]),
     BullModule.registerQueueAsync({
-      name: 'count-points',
+      name: 'survey-results',
     }),
   ],
   controllers: [SurveyResultController],

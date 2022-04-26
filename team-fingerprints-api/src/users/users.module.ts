@@ -7,6 +7,7 @@ import { CompanyModule } from 'src/company/company.module';
 import { TeamModule } from 'src/company/team/team.module';
 import { RoleModule } from 'src/role/role.module';
 import { FilterModule } from 'src/filter/filter.module';
+import { SurveyResultModule } from 'src/survey-result/survey-result.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FilterModule } from 'src/filter/filter.module';
     forwardRef(() => TeamModule),
     forwardRef(() => RoleModule),
     forwardRef(() => FilterModule),
+    forwardRef(() => SurveyResultModule),
   ],
   providers: [UsersService],
   controllers: [UsersController],

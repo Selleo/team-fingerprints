@@ -32,10 +32,10 @@ export class AuthService {
 
     await this.companyMembersService.handleUserInCompanyDomain(email);
 
-    roleDocuments.forEach(async (doc) => {
-      if (!doc.userId || doc.userId.length <= 0) {
+    roleDocuments.forEach(async (roleDocument) => {
+      if (!roleDocument.userId || roleDocument.userId.length <= 0) {
         await this.roleService.updateRoleDocument(
-          { _id: doc._id },
+          { _id: roleDocument._id },
           { userId: user._id.toString() },
         );
       }

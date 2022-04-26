@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { FilterValueSchema, FilterValue } from './filter-value.model';
 
-@Schema({ autoIndex: false, timestamps: true })
+@Schema({ autoIndex: true, timestamps: true })
 export class Filter extends Document {
   _id?: string;
 

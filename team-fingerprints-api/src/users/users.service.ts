@@ -16,6 +16,7 @@ import {
 } from './interfaces/user.interface';
 import { FilterService } from 'src/filter/filter.service';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
+import { SurveyResultService } from 'src/survey-result/survey-result.service';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,7 @@ export class UsersService {
     private readonly teamService: TeamService,
     private readonly roleService: RoleService,
     private readonly filterService: FilterService,
+    private readonly surveyResultService: SurveyResultService,
   ) {}
 
   async getUserById(userId: string): Promise<User> {
@@ -180,6 +182,34 @@ export class UsersService {
       { $set: { userDetails } },
       { new: true },
     );
+
+    const finishedSurveysIds = (
+      await this.userModel.aggregate([
+        {
+          $match: {
+            _id: new Types.ObjectId(userId),
+          },
+        },
+        {
+          $project: {
+            surveysAnswers: 1,
+          },
+        },
+        {
+          $unwind: '$surveysAnswers',
+        },
+        {
+          $match: {
+            'surveysAnswers.completeStatus': SurveyCompleteStatus.FINISHED,
+          },
+        },
+      ])
+    ).map((survey) => survey.surveysAnswers.surveyId);
+
+    await this.surveyResultService.updateGlobalAvailableFiltersWhenUserChangeUserDetails(
+      finishedSurveysIds,
+    );
+
     return await this.getUserProfile(userId);
   }
 

@@ -422,10 +422,10 @@ describe('SurveyResultController', () => {
     });
   });
 
-  describe('GET /survey-results/companies/filters/:surveyId - get available filters for companies', () => {
+  describe('GET /survey-filters/companies/filters/:surveyId - get available filters for companies', () => {
     it('returnsavailable filters for companies', async () => {
       const { body } = await request(app.getHttpServer())
-        .get(`/survey-results/companies/filters/${survey._id.toString()}`)
+        .get(`/survey-filters/companies/filters/${survey._id.toString()}`)
         .expect(200);
 
       expect(body[0].name).toEqual(filterCountry.name);
@@ -454,11 +454,11 @@ describe('SurveyResultController', () => {
     });
   });
 
-  describe('GET /survey-results/companies/:companyId/filters/:surveyId - get available filters for company', () => {
+  describe('GET /survey-filters/companies/:companyId/filters/:surveyId - get available filters for company', () => {
     it('returnsavailable filters for company', async () => {
       const { body } = await request(app.getHttpServer())
         .get(
-          `/survey-results/companies/${company1._id.toString()}/filters/${survey._id.toString()}`,
+          `/survey-filters/companies/${company1._id.toString()}/filters/${survey._id.toString()}`,
         )
         .expect(200);
 
@@ -472,11 +472,11 @@ describe('SurveyResultController', () => {
     });
   });
 
-  describe('GET /survey-results/companies/:companyId/teams/:teamId/filters/:surveyId - get available filters for team', () => {
+  describe('GET /survey-filters/companies/:companyId/teams/:teamId/filters/:surveyId - get available filters for team', () => {
     it('returnsavailable filters for team', async () => {
       const { body } = await request(app.getHttpServer())
         .get(
-          `/survey-results/companies/${company1._id.toString()}/teams/${team1._id.toString()}/filters/${survey._id.toString()}`,
+          `/survey-filters/companies/${company1._id.toString()}/teams/${team1._id.toString()}/filters/${survey._id.toString()}`,
         )
         .expect(200);
 

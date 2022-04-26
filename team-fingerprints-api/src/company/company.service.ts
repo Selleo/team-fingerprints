@@ -62,27 +62,32 @@ export class CompanyService {
     {
       name,
       description = '',
-      domain,
+      domain = '',
       pointColor,
       pointShape,
     }: CreateCompanyDto,
   ): Promise<Company | HttpException> {
-    if (!isDomainValid(domain)) throw new BadRequestException('Invalid domain');
+    if (domain.length > 0) {
+      if (!isDomainValid(domain))
+        throw new BadRequestException('Invalid domain');
 
-    const data: DomainBlacklist =
-      await this.tfConfigService.getEmailBlackList();
+      const data: DomainBlacklist =
+        await this.tfConfigService.getEmailBlackList();
 
-    if (data?.domains?.includes(domain))
-      throw new BadRequestException('Can not add this domain to your company');
+      if (data?.domains?.includes(domain))
+        throw new BadRequestException(
+          'Can not add this domain to your company',
+        );
 
-    if (await this.isDomainTaken(domain)) {
-      throw new ForbiddenException(`Domain ${domain} is already taken.`);
+      if (await this.isDomainTaken(domain)) {
+        throw new ForbiddenException(`Domain ${domain} is already taken.`);
+      }
     }
 
     const newCompany = await this.companyModel.create({
       name,
       description,
-      domain: domain.toLowerCase(),
+      domain: domain.length > 0 ? domain.toLowerCase() : '',
       pointColor,
       pointShape,
     });
@@ -106,29 +111,31 @@ export class CompanyService {
     {
       name,
       description = '',
-      domain: companyDomain,
+      domain: newDomain = '',
       pointColor,
       pointShape,
     }: UpdateCompanyDto,
   ): Promise<Company> {
-    const { domain } = await this.companyModel.findById(companyId, {
-      domain: 1,
-    });
-    if (domain !== companyDomain) {
-      const data: DomainBlacklist =
-        await this.tfConfigService.getEmailBlackList();
+    const company = await this.companyModel.findById(companyId);
 
-      if (data?.domains?.includes(companyDomain))
+    const { domains }: DomainBlacklist =
+      await this.tfConfigService.getEmailBlackList();
+
+    if (newDomain && newDomain?.length > 0 && company?.domain !== newDomain) {
+      if (!isDomainValid(newDomain))
+        throw new BadRequestException('Invalid domain');
+
+      if (domains?.includes(newDomain))
         throw new BadRequestException(
           'Can not add this domain to your company',
         );
 
-      if (await this.isDomainTaken(companyDomain)) {
-        throw new ForbiddenException(
-          `Domain ${companyDomain} is already taken.`,
-        );
-      }
+      if (await this.isDomainTaken(newDomain))
+        throw new ForbiddenException(`Domain ${newDomain} is already taken.`);
     }
+
+    if (company.domain?.length > 0 && company.domain === newDomain)
+      return company;
 
     return await this.companyModel
       .findOneAndUpdate(
@@ -136,7 +143,7 @@ export class CompanyService {
         {
           name,
           description,
-          domain: companyDomain.toLowerCase(),
+          domain: newDomain?.length > 0 ? newDomain.toLowerCase() : '',
           pointColor,
           pointShape,
         },

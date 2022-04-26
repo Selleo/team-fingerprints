@@ -134,6 +134,7 @@ export class SurveyAnswerService {
     await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
 
     await this.surveyResultService.countPointsJob(surveyId);
+    await this.surveyResultService.getAvailableFiltersForCompaniesJob(surveyId);
     return await this.surveyResultService.getSurveyResultForUsers(surveyId, [
       userId,
     ]);

@@ -1,5 +1,7 @@
 import { InjectQueue } from '@nestjs/bull';
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -20,10 +22,11 @@ import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class SurveyResultService {
   constructor(
-    @InjectQueue('count-points') private readonly countPointsQueue: Queue,
+    @InjectQueue('survey-results') private readonly surveyResultsQueue: Queue,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
     private readonly roleService: RoleService,
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly filterService: FilterService,
     private readonly tfConfigService: TfConfigService,
@@ -47,8 +50,7 @@ export class SurveyResultService {
 
     if (
       resultsForCompanies &&
-      Object.keys(resultsForCompanies.data).length > 0 &&
-      resultsForCompanies.counter < 3
+      Object.keys(resultsForCompanies.data).length > 0
     ) {
       return resultsForCompanies.data;
     } else {
@@ -97,8 +99,43 @@ export class SurveyResultService {
   }
 
   async getAvailableFiltersForCompanies(surveyId: string) {
+    const availableFilters =
+      await this.tfConfigService.getGlobalAvailableFilters(surveyId);
+
+    if (availableFilters?.data && availableFilters.data.length > 0) {
+      return availableFilters.data;
+    } else {
+      const usersIds = await this.getUsersForFilters();
+      const newAvailableFilters = await this.getAvailableFilters(
+        surveyId,
+        usersIds,
+      );
+
+      return (
+        await this.tfConfigService.createGlobalAvailableFilters(
+          surveyId,
+          newAvailableFilters,
+        )
+      ).data;
+    }
+  }
+
+  async updateGlobalAvailableFiltersWhenUserChangeUserDetails(
+    surveysIds: string[],
+  ) {
     const usersIds = await this.getUsersForFilters();
-    return await this.getAvailableFilters(surveyId, usersIds);
+
+    surveysIds.forEach(async (surveyId) => {
+      const newAvailableFilters = await this.getAvailableFilters(
+        surveyId,
+        usersIds,
+      );
+
+      await this.tfConfigService.updateGlobalAvailableFilters(
+        surveyId,
+        newAvailableFilters,
+      );
+    });
   }
 
   async getAvailableFiltersForCompany(surveyId: string, companyId: string) {
@@ -115,8 +152,14 @@ export class SurveyResultService {
     return await this.getAvailableFilters(surveyId, usersIds);
   }
 
+  async getAvailableFiltersForCompaniesJob(surveyId: string) {
+    await this.surveyResultsQueue.add('get-global-available-filters', {
+      surveyId,
+    });
+  }
+
   async countPointsJob(surveyId: string) {
-    await this.countPointsQueue.add('count', { surveyId });
+    await this.surveyResultsQueue.add('count-points', { surveyId });
   }
 
   async countPoints(surveyId: string, usersIds: string[]) {

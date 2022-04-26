@@ -3,6 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TfConfig } from './models/tf-config.model';
 
+const SURVEY_RESULTS = 'survey-results';
+const GLOBAL_FILTERS = 'global-filters';
+
 @Injectable()
 export class TfConfigService {
   constructor(
@@ -16,31 +19,60 @@ export class TfConfigService {
     return document?.data ?? [];
   }
 
+  // Storing global survey results
+
   async getGlobalSurveysResults(surveyId: string) {
-    return await this.tfConfigModel.findOne({ name: surveyId }).exec();
+    return await this.tfConfigModel
+      .findOne({ name: SURVEY_RESULTS, surveyId })
+      .exec();
   }
 
   async createGlobalSurveysResults(surveyId: string, result: unknown = {}) {
     return await (
-      await this.tfConfigModel.create({ name: surveyId, data: result })
+      await this.tfConfigModel.create({
+        name: SURVEY_RESULTS,
+        surveyId,
+        data: result,
+      })
     ).save();
   }
 
   async updateGlobalSurveysResults(surveyId: string, newResults: unknown) {
     return await this.tfConfigModel
       .findOneAndUpdate(
-        { name: surveyId },
-        { data: newResults, counter: 0 },
+        { name: SURVEY_RESULTS, surveyId },
+        { data: newResults },
         { new: true },
       )
       .exec();
   }
 
-  async globalSurveysResultsChangeCounter(surveyId: string) {
+  // Storing available global filters
+
+  async getGlobalAvailableFilters(surveyId: string) {
+    return await this.tfConfigModel
+      .findOne({ name: GLOBAL_FILTERS, surveyId })
+      .exec();
+  }
+
+  async createGlobalAvailableFilters(surveyId: string, filters: unknown = {}) {
+    return await (
+      await this.tfConfigModel.create({
+        name: GLOBAL_FILTERS,
+        surveyId,
+        data: filters,
+      })
+    ).save();
+  }
+
+  async updateGlobalAvailableFilters(
+    surveyId: string,
+    newFilters: unknown = {},
+  ) {
     return await this.tfConfigModel
       .findOneAndUpdate(
-        { name: surveyId },
-        { $inc: { counter: 1 } },
+        { name: GLOBAL_FILTERS, surveyId },
+        { data: newFilters },
         { new: true },
       )
       .exec();

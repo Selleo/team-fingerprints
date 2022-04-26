@@ -16,11 +16,11 @@ import { SurveyResultService } from './survey-result.service';
 @Module({
   imports: [
     TeamModule,
-    CompanyModule,
-    UsersModule,
     FilterModule,
+    forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
     forwardRef(() => TfConfigModule),
+    forwardRef(() => UsersModule),
     MongooseModule.forFeature([
       {
         name: User.name,
@@ -32,7 +32,7 @@ import { SurveyResultService } from './survey-result.service';
       },
     ]),
     BullModule.registerQueueAsync({
-      name: 'count-points',
+      name: 'survey-results',
     }),
   ],
   controllers: [SurveyResultController],

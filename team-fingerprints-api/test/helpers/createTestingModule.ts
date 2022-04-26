@@ -8,8 +8,7 @@ import { MailServiceMock } from './../../test/mocks/mail-service.mock';
 const EXAMPLE_QUEUE = 'example_queue';
 
 const exampleQueueMock = {
-  add: jest.fn(),
-  inviteToCompanyMail: jest.fn().mockReturnValue(true),
+  add: () => jest.fn,
 };
 
 export async function createTestingModule() {

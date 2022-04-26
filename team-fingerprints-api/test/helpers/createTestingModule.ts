@@ -1,5 +1,9 @@
-import { BullModule, getQueueToken } from '@nestjs/bull';
-import { CacheInterceptor, ValidationPipe } from '@nestjs/common';
+import { getQueueToken } from '@nestjs/bull';
+import {
+  CacheInterceptor,
+  CACHE_MANAGER,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import { MailService } from 'src/mail/mail.service';
@@ -14,7 +18,16 @@ const exampleQueueMock = {
 
 export async function createTestingModule() {
   const testingModule: TestingModule = await Test.createTestingModule({
-    imports: [BullModule.registerQueue({ name: EXAMPLE_QUEUE }), AppModule],
+    imports: [AppModule],
+    providers: [
+      {
+        provide: CACHE_MANAGER,
+        useValue: {
+          get: () => '',
+          set: () => jest.fn(),
+        },
+      },
+    ],
   })
     .overrideProvider(MailService)
     .useValue(new MailServiceMock())

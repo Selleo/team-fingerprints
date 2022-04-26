@@ -80,10 +80,10 @@ function Details() {
                 return (
                   <List.Item icon={<TrendIcon />}>
                     <Group>
-                      <Text color="#FEC92D">
+                      <Text color="#48bd66">
                         primary: <strong>{trend.primary}</strong>
                       </Text>
-                      <Text color="#48bd66">secondary: {trend.secondary}</Text>
+                      <Text color="#FEC92D">secondary: {trend.secondary}</Text>
                       <EditTrendButton
                         trend={trend}
                         surveyId={survey?._id}

@@ -1,9 +1,19 @@
 @import 'styles/base/variables'
 @import 'styles/base/mixins'
 
+.welcome-screen
+  display: flex
+
+.login-box
+  width: 50%
+  text-align: center
+  position: relative
+  overflow: hidden
+
+  &:hover .login-background
+      transform: scale(1.6)
 
 .login
-  align-items: flex-start
   display: flex
   flex-direction: column
   font-weight: $font-weight-regular
@@ -30,7 +40,7 @@
     color: $color-white-text
     font-size: $font-size-h5
     margin:
-      bottom: $m-lg
+      bottom: 31px
       top: 0
 
   &__public
@@ -49,14 +59,55 @@
     color: $color-background
     cursor: pointer
     display: flex
-    font-weight: $font-weight-500
+    font-weight: 700
     font-size: $font-size-base
     margin: 0 auto
     padding: $m-xs $m-sm
     width: fit-content
+    height: 48px
 
     &:focus
       outline: none
 
     &:hover
       background-color: $color-primary-dark
+
+  .--manager
+    background-color: #7643A8
+
+    &:hover
+      background-color: #53297c
+
+.login-background
+  position: absolute
+  top: 28%
+  left: 0
+  right: 0
+  margin-left: auto
+  margin-right: auto
+  display: flex
+  justify-content: center
+  z-index: -1
+  transform: scale(1)
+  transition-duration: 400ms
+
+.login-box-manager:hover ~ .thunder path
+  stroke: #7643A8
+
+.login-box-employer:hover ~ .thunder path
+  stroke: #32A89C
+
+.thunder
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  margin-left: auto
+  margin-right: auto
+  display: flex
+  justify-content: center
+  z-index: -1
+
+  path
+    stroke: #fff
+    transition-duration: 400ms

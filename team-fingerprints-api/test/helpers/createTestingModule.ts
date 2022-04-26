@@ -1,9 +1,5 @@
-import { getQueueToken } from '@nestjs/bull';
-import {
-  CacheInterceptor,
-  CACHE_MANAGER,
-  ValidationPipe,
-} from '@nestjs/common';
+import { BullModule, getQueueToken } from '@nestjs/bull';
+import { CacheInterceptor, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import { MailService } from 'src/mail/mail.service';
@@ -12,22 +8,12 @@ import { MailServiceMock } from './../../test/mocks/mail-service.mock';
 const EXAMPLE_QUEUE = 'example_queue';
 
 const exampleQueueMock = {
-  add: jest.fn(),
-  inviteToCompanyMail: jest.fn().mockReturnValue(true),
+  add: () => jest.fn,
 };
 
 export async function createTestingModule() {
   const testingModule: TestingModule = await Test.createTestingModule({
-    imports: [AppModule],
-    providers: [
-      {
-        provide: CACHE_MANAGER,
-        useValue: {
-          get: () => '',
-          set: () => jest.fn(),
-        },
-      },
-    ],
+    imports: [BullModule.registerQueue({ name: EXAMPLE_QUEUE }), AppModule],
   })
     .overrideProvider(MailService)
     .useValue(new MailServiceMock())

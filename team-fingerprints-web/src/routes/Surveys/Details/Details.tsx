@@ -1,8 +1,8 @@
+import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { times } from "lodash";
 import { Badge, Skeleton, List, Group, Text } from "@mantine/core";
-import axios from "axios";
 
 import AddCategoryButton from "../../../components/Category/AddCategoryButton";
 import AddQuestionButton from "../../../components/Question/AddQuestionButton";
@@ -64,10 +64,12 @@ function Details() {
             <Group>
               <Text>{category.title}</Text>
               <EditCategoryButton category={category} surveyId={survey?._id} />
-              <DeleteCategoryButton
-                categoryId={category._id}
-                surveyId={survey?._id}
-              />
+              {!survey?.isPublic && (
+                <DeleteCategoryButton
+                  categoryId={category._id}
+                  surveyId={survey?._id}
+                />
+              )}
             </Group>
             <Group style={{ marginTop: "10px" }}>
               <AddTrendButton
@@ -89,11 +91,13 @@ function Details() {
                         surveyId={survey?._id}
                         categoryId={category._id}
                       />
-                      <DeleteTrendButton
-                        trendId={trend._id}
-                        surveyId={survey?._id}
-                        categoryId={category._id}
-                      />
+                      {!survey?.isPublic && (
+                        <DeleteTrendButton
+                          trendId={trend._id}
+                          surveyId={survey?._id}
+                          categoryId={category._id}
+                        />
+                      )}
                     </Group>
                     <Group style={{ marginTop: "10px" }}>
                       <AddQuestionButton
@@ -125,12 +129,14 @@ function Details() {
                                 trendId={trend._id}
                                 categoryId={category._id}
                               />
-                              <DeleteQuestionButton
-                                questionId={question._id}
-                                surveyId={survey._id}
-                                trendId={trend._id}
-                                categoryId={category._id}
-                              />
+                              {!survey?.isPublic && (
+                                <DeleteQuestionButton
+                                  questionId={question._id}
+                                  surveyId={survey._id}
+                                  trendId={trend._id}
+                                  categoryId={category._id}
+                                />
+                              )}
                             </Group>
                           </List.Item>
                         );

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ResponseItem } from "../../../types/models";
+import { ResponseItem } from "../../../../types/models";
 import StatusIcon from "./StatusIcon";
 import StatusInfo from "./StatusInfo";
 

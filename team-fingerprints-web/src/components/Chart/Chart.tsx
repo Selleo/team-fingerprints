@@ -1,4 +1,4 @@
-import { each, times, values } from "lodash";
+import { each, times } from "lodash";
 import {
   FC,
   useCallback,
@@ -9,29 +9,22 @@ import {
   useState,
 } from "react";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
-import { AdditionalData, Shape } from "../../types/models";
+import {
+  AdditionalData,
+  CategoryResults,
+  Shape,
+  TrendResults,
+} from "../../types/models";
+
 import "./styles.sass";
 
 interface IProps {
-  surveyResult: any;
+  surveyResult: CategoryResults[];
   additionalData: AdditionalData[];
   showMe: boolean;
 }
 
 const ROW_HEIGHT_PX = 60;
-
-type TrendResults = {
-  avgTrendAnswer: number;
-  trendId: string;
-  trendPrimary: string;
-  trendSecondary: string;
-};
-
-type CategoryResults = {
-  categoryId: string;
-  categoryTitile: string;
-  avgTrends: TrendResults[];
-};
 
 type TrendToDisplay = TrendResults & { categoryTitile: string };
 

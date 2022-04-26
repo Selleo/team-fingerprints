@@ -123,6 +123,19 @@ export type QuestionWithAnswers = { answer: Answer; question: Question };
 
 export type Shape = "triangle" | "square" | "circle" | "trapeze";
 
+export type TrendResults = {
+  avgTrendAnswer: number;
+  trendId: string;
+  trendPrimary: string;
+  trendSecondary: string;
+};
+
+export type CategoryResults = {
+  categoryId: string;
+  categoryTitile: string;
+  avgTrends: TrendResults[];
+};
+
 export type AdditionalData = {
   icon: Shape;
   color: string;
@@ -130,6 +143,19 @@ export type AdditionalData = {
   id: string;
   name: string;
 };
+
+type FiltersSet = AdditionalData & {
+  visible: boolean;
+  filterValues: { [key: string]: Array<string> };
+
+  collapsed: boolean;
+};
+
+export type ChangeFilterValue = <T extends keyof FiltersSet>(
+  id: string,
+  valueName: T,
+  newValue: FiltersSet[T]
+) => void;
 
 export type Filter = {
   _id: string;

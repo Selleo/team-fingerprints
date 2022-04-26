@@ -1,35 +1,29 @@
-import { useMemo, memo } from "react";
-import { Select } from "@mantine/core";
+import { useMemo } from "react";
+import { MultiSelect } from "@mantine/core";
 import { FilterSelect } from "../../../../types/models";
+
+import "./styles.sass";
 
 type Props = {
   filter: FilterSelect;
-  values: Values;
-  handleChange: (e: string) => any;
   handleSubmit: () => void;
+  setFieldValue: (filterPath: string, value: Array<string>) => void;
 };
 
 type Values = {
-  _id: string,
-  value: string,
-  label: string
-}
-
-const selectClasses = {
-  root: "survey-response__filters__select",
-  label: "survey-response__filters__select__label",
+  _id: string;
+  value: string;
+  label: string;
 };
 
-const MemoizedSelect = memo(Select);
+const selectClasses = {
+  root: "survey-response__selects__item",
+  label: "survey-response__selects__item__label",
+};
 
-const FiltersSelect = ({
-  filter,
-  handleChange,
-  handleSubmit,
-}: Props) => {
+const FiltersSelect = ({ filter, handleSubmit, setFieldValue }: Props) => {
   const itemSelect = useMemo(() => {
     const data = [
-      { value: "", label: "" },
       ...filter.values?.map((value: Values) => ({
         value: value._id,
         label: value.value,
@@ -40,14 +34,16 @@ const FiltersSelect = ({
   }, [filter]);
 
   return (
-    <MemoizedSelect
+    <MultiSelect
       classNames={selectClasses}
       key={filter._id}
       label={filter.name}
-      placeholder="Pick one"
+      placeholder="Select"
+      searchable
+      clearable
       data={itemSelect}
-      onChange={(e) => {
-        handleChange(filter.filterPath)(e);
+      onChange={(values) => {
+        setFieldValue(filter.filterPath, values);
         handleSubmit();
       }}
     />

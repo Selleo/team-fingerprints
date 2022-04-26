@@ -97,7 +97,6 @@ const CompanyForm = ({
         onChange={handleChange("description")}
       />
       <TextInput
-        required
         label="Company domain"
         placeholder="Company domain"
         value={values.domain}

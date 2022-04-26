@@ -7,17 +7,15 @@ import {
 } from '@nestjs/bull';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { Job } from 'bull';
+import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
-import { UsersService } from 'src/users/users.service';
-import { SurveyResultService } from './survey-result.service';
 
-@Processor('survey-results')
+@Processor('survey-filters')
 export class SurveyResultProcessor {
   private readonly logger = new Logger(this.constructor.name);
   constructor(
-    private readonly surveyResultService: SurveyResultService,
     private readonly tfConfigService: TfConfigService,
-    private readonly usersService: UsersService,
+    private readonly surveyFiltersService: SurveyFiltersService,
   ) {}
 
   @OnQueueActive()
@@ -46,31 +44,26 @@ export class SurveyResultProcessor {
     );
   }
 
-  @Process('count-points')
-  async countPoints({ data }: Job) {
-    const usersIds = await this.surveyResultService.getUsersIds();
-    const filteredUsersIds = await this.usersService.getUsersIdsByUserDetails(
-      usersIds,
-    );
+  @Process('get-global-available-filters')
+  async getGlobalAvailableFilters({ data }: Job) {
     try {
-      const result = await this.surveyResultService.countPoints(
-        data.surveyId,
-        filteredUsersIds,
-      );
-
-      const currentResults = await this.tfConfigService.getGlobalSurveysResults(
-        data.surveyId,
-      );
-
-      if (!currentResults) {
-        await this.tfConfigService.createGlobalSurveysResults(
+      const filters =
+        await this.surveyFiltersService.getAvailableFiltersForCompanies(
           data.surveyId,
-          result,
+        );
+
+      const currentFilters =
+        await this.tfConfigService.getGlobalAvailableFilters(data.surveyId);
+
+      if (!currentFilters) {
+        await this.tfConfigService.createGlobalAvailableFilters(
+          data.surveyId,
+          filters,
         );
       } else {
-        await this.tfConfigService.updateGlobalSurveysResults(
+        await this.tfConfigService.updateGlobalAvailableFilters(
           data.surveyId,
-          result,
+          filters,
         );
       }
     } catch (error) {

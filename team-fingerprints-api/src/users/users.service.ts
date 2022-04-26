@@ -17,6 +17,7 @@ import {
 import { FilterService } from 'src/filter/filter.service';
 import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
+import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
 
 @Injectable()
 export class UsersService {
@@ -27,6 +28,7 @@ export class UsersService {
     private readonly roleService: RoleService,
     private readonly filterService: FilterService,
     private readonly surveyResultService: SurveyResultService,
+    private readonly surveyFiltersService: SurveyFiltersService,
   ) {}
 
   async getUserById(userId: string): Promise<User> {
@@ -206,7 +208,7 @@ export class UsersService {
       ])
     ).map((survey) => survey.surveysAnswers.surveyId);
 
-    await this.surveyResultService.updateGlobalAvailableFiltersWhenUserChangeUserDetails(
+    await this.surveyFiltersService.updateGlobalAvailableFiltersWhenUserChangeUserDetails(
       finishedSurveysIds,
     );
 

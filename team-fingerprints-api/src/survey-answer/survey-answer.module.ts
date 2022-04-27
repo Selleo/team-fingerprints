@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SurveyFiltersModule } from 'src/survey-filters/survey-filters.module';
 import { SurveyResultModule } from 'src/survey-result/survey-result.module';
 import { SurveySummarizeModule } from 'src/survey-summarize/survey-summarize.module';
 import { SurveyModule } from 'src/survey/survey.module';
@@ -14,6 +15,7 @@ import { SurveyAnswerService } from './survey-answer.service';
     forwardRef(() => SurveyResultModule),
     forwardRef(() => SurveyModule),
     forwardRef(() => TfConfigModule),
+    forwardRef(() => SurveyFiltersModule),
     MongooseModule.forFeature([
       {
         name: User.name,

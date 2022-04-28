@@ -28,6 +28,7 @@ jobs:
       REDIS_PORT: ${{secrets.REDIS_PORT}}
       REDIS_HOST: ${{secrets.REDIS_HOST}}
       REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
+      CI: true
       
     steps:
       - uses: actions/checkout@v2
@@ -35,7 +36,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
  
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
@@ -45,6 +45,5 @@ jobs:
           mongodb-db: test
       - run: npm i
       - run: npm run tsc
-      - run: npm run build
       - run: npm run test
       - run: npm run test:e2e

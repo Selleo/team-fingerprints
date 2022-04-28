@@ -7,9 +7,6 @@ services:
       REDIS_PASSWORD: redis
     ports:
       - 6379:6379
-    volumes:
-      - ./.docker/redis/data/:/data/
-      - ./.docker/redis/logs/:/var/log/redis/
 
   redis-commander:
     image: rediscommander/redis-commander:latest

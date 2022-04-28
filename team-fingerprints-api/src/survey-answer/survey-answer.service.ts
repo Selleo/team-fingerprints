@@ -16,6 +16,7 @@ import { SurveyCompleteStatus } from './survey-answer.type';
 import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { SurveyService } from 'src/survey/survey.service';
+import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
 
 @Injectable()
 export class SurveyAnswerService {
@@ -26,6 +27,7 @@ export class SurveyAnswerService {
     private readonly surveyResultService: SurveyResultService,
     private readonly surveySummarizeService: SurveySummarizeService,
     private readonly surveyService: SurveyService,
+    private readonly surveyFiltersService: SurveyFiltersService,
   ) {}
 
   async getUserAnswers(userId: string, surveyId: string): Promise<User> {
@@ -134,7 +136,9 @@ export class SurveyAnswerService {
     await this.saveCalculatedAnswers(userId, surveyId, calculatedAnswers);
 
     await this.surveyResultService.countPointsJob(surveyId);
-    await this.surveyResultService.getAvailableFiltersForCompaniesJob(surveyId);
+    await this.surveyFiltersService.getAvailableFiltersForCompaniesJob(
+      surveyId,
+    );
     return await this.surveyResultService.getSurveyResultForUsers(surveyId, [
       userId,
     ]);

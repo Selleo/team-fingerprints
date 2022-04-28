@@ -30,19 +30,6 @@ export class PrivilegesInterceptor implements NestInterceptor {
     const companyId = params.companyId ?? null;
     const teamId = params.teamId ?? null;
 
-    // TESTING
-    if (this.configService.get<string>('NODE_ENV') === 'test') {
-      const superAdminRoleDocument = await this.roleService.findRoleDocument({
-        email,
-        role: RoleType.SUPER_ADMIN,
-      });
-
-      if (superAdminRoleDocument) {
-        request.roleDocument = superAdminRoleDocument;
-        return handler.handle();
-      }
-    }
-
     // Handle USER && TEAM LEADER
     if (companyId && teamId) {
       const leaderRoleDocument = await this.roleService.findRoleDocument({

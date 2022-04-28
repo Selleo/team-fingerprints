@@ -16,7 +16,6 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
-        mongodb-version: ['4.2']
     env:
       AUTH0_CLIENT_ID: ${{secrets.AUTH0_CLIENT_ID}}
       AUTH0_CLIENT_SECRET: ${{secrets.AUTH0_CLIENT_SECRET}}
@@ -28,6 +27,7 @@ jobs:
       REDIS_PORT: ${{secrets.REDIS_PORT}}
       REDIS_HOST: ${{secrets.REDIS_HOST}}
       REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
+      CI: true
       
     steps:
       - uses: actions/checkout@v2
@@ -35,16 +35,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
  
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
         with:
-          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-version: 4.2
           mongodb-replica-set: rs
           mongodb-db: test
       - run: npm i
       - run: npm run tsc
-      - run: npm run build
       - run: npm run test
       - run: npm run test:e2e

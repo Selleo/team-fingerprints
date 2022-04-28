@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD, Reflector } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/guards/JwtAuthGuard.guard';
 import { JwtStrategy } from './jwt.strategy';
@@ -9,8 +8,6 @@ import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { CompanyModule } from 'src/company/company.module';
 import { TeamModule } from 'src/company/team/team.module';
-import { TestingAuthGuard } from './guards/TestingAuthGuard.guard';
-import { UsersService } from 'src/users/users.service';
 import { RoleModule } from 'src/role/role.module';
 import { MailModule } from 'src/mail/mail.module';
 
@@ -24,25 +21,8 @@ import { MailModule } from 'src/mail/mail.module';
     MailModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      inject: [ConfigService, UsersService, Reflector],
-      useFactory: (
-        configService: ConfigService,
-        usersService: UsersService,
-        reflector: Reflector,
-      ) => {
-        const ENV = configService.get<string>('NODE_ENV');
-        if (ENV === 'test') {
-          return new TestingAuthGuard(usersService);
-        } else return new JwtAuthGuard(reflector);
-      },
-    },
-    JwtStrategy,
-    AuthService,
-  ],
-  exports: [PassportModule],
+  providers: [JwtAuthGuard, JwtStrategy, AuthService],
+  exports: [PassportModule, JwtAuthGuard],
   controllers: [AuthController],
 })
 export class AuthModule {}

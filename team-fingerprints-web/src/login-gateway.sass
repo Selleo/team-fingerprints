@@ -3,15 +3,18 @@
 
 .welcome-screen
   display: flex
+  align-items: center
 
 .login-box
   width: 50%
   text-align: center
   position: relative
   overflow: hidden
+  display: flex
+  align-items: center
 
   &:hover .login-background
-      transform: scale(1.6)
+      transform: scale(1.7)
 
 .login
   display: flex
@@ -40,7 +43,7 @@
     color: $color-white-text
     font-size: $font-size-h5
     margin:
-      bottom: 31px
+      bottom: $m-lg
       top: 0
 
   &__public
@@ -73,14 +76,13 @@
       background-color: $color-primary-dark
 
   .--manager
-    background-color: #7643A8
+    background-color: $color-purple
 
     &:hover
-      background-color: #53297c
+      background-color: $color-purple-dark
 
 .login-background
   position: absolute
-  top: 28%
   left: 0
   right: 0
   margin-left: auto
@@ -88,20 +90,20 @@
   display: flex
   justify-content: center
   z-index: -1
-  transform: scale(1)
+  transform: scale(1.2)
   transition-duration: 400ms
 
 .login-box-manager:hover ~ .thunder path
-  stroke: #7643A8
+  stroke: $color-purple
 
 .login-box-employer:hover ~ .thunder path
-  stroke: #32A89C
+  stroke: $color-primary
 
 .thunder
   position: absolute
-  top: 0
   left: 0
   right: 0
+  height: 100%
   margin-left: auto
   margin-right: auto
   display: flex
@@ -109,5 +111,5 @@
   z-index: -1
 
   path
-    stroke: #fff
+    stroke: $color-white
     transition-duration: 400ms

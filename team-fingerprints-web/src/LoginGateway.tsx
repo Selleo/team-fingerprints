@@ -61,25 +61,23 @@ const LoginGateway = () => {
         ) : (
           <>
             <QueryClientProvider client={queryClient}>
-              <AppShell navbarOffsetBreakpoint="sm" fixed className="app-shell">
-                <Routes>
-                  <Route path="/public" element={<PublicSurveysList />} />
-                  <Route
-                    path="/"
-                    element={
-                      <WelcomeScreen
-                        loginWithRedirect={loginWithRedirect}
-                        isLoading={isLoading}
-                        pathname={pathname}
-                      />
-                    }
-                  />
-                  <Route
-                    path="survey/:surveyId"
-                    element={<ShowPublicResults />}
-                  />
-                </Routes>
-              </AppShell>
+              <Routes>
+                <Route path="/public" element={<PublicSurveysList />} />
+                <Route
+                  path="/"
+                  element={
+                    <WelcomeScreen
+                      loginWithRedirect={loginWithRedirect}
+                      isLoading={isLoading}
+                      pathname={pathname}
+                    />
+                  }
+                />
+                <Route
+                  path="survey/:surveyId"
+                  element={<ShowPublicResults />}
+                />
+              </Routes>
             </QueryClientProvider>
           </>
         )}

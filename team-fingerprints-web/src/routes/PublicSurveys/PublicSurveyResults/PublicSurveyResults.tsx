@@ -13,14 +13,12 @@ import ResultsFilters from "./PublicResultsFilters/PublicResultsFilters";
 import ColoredShape from "../../../components/ColoredShape";
 import SurveyFinishedWrapper from "../../../components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 
+import { Switch } from "../../../components/Switch";
 import {
   SurveyDetails,
   ChangeFilterValue,
-  FiltersSet,
+  FilterSets,
 } from "../../../types/models";
-import { Switch } from "../../../components/Switch";
-
-type FilterSets = { [key: string]: FiltersSet };
 
 export default function PublicSurveyResults() {
   const { surveyId } = useParams();
@@ -46,16 +44,6 @@ export default function PublicSurveyResults() {
     );
     return data;
   });
-
-  const { data: availableFilters } = useQuery<any, Error>(
-    ["surveyFiltersPublic", surveyId],
-    async () => {
-      const { data } = await axios.get<FilterSets>(
-        `/survey-results/companies/filters/${surveyId}`
-      );
-      return data;
-    }
-  );
 
   const createFilterSet = () => {
     const id = uniqueId();
@@ -147,7 +135,6 @@ export default function PublicSurveyResults() {
                   {surveyId && (
                     <ResultsFilters
                       currentFiltersValues={filterSet.filterValues}
-                      availableFilters={availableFilters}
                       id={filterSet.id}
                       surveyId={surveyId}
                       changeFilterValue={changeFilterValue}

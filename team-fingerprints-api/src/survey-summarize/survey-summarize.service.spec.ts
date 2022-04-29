@@ -1,13 +1,13 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Types } from 'mongoose';
-import { Survey } from './../survey/models/survey.model';
-import { User } from '../users/models/user.model';
+import { SurveyModel } from './../survey/models/survey.model';
+import { UserModel } from '../users/models/user.model';
 import { SurveyModelMock, findById } from '../../test/mocks/survey.model.mock';
 import { UserModelMock, findOne } from '../../test/mocks/user.model.mock';
 import { SurveySummarizeService } from './survey-summarize.service';
 
-const survey: Partial<Survey> = {
+const survey: Partial<SurveyModel> = {
   _id: new Types.ObjectId(),
   title: 'Test survey',
   amountOfQuestions: 2,
@@ -90,11 +90,11 @@ describe('SurveySummarizeService', () => {
       providers: [
         SurveySummarizeService,
         {
-          provide: getModelToken(User.name),
+          provide: getModelToken(UserModel.name),
           useValue: new UserModelMock(),
         },
         {
-          provide: getModelToken(Survey.name),
+          provide: getModelToken(SurveyModel.name),
           useValue: new SurveyModelMock(),
         },
       ],

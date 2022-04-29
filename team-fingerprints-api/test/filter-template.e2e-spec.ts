@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Company } from 'src/company/models/company.model';
+import { CompanyModel } from 'src/company/models/company.model';
 import * as request from 'supertest';
 import { getApplication } from './helpers/getApplication';
 
 const createCompanyWithTeam = async (
-  companyModel: Model<Company>,
-): Promise<Company> => {
+  companyModel: Model<CompanyModel>,
+): Promise<CompanyModel> => {
   const teamData = {
     _id: new Types.ObjectId(),
     name: 'Test team',
@@ -29,7 +29,7 @@ const createCompanyWithTeam = async (
 };
 
 const createFilterTemplateInCompany = async (
-  companyModel: Model<Company>,
+  companyModel: Model<CompanyModel>,
   companyId: string,
 ) => {
   const filterTemplateData = {
@@ -50,7 +50,7 @@ const createFilterTemplateInCompany = async (
 };
 
 const createFilterTemplateInTeam = async (
-  companyModel: Model<Company>,
+  companyModel: Model<CompanyModel>,
   companyId: string,
   teamId: string,
 ) => {
@@ -73,14 +73,14 @@ const createFilterTemplateInTeam = async (
 
 describe('FilterTemplateController', () => {
   let app: INestApplication;
-  let companyModel: Model<Company>;
-  let company: Company;
+  let companyModel: Model<CompanyModel>;
+  let company: CompanyModel;
   let companyId: string;
   let teamId: string;
 
   beforeEach(async () => {
     app = await getApplication();
-    companyModel = app.get(getModelToken(Company.name));
+    companyModel = app.get(getModelToken(CompanyModel.name));
     company = await createCompanyWithTeam(companyModel);
     companyId = company._id.toString();
     teamId = company.teams[0]._id.toString();

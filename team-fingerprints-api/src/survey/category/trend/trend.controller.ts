@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RoleType } from 'src/role/role.type';
-import { Survey } from 'src/survey/models/survey.model';
+import { RoleType } from 'team-fingerprints-common';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import { TrendService } from './trend.service';
 import {
   TrendParamsDto,
@@ -20,7 +20,7 @@ export class TrendController {
   async createTrend(
     @Param() params: TrendParamsDto,
     @Body() trendDto: CreateTrendDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.trendService.createTrend(params, trendDto);
   }
 
@@ -29,7 +29,7 @@ export class TrendController {
   async updateTrend(
     @Param() params: TrendParamsDto,
     @Body() trendDto: UpdateTrendDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.trendService.updateTrend(params, trendDto);
   }
 

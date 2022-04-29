@@ -1,150 +1,37 @@
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
-import { Survey } from 'src/survey/models/survey.model';
-import { UserSurveyAnswerI } from 'src/users/interfaces/user.interface';
-import { User } from 'src/users/models/user.model';
+import { Model } from 'mongoose';
+import { SurveyModel } from 'src/survey/models/survey.model';
+import { UserModel } from 'src/users/models/user.model';
 import { getApplication } from './helpers/getApplication';
 import { getBaseUser } from './helpers/getBaseUser';
 import { createBaseUser } from './helpers/users';
 import * as request from 'supertest';
-import { Company } from 'src/company/models/company.model';
-import { Role } from 'src/role/models/role.model';
-import { RoleType } from 'src/role/role.type';
-import { Team } from 'src/company/models/team.model';
-import { Filter } from 'src/filter/models/filter.model';
-
-const companyWithTeamData = [
-  {
-    name: 'Test company - 1',
-    pointColor: '#fffaaa',
-    pointShape: 'square',
-    domain: 'example.com',
-    filterTemplates: [],
-    teams: [
-      {
-        _id: new Types.ObjectId(),
-        name: 'Test team - 1',
-        pointColor: '#fffaaa',
-        pointShape: 'square',
-        filterTemplates: [],
-      },
-    ],
-  },
-  {
-    name: 'Test company - 2',
-    pointColor: '#222333',
-    pointShape: 'circle',
-    domain: 'oelles.com',
-    filterTemplates: [],
-    teams: [
-      {
-        _id: new Types.ObjectId(),
-        name: 'Test team - 2',
-        pointColor: '#bbbccc',
-        pointShape: 'circle',
-        filterTemplates: [],
-      },
-    ],
-  },
-];
-
-const surveyData: Partial<Survey> = {
-  title: 'Test survey',
-  amountOfQuestions: 2,
-  isPublic: true,
-  archived: false,
-  categories: [
-    {
-      _id: new Types.ObjectId(),
-      title: 'Category 1 - test',
-      trends: [
-        {
-          _id: new Types.ObjectId(),
-          primary: 'Aaaa - test',
-          secondary: 'Bbbb - test',
-          questions: [
-            {
-              _id: new Types.ObjectId(),
-              title: 'Jdiokehfjiwebdfvjdbfv?',
-              primary: true,
-            },
-            {
-              _id: new Types.ObjectId(),
-              title: 'Aadasddfs?',
-              primary: true,
-            },
-          ],
-        },
-      ],
-    },
-  ],
-};
-
-const filtersWithValuesData = [
-  {
-    name: 'Country',
-    filterPath: 'country',
-    values: [
-      {
-        _id: new Types.ObjectId(),
-        value: 'Poland',
-      },
-      {
-        _id: new Types.ObjectId(),
-        value: 'Slovakia',
-      },
-    ],
-  },
-  {
-    name: 'Level',
-    filterPath: 'level',
-    values: [
-      {
-        _id: new Types.ObjectId(),
-        value: 'Junior',
-      },
-      {
-        _id: new Types.ObjectId(),
-        value: 'Independent',
-      },
-    ],
-  },
-];
+import { CompanyModel } from 'src/company/models/company.model';
+import { RoleModel } from 'src/role/models/role.model';
+import { TeamModel } from 'src/company/models/team.model';
+import {
+  filtersWithValuesData,
+  companyWithTeamData,
+  surveyData,
+  addUserToTeam,
+  createSurvey,
+} from './survey-result-filter.setup';
+import {
+  UserSurveyAnswer,
+  SurveyCompleteStatus,
+} from 'team-fingerprints-common';
 
 const createCompanyWithTeam = async (
-  companyModel: Model<Company>,
+  companyModel: Model<CompanyModel>,
   data: any,
-): Promise<Company> => {
+): Promise<CompanyModel> => {
   return await (await companyModel.create(data)).save();
 };
 
-const addUserToTeam = async (
-  roleModel: Model<Role>,
-  baseUser: User,
-  companyId: string,
-  teamId: string,
-): Promise<Role> => {
-  const roleDocumentData: Partial<Role> = {
-    role: RoleType.USER,
-    companyId,
-    teamId,
-    email: baseUser.email,
-    userId: baseUser._id.toString(),
-  };
-
-  return await (await roleModel.create(roleDocumentData)).save();
-};
-
-const createSurvey = async (
-  surveyModel: Model<Survey>,
-  surveyData: Partial<Survey>,
-): Promise<Survey> => {
-  return await (await surveyModel.create(surveyData)).save();
-};
-
-const surveyAnswersDataForBaseUser = (survey: Survey): UserSurveyAnswerI => ({
+const surveyAnswersDataForBaseUser = (
+  survey: SurveyModel,
+): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
   completeStatus: SurveyCompleteStatus.FINISHED,
   amountOfAnswers: 2,
@@ -174,7 +61,7 @@ const surveyAnswersDataForBaseUser = (survey: Survey): UserSurveyAnswerI => ({
   ],
 });
 
-const surveyAnswersDataForUser = (survey: Survey): UserSurveyAnswerI => ({
+const surveyAnswersDataForUser = (survey: SurveyModel): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
   completeStatus: SurveyCompleteStatus.FINISHED,
   amountOfAnswers: 2,
@@ -205,9 +92,9 @@ const surveyAnswersDataForUser = (survey: Survey): UserSurveyAnswerI => ({
 });
 
 const saveAnswersInUser = async (
-  userModel: Model<User>,
-  user: User,
-  surveyAnswerData: UserSurveyAnswerI,
+  userModel: Model<UserModel>,
+  user: UserModel,
+  surveyAnswerData: UserSurveyAnswer,
 ) => {
   return await userModel
     .findOneAndUpdate(
@@ -222,10 +109,6 @@ const saveAnswersInUser = async (
     .exec();
 };
 
-const createFilter = async (filterModel: Model<Filter>, filterData: any) => {
-  return await (await filterModel.create(filterData)).save();
-};
-
 const userDatailsData = [
   {
     country: filtersWithValuesData[0].values[0]._id.toString(),
@@ -238,7 +121,7 @@ const userDatailsData = [
 ];
 
 const saveDetailsInUser = async (
-  userModel: Model<User>,
+  userModel: Model<UserModel>,
   userId: string,
   userDetails: any,
 ) => {
@@ -249,35 +132,31 @@ const saveDetailsInUser = async (
   );
 };
 
-const getUserById = async (userModel: Model<User>, userId: string) => {
+const getUserById = async (userModel: Model<UserModel>, userId: string) => {
   return await userModel.findById(userId).exec();
 };
 
 describe('SurveyResultController', () => {
   let app: INestApplication;
-  let userModel: Model<User>;
-  let companyModel: Model<Company>;
-  let roleModel: Model<Role>;
-  let surveyModel: Model<Survey>;
-  let filterModel: Model<Filter>;
+  let userModel: Model<UserModel>;
+  let companyModel: Model<CompanyModel>;
+  let roleModel: Model<RoleModel>;
+  let surveyModel: Model<SurveyModel>;
 
-  let baseUser: User;
-  let user: User;
-  let company1: Company;
-  let company2: Company;
-  let team1: Team;
-  let team2: Team;
-  let survey: Survey;
-  let filterCountry: Filter;
-  let filterLevel: Filter;
+  let baseUser: UserModel;
+  let user: UserModel;
+  let company1: CompanyModel;
+  let company2: CompanyModel;
+  let team1: TeamModel;
+  let team2: TeamModel;
+  let survey: SurveyModel;
 
   beforeEach(async () => {
     app = await getApplication();
-    userModel = app.get(getModelToken(User.name));
-    companyModel = app.get(getModelToken(Company.name));
-    roleModel = app.get(getModelToken(Role.name));
-    surveyModel = app.get(getModelToken(Survey.name));
-    filterModel = app.get(getModelToken(Filter.name));
+    userModel = app.get(getModelToken(UserModel.name));
+    companyModel = app.get(getModelToken(CompanyModel.name));
+    roleModel = app.get(getModelToken(RoleModel.name));
+    surveyModel = app.get(getModelToken(SurveyModel.name));
 
     baseUser = await getBaseUser(userModel);
     user = await createBaseUser(userModel);
@@ -316,9 +195,6 @@ describe('SurveyResultController', () => {
 
     userAnswerData = surveyAnswersDataForUser(survey);
     await saveAnswersInUser(userModel, user, userAnswerData);
-
-    filterCountry = await createFilter(filterModel, filtersWithValuesData[0]);
-    filterLevel = await createFilter(filterModel, filtersWithValuesData[1]);
 
     await saveDetailsInUser(
       userModel,
@@ -419,74 +295,6 @@ describe('SurveyResultController', () => {
         companies.body[survey.categories[0]._id.toString()].avgTrends[0]
           .avgTrendAnswer,
       ).toBe(2.5);
-    });
-  });
-
-  describe('GET /survey-results/companies/filters/:surveyId - get available filters for companies', () => {
-    it('returnsavailable filters for companies', async () => {
-      const { body } = await request(app.getHttpServer())
-        .get(`/survey-results/companies/filters/${survey._id.toString()}`)
-        .expect(200);
-
-      expect(body[0].name).toEqual(filterCountry.name);
-      expect(body[0].filterPath).toEqual(filterCountry.filterPath);
-      expect(body[0]._id).toEqual(filterCountry._id.toString());
-      expect(body[0].values[0].value).toEqual(filterCountry.values[0].value);
-      expect(body[0].values[0]._id).toEqual(
-        filterCountry.values[0]._id.toString(),
-      );
-      expect(body[0].values[1].value).toEqual(filterCountry.values[1].value);
-      expect(body[0].values[1]._id).toEqual(
-        filterCountry.values[1]._id.toString(),
-      );
-
-      expect(body[1].name).toEqual(filterLevel.name);
-      expect(body[1].filterPath).toEqual(filterLevel.filterPath);
-      expect(body[1]._id).toEqual(filterLevel._id.toString());
-      expect(body[1].values[0].value).toEqual(filterLevel.values[0].value);
-      expect(body[1].values[0]._id).toEqual(
-        filterLevel.values[0]._id.toString(),
-      );
-      expect(body[1].values[1].value).toEqual(filterLevel.values[1].value);
-      expect(body[1].values[1]._id).toEqual(
-        filterLevel.values[1]._id.toString(),
-      );
-    });
-  });
-
-  describe('GET /survey-results/companies/:companyId/filters/:surveyId - get available filters for company', () => {
-    it('returnsavailable filters for company', async () => {
-      const { body } = await request(app.getHttpServer())
-        .get(
-          `/survey-results/companies/${company1._id.toString()}/filters/${survey._id.toString()}`,
-        )
-        .expect(200);
-
-      expect(body[0].name).toEqual(filterCountry.name);
-      expect(body[0].filterPath).toEqual(filterCountry.filterPath);
-      expect(body[0]._id).toEqual(filterCountry._id.toString());
-      expect(body[0].values[0].value).toEqual(filterCountry.values[0].value);
-      expect(body[0].values[0]._id).toEqual(
-        filterCountry.values[0]._id.toString(),
-      );
-    });
-  });
-
-  describe('GET /survey-results/companies/:companyId/teams/:teamId/filters/:surveyId - get available filters for team', () => {
-    it('returnsavailable filters for team', async () => {
-      const { body } = await request(app.getHttpServer())
-        .get(
-          `/survey-results/companies/${company1._id.toString()}/teams/${team1._id.toString()}/filters/${survey._id.toString()}`,
-        )
-        .expect(200);
-
-      expect(body[0].name).toEqual(filterCountry.name);
-      expect(body[0].filterPath).toEqual(filterCountry.filterPath);
-      expect(body[0]._id).toEqual(filterCountry._id.toString());
-      expect(body[0].values[0].value).toEqual(filterCountry.values[0].value);
-      expect(body[0].values[0]._id).toEqual(
-        filterCountry.values[0]._id.toString(),
-      );
     });
   });
 });

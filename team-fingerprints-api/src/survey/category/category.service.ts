@@ -1,8 +1,8 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Category } from '../models/category.model';
-import { Survey } from '../models/survey.model';
+import { CategoryModel } from '../models/category.model';
+import { SurveyModel } from '../models/survey.model';
 import { SurveyService } from '../survey.service';
 import {
   CategoryParamsDto,
@@ -15,14 +15,15 @@ import { TrendService } from './trend/trend.service';
 export class CategoryService {
   constructor(
     private readonly surveyService: SurveyService,
-    @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
+    @InjectModel(SurveyModel.name)
+    private readonly surveyModel: Model<SurveyModel>,
     private readonly trendService: TrendService,
   ) {}
 
   async createCategory(
     { surveyId }: CategoryParamsDto,
     { title }: CreateCategoryDto,
-  ): Promise<Survey | HttpException> {
+  ): Promise<SurveyModel | HttpException> {
     await this.surveyService.canEditSurvey(surveyId);
 
     const surveyExists = await this.surveyService.getSurvey(surveyId);
@@ -34,7 +35,7 @@ export class CategoryService {
   async updateCategory(
     { surveyId, categoryId }: CategoryParamsDto,
     { title }: UpdateCategoryDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.surveyModel.findOneAndUpdate(
       {
         _id: surveyId,
@@ -49,10 +50,13 @@ export class CategoryService {
     );
   }
 
-  async removeCategory(surveyId: string, categoryId: string): Promise<Survey> {
+  async removeCategory(
+    surveyId: string,
+    categoryId: string,
+  ): Promise<SurveyModel> {
     await this.surveyService.canEditSurvey(surveyId);
 
-    const { categories }: Survey = await this.surveyModel.findOne(
+    const { categories }: SurveyModel = await this.surveyModel.findOne(
       {
         _id: surveyId,
       },
@@ -62,7 +66,7 @@ export class CategoryService {
     if (!categories) throw new NotFoundException();
 
     const trendsId = [];
-    categories.forEach((category: Category) => {
+    categories.forEach((category: CategoryModel) => {
       if (category?._id.toString() === categoryId) {
         category.trends.forEach((trend) => {
           trendsId.push(trend?._id.toString());

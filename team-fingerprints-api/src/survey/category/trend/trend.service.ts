@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Survey } from 'src/survey/models/survey.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import { SurveyService } from 'src/survey/survey.service';
 import {
   CreateTrendDto,
@@ -18,7 +18,8 @@ import { QuestionService } from './question/question.service';
 @Injectable()
 export class TrendService {
   constructor(
-    @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
+    @InjectModel(SurveyModel.name)
+    private readonly surveyModel: Model<SurveyModel>,
     private readonly questionService: QuestionService,
     @Inject(forwardRef(() => SurveyService))
     private readonly surveyService: SurveyService,
@@ -27,7 +28,7 @@ export class TrendService {
   async createTrend(
     { surveyId, categoryId }: TrendParamsDto,
     { primary, secondary }: CreateTrendDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     await this.surveyService.canEditSurvey(surveyId);
 
     return await this.surveyModel.findOneAndUpdate(
@@ -50,7 +51,7 @@ export class TrendService {
   async updateTrend(
     { surveyId, categoryId, trendId }: TrendParamsDto,
     { primary, secondary }: UpdateTrendDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.surveyModel.findOneAndUpdate(
       {
         _id: surveyId,

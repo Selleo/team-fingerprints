@@ -2,17 +2,17 @@ import { INestApplication } from '@nestjs/common';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { Model } from 'mongoose';
-import { Company } from 'src/company/models/company.model';
+import { CompanyModel } from 'src/company/models/company.model';
 import { getModelToken } from '@nestjs/mongoose';
 import {
   CreateCompanyDto,
   UpdateCompanyDto,
 } from 'src/company/dto/company.dto';
-import { Role } from 'src/role/models/role.model';
-import { RoleType } from 'src/role/role.type';
+import { RoleModel } from 'src/role/models/role.model';
+import { RoleType } from 'team-fingerprints-common';
 
-const createCompany = async (companyModel: Model<Company>) => {
-  const companyData: Partial<Company> = {
+const createCompany = async (companyModel: Model<CompanyModel>) => {
+  const companyData: Partial<CompanyModel> = {
     name: 'Company test',
     pointColor: '#ab34bf',
     pointShape: 'triangle',
@@ -26,13 +26,13 @@ const createCompany = async (companyModel: Model<Company>) => {
 
 describe('CompanyController', () => {
   let app: INestApplication;
-  let companyModel: Model<Company>;
-  let roleModel: Model<Role>;
+  let companyModel: Model<CompanyModel>;
+  let roleModel: Model<RoleModel>;
 
   beforeEach(async () => {
     app = await getApplication();
-    companyModel = app.get(getModelToken(Company.name));
-    roleModel = app.get(getModelToken(Role.name));
+    companyModel = app.get(getModelToken(CompanyModel.name));
+    roleModel = app.get(getModelToken(RoleModel.name));
   });
 
   describe('GET /companies - get companies', () => {

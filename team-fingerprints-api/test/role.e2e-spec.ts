@@ -2,23 +2,23 @@ import { INestApplication } from '@nestjs/common';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { Model, Types } from 'mongoose';
-import { Role } from 'src/role/models/role.model';
+import { RoleModel } from 'src/role/models/role.model';
 import { getModelToken } from '@nestjs/mongoose';
-import { RoleType } from 'src/role/role.type';
-import { User } from 'src/users/models/user.model';
+import { RoleType } from 'team-fingerprints-common';
+import { UserModel } from 'src/users/models/user.model';
 import { getBaseUser } from './helpers/getBaseUser';
 import { createRandomUser } from './helpers/users';
 
 describe('RoleController', () => {
   let app: INestApplication;
-  let roleModel: Model<Role>;
-  let userModel: Model<User>;
-  let baseUser: User;
+  let roleModel: Model<RoleModel>;
+  let userModel: Model<UserModel>;
+  let baseUser: UserModel;
 
   beforeEach(async () => {
     app = await getApplication();
-    roleModel = app.get(getModelToken(Role.name));
-    userModel = app.get(getModelToken(User.name));
+    roleModel = app.get(getModelToken(RoleModel.name));
+    userModel = app.get(getModelToken(UserModel.name));
     baseUser = await getBaseUser(userModel);
   });
 

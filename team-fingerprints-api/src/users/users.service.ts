@@ -1,43 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { PrivilegeI } from 'src/auth/interfaces/auth.interface';
+import { Privilege } from 'team-fingerprints-common';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
-import { User } from './models/user.model';
+import { UserModel } from './models/user.model';
 import * as mongoose from 'mongoose';
 import { RoleService } from 'src/role/role.service';
-import { Role } from 'src/role/models/role.model';
-import {
-  UserDetailI,
-  UserProfileI,
-  UserSurveyAnswerI,
-} from './interfaces/user.interface';
+
 import { FilterService } from 'src/filter/filter.service';
-import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
-import { SurveyResultService } from 'src/survey-result/survey-result.service';
+import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
+import {
+  UserProfile,
+  UserDetail,
+  SurveyCompleteStatus,
+  UserSurveyAnswer,
+} from 'team-fingerprints-common';
+import { Role } from 'src/role/types/role.types';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
     private readonly companyService: CompanyService,
     private readonly teamService: TeamService,
     private readonly roleService: RoleService,
     private readonly filterService: FilterService,
-    private readonly surveyResultService: SurveyResultService,
+    private readonly surveyFiltersService: SurveyFiltersService,
   ) {}
 
-  async getUserById(userId: string): Promise<User> {
+  async getUserById(userId: string): Promise<UserModel> {
     return await this.userModel.findOne({ _id: userId });
   }
 
-  async getUserByEmail(email: string): Promise<User> {
+  async getUserByEmail(email: string): Promise<UserModel> {
     return await this.userModel.findOne({ email });
   }
 
-  async getUserByAuthId(authId: string): Promise<User> {
+  async getUserByAuthId(authId: string): Promise<UserModel> {
     return await this.userModel.findOne({ authId });
   }
 
@@ -59,11 +60,11 @@ export class UsersService {
     return query;
   }
 
-  async getUsersAll(): Promise<User[]> {
+  async getUsersAll(): Promise<UserModel[]> {
     return await this.userModel.find({});
   }
 
-  async getUsersByIds(userIds: string[]): Promise<UserProfileI[]> {
+  async getUsersByIds(userIds: string[]): Promise<UserProfile[]> {
     if (!userIds || userIds.length <= 0) return [];
 
     const profiles = userIds?.map(async (id) => {
@@ -96,11 +97,11 @@ export class UsersService {
     return users.map((user) => user._id.toString());
   }
 
-  async getUserProfile(userId: string): Promise<UserProfileI> {
+  async getUserProfile(userId: string): Promise<UserProfile> {
     const user = await this.getUserById(userId);
     if (!user) throw new NotFoundException('User does not exist');
 
-    const profile: UserProfileI = {
+    const profile: UserProfile = {
       _id: userId,
       email: user.email,
       userDetails: user.userDetails,
@@ -113,7 +114,7 @@ export class UsersService {
 
     const privileges = await Promise.all(
       roleDocuments.map(async (roleDocument: Role) => {
-        let privilege: PrivilegeI = {
+        let privilege: Privilege = {
           role: roleDocument.role,
           roleId: roleDocument._id,
         };
@@ -166,12 +167,12 @@ export class UsersService {
     return { ...profile, privileges };
   }
 
-  async createUser(newUserData: CreateUserDto): Promise<User> {
+  async createUser(newUserData: CreateUserDto): Promise<UserModel> {
     const user = await this.userModel.create(newUserData);
     return await user.save();
   }
 
-  async setUserDetails(userId: string, userDetails: UserDetailI) {
+  async setUserDetails(userId: string, userDetails: UserDetail) {
     await this.filterService.validateUserDetails(userDetails);
 
     const user = await this.getUserById(userId);
@@ -206,7 +207,7 @@ export class UsersService {
       ])
     ).map((survey) => survey.surveysAnswers.surveyId);
 
-    await this.surveyResultService.updateGlobalAvailableFiltersWhenUserChangeUserDetails(
+    await this.surveyFiltersService.updateGlobalAvailableFiltersWhenUserChangeUserDetails(
       finishedSurveysIds,
     );
 
@@ -216,7 +217,7 @@ export class UsersService {
   async updateUser(
     userId: string,
     updateUserData: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<UserModel> {
     return await this.userModel.findOneAndUpdate(
       { _id: userId },
       { $set: updateUserData },
@@ -259,7 +260,7 @@ export class UsersService {
     const { surveysAnswers } = user;
     const surveys: boolean[] = surveysAnswers
       .map(
-        (el: UserSurveyAnswerI) =>
+        (el: UserSurveyAnswer) =>
           el.completeStatus === SurveyCompleteStatus.FINISHED,
       )
       .filter(Boolean);

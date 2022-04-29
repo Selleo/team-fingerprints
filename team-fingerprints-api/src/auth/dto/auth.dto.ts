@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { UserDetailI, UserProfileI } from 'src/users/interfaces/user.interface';
-import { PrivilegeI } from '../interfaces/auth.interface';
+import { UserDetail, UserProfile } from 'team-fingerprints-common';
+import { Privilege } from 'team-fingerprints-common';
 
-export class ResponseAuthDto implements UserProfileI {
+export class ResponseAuthDto implements UserProfile {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -17,9 +17,9 @@ export class ResponseAuthDto implements UserProfileI {
 
   @ApiProperty()
   @ValidateNested()
-  privileges: PrivilegeI[];
+  privileges: Privilege[];
 
   @ApiProperty()
   @ValidateNested()
-  userDetails: UserDetailI[];
+  userDetails: UserDetail[];
 }

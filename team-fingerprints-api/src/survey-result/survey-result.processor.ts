@@ -6,10 +6,7 @@ import {
   Processor,
 } from '@nestjs/bull';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { Job } from 'bull';
-import { Model } from 'mongoose';
-import { Survey } from 'src/survey/models/survey.model';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UsersService } from 'src/users/users.service';
 import { SurveyResultService } from './survey-result.service';
@@ -18,7 +15,6 @@ import { SurveyResultService } from './survey-result.service';
 export class SurveyResultProcessor {
   private readonly logger = new Logger(this.constructor.name);
   constructor(
-    @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
     private readonly surveyResultService: SurveyResultService,
     private readonly tfConfigService: TfConfigService,
     private readonly usersService: UsersService,
@@ -75,33 +71,6 @@ export class SurveyResultProcessor {
         await this.tfConfigService.updateGlobalSurveysResults(
           data.surveyId,
           result,
-        );
-      }
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-  }
-
-  @Process('get-global-available-filters')
-  async getGlobalAvailableFilters({ data }: Job) {
-    try {
-      const filters =
-        await this.surveyResultService.getAvailableFiltersForCompanies(
-          data.surveyId,
-        );
-
-      const currentFilters =
-        await this.tfConfigService.getGlobalAvailableFilters(data.surveyId);
-
-      if (!currentFilters) {
-        await this.tfConfigService.createGlobalAvailableFilters(
-          data.surveyId,
-          filters,
-        );
-      } else {
-        await this.tfConfigService.updateGlobalAvailableFilters(
-          data.surveyId,
-          filters,
         );
       }
     } catch (error) {

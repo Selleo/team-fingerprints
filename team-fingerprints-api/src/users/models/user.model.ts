@@ -1,13 +1,13 @@
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UserDetailI, UserI } from '../interfaces/user.interface';
+import { UserDetail, User } from 'team-fingerprints-common';
 import {
-  UserSurveyAnswer,
+  UserSurveyAnswerModel,
   UserSurveyAnswerSchema,
 } from './user-survey-answer.model';
 
-@Schema({ autoIndex: false, timestamps: true })
-export class User extends Document implements UserI {
+@Schema({ collection: 'users', autoIndex: false, timestamps: true })
+export class UserModel extends Document implements User {
   _id?: string;
 
   @Prop({ required: true, unique: true })
@@ -34,10 +34,10 @@ export class User extends Document implements UserI {
     excludeIndexes: true,
     required: true,
   })
-  surveysAnswers: UserSurveyAnswer[];
+  surveysAnswers: UserSurveyAnswerModel[];
 
   @Prop(raw({}))
-  userDetails?: UserDetailI[];
+  userDetails?: UserDetail[];
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(UserModel);

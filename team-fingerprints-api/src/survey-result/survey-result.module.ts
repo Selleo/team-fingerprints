@@ -5,9 +5,9 @@ import { CompanyModule } from 'src/company/company.module';
 import { TeamModule } from 'src/company/team/team.module';
 import { FilterModule } from 'src/filter/filter.module';
 import { RoleModule } from 'src/role/role.module';
-import { Survey, SurveySchema } from 'src/survey/models/survey.model';
+import { SurveyModel, SurveySchema } from 'src/survey/models/survey.model';
 import { TfConfigModule } from 'src/tf-config/tf-config.module';
-import { User, UserSchema } from 'src/users/models/user.model';
+import { UserModel, UserSchema } from 'src/users/models/user.model';
 import { UsersModule } from 'src/users/users.module';
 import { SurveyResultController } from './survey-result.controller';
 import { SurveyResultProcessor } from './survey-result.processor';
@@ -23,11 +23,11 @@ import { SurveyResultService } from './survey-result.service';
     forwardRef(() => UsersModule),
     MongooseModule.forFeature([
       {
-        name: User.name,
+        name: UserModel.name,
         schema: UserSchema,
       },
       {
-        name: Survey.name,
+        name: SurveyModel.name,
         schema: SurveySchema,
       },
     ]),

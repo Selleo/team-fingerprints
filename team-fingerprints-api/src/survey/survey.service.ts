@@ -5,22 +5,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Survey } from './models/survey.model';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 import { RoleService } from 'src/role/role.service';
 import * as mongoose from 'mongoose';
-import { Category } from './models/category.model';
-import { Question } from './models/question.model';
-import { Trend } from './models/trend.model';
+import { SurveyModel } from './models/survey.model';
+import { CategoryModel } from './models/category.model';
+import { QuestionModel } from './models/question.model';
+import { TrendModel } from './models/trend.model';
 
 @Injectable()
 export class SurveyService {
   constructor(
-    @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
+    @InjectModel(SurveyModel.name)
+    private readonly surveyModel: Model<SurveyModel>,
     @Inject(forwardRef(() => SurveyAnswerService))
     private readonly surveyAnswerService: SurveyAnswerService,
     private readonly roleService: RoleService,
@@ -28,7 +29,7 @@ export class SurveyService {
 
   async getSurveysByRole(
     userId: string,
-  ): Promise<(Survey & 'completeStatus')[]> {
+  ): Promise<(SurveyModel & 'completeStatus')[]> {
     const surveys = await this.surveyModel.find().exec();
 
     const surveysWithCompleteStatus: any = surveys.map(async (survey: any) => {
@@ -47,7 +48,10 @@ export class SurveyService {
     return await this.surveyModel.find({ isPublic: true, archived: false });
   }
 
-  async getSurveyByRole(surveyId: string, userId: string): Promise<Survey> {
+  async getSurveyByRole(
+    surveyId: string,
+    userId: string,
+  ): Promise<SurveyModel> {
     const roleDocuments = await this.roleService.findAllRoleDocuments({
       userId,
     });
@@ -60,37 +64,39 @@ export class SurveyService {
       .exec();
   }
 
-  async getSurvey(surveyId: string): Promise<Survey> {
+  async getSurvey(surveyId: string): Promise<SurveyModel> {
     return await this.surveyModel.findById(surveyId).exec();
   }
 
-  async getPublicSurveyById(surveyId: string): Promise<Survey> {
+  async getPublicSurveyById(surveyId: string): Promise<SurveyModel> {
     return await this.surveyModel
       .findOne({ _id: surveyId, isPublic: true, archived: false })
       .exec();
   }
 
-  async createSurvey({ title }: CreateSurveyDto): Promise<Survey> {
+  async createSurvey({ title }: CreateSurveyDto): Promise<SurveyModel> {
     return await (await this.surveyModel.create({ title })).save();
   }
 
   async duplicateSurvey(surveyId: string, { title }: CreateSurveyDto) {
     const existingSurvey = await this.getSurvey(surveyId);
 
-    const categories = existingSurvey.categories.map((category: Category) => ({
-      title: category.title,
-      _id: new mongoose.Types.ObjectId(),
-      trends: category.trends.map((trend: Trend) => ({
-        primary: trend.primary,
-        secondary: trend.secondary,
+    const categories = existingSurvey.categories.map(
+      (category: CategoryModel) => ({
+        title: category.title,
         _id: new mongoose.Types.ObjectId(),
-        questions: trend.questions.map((question: Question) => ({
-          primary: question.primary,
-          title: question.title,
+        trends: category.trends.map((trend: TrendModel) => ({
+          primary: trend.primary,
+          secondary: trend.secondary,
           _id: new mongoose.Types.ObjectId(),
+          questions: trend.questions.map((question: QuestionModel) => ({
+            primary: question.primary,
+            title: question.title,
+            _id: new mongoose.Types.ObjectId(),
+          })),
         })),
-      })),
-    }));
+      }),
+    );
 
     const newSurvey = await this.surveyModel.create({
       title,
@@ -104,7 +110,7 @@ export class SurveyService {
   async updateSurvey(
     surveyId: string,
     { title, isPublic, archived }: UpdateSurveyDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     const surveyBeforeUpdate = await this.getSurvey(surveyId);
 
     let updateOptions = {};
@@ -126,7 +132,7 @@ export class SurveyService {
       .exec();
   }
 
-  async removeSurvey(surveyId: string): Promise<Survey> {
+  async removeSurvey(surveyId: string): Promise<SurveyModel> {
     await this.canEditSurvey(surveyId);
 
     return await this.surveyModel

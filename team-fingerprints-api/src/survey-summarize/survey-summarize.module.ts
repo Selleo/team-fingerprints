@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Survey, SurveySchema } from 'src/survey/models/survey.model';
-import { User, UserSchema } from 'src/users/models/user.model';
+import { SurveyModel, SurveySchema } from 'src/survey/models/survey.model';
+import { UserModel, UserSchema } from 'src/users/models/user.model';
 import { SurveySummarizeService } from './survey-summarize.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: User.name,
+        name: UserModel.name,
         schema: UserSchema,
       },
       {
-        name: Survey.name,
+        name: SurveyModel.name,
         schema: SurveySchema,
       },
     ]),

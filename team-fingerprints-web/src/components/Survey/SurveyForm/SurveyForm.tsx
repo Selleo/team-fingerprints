@@ -1,19 +1,19 @@
 import { useEffect, useRef } from "react";
-import { TextInput, Button, Switch, Alert } from "@mantine/core";
+import { TextInput, Button, Switch, Alert, Checkbox } from "@mantine/core";
 import { BellIcon } from "@modulz/radix-icons";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
 import { useStyles } from "./styles";
 import axios from "axios";
 import { queryClient } from "../../../App";
-import { Survey } from "../../../types/models";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import { FullSurvey } from "team-fingerprints-common";
 
 const SurveyForm = ({
   initialValues,
   onClose,
 }: {
-  initialValues?: Survey;
+  initialValues?: FullSurvey;
   onClose: () => void;
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -26,8 +26,10 @@ const SurveyForm = ({
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const createMutation = useMutation(
-    (newSurvey: Partial<Survey>) => {
-      return axios.post<Partial<Survey>>("/surveys", newSurvey).then(onClose);
+    (newSurvey: Partial<FullSurvey>) => {
+      return axios
+        .post<Partial<FullSurvey>>("/surveys", newSurvey)
+        .then(onClose);
     },
     {
       onSuccess,
@@ -36,9 +38,9 @@ const SurveyForm = ({
   );
 
   const updateMutation = useMutation(
-    (survey: Partial<Survey>) => {
+    (survey: Partial<FullSurvey>) => {
       return axios
-        .patch<Partial<Survey>>(`/surveys/${survey._id}`, survey)
+        .patch<Partial<FullSurvey>>(`/surveys/${survey._id}`, survey)
         .then(onClose);
     },
     {
@@ -48,7 +50,7 @@ const SurveyForm = ({
   );
 
   const { handleSubmit, handleChange, values, setValues, setTouched } =
-    useFormik<Partial<Survey>>({
+    useFormik<Partial<FullSurvey>>({
       initialValues: initialValues || { title: "" },
       onSubmit: (val) =>
         isUpdate ? updateMutation.mutate(val) : createMutation.mutate(val),
@@ -84,13 +86,26 @@ const SurveyForm = ({
             color="red"
             label="public"
             style={{ marginTop: "10px", marginBottom: "10px" }}
-          ></Switch>
+          />
           {values.isPublic && (
             <Alert icon={<BellIcon />} title="Warning!" color="red">
               Remember! Public property can be changed only once!
             </Alert>
           )}
         </>
+      )}
+
+      {isUpdate && (
+        <Checkbox
+          checked={values.archived}
+          onChange={(event) => {
+            setValues({ ...values, archived: event.currentTarget.checked });
+            setTouched({ archived: true });
+          }}
+          color="dark"
+          label="archive"
+          style={{ marginTop: "15px" }}
+        />
       )}
 
       <Button className={classes.submitButton} type="submit">

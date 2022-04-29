@@ -10,7 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 import { QuestionAnswerDto } from './dto/question-answer.dto';
 import { SurveyAnswerService } from './survey-answer.service';
 
@@ -24,7 +24,7 @@ export class SurveyAnswerController {
   async getUserAnswers(
     @CurrentUserId(ValidateObjectId) userId: any,
     @Param('surveyId', ValidateObjectId) surveyId: string,
-  ): Promise<User> {
+  ): Promise<UserModel> {
     return await this.surveyAnswerService.getUserAnswers(userId, surveyId);
   }
 

@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsMongoId,
@@ -12,6 +13,7 @@ export class CreateQuestionDto implements Partial<Question> {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => value.trim())
   readonly title: string;
 
   @ApiProperty()
@@ -25,6 +27,7 @@ export class UpdateQuestionDto implements Partial<Question> {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => value.trim())
   readonly title: string;
 
   @ApiProperty()

@@ -1,3 +1,4 @@
+import { Transform, Type } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -11,16 +12,20 @@ export class CreateUserDto implements Partial<User> {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
+  @Type(() => String)
+  @Transform(({ value }: { value: string }) => value.trim())
   readonly firstName?: string;
 
   @IsString()
   @IsOptional()
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => value.trim())
   readonly lastName?: string;
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => value.trim())
   readonly email: string;
 
   @IsString()
@@ -37,16 +42,19 @@ export class UpdateUserDto implements Partial<User> {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
+  @Transform(({ value }: { value: string }) => value.trim())
   readonly firstName?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
+  @Transform(({ value }: { value: string }) => value.trim())
   readonly lastName?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
+  @Transform(({ value }: { value: string }) => value.trim())
   readonly email?: string;
 
   @IsString()

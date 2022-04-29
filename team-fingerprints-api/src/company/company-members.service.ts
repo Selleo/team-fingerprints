@@ -8,7 +8,7 @@ import { isEmail } from 'class-validator';
 import { Model } from 'mongoose';
 import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { UsersService } from 'src/users/users.service';
 import { CompanyService } from './company.service';
 import { Company } from './models/company.model';

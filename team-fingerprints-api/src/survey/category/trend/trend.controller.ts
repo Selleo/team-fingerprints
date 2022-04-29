@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { Survey } from 'src/survey/models/survey.model';
 import { TrendService } from './trend.service';
 import {

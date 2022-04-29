@@ -21,3 +21,10 @@ export type SurveyI = {
   amountOfQuestions: number;
   archived: boolean;
 };
+
+type AdditionalMongoParams = {
+  createdAt: string;
+  _id: string;
+};
+
+export type FullSurveyI = SurveyI & AdditionalMongoParams;

@@ -1,6 +1,6 @@
 import { Model, Types } from 'mongoose';
 import { Role } from 'src/role/models/role.model';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { Survey } from 'src/survey/models/survey.model';
 import { User } from 'src/users/models/user.model';
 

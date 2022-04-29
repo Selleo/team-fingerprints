@@ -1,4 +1,4 @@
-import { RoleType } from '../role.type';
+import { RoleType } from 'team-fingerprints-common';
 
 export interface RoleI {
   _id?: string;

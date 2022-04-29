@@ -11,7 +11,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';

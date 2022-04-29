@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { RoleI } from 'src/role/interfaces/role.interface';
 import { Role } from 'src/role/models/role.model';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { User } from 'src/users/models/user.model';
 import { createUser } from '../../test/factories/user.factory';
 import { create } from './create';

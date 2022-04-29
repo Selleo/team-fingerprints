@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { Model, Types } from 'mongoose';
 import { Role } from 'src/role/models/role.model';
 import { getModelToken } from '@nestjs/mongoose';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { User } from 'src/users/models/user.model';
 import { getBaseUser } from './helpers/getBaseUser';
 import { createRandomUser } from './helpers/users';

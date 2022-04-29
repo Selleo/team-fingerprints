@@ -14,7 +14,7 @@ import { CompanyService } from 'src/company/company.service';
 import { User } from 'src/users/models/user.model';
 import { RoleI } from './interfaces/role.interface';
 import { Role } from './models/role.model';
-import { RoleType } from './role.type';
+import { RoleType } from 'team-fingerprints-common';
 
 @Injectable()
 export class RoleService {

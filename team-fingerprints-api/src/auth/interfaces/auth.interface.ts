@@ -1,4 +1,4 @@
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 
 export type PrivilegeI = {
   readonly roleId: string;

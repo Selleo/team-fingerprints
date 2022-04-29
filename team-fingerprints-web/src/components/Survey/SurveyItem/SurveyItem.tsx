@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../../App";
-import { Survey } from "../../../types/models";
+import { FullSurveyI } from "team-fingerprints-common";
 import SurveyForm from "../SurveyForm";
 import axios from "axios";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
-const SurveyItem = ({ item }: { item: Survey }) => {
+const SurveyItem = ({ item }: { item: FullSurveyI }) => {
   const navigate = useNavigate();
   const [modalVisible, setModalVisible] = useState(false);
   const [duplicateModalVisible, setDuplicateModalVisible] = useState(false);

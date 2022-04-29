@@ -4,7 +4,7 @@ import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleService } from './role.service';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { Roles } from './decorators/roles.decorator';
-import { RoleType } from './role.type';
+import { RoleType } from 'team-fingerprints-common';
 
 @ApiTags('role')
 @Controller({ path: 'role', version: '1' })

@@ -9,7 +9,7 @@ import {
   UpdateCompanyDto,
 } from 'src/company/dto/company.dto';
 import { Role } from 'src/role/models/role.model';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 
 const createCompany = async (companyModel: Model<Company>) => {
   const companyData: Partial<Company> = {

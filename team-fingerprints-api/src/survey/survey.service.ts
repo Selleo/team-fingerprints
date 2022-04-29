@@ -8,7 +8,7 @@ import {
 import { Survey } from './models/survey.model';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 import { RoleService } from 'src/role/role.service';

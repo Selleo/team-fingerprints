@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Roles } from 'src/role/decorators/roles.decorator';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
 import { FilterTemplateService } from './filter-template.service';
 

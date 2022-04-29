@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Company } from 'src/company/models/company.model';
 import { Team } from 'src/company/models/team.model';
 import { Role } from 'src/role/models/role.model';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import { User } from 'src/users/models/user.model';
 import { getApplication } from './helpers/getApplication';
 import { getBaseUser } from './helpers/getBaseUser';

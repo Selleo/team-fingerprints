@@ -57,25 +57,22 @@ function Details() {
           {survey.isPublic ? "Public" : "Not public"}
         </Badge>
       </h2>
-      <AddCategoryButton surveyId={survey?._id} />
+      <AddCategoryButton surveyId={survey._id} />
       <List style={{ padding: "10px" }}>
         {survey.categories.map((category: Category) => (
           <List.Item icon={<CategoryIcon />}>
             <Group>
               <Text>{category.title}</Text>
-              <EditCategoryButton category={category} surveyId={survey?._id} />
+              <EditCategoryButton category={category} surveyId={survey._id} />
               {!survey.isPublic && (
                 <DeleteCategoryButton
                   categoryId={category._id}
-                  surveyId={survey?._id}
+                  surveyId={survey._id}
                 />
               )}
             </Group>
             <Group style={{ marginTop: "10px" }}>
-              <AddTrendButton
-                surveyId={survey?._id}
-                categoryId={category._id}
-              />
+              <AddTrendButton surveyId={survey._id} categoryId={category._id} />
             </Group>
             <List style={{ padding: "10px" }}>
               {category.trends.map((trend: Trend) => {
@@ -88,13 +85,13 @@ function Details() {
                       <Text color="#FEC92D">secondary: {trend.secondary}</Text>
                       <EditTrendButton
                         trend={trend}
-                        surveyId={survey?._id}
+                        surveyId={survey._id}
                         categoryId={category._id}
                       />
-                      {!survey?.isPublic && (
+                      {!survey.isPublic && (
                         <DeleteTrendButton
                           trendId={trend._id}
-                          surveyId={survey?._id}
+                          surveyId={survey._id}
                           categoryId={category._id}
                         />
                       )}
@@ -102,7 +99,7 @@ function Details() {
                     <Group style={{ marginTop: "10px" }}>
                       <AddQuestionButton
                         trendId={trend._id}
-                        surveyId={survey?._id}
+                        surveyId={survey._id}
                         categoryId={category._id}
                       />
                     </Group>
@@ -129,7 +126,7 @@ function Details() {
                                 trendId={trend._id}
                                 categoryId={category._id}
                               />
-                              {!survey?.isPublic && (
+                              {!survey.isPublic && (
                                 <DeleteQuestionButton
                                   questionId={question._id}
                                   surveyId={survey._id}

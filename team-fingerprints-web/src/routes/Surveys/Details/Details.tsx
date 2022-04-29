@@ -64,7 +64,7 @@ function Details() {
             <Group>
               <Text>{category.title}</Text>
               <EditCategoryButton category={category} surveyId={survey?._id} />
-              {!survey?.isPublic && (
+              {!survey.isPublic && (
                 <DeleteCategoryButton
                   categoryId={category._id}
                   surveyId={survey?._id}

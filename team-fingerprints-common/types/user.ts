@@ -1,44 +1,45 @@
 import { Types } from "mongoose";
 import { SurveyCompleteStatus } from "../enums";
-import { PrivilegeI } from "./privilege";
+import { Privilege } from "./privilege";
 
-export type QuestionAnswerI = {
+export type QuestionAnswer = {
   questionId: string;
   value: number;
 };
 
-export type UserI = {
+export type User = {
   _id?: string | Types.ObjectId;
   authId: string;
   firstName: string;
   lastName: string;
   email: string;
   pictureUrl?: string;
-  surveysAnswers: UserSurveyAnswerI[];
-  userDetails?: UserDetailI[];
+  surveysAnswers: UserSurveyAnswer[];
+  userDetails?: UserDetail[];
   inCompany: boolean;
+  createdAt?: string;
 };
 
-export type UserSurveyAnswerI = {
+export type UserSurveyAnswer = {
   surveyId: string;
   completeStatus: SurveyCompleteStatus;
   amountOfAnswers: number;
   surveyResult: [any];
-  answers: QuestionAnswerI[];
+  answers: QuestionAnswer[];
 };
 
-export type UserSurveyResultI = {
+export type UserSurveyResult = {
   category: string;
-  answers: QuestionAnswerI[];
+  answers: QuestionAnswer[];
 };
 
-export type UserDetailI = {
+export type UserDetail = {
   [key: string]: string;
 };
 
-export type UserProfileI = {
+export type UserProfile = {
   readonly _id: string;
   readonly email: string;
-  readonly userDetails: UserDetailI[];
-  readonly privileges: PrivilegeI[];
+  readonly userDetails: UserDetail[];
+  readonly privileges: Privilege[];
 };

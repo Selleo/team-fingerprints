@@ -1,22 +1,22 @@
-export type QuestionI = {
+export type Question = {
   title: string;
   primary: boolean;
 };
 
-export type TrendI = {
+export type Trend = {
   primary: string;
   secondary: string;
-  questions?: QuestionI[];
+  questions?: Question[];
 };
 
-export type CategoryI = {
+export type Category = {
   title: string;
-  trends?: TrendI[];
+  trends?: Trend[];
 };
 
-export type SurveyI = {
+export type Survey = {
   title: string;
-  categories?: CategoryI[];
+  categories?: Category[];
   isPublic: boolean;
   amountOfQuestions: number;
   archived: boolean;
@@ -27,4 +27,4 @@ type AdditionalMongoParams = {
   _id: string;
 };
 
-export type FullSurveyI = SurveyI & AdditionalMongoParams;
+export type FullSurvey = Survey & AdditionalMongoParams;

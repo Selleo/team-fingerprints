@@ -1,6 +1,6 @@
 import { RoleType } from "../enums";
 
-export type PrivilegeI = {
+export type Privilege = {
   readonly roleId: string;
   readonly role: RoleType;
   readonly company?: {

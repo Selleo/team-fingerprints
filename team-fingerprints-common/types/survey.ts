@@ -1,23 +1,23 @@
-export interface QuestionI {
+export type QuestionI = {
   title: string;
   primary: boolean;
-}
+};
 
-export interface TrendI {
+export type TrendI = {
   primary: string;
   secondary: string;
   questions?: QuestionI[];
-}
+};
 
-export interface CategoryI {
+export type CategoryI = {
   title: string;
   trends?: TrendI[];
-}
+};
 
-export interface SurveyI {
+export type SurveyI = {
   title: string;
   categories?: CategoryI[];
   isPublic: boolean;
   amountOfQuestions: number;
   archived: boolean;
-}
+};

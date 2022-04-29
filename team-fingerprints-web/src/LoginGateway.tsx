@@ -15,9 +15,6 @@ import {
   Title,
 } from "@mantine/core";
 import WelcomeScreen from "./WelcomeScreen";
-
-import { ReactComponent as BGIcons } from "./assets/BGIcons.svg";
-
 import { queryClient } from "./App";
 import AppRoutes from "./routes";
 import TokenSetup from "./components/TokenSetup";

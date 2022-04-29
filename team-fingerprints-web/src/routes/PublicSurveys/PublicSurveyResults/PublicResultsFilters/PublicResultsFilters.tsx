@@ -10,25 +10,17 @@ import {
   FilterSelect,
   Shape,
   ChangeFilterValue,
+  FilterSets,
 } from "../../../../types/models";
 
 type Props = {
   id: string;
-  availableFilters: [
-    {
-      filterPath: string;
-      name: string;
-      values: { [key: string]: Array<string> };
-      _id: string;
-    }
-  ];
   currentFiltersValues: { [key: string]: Array<string> };
   surveyId: string;
   changeFilterValue: ChangeFilterValue;
 };
 
 const PublicResultsFilters = ({
-  availableFilters,
   currentFiltersValues,
   surveyId,
   changeFilterValue,
@@ -49,6 +41,16 @@ const PublicResultsFilters = ({
       const { data } = await axios.get<any>(
         `/survey-results/${surveyId}/companies`,
         { params: currentFiltersValues }
+      );
+      return data;
+    }
+  );
+
+  const { data: availableFilters } = useQuery<any, Error>(
+    ["surveyFiltersPublic", surveyId],
+    async () => {
+      const { data } = await axios.get<FilterSets>(
+        `/survey-filters/${surveyId}/companies`
       );
       return data;
     }

@@ -24,6 +24,7 @@ import {
   mongooseModuleConfig,
   bullModuleConfig,
 } from './config';
+import { SurveyFiltersModule } from './survey-filters/survey-filters.module';
 import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
@@ -59,6 +60,7 @@ import * as redisStore from 'cache-manager-redis-store';
     MailModule,
     TfConfigModule,
     FilterTemplateModule,
+    SurveyFiltersModule,
   ],
 })
 export class AppModule {}

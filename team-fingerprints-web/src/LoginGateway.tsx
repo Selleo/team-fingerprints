@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { Route, Routes } from "react-router-dom";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import ShowPublicResults from "./routes/PublicSurveys/PublicSurveyResults/";
+import ShowPublicResults from "./routes/PublicSurveys/PublicSurveyResults";
 import PublicSurveysList from "./routes/PublicSurveys/PublicSurveysList";
 import { useAuth0 } from "@auth0/auth0-react";
 import { NotificationsProvider } from "@mantine/notifications";

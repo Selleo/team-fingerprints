@@ -2,9 +2,10 @@
   "name": "team-fingerprints-common",
   "version": "1.0.0",
   "description": "Types for Selleo Team Fingerprints F/b and B/E",
-  "main": "index.ts",
   "license": "ISC",
   "dev": true,
+  "types": "index.d.ts",
+  "main": "index.ts",
   "dependencies": {
     "@babel/parser": "^7.17.9",
     "babel-cli": "^6.26.0",

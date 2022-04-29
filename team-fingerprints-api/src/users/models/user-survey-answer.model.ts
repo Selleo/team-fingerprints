@@ -1,5 +1,5 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
-import {
+import type {
   SurveyCompleteStatus,
   UserSurveyAnswerI,
 } from 'team-fingerprints-common';

@@ -1,7 +1,7 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { CategoryI } from '../interfaces/survey.interface';
+import { CategoryI } from 'team-fingerprints-common';
 import { Trend, TrendSchema } from './trend.model';
 
 @Schema()

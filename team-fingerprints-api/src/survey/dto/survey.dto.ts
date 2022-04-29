@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsBoolean, IsOptional } from 'class-validator';
-import { SurveyI } from '../interfaces/survey.interface';
+import { SurveyI } from 'team-fingerprints-common';
 
 export class CreateSurveyDto implements Partial<SurveyI> {
   @ApiProperty()

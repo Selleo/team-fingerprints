@@ -7,7 +7,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { QuestionAnswerI } from 'src/users/interfaces/user.interface';
+import { QuestionAnswerI } from 'team-fingerprints-common';
 
 export class QuestionAnswerDto implements QuestionAnswerI {
   @ApiProperty()

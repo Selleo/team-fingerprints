@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { QuestionI } from 'src/survey/interfaces/survey.interface';
+import { QuestionI } from 'team-fingerprints-common';
 
 export class CreateQuestionDto implements Partial<QuestionI> {
   @ApiProperty()

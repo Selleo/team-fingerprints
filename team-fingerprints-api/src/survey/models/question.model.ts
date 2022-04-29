@@ -1,7 +1,7 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { QuestionI } from '../interfaces/survey.interface';
+import { QuestionI } from 'team-fingerprints-common';
 
 @Schema()
 export class Question implements QuestionI {

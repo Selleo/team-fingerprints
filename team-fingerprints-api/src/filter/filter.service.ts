@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserDetailI } from 'src/users/interfaces/user.interface';
+import { UserDetailI } from 'team-fingerprints-common';
 import { Filter } from './models/filter.model';
 
 @Injectable()

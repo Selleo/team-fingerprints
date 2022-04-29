@@ -12,11 +12,11 @@ import { Model, Types } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { User } from 'src/users/models/user.model';
 import { QuestionAnswerDto } from './dto/question-answer.dto';
-import { SurveyCompleteStatus } from './survey-answer.type';
 import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { SurveyService } from 'src/survey/survey.service';
 import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
+import { SurveyCompleteStatus } from 'team-fingerprints-common';
 
 @Injectable()
 export class SurveyAnswerService {

@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { QuestionAnswerI } from '../interfaces/user.interface';
+import { QuestionAnswerI } from 'team-fingerprints-common';
 
 @Schema({ _id: false })
 export class QuestionAnswer implements QuestionAnswerI {

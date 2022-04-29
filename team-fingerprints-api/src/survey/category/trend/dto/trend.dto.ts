@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { TrendI } from 'src/survey/interfaces/survey.interface';
+import { TrendI } from 'team-fingerprints-common';
 
 export class CreateTrendDto implements Partial<TrendI> {
   @ApiProperty()

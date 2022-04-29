@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Document, Types } from 'mongoose';
-import { SurveyI } from '../interfaces/survey.interface';
+import { SurveyI } from 'team-fingerprints-common';
 import { Category, CategorySchema } from './category.model';
 
 @Schema({ autoIndex: true, timestamps: true })

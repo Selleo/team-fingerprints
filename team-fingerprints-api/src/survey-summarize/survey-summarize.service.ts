@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Category } from 'src/survey/models/category.model';
 import { Survey } from 'src/survey/models/survey.model';
 import { User } from 'src/users/models/user.model';
 
@@ -47,11 +48,11 @@ export class SurveySummarizeService {
 
     const summary = [];
 
-    categories.forEach((category: any) => {
+    categories.forEach((category: Category) => {
       const avgTrends = [];
-      category.trends.forEach((trend: any) => {
+      category.trends.forEach((trend) => {
         let trendCount = 0;
-        trend.questions.forEach((question: any) => {
+        trend.questions.forEach((question) => {
           answers.forEach((answer) => {
             if (answer.questionId.toString() === question._id.toString()) {
               if (question.primary) {

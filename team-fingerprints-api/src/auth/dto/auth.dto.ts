@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { UserDetailI, UserProfileI } from 'src/users/interfaces/user.interface';
+import { UserDetailI, UserProfileI } from 'team-fingerprints-common';
 import { PrivilegeI } from '../interfaces/auth.interface';
 
 export class ResponseAuthDto implements UserProfileI {

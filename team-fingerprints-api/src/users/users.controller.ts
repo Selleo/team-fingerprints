@@ -15,8 +15,8 @@ import { User } from './models/user.model';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { Roles } from 'src/role/decorators/roles.decorator';
-import { UserDetailI, UserProfileI } from './interfaces/user.interface';
 import { ValidateEmail } from 'src/company/dto/company.dto';
+import { UserDetailI, UserProfileI } from 'team-fingerprints-common';
 
 @ApiTags('users')
 @Controller({ path: 'users', version: '1' })

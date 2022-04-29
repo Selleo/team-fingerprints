@@ -9,15 +9,21 @@ import { User } from './models/user.model';
 import * as mongoose from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/models/role.model';
-import {
-  UserDetailI,
-  UserProfileI,
-  UserSurveyAnswerI,
-} from './interfaces/user.interface';
+
 import { FilterService } from 'src/filter/filter.service';
-import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
-import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
+// import { SurveyCompleteStatus } from 'team-fingerprints-common/enums';
+// import {
+//   UserProfileI,
+//   UserDetailI,
+//   UserSurveyAnswerI,
+// } from 'team-fingerprints-common/types';
+import {
+  UserProfileI,
+  UserDetailI,
+  SurveyCompleteStatus,
+  UserSurveyAnswerI,
+} from 'team-fingerprints-common';
 
 @Injectable()
 export class UsersService {
@@ -27,7 +33,6 @@ export class UsersService {
     private readonly teamService: TeamService,
     private readonly roleService: RoleService,
     private readonly filterService: FilterService,
-    private readonly surveyResultService: SurveyResultService,
     private readonly surveyFiltersService: SurveyFiltersService,
   ) {}
 

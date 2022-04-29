@@ -11,11 +11,11 @@ import { Queue } from 'bull';
 import { Model, Types } from 'mongoose';
 import { RoleI } from 'src/role/interfaces/role.interface';
 import { RoleService } from 'src/role/role.service';
-import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
 import { Survey } from 'src/survey/models/survey.model';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { User } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
+import { SurveyCompleteStatus } from 'team-fingerprints-common';
 
 @Injectable()
 export class SurveyResultService {

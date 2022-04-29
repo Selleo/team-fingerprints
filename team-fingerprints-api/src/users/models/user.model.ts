@@ -1,6 +1,6 @@
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UserDetailI, UserI } from '../interfaces/user.interface';
+import { UserDetailI, UserI } from 'team-fingerprints-common';
 import {
   UserSurveyAnswer,
   UserSurveyAnswerSchema,

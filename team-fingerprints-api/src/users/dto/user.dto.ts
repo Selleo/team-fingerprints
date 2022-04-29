@@ -5,7 +5,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { UserDetailI, UserI } from '../interfaces/user.interface';
+import { UserDetailI, UserI } from 'team-fingerprints-common';
 
 export class CreateUserDto implements Partial<UserI> {
   @IsString()

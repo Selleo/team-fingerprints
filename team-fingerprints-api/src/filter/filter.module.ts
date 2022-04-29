@@ -3,14 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RoleModule } from 'src/role/role.module';
 import { FilterController } from './filter.controller';
 import { FilterService } from './filter.service';
-import { Filter, FilterSchema } from './models/filter.model';
+import { FilterModel, FilterSchema } from './models/filter.model';
 
 @Module({
   imports: [
     forwardRef(() => RoleModule),
     MongooseModule.forFeature([
       {
-        name: Filter.name,
+        name: FilterModel.name,
         schema: FilterSchema,
       },
     ]),

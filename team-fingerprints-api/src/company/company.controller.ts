@@ -13,7 +13,7 @@ import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'team-fingerprints-common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
-import { Company } from './models/company.model';
+import { CompanyModel } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 import { Roles } from 'src/role/decorators/roles.decorator';
 
@@ -27,7 +27,7 @@ export class CompanyController {
 
   @Get()
   @Roles([RoleType.SUPER_ADMIN, RoleType.USER, RoleType.COMPANY_ADMIN])
-  async getCompanies(): Promise<Company[]> {
+  async getCompanies(): Promise<CompanyModel[]> {
     return await this.companyService.getCompaneis();
   }
 
@@ -41,7 +41,7 @@ export class CompanyController {
   async createCompany(
     @Body() companyDto: CreateCompanyDto,
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<Company | HttpException> {
+  ): Promise<CompanyModel | HttpException> {
     return await this.companyService.createCompany(userId, companyDto);
   }
 
@@ -50,7 +50,7 @@ export class CompanyController {
   async updateCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() companyDto: UpdateCompanyDto,
-  ): Promise<Company> {
+  ): Promise<CompanyModel> {
     return await this.companyService.updateCompany(companyId, companyDto);
   }
 

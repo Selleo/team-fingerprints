@@ -1,8 +1,8 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { ResultSchema, Result } from './result.model';
+import { ResultSchema, ResultModel } from './result.model';
 
 @Schema()
-export class SurveysResult {
+export class SurveysResultModel {
   @Prop({ required: true })
   surveyId: string;
 
@@ -12,6 +12,7 @@ export class SurveysResult {
     excludeIndexes: true,
     default: [],
   })
-  result: Result[];
+  result: ResultModel[];
 }
-export const SurveysResultSchema = SchemaFactory.createForClass(SurveysResult);
+export const SurveysResultSchema =
+  SchemaFactory.createForClass(SurveysResultModel);

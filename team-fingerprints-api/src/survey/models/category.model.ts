@@ -1,11 +1,11 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { CategoryI } from 'team-fingerprints-common';
-import { Trend, TrendSchema } from './trend.model';
+import { Category } from 'team-fingerprints-common';
+import { TrendModel, TrendSchema } from './trend.model';
 
 @Schema()
-export class Category implements CategoryI {
+export class CategoryModel implements Category {
   _id?: string | Types.ObjectId;
 
   @ApiProperty()
@@ -14,6 +14,6 @@ export class Category implements CategoryI {
 
   @ApiPropertyOptional()
   @Prop({ type: [TrendSchema], default: [], required: true })
-  trends?: Trend[];
+  trends?: TrendModel[];
 }
-export const CategorySchema = SchemaFactory.createForClass(Category);
+export const CategorySchema = SchemaFactory.createForClass(CategoryModel);

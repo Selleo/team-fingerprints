@@ -1,17 +1,15 @@
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
-import { Survey } from 'src/survey/models/survey.model';
-import { UserSurveyAnswerI } from 'src/users/interfaces/user.interface';
-import { User } from 'src/users/models/user.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
+import { UserModel } from 'src/users/models/user.model';
 import { getApplication } from './helpers/getApplication';
 import { getBaseUser } from './helpers/getBaseUser';
 import { createBaseUser } from './helpers/users';
 import * as request from 'supertest';
-import { Company } from 'src/company/models/company.model';
-import { Role } from 'src/role/models/role.model';
-import { Team } from 'src/company/models/team.model';
+import { CompanyModel } from 'src/company/models/company.model';
+import { RoleModel } from 'src/role/models/role.model';
+import { TeamModel } from 'src/company/models/team.model';
 import {
   filtersWithValuesData,
   companyWithTeamData,
@@ -19,15 +17,21 @@ import {
   addUserToTeam,
   createSurvey,
 } from './survey-result-filter.setup';
+import {
+  UserSurveyAnswer,
+  SurveyCompleteStatus,
+} from 'team-fingerprints-common';
 
 const createCompanyWithTeam = async (
-  companyModel: Model<Company>,
+  companyModel: Model<CompanyModel>,
   data: any,
-): Promise<Company> => {
+): Promise<CompanyModel> => {
   return await (await companyModel.create(data)).save();
 };
 
-const surveyAnswersDataForBaseUser = (survey: Survey): UserSurveyAnswerI => ({
+const surveyAnswersDataForBaseUser = (
+  survey: SurveyModel,
+): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
   completeStatus: SurveyCompleteStatus.FINISHED,
   amountOfAnswers: 2,
@@ -57,7 +61,7 @@ const surveyAnswersDataForBaseUser = (survey: Survey): UserSurveyAnswerI => ({
   ],
 });
 
-const surveyAnswersDataForUser = (survey: Survey): UserSurveyAnswerI => ({
+const surveyAnswersDataForUser = (survey: SurveyModel): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
   completeStatus: SurveyCompleteStatus.FINISHED,
   amountOfAnswers: 2,
@@ -88,9 +92,9 @@ const surveyAnswersDataForUser = (survey: Survey): UserSurveyAnswerI => ({
 });
 
 const saveAnswersInUser = async (
-  userModel: Model<User>,
-  user: User,
-  surveyAnswerData: UserSurveyAnswerI,
+  userModel: Model<UserModel>,
+  user: UserModel,
+  surveyAnswerData: UserSurveyAnswer,
 ) => {
   return await userModel
     .findOneAndUpdate(
@@ -117,7 +121,7 @@ const userDatailsData = [
 ];
 
 const saveDetailsInUser = async (
-  userModel: Model<User>,
+  userModel: Model<UserModel>,
   userId: string,
   userDetails: any,
 ) => {
@@ -128,31 +132,31 @@ const saveDetailsInUser = async (
   );
 };
 
-const getUserById = async (userModel: Model<User>, userId: string) => {
+const getUserById = async (userModel: Model<UserModel>, userId: string) => {
   return await userModel.findById(userId).exec();
 };
 
 describe('SurveyResultController', () => {
   let app: INestApplication;
-  let userModel: Model<User>;
-  let companyModel: Model<Company>;
-  let roleModel: Model<Role>;
-  let surveyModel: Model<Survey>;
+  let userModel: Model<UserModel>;
+  let companyModel: Model<CompanyModel>;
+  let roleModel: Model<RoleModel>;
+  let surveyModel: Model<SurveyModel>;
 
-  let baseUser: User;
-  let user: User;
-  let company1: Company;
-  let company2: Company;
-  let team1: Team;
-  let team2: Team;
-  let survey: Survey;
+  let baseUser: UserModel;
+  let user: UserModel;
+  let company1: CompanyModel;
+  let company2: CompanyModel;
+  let team1: TeamModel;
+  let team2: TeamModel;
+  let survey: SurveyModel;
 
   beforeEach(async () => {
     app = await getApplication();
-    userModel = app.get(getModelToken(User.name));
-    companyModel = app.get(getModelToken(Company.name));
-    roleModel = app.get(getModelToken(Role.name));
-    surveyModel = app.get(getModelToken(Survey.name));
+    userModel = app.get(getModelToken(UserModel.name));
+    companyModel = app.get(getModelToken(CompanyModel.name));
+    roleModel = app.get(getModelToken(RoleModel.name));
+    surveyModel = app.get(getModelToken(SurveyModel.name));
 
     baseUser = await getBaseUser(userModel);
     user = await createBaseUser(userModel);

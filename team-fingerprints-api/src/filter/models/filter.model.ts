@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { FilterValueSchema, FilterValue } from './filter-value.model';
+import { FilterValueSchema, FilterValueModel } from './filter-value.model';
 
 @Schema({ autoIndex: true, timestamps: true })
-export class Filter extends Document {
+export class FilterModel extends Document {
   _id?: string;
 
   @Prop({ required: true, unique: true })
@@ -13,7 +13,7 @@ export class Filter extends Document {
   filterPath: string;
 
   @Prop({ type: [FilterValueSchema], default: [] })
-  values: FilterValue[];
+  values: FilterValueModel[];
 }
 
-export const FilterSchema = SchemaFactory.createForClass(Filter);
+export const FilterSchema = SchemaFactory.createForClass(FilterModel);

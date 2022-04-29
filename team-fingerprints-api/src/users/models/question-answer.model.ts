@@ -1,8 +1,8 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { QuestionAnswerI } from 'team-fingerprints-common';
+import { QuestionAnswer } from 'team-fingerprints-common';
 
 @Schema({ _id: false })
-export class QuestionAnswer implements QuestionAnswerI {
+export class QuestionAnswerModel implements QuestionAnswer {
   @Prop({ required: true })
   questionId: string;
 
@@ -10,4 +10,4 @@ export class QuestionAnswer implements QuestionAnswerI {
   value: number;
 }
 export const QuestionAnswerSchema =
-  SchemaFactory.createForClass(QuestionAnswer);
+  SchemaFactory.createForClass(QuestionAnswerModel);

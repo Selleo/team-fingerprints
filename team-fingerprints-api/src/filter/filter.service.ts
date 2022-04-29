@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserDetailI } from 'team-fingerprints-common';
-import { Filter } from './models/filter.model';
+import { UserDetail } from 'team-fingerprints-common';
+import { FilterModel } from './models/filter.model';
 
 @Injectable()
 export class FilterService {
   constructor(
-    @InjectModel(Filter.name)
-    private readonly filterModel: Model<Filter>,
+    @InjectModel(FilterModel.name)
+    private readonly filterModel: Model<FilterModel>,
   ) {}
 
   async generateFilterPath(name: string) {
@@ -128,12 +128,12 @@ export class FilterService {
       .exec();
   }
 
-  async validateUserDetails(userDetails: UserDetailI) {
+  async validateUserDetails(userDetails: UserDetail) {
     const filterPaths = Object.keys(userDetails);
     if (filterPaths.length <= 0)
       throw new NotFoundException('No params passed');
 
-    const filter: Filter = (
+    const filter: FilterModel = (
       await this.filterModel
         .aggregate([
           {

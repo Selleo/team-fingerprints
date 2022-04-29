@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -41,8 +41,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ sub }: authPayload): Promise<User | HttpException> {
-    const user: User = await this.userService.getUserByAuthId(sub);
+  async validate({ sub }: authPayload): Promise<UserModel | HttpException> {
+    const user: UserModel = await this.userService.getUserByAuthId(sub);
     if (user) {
       await this.authService.handleExistingUsers(user.email);
       return user;

@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Document, Types } from 'mongoose';
-import { SurveyI } from 'team-fingerprints-common';
-import { Category, CategorySchema } from './category.model';
+import { Survey } from 'team-fingerprints-common';
+import { CategoryModel, CategorySchema } from './category.model';
 
 @Schema({ autoIndex: true, timestamps: true })
-export class Survey extends Document implements SurveyI {
+export class SurveyModel extends Document implements Survey {
   _id?: string | Types.ObjectId;
 
   @ApiProperty()
@@ -14,7 +14,7 @@ export class Survey extends Document implements SurveyI {
 
   @ApiPropertyOptional()
   @Prop({ type: [CategorySchema], default: [], required: true })
-  categories?: Category[];
+  categories?: CategoryModel[];
 
   @ApiProperty()
   @Prop({ default: false, required: true })
@@ -28,4 +28,4 @@ export class Survey extends Document implements SurveyI {
   @Prop({ default: false, required: true })
   archived: boolean;
 }
-export const SurveySchema = SchemaFactory.createForClass(Survey);
+export const SurveySchema = SchemaFactory.createForClass(SurveyModel);

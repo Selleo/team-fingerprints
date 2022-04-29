@@ -10,7 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'team-fingerprints-common';
-import { Survey } from '../models/survey.model';
+import { SurveyModel } from '../models/survey.model';
 import { CategoryService } from './category.service';
 import {
   CategoryParamsDto,
@@ -29,7 +29,7 @@ export class CategoryController {
   async createCategory(
     @Param() params: CategoryParamsDto,
     @Body() categoryDto: CreateCategoryDto,
-  ): Promise<Survey | HttpException> {
+  ): Promise<SurveyModel | HttpException> {
     return await this.categoryService.createCategory(params, categoryDto);
   }
 
@@ -38,7 +38,7 @@ export class CategoryController {
   async updateCateory(
     @Param() params: CategoryParamsDto,
     @Body() categoryDto: UpdateCategoryDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.categoryService.updateCategory(params, categoryDto);
   }
 
@@ -47,7 +47,7 @@ export class CategoryController {
   async removeCategory(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('categoryId', ValidateObjectId) categoryId: string,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return this.categoryService.removeCategory(surveyId, categoryId);
   }
 }

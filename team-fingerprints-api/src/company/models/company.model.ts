@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Team, TeamSchema } from './team.model';
+import { TeamModel, TeamSchema } from './team.model';
 
 @Schema({ autoIndex: false, timestamps: true })
-export class Company extends Document {
+export class CompanyModel extends Document {
   _id?: string;
 
   @Prop()
@@ -19,7 +19,7 @@ export class Company extends Document {
   pointShape: string;
 
   @Prop({ type: [TeamSchema], default: [], required: true })
-  teams: Team[];
+  teams: TeamModel[];
 
   @Prop({ default: '', required: false, unique: true })
   domain: string;
@@ -28,4 +28,4 @@ export class Company extends Document {
   filterTemplates: any[];
 }
 
-export const CompanySchema = SchemaFactory.createForClass(Company);
+export const CompanySchema = SchemaFactory.createForClass(CompanyModel);

@@ -1,12 +1,15 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
 import {
   SurveyCompleteStatus,
-  UserSurveyAnswerI,
+  UserSurveyAnswer,
 } from 'team-fingerprints-common';
-import { QuestionAnswerSchema, QuestionAnswer } from './question-answer.model';
+import {
+  QuestionAnswerSchema,
+  QuestionAnswerModel,
+} from './question-answer.model';
 
 @Schema({ _id: false })
-export class UserSurveyAnswer implements UserSurveyAnswerI {
+export class UserSurveyAnswerModel implements UserSurveyAnswer {
   @Prop({ required: true })
   surveyId: string;
 
@@ -20,7 +23,8 @@ export class UserSurveyAnswer implements UserSurveyAnswerI {
   surveyResult: [any];
 
   @Prop({ type: [QuestionAnswerSchema], default: [], required: true })
-  answers: QuestionAnswer[];
+  answers: QuestionAnswerModel[];
 }
-export const UserSurveyAnswerSchema =
-  SchemaFactory.createForClass(UserSurveyAnswer);
+export const UserSurveyAnswerSchema = SchemaFactory.createForClass(
+  UserSurveyAnswerModel,
+);

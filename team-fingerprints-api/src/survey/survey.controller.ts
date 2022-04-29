@@ -12,7 +12,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'team-fingerprints-common';
-import { Survey } from './models/survey.model';
+import { SurveyModel } from './models/survey.model';
 import { SurveyService } from './survey.service';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
@@ -28,14 +28,14 @@ export class SurveyController {
   @UseInterceptors(CacheInterceptor)
   async getSurveysByRole(
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<(Survey & 'completeStatus')[] | Survey[]> {
+  ): Promise<(SurveyModel & 'completeStatus')[] | SurveyModel[]> {
     return await this.surveyService.getSurveysByRole(userId);
   }
 
   @Public()
   @Get('/public')
   @UseInterceptors(CacheInterceptor)
-  async getSurveys(): Promise<Survey[]> {
+  async getSurveys(): Promise<SurveyModel[]> {
     return await this.surveyService.getSurveys();
   }
 
@@ -44,7 +44,7 @@ export class SurveyController {
   @UseInterceptors(CacheInterceptor)
   async getSurveyById(
     @Param('surveyId', ValidateObjectId) suveyId: string,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.surveyService.getPublicSurveyById(suveyId);
   }
 
@@ -53,13 +53,13 @@ export class SurveyController {
   async getSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return this.surveyService.getSurveyByRole(surveyId, userId);
   }
 
   @Post()
   @Roles([RoleType.SUPER_ADMIN])
-  async createSurvey(@Body() surveyDto: CreateSurveyDto): Promise<Survey> {
+  async createSurvey(@Body() surveyDto: CreateSurveyDto): Promise<SurveyModel> {
     return await this.surveyService.createSurvey(surveyDto);
   }
 
@@ -68,7 +68,7 @@ export class SurveyController {
   async duplicateSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() surveyDto: CreateSurveyDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.surveyService.duplicateSurvey(surveyId, surveyDto);
   }
 
@@ -77,7 +77,7 @@ export class SurveyController {
   async updateSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Body() surveyDto: UpdateSurveyDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.surveyService.updateSurvey(surveyId, surveyDto);
   }
 
@@ -85,7 +85,7 @@ export class SurveyController {
   @Roles([RoleType.SUPER_ADMIN])
   async removeSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return this.surveyService.removeSurvey(surveyId);
   }
 }

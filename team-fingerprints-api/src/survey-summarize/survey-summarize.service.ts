@@ -5,15 +5,16 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Category } from 'src/survey/models/category.model';
-import { Survey } from 'src/survey/models/survey.model';
-import { User } from 'src/users/models/user.model';
+import { CategoryModel } from 'src/survey/models/category.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
+import { UserModel } from 'src/users/models/user.model';
 
 @Injectable()
 export class SurveySummarizeService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-    @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
+    @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
+    @InjectModel(SurveyModel.name)
+    private readonly surveyModel: Model<SurveyModel>,
   ) {}
 
   async countPointsForUser(userId: string, surveyId: string) {
@@ -48,7 +49,7 @@ export class SurveySummarizeService {
 
     const summary = [];
 
-    categories.forEach((category: Category) => {
+    categories.forEach((category: CategoryModel) => {
       const avgTrends = [];
       category.trends.forEach((trend) => {
         let trendCount = 0;

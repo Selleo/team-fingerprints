@@ -1,14 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Survey } from 'src/survey/models/survey.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { CreateTrendDto } from 'src/survey/category/trend/dto/trend.dto';
 
 const createSurveyWithCategory = async (
-  surveyModel: Model<Survey>,
-): Promise<Survey> => {
+  surveyModel: Model<SurveyModel>,
+): Promise<SurveyModel> => {
   const surveyData = {
     title: 'Test survey',
     categories: [
@@ -24,12 +24,12 @@ const createSurveyWithCategory = async (
 
 describe('TrendController', () => {
   let app: INestApplication;
-  let surveyModel: Model<Survey>;
-  let survey: Survey;
+  let surveyModel: Model<SurveyModel>;
+  let survey: SurveyModel;
 
   beforeEach(async () => {
     app = await getApplication();
-    surveyModel = app.get(getModelToken(Survey.name));
+    surveyModel = app.get(getModelToken(SurveyModel.name));
     survey = await createSurveyWithCategory(surveyModel);
   });
 

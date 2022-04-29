@@ -5,7 +5,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Role } from 'src/role/models/role.model';
 import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'team-fingerprints-common';
@@ -13,6 +12,7 @@ import { UsersService } from 'src/users/users.service';
 import { CompanyService } from '../company.service';
 import { TeamService } from './team.service';
 import { isEmail } from 'class-validator';
+import { Role } from 'src/role/types/role.types';
 
 @Injectable()
 export class TeamMembersService {

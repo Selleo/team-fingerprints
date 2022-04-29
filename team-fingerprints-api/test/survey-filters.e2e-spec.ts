@@ -2,17 +2,15 @@ import { INestApplication } from '@nestjs/common';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { Model } from 'mongoose';
-import { Filter } from 'src/filter/models/filter.model';
-import { Role } from 'src/role/models/role.model';
-import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
-import { Survey } from 'src/survey/models/survey.model';
-import { UserSurveyAnswerI } from 'src/users/interfaces/user.interface';
-import { User } from 'src/users/models/user.model';
+import { FilterModel } from 'src/filter/models/filter.model';
+import { RoleModel } from 'src/role/models/role.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
+import { UserModel } from 'src/users/models/user.model';
 import { getModelToken } from '@nestjs/mongoose';
-import { Team } from 'src/company/models/team.model';
+import { TeamModel } from 'src/company/models/team.model';
 import { getBaseUser } from './helpers/getBaseUser';
 import { createBaseUser } from './helpers/users';
-import { Company } from 'src/company/models/company.model';
+import { CompanyModel } from 'src/company/models/company.model';
 import {
   filtersWithValuesData,
   companyWithTeamData,
@@ -20,15 +18,19 @@ import {
   addUserToTeam,
   createSurvey,
 } from './survey-result-filter.setup';
+import {
+  UserSurveyAnswer,
+  SurveyCompleteStatus,
+} from 'team-fingerprints-common';
 
 export const createCompanyWithTeam = async (
-  companyModel: Model<Company>,
+  companyModel: Model<CompanyModel>,
   data: any,
-): Promise<Company> => {
+): Promise<CompanyModel> => {
   return await (await companyModel.create(data)).save();
 };
 
-const surveyAnswersDataForUser = (survey: Survey): UserSurveyAnswerI => ({
+const surveyAnswersDataForUser = (survey: SurveyModel): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
   completeStatus: SurveyCompleteStatus.FINISHED,
   amountOfAnswers: 2,
@@ -58,7 +60,9 @@ const surveyAnswersDataForUser = (survey: Survey): UserSurveyAnswerI => ({
   ],
 });
 
-const surveyAnswersDataForBaseUser = (survey: Survey): UserSurveyAnswerI => ({
+const surveyAnswersDataForBaseUser = (
+  survey: SurveyModel,
+): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
   completeStatus: SurveyCompleteStatus.FINISHED,
   amountOfAnswers: 2,
@@ -89,9 +93,9 @@ const surveyAnswersDataForBaseUser = (survey: Survey): UserSurveyAnswerI => ({
 });
 
 const saveAnswersInUser = async (
-  userModel: Model<User>,
-  user: User,
-  surveyAnswerData: UserSurveyAnswerI,
+  userModel: Model<UserModel>,
+  user: UserModel,
+  surveyAnswerData: UserSurveyAnswer,
 ) => {
   return await userModel
     .findOneAndUpdate(
@@ -106,7 +110,10 @@ const saveAnswersInUser = async (
     .exec();
 };
 
-const createFilter = async (filterModel: Model<Filter>, filterData: any) => {
+const createFilter = async (
+  filterModel: Model<FilterModel>,
+  filterData: unknown,
+) => {
   return await (await filterModel.create(filterData)).save();
 };
 
@@ -122,9 +129,9 @@ const userDatailsData = [
 ];
 
 const saveDetailsInUser = async (
-  userModel: Model<User>,
+  userModel: Model<UserModel>,
   userId: string,
-  userDetails: any,
+  userDetails: unknown,
 ) => {
   return await userModel.findByIdAndUpdate(
     userId,
@@ -133,35 +140,35 @@ const saveDetailsInUser = async (
   );
 };
 
-const getUserById = async (userModel: Model<User>, userId: string) => {
+const getUserById = async (userModel: Model<UserModel>, userId: string) => {
   return await userModel.findById(userId).exec();
 };
 
 describe('SurveyFiltersController', () => {
   let app: INestApplication;
-  let userModel: Model<User>;
-  let companyModel: Model<Company>;
-  let roleModel: Model<Role>;
-  let surveyModel: Model<Survey>;
-  let filterModel: Model<Filter>;
+  let userModel: Model<UserModel>;
+  let companyModel: Model<CompanyModel>;
+  let roleModel: Model<RoleModel>;
+  let surveyModel: Model<SurveyModel>;
+  let filterModel: Model<FilterModel>;
 
-  let baseUser: User;
-  let user: User;
-  let company1: Company;
-  let company2: Company;
-  let team1: Team;
-  let team2: Team;
-  let survey: Survey;
-  let filterCountry: Filter;
-  let filterLevel: Filter;
+  let baseUser: UserModel;
+  let user: UserModel;
+  let company1: CompanyModel;
+  let company2: CompanyModel;
+  let team1: TeamModel;
+  let team2: TeamModel;
+  let survey: SurveyModel;
+  let filterCountry: FilterModel;
+  let filterLevel: FilterModel;
 
   beforeEach(async () => {
     app = await getApplication();
-    userModel = app.get(getModelToken(User.name));
-    companyModel = app.get(getModelToken(Company.name));
-    roleModel = app.get(getModelToken(Role.name));
-    surveyModel = app.get(getModelToken(Survey.name));
-    filterModel = app.get(getModelToken(Filter.name));
+    userModel = app.get(getModelToken(UserModel.name));
+    companyModel = app.get(getModelToken(CompanyModel.name));
+    roleModel = app.get(getModelToken(RoleModel.name));
+    surveyModel = app.get(getModelToken(SurveyModel.name));
+    filterModel = app.get(getModelToken(FilterModel.name));
 
     baseUser = await getBaseUser(userModel);
     user = await createBaseUser(userModel);

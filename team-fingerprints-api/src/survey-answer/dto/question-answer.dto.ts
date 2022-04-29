@@ -7,9 +7,9 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { QuestionAnswerI } from 'team-fingerprints-common';
+import { QuestionAnswer } from 'team-fingerprints-common';
 
-export class QuestionAnswerDto implements QuestionAnswerI {
+export class QuestionAnswerDto implements QuestionAnswer {
   @ApiProperty()
   @IsString()
   @IsMongoId()

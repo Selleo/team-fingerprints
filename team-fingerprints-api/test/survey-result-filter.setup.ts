@@ -1,8 +1,8 @@
 import { Model, Types } from 'mongoose';
-import { Role } from 'src/role/models/role.model';
+import { RoleModel } from 'src/role/models/role.model';
 import { RoleType } from 'team-fingerprints-common';
-import { Survey } from 'src/survey/models/survey.model';
-import { User } from 'src/users/models/user.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
+import { UserModel } from 'src/users/models/user.model';
 
 export const companyWithTeamData = [
   {
@@ -39,7 +39,7 @@ export const companyWithTeamData = [
   },
 ];
 
-export const surveyData: Partial<Survey> = {
+export const surveyData: Partial<SurveyModel> = {
   title: 'Test survey',
   amountOfQuestions: 2,
   isPublic: true,
@@ -103,12 +103,12 @@ export const filtersWithValuesData = [
 ];
 
 export const addUserToTeam = async (
-  roleModel: Model<Role>,
-  baseUser: User,
+  roleModel: Model<RoleModel>,
+  baseUser: UserModel,
   companyId: string,
   teamId: string,
-): Promise<Role> => {
-  const roleDocumentData: Partial<Role> = {
+): Promise<RoleModel> => {
+  const roleDocumentData: Partial<RoleModel> = {
     role: RoleType.USER,
     companyId,
     teamId,
@@ -120,8 +120,8 @@ export const addUserToTeam = async (
 };
 
 export const createSurvey = async (
-  surveyModel: Model<Survey>,
-  surveyData: Partial<Survey>,
-): Promise<Survey> => {
+  surveyModel: Model<SurveyModel>,
+  surveyData: Partial<SurveyModel>,
+): Promise<SurveyModel> => {
   return await (await surveyModel.create(surveyData)).save();
 };

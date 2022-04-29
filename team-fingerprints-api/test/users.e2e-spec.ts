@@ -3,30 +3,30 @@ import { createUser } from './factories';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { baseUserData } from './helpers/data/baseUserData';
-import { RoleType } from 'team-fingerprints-common';
+import { RoleType, User } from 'team-fingerprints-common';
 import { Model } from 'mongoose';
-import { Role } from 'src/role/models/role.model';
+import { RoleModel } from 'src/role/models/role.model';
 import { getModelToken } from '@nestjs/mongoose';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 import { getBaseUser } from './helpers/getBaseUser';
-import { UserDetailI } from 'team-fingerprints-common';
-import { Filter } from 'src/filter/models/filter.model';
+import { UserDetail } from 'team-fingerprints-common';
+import { FilterModel } from 'src/filter/models/filter.model';
 import * as mongoose from 'mongoose';
 import { removeDocument } from './helpers/removeDocument';
 import { UpdateUserDto } from 'src/users/dto/user.dto';
 
 describe('UsersController', () => {
   let app: INestApplication;
-  let baseUser: User;
-  let roleModel: Model<Role>;
-  let userModel: Model<User>;
-  let filterModel: Model<Filter>;
+  let baseUser: UserModel;
+  let roleModel: Model<RoleModel>;
+  let userModel: Model<UserModel>;
+  let filterModel: Model<FilterModel>;
 
   beforeEach(async () => {
     app = await getApplication();
-    roleModel = app.get(getModelToken(Role.name));
-    userModel = app.get(getModelToken(User.name));
-    filterModel = app.get(getModelToken(Filter.name));
+    roleModel = app.get(getModelToken(RoleModel.name));
+    userModel = app.get(getModelToken(UserModel.name));
+    filterModel = app.get(getModelToken(FilterModel.name));
     baseUser = await getBaseUser(userModel);
   });
 
@@ -78,7 +78,7 @@ describe('UsersController', () => {
 
   describe('POST /users/details - sets user details for current user', () => {
     it('should throw - 404 Not Found', async () => {
-      const userDetails: UserDetailI = {
+      const userDetails: UserDetail = {
         country: '324242323',
         yearOfExperience: '3423534',
       };
@@ -118,7 +118,7 @@ describe('UsersController', () => {
         }),
       );
 
-      const userDetails: UserDetailI = {
+      const userDetails: UserDetail = {
         country: newFilters[0].values[0]._id.toString(),
         yearOfExperience: newFilters[1].values[0]._id.toString(),
       };
@@ -152,7 +152,7 @@ describe('UsersController', () => {
 
   describe('POST /users - creates new user', () => {
     it('should return new user', async () => {
-      const user = await createUser('gmail.com');
+      const user: Partial<UserModel> = await createUser('gmail.com');
 
       const { body } = await request(app.getHttpServer())
         .post('/users')
@@ -172,7 +172,9 @@ describe('UsersController', () => {
 
   describe('PATCH /users - updates current user', () => {
     it('should return updated user', async () => {
-      const { firstName, lastName } = await createUser('gmail.com');
+      const { firstName, lastName }: Partial<User> = await createUser(
+        'gmail.com',
+      );
 
       const { body } = await request(app.getHttpServer())
         .patch('/users')

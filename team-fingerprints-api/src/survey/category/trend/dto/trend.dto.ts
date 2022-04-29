@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { TrendI } from 'team-fingerprints-common';
+import { Trend } from 'team-fingerprints-common';
 
-export class CreateTrendDto implements Partial<TrendI> {
+export class CreateTrendDto implements Partial<Trend> {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -14,7 +14,7 @@ export class CreateTrendDto implements Partial<TrendI> {
   readonly secondary: string;
 }
 
-export class UpdateTrendDto implements Partial<TrendI> {
+export class UpdateTrendDto implements Partial<Trend> {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()

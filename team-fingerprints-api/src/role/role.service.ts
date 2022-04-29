@@ -11,21 +11,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import { isEmail } from 'class-validator';
 import { Model } from 'mongoose';
 import { CompanyService } from 'src/company/company.service';
-import { User } from 'src/users/models/user.model';
-import { RoleI } from './interfaces/role.interface';
-import { Role } from './models/role.model';
+import { UserModel } from 'src/users/models/user.model';
+import { RoleModel } from './models/role.model';
 import { RoleType } from 'team-fingerprints-common';
+import { Role } from './types/role.types';
 
 @Injectable()
 export class RoleService {
   constructor(
-    @InjectModel(Role.name) private readonly roleModel: Model<Role>,
+    @InjectModel(RoleModel.name) private readonly roleModel: Model<RoleModel>,
     @Inject(forwardRef(() => CompanyService))
     private readonly companyService: CompanyService,
   ) {}
 
   async createRoleDocument(
-    user: Partial<User>,
+    user: Partial<UserModel>,
     roleDocumentData: Partial<Role> = {},
   ): Promise<Role> {
     const roleDocument = await this.roleModel.create({
@@ -38,21 +38,21 @@ export class RoleService {
     return roleDocument;
   }
 
-  async findRoleDocument(searchParams: Partial<RoleI | null>): Promise<Role> {
+  async findRoleDocument(searchParams: Partial<Role | null>): Promise<Role> {
     const roleDocument = await this.roleModel.findOne(searchParams).exec();
     if (!roleDocument) return null;
     return roleDocument;
   }
 
-  async findAllRoleDocuments(searchParams: Partial<RoleI>): Promise<Role[]> {
+  async findAllRoleDocuments(searchParams: Partial<Role>): Promise<Role[]> {
     const roleDocuments = await this.roleModel.find(searchParams).exec();
     if (!roleDocuments || roleDocuments.length <= 0) return [];
     return roleDocuments;
   }
 
   async updateRoleDocument(
-    searchParams: Partial<RoleI>,
-    updateData: Partial<RoleI>,
+    searchParams: Partial<Role>,
+    updateData: Partial<Role>,
   ): Promise<Role> {
     const updatedRoleDocument = await this.roleModel
       .findOneAndUpdate(searchParams, updateData, { new: true })

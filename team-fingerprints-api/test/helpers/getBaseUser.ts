@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 import { baseUserData } from './data/baseUserData';
 
-export async function getBaseUser(userModel: Model<User>) {
+export async function getBaseUser(userModel: Model<UserModel>) {
   return await userModel.findOne({ email: baseUserData().email });
 }

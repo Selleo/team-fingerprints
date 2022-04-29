@@ -11,19 +11,20 @@ import { RoleService } from 'src/role/role.service';
 import { RoleType } from 'team-fingerprints-common';
 import { UsersService } from 'src/users/users.service';
 import { CompanyService } from './company.service';
-import { Company } from './models/company.model';
+import { CompanyModel } from './models/company.model';
 
 @Injectable()
 export class CompanyMembersService {
   constructor(
-    @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+    @InjectModel(CompanyModel.name)
+    private readonly companyModel: Model<CompanyModel>,
     private readonly usersService: UsersService,
     private readonly roleService: RoleService,
     private readonly mailService: MailService,
     private readonly companyService: CompanyService,
   ) {}
 
-  async isUserInCompanyDomain(email: string): Promise<Company> {
+  async isUserInCompanyDomain(email: string): Promise<CompanyModel> {
     return await this.companyModel.findOne({
       domain: email.split('@')[1],
     });

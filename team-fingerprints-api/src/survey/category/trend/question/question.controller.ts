@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { RoleType } from 'team-fingerprints-common';
-import { Survey } from 'src/survey/models/survey.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import {
   CreateQuestionDto,
   QuestionParamsDto,
@@ -21,7 +21,7 @@ export class QuestionController {
   async createQuestion(
     @Param() params: QuestionParamsDto,
     @Body() questionDto: CreateQuestionDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.questionService.createQuestion(params, questionDto);
   }
 
@@ -30,7 +30,7 @@ export class QuestionController {
   async updateQuestion(
     @Param() params: QuestionParamsDto,
     @Body() questionDto: UpdateQuestionDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.questionService.updateQuestion(params, questionDto);
   }
 
@@ -39,7 +39,7 @@ export class QuestionController {
   async removeQuestion(
     @Param('questionId', ValidateObjectId) questionId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.questionService.removeQuestion(surveyId, questionId);
   }
 }

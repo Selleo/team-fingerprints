@@ -15,7 +15,7 @@ import { RoleType } from 'team-fingerprints-common';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
-import { Company } from './models/company.model';
+import { CompanyModel } from './models/company.model';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isDomainValid = require('is-valid-domain');
@@ -27,14 +27,15 @@ interface DomainBlacklist {
 @Injectable()
 export class CompanyService {
   constructor(
-    @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+    @InjectModel(CompanyModel.name)
+    private readonly companyModel: Model<CompanyModel>,
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly roleService: RoleService,
     private readonly tfConfigService: TfConfigService,
   ) {}
 
-  async getCompanyById(companyId: string): Promise<Company> {
+  async getCompanyById(companyId: string): Promise<CompanyModel> {
     return await this.companyModel.findOne({ _id: companyId }).exec();
   }
 
@@ -51,7 +52,7 @@ export class CompanyService {
     return { company, roles: roleDocuments };
   }
 
-  async getCompaneis(): Promise<Company[]> {
+  async getCompaneis(): Promise<CompanyModel[]> {
     const companies = await this.companyModel.find().exec();
     if (companies && companies.length > 0) return companies;
     else return [];
@@ -66,7 +67,7 @@ export class CompanyService {
       pointColor,
       pointShape,
     }: CreateCompanyDto,
-  ): Promise<Company | HttpException> {
+  ): Promise<CompanyModel | HttpException> {
     if (domain.length > 0) {
       if (!isDomainValid(domain))
         throw new BadRequestException('Invalid domain');
@@ -115,7 +116,7 @@ export class CompanyService {
       pointColor,
       pointShape,
     }: UpdateCompanyDto,
-  ): Promise<Company> {
+  ): Promise<CompanyModel> {
     const company = await this.companyModel.findById(companyId);
 
     const { domains }: DomainBlacklist =
@@ -159,7 +160,7 @@ export class CompanyService {
     return companyByDomain ? true : false;
   }
 
-  async deleteCompany(companyId: string): Promise<Company> {
+  async deleteCompany(companyId: string): Promise<CompanyModel> {
     return await this.companyModel.findByIdAndDelete(companyId);
   }
 

@@ -9,11 +9,11 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Queue } from 'bull';
 import { Model, Types } from 'mongoose';
-import { RoleI } from 'src/role/interfaces/role.interface';
 import { RoleService } from 'src/role/role.service';
-import { Survey } from 'src/survey/models/survey.model';
+import { Role } from 'src/role/types/role.types';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
 import { SurveyCompleteStatus } from 'team-fingerprints-common';
 
@@ -21,8 +21,9 @@ import { SurveyCompleteStatus } from 'team-fingerprints-common';
 export class SurveyResultService {
   constructor(
     @InjectQueue('survey-results') private readonly surveyResultsQueue: Queue,
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-    @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
+    @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
+    @InjectModel(SurveyModel.name)
+    private readonly surveyModel: Model<SurveyModel>,
     private readonly roleService: RoleService,
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
@@ -179,7 +180,7 @@ export class SurveyResultService {
   }
 
   async getUsersIds(
-    searchParam: Partial<RoleI> | null = null,
+    searchParam: Partial<Role> | null = null,
   ): Promise<string[]> {
     if (!searchParam) {
       const usersObjectIds = await this.userModel.find({}, { _id: 1 });

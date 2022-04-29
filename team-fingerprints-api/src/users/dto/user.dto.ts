@@ -5,9 +5,9 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { UserDetailI, UserI } from '../interfaces/user.interface';
+import { UserDetail, User } from 'team-fingerprints-common';
 
-export class CreateUserDto implements Partial<UserI> {
+export class CreateUserDto implements Partial<User> {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
@@ -33,7 +33,7 @@ export class CreateUserDto implements Partial<UserI> {
   readonly pictureUrl?: string;
 }
 
-export class UpdateUserDto implements Partial<UserI> {
+export class UpdateUserDto implements Partial<User> {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
@@ -57,5 +57,5 @@ export class UpdateUserDto implements Partial<UserI> {
   @IsNotEmpty()
   @IsOptional()
   @ValidateNested()
-  readonly userDetails?: UserDetailI[];
+  readonly userDetails?: UserDetail[];
 }

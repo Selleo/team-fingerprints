@@ -2,11 +2,11 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bull';
 import { FilterService } from 'src/filter/filter.service';
-import { Filter } from 'src/filter/models/filter.model';
-import { RoleI } from 'src/role/interfaces/role.interface';
+import { FilterModel } from 'src/filter/models/filter.model';
+import { Role } from 'src/role/types/role.types';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 
 @Injectable()
 export class SurveyFiltersService {
@@ -85,14 +85,14 @@ export class SurveyFiltersService {
           usersIds,
         )
       )
-        ?.map(({ userDetails }: User) =>
+        ?.map(({ userDetails }: UserModel) =>
           userDetails && Object.keys(userDetails).length > 0
             ? userDetails
             : null,
         )
         .filter(Boolean) || [];
 
-    const filters: Filter[] = await this.filterService.getFiltersList();
+    const filters: FilterModel[] = await this.filterService.getFiltersList();
 
     const filtersPaths = filters.map((filter) => filter.filterPath);
 
@@ -141,7 +141,7 @@ export class SurveyFiltersService {
     return availableFilters;
   }
 
-  async getUsersForFilters(searchParam: Partial<RoleI> | null = null) {
+  async getUsersForFilters(searchParam: Partial<Role> | null = null) {
     const usersIds = await this.surveyResultService.getUsersIds(searchParam);
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('There are not available filters');

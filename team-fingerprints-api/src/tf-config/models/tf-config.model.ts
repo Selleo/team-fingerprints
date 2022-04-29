@@ -1,7 +1,7 @@
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema({ autoIndex: false })
-export class TfConfig {
+@Schema({ collection: 'tfconfigs', autoIndex: false })
+export class TfConfigModel {
   _id?: string;
 
   @Prop({ required: true, unique: false })
@@ -14,4 +14,4 @@ export class TfConfig {
   data: any;
 }
 
-export const TfConfigSchema = SchemaFactory.createForClass(TfConfig);
+export const TfConfigSchema = SchemaFactory.createForClass(TfConfigModel);

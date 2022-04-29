@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
-import { Filter } from 'src/filter/models/filter.model';
+import { FilterModel } from 'src/filter/models/filter.model';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { CreateFilterValueDto } from 'src/filter/dto/filter';
 
-const createFilter = async (): Promise<Filter> => {
+const createFilter = async (): Promise<FilterModel> => {
   const filterData = {
     name: 'Test filter',
-  } as Partial<Filter>;
+  } as Partial<FilterModel>;
   const app = await getApplication();
   const { body } = await request(app.getHttpServer())
     .post('/filters')

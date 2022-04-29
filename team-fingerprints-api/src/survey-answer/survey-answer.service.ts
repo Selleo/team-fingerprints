@@ -10,18 +10,18 @@ import {
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 import { QuestionAnswerDto } from './dto/question-answer.dto';
-import { SurveyCompleteStatus } from './survey-answer.type';
 import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.service';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { SurveyService } from 'src/survey/survey.service';
 import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
+import { SurveyCompleteStatus } from 'team-fingerprints-common';
 
 @Injectable()
 export class SurveyAnswerService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
     @InjectConnection() private readonly connection: mongoose.Connection,
     @Inject(forwardRef(() => SurveyResultService))
     private readonly surveyResultService: SurveyResultService,
@@ -30,7 +30,7 @@ export class SurveyAnswerService {
     private readonly surveyFiltersService: SurveyFiltersService,
   ) {}
 
-  async getUserAnswers(userId: string, surveyId: string): Promise<User> {
+  async getUserAnswers(userId: string, surveyId: string): Promise<UserModel> {
     return await this.userModel
       .findOne(
         { _id: userId, 'surveysAnswers.surveyId': surveyId },
@@ -148,11 +148,11 @@ export class SurveyAnswerService {
     userId: string,
     surveyId: string,
     { value, questionId }: QuestionAnswerDto,
-  ): Promise<User | HttpException> {
+  ): Promise<UserModel | HttpException> {
     if (await this.checkIfSurveyIsFinished(userId, surveyId))
       throw new ForbiddenException();
 
-    let updatedAnswer: User;
+    let updatedAnswer: UserModel;
 
     if (value === 0) {
       updatedAnswer = await this.userModel

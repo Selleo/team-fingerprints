@@ -4,7 +4,7 @@ import { RoleModule } from 'src/role/role.module';
 import { UsersModule } from 'src/users/users.module';
 import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
-import { Company, CompanySchema } from './models/company.model';
+import { CompanyModel, CompanySchema } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 import { TeamModule } from './team/team.module';
 import { MailModule } from 'src/mail/mail.module';
@@ -19,7 +19,7 @@ import { TfConfigModule } from 'src/tf-config/tf-config.module';
     TfConfigModule,
     MongooseModule.forFeature([
       {
-        name: Company.name,
+        name: CompanyModel.name,
         schema: CompanySchema,
       },
     ]),

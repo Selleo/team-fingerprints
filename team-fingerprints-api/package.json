@@ -59,6 +59,7 @@
     "rosie": "^2.1.0",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.3.0",
+    "team-fingerprints-common": "file:../team-fingerprints-common",
     "utility-types": "^3.10.0"
   },
   "devDependencies": {

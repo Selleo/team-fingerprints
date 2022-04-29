@@ -1,23 +1,25 @@
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Survey } from 'src/survey/models/survey.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { CreateCategoryDto } from 'src/survey/category/dto/category.dto';
 
-const createSurvey = async (surveyModel: Model<Survey>): Promise<Survey> => {
+const createSurvey = async (
+  surveyModel: Model<SurveyModel>,
+): Promise<SurveyModel> => {
   return await (await surveyModel.create({ title: 'Test survey' })).save();
 };
 
 describe('CategoryController', () => {
   let app: INestApplication;
-  let surveyModel: Model<Survey>;
-  let survey: Survey;
+  let surveyModel: Model<SurveyModel>;
+  let survey: SurveyModel;
 
   beforeEach(async () => {
     app = await getApplication();
-    surveyModel = app.get(getModelToken(Survey.name));
+    surveyModel = app.get(getModelToken(SurveyModel.name));
     survey = await createSurvey(surveyModel);
   });
 

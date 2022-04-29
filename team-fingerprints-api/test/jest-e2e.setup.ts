@@ -1,7 +1,7 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
-import { Role } from 'src/role/models/role.model';
-import { User } from 'src/users/models/user.model';
+import { RoleModel } from 'src/role/models/role.model';
+import { UserModel } from 'src/users/models/user.model';
 import { createBaseUser, giveSuperAdminPrivileges } from './helpers/users';
 import { getApplication } from './helpers/getApplication';
 import { getMongoConnection } from './helpers/getMongoConnection';
@@ -10,9 +10,9 @@ jest.mock('cache-manager-redis-store');
 jest.mock('cache-manager');
 jest.mock('bull');
 
-let usersModel: Model<User>;
-let roleModel: Model<Role>;
-let baseUser: User;
+let usersModel: Model<UserModel>;
+let roleModel: Model<RoleModel>;
+let baseUser: UserModel;
 let connection: Connection;
 
 jest.setTimeout(40000);
@@ -26,8 +26,8 @@ beforeEach(async () => {
   await connection.dropDatabase();
 
   const app = await getApplication();
-  usersModel = app.get(getModelToken(User.name));
-  roleModel = app.get(getModelToken(Role.name));
+  usersModel = app.get(getModelToken(UserModel.name));
+  roleModel = app.get(getModelToken(RoleModel.name));
   baseUser = await createBaseUser(usersModel);
   await giveSuperAdminPrivileges(roleModel, baseUser);
 });

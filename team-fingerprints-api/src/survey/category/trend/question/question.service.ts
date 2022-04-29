@@ -7,7 +7,7 @@ import {
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { Survey } from 'src/survey/models/survey.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import {
   CreateQuestionDto,
   QuestionParamsDto,
@@ -18,7 +18,8 @@ import { SurveyService } from 'src/survey/survey.service';
 @Injectable()
 export class QuestionService {
   constructor(
-    @InjectModel(Survey.name) private readonly surveyModel: Model<Survey>,
+    @InjectModel(SurveyModel.name)
+    private readonly surveyModel: Model<SurveyModel>,
     @InjectConnection() private readonly connection: mongoose.Connection,
     @Inject(forwardRef(() => SurveyService))
     private readonly surveyService: SurveyService,
@@ -27,10 +28,10 @@ export class QuestionService {
   async createQuestion(
     { surveyId, categoryId, trendId }: QuestionParamsDto,
     { title, primary }: CreateQuestionDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     await this.surveyService.canEditSurvey(surveyId);
 
-    let newQuestion: Survey;
+    let newQuestion: SurveyModel;
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
       newQuestion = await this.surveyModel
@@ -77,7 +78,7 @@ export class QuestionService {
   async updateQuestion(
     { surveyId, categoryId, trendId, questionId }: QuestionParamsDto,
     { title, primary }: UpdateQuestionDto,
-  ): Promise<Survey> {
+  ): Promise<SurveyModel> {
     return await this.surveyModel.findByIdAndUpdate(
       {
         _id: surveyId,
@@ -101,9 +102,12 @@ export class QuestionService {
     );
   }
 
-  async removeQuestion(surveyId: string, questionId: string): Promise<Survey> {
+  async removeQuestion(
+    surveyId: string,
+    questionId: string,
+  ): Promise<SurveyModel> {
     await this.surveyService.canEditSurvey(surveyId);
-    let removedQuestion: Survey;
+    let removedQuestion: SurveyModel;
     const session = await this.connection.startSession();
     await session.withTransaction(async () => {
       removedQuestion = await this.surveyModel

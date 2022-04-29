@@ -7,25 +7,26 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
-import { Company } from '../models/company.model';
+import { CompanyModel } from '../models/company.model';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 
 @Injectable()
 export class TeamService {
   constructor(
-    @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+    @InjectModel(CompanyModel.name)
+    private readonly companyModel: Model<CompanyModel>,
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
   ) {}
 
-  async getTeamsAll(companyId): Promise<Company[]> {
+  async getTeamsAll(companyId): Promise<CompanyModel[]> {
     return await this.companyModel
       .find({ _id: companyId }, { teams: 1 })
       .exec();
   }
 
   async getTeamById(companyId: string, teamId: string) {
-    const company: Company = await this.companyModel
+    const company: CompanyModel = await this.companyModel
       .findOne({ _id: companyId, 'teams._id': teamId })
       .exec();
 
@@ -45,7 +46,7 @@ export class TeamService {
   }
 
   async getTeam(companyId: string, teamId: string) {
-    const company: Company = await this.companyModel
+    const company: CompanyModel = await this.companyModel
       .findOne({ _id: companyId, 'teams._id': teamId })
       .exec();
 
@@ -57,7 +58,10 @@ export class TeamService {
     return team;
   }
 
-  async createTeam(companyId: string, team: CreateTeamDto): Promise<Company> {
+  async createTeam(
+    companyId: string,
+    team: CreateTeamDto,
+  ): Promise<CompanyModel> {
     return await this.companyModel
       .findOneAndUpdate(
         { _id: companyId },
@@ -75,7 +79,7 @@ export class TeamService {
     companyId: string,
     teamId: string,
     { name, description, pointShape, pointColor }: UpdateTeamDto,
-  ): Promise<Company> {
+  ): Promise<CompanyModel> {
     const team = await this.companyModel
       .findOneAndUpdate(
         {
@@ -96,7 +100,7 @@ export class TeamService {
     return team;
   }
 
-  async removeTeam(teamId: string): Promise<Company> {
+  async removeTeam(teamId: string): Promise<CompanyModel> {
     const roleDocuments = await this.roleService.findAllRoleDocuments({
       teamId,
     });

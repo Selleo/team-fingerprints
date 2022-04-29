@@ -1,16 +1,16 @@
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Company } from 'src/company/models/company.model';
+import { CompanyModel } from 'src/company/models/company.model';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
-import { Team } from 'src/company/models/team.model';
+import { TeamModel } from 'src/company/models/team.model';
 import { CreateTeamDto } from 'src/company/team/dto/team.dto';
-import { Role } from 'src/role/models/role.model';
-import { RoleType } from 'src/role/role.type';
+import { RoleModel } from 'src/role/models/role.model';
+import { RoleType } from 'team-fingerprints-common';
 
-const createCompany = async (companyModel: Model<Company>) => {
-  const companyData: Partial<Company> = {
+const createCompany = async (companyModel: Model<CompanyModel>) => {
+  const companyData: Partial<CompanyModel> = {
     name: 'Company test',
     pointColor: '#ab34bf',
     pointShape: 'triangle',
@@ -23,10 +23,10 @@ const createCompany = async (companyModel: Model<Company>) => {
 };
 
 const createTeamInCompany = async (
-  companyModel: Model<Company>,
+  companyModel: Model<CompanyModel>,
   companyId: string,
 ) => {
-  const teamData: Partial<Team> = {
+  const teamData: Partial<TeamModel> = {
     name: 'Company test',
     pointColor: '#ab34bf',
     pointShape: 'triangle',
@@ -48,14 +48,14 @@ const createTeamInCompany = async (
 
 describe('TeamController', () => {
   let app: INestApplication;
-  let companyModel: Model<Company>;
-  let roleModel: Model<Role>;
-  let company: Company;
+  let companyModel: Model<CompanyModel>;
+  let roleModel: Model<RoleModel>;
+  let company: CompanyModel;
 
   beforeEach(async () => {
     app = await getApplication();
-    companyModel = app.get(getModelToken(Company.name));
-    roleModel = app.get(getModelToken(Role.name));
+    companyModel = app.get(getModelToken(CompanyModel.name));
+    roleModel = app.get(getModelToken(RoleModel.name));
     company = await createCompany(companyModel);
   });
 

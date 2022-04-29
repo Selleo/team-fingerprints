@@ -2,15 +2,17 @@ import { INestApplication } from '@nestjs/common';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
 import { Model, Types } from 'mongoose';
-import { Survey } from 'src/survey/models/survey.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import { getModelToken } from '@nestjs/mongoose';
-import { UserSurveyAnswerI } from 'src/users/interfaces/user.interface';
-import { SurveyCompleteStatus } from 'src/survey-answer/survey-answer.type';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 import { getBaseUser } from './helpers/getBaseUser';
 import { QuestionAnswerDto } from 'src/survey-answer/dto/question-answer.dto';
+import {
+  UserSurveyAnswer,
+  SurveyCompleteStatus,
+} from 'team-fingerprints-common';
 
-const surveyData: Partial<Survey> = {
+const surveyData: Partial<SurveyModel> = {
   title: 'Test survey',
   amountOfQuestions: 2,
   isPublic: true,
@@ -43,13 +45,13 @@ const surveyData: Partial<Survey> = {
 };
 
 const createSurvey = async (
-  surveyModel: Model<Survey>,
-  surveyData: Partial<Survey>,
-): Promise<Survey> => {
+  surveyModel: Model<SurveyModel>,
+  surveyData: Partial<SurveyModel>,
+): Promise<SurveyModel> => {
   return await (await surveyModel.create(surveyData)).save();
 };
 
-const surveyAnswersData = (survey: Survey): UserSurveyAnswerI => ({
+const surveyAnswersData = (survey: SurveyModel): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
   completeStatus: SurveyCompleteStatus.PENDING,
   amountOfAnswers: 2,
@@ -69,9 +71,9 @@ const surveyAnswersData = (survey: Survey): UserSurveyAnswerI => ({
 });
 
 const saveAnswersInUser = async (
-  userModel: Model<User>,
-  baseUser: User,
-  survey: Survey,
+  userModel: Model<UserModel>,
+  baseUser: UserModel,
+  survey: SurveyModel,
 ) => {
   const surveyAnswerData = surveyAnswersData(survey);
   return await userModel
@@ -89,15 +91,15 @@ const saveAnswersInUser = async (
 
 describe('SurveyAnswerController', () => {
   let app: INestApplication;
-  let surveyModel: Model<Survey>;
-  let userModel: Model<User>;
-  let survey: Survey;
-  let baseUser: User;
+  let surveyModel: Model<SurveyModel>;
+  let userModel: Model<UserModel>;
+  let survey: SurveyModel;
+  let baseUser: UserModel;
 
   beforeEach(async () => {
     app = await getApplication();
-    surveyModel = app.get(getModelToken(Survey.name));
-    userModel = app.get(getModelToken(User.name));
+    surveyModel = app.get(getModelToken(SurveyModel.name));
+    userModel = app.get(getModelToken(UserModel.name));
     baseUser = await getBaseUser(userModel);
     survey = await createSurvey(surveyModel, surveyData);
   });

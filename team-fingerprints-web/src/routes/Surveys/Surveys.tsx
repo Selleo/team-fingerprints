@@ -9,19 +9,19 @@ import { useStyles } from "./styles";
 import SurveyItem from "../../components/Survey/SurveyItem";
 import SurveyForm from "../../components/Survey/SurveyForm";
 import axios from "axios";
-import { Survey } from "../../types/models";
 import ErrorLoading from "../../components/ErrorLoading";
 import { useNavigate } from "react-router-dom";
+import { FullSurvey } from "team-fingerprints-common";
 
 const Surveys = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
   const [createModalVisible, setCreateModalVisible] = useState(false);
 
-  const { isLoading, error, data } = useQuery<Survey[]>(
+  const { isLoading, error, data } = useQuery<FullSurvey[]>(
     "surveysAll",
     async () => {
-      const response = await axios.get<Survey[]>("/surveys");
+      const response = await axios.get<FullSurvey[]>("/surveys");
       return response.data;
     }
   );

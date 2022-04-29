@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { TeamService } from 'src/company/team/team.service';
 import { RoleService } from 'src/role/role.service';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 
 @Injectable()
 export class PrivilegesInterceptorMock implements NestInterceptor {

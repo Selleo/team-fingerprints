@@ -1,0 +1,16 @@
+{
+  "name": "team-fingerprints-common",
+  "version": "1.0.0",
+  "description": "Types for Selleo Team Fingerprints F/b and B/E",
+  "license": "ISC",
+  "dev": true,
+  "types": "index.d.ts",
+  "main": "",
+  "private": true,
+  "dependencies": {
+    "mongoose": "^6.3.1",
+    "typescript": "^4.6.3"
+  },
+  "devDependencies": {
+  }
+}

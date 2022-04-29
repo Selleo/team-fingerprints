@@ -6,7 +6,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
 import * as request from 'request';
-import { User } from 'src/users/models/user.model';
+import { UserModel } from 'src/users/models/user.model';
 import { RoleService } from 'src/role/role.service';
 import { CompanyMembersService } from 'src/company/company-members.service';
 import axios from 'axios';
@@ -58,7 +58,7 @@ export class AuthService {
       };
     };
 
-    let user: User;
+    let user: UserModel;
     await request(options(auth0Id), async (err, res, body) => {
       if (err) {
         throw new BadRequestException(

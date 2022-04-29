@@ -10,7 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Roles } from 'src/role/decorators/roles.decorator';
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from 'team-fingerprints-common';
 import {
   CreateFilterDto,
   CreateFilterValueDto,

@@ -33,6 +33,7 @@
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
     "react-spinners": "^0.11.0",
+    "team-fingerprints-common": "file:../team-fingerprints-common",
     "typescript": "^4.5.4",
     "web-vitals": "^2.1.2"
   },

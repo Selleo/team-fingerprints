@@ -10,13 +10,13 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { RoleType } from 'src/role/role.type';
-import { User } from './models/user.model';
+import { RoleType } from 'team-fingerprints-common';
+import { UserModel } from './models/user.model';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { Roles } from 'src/role/decorators/roles.decorator';
-import { UserDetailI, UserProfileI } from './interfaces/user.interface';
 import { ValidateEmail } from 'src/company/dto/company.dto';
+import { UserDetail, UserProfile } from 'team-fingerprints-common';
 
 @ApiTags('users')
 @Controller({ path: 'users', version: '1' })
@@ -26,26 +26,26 @@ export class UsersController {
   @Get()
   async getUser(
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<User> {
+  ): Promise<UserModel> {
     return await this.userService.getUserById(userId);
   }
 
   @Get('/all')
   @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
-  async getUsersAll(): Promise<User[]> {
+  async getUsersAll(): Promise<UserModel[]> {
     return await this.userService.getUsersAll();
   }
 
   @Post('/profiles')
   @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
-  async getUsersByIds(@Body() userIds: string[]): Promise<UserProfileI[]> {
+  async getUsersByIds(@Body() userIds: string[]): Promise<UserProfile[]> {
     return await this.userService.getUsersByIds(userIds);
   }
 
   @Post('/details')
   async setUserDetails(
     @CurrentUserId(ValidateObjectId) userId: string,
-    @Body() userDetais: UserDetailI,
+    @Body() userDetais: UserDetail,
   ) {
     return await this.userService.setUserDetails(userId, userDetais);
   }
@@ -53,7 +53,7 @@ export class UsersController {
   @Post()
   async createUser(
     @Body() newUserData: CreateUserDto,
-  ): Promise<User | HttpException> {
+  ): Promise<UserModel | HttpException> {
     return await this.userService.createUser(newUserData);
   }
 
@@ -61,7 +61,7 @@ export class UsersController {
   async updateUser(
     @CurrentUserId(ValidateObjectId) userId: string,
     @Body() updateUserData: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<UserModel> {
     return await this.userService.updateUser(userId, updateUserData);
   }
 

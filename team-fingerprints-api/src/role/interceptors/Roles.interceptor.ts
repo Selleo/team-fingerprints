@@ -5,7 +5,7 @@ import {
   NestInterceptor,
   UnauthorizedException,
 } from '@nestjs/common';
-import { RoleType } from '../role.type';
+import { RoleType } from 'team-fingerprints-common';
 
 @Injectable()
 export class RolesInterceptor implements NestInterceptor {

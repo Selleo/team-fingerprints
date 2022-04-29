@@ -1,10 +1,10 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { QuestionI } from '../interfaces/survey.interface';
+import { Question } from 'team-fingerprints-common';
 
 @Schema()
-export class Question implements QuestionI {
+export class QuestionModel implements Question {
   _id?: string | Types.ObjectId;
 
   @ApiProperty()
@@ -15,4 +15,4 @@ export class Question implements QuestionI {
   @Prop({ required: true })
   primary: boolean;
 }
-export const QuestionSchema = SchemaFactory.createForClass(Question);
+export const QuestionSchema = SchemaFactory.createForClass(QuestionModel);

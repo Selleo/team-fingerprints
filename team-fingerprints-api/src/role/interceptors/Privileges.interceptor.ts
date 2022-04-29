@@ -7,10 +7,9 @@ import {
   NestInterceptor,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { TeamService } from 'src/company/team/team.service';
 import { RoleService } from 'src/role/role.service';
-import { RoleType } from '../role.type';
+import { RoleType } from 'team-fingerprints-common';
 
 @Injectable()
 export class PrivilegesInterceptor implements NestInterceptor {
@@ -19,7 +18,6 @@ export class PrivilegesInterceptor implements NestInterceptor {
     private readonly roleService: RoleService,
     @Inject(forwardRef(() => TeamService))
     private readonly teamService: TeamService,
-    private readonly configService: ConfigService,
   ) {}
 
   async intercept(context: ExecutionContext, handler: CallHandler) {

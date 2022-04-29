@@ -6,9 +6,9 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { QuestionI } from 'src/survey/interfaces/survey.interface';
+import { Question } from 'team-fingerprints-common';
 
-export class CreateQuestionDto implements Partial<QuestionI> {
+export class CreateQuestionDto implements Partial<Question> {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -20,7 +20,7 @@ export class CreateQuestionDto implements Partial<QuestionI> {
   readonly primary: boolean;
 }
 
-export class UpdateQuestionDto implements Partial<QuestionI> {
+export class UpdateQuestionDto implements Partial<Question> {
   @ApiProperty()
   @IsString()
   @IsOptional()

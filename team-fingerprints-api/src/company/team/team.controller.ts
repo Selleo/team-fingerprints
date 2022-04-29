@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { RoleType } from 'src/role/role.type';
-import { Company } from '../models/company.model';
+import { RoleType } from 'team-fingerprints-common';
+import { CompanyModel } from '../models/company.model';
 import { TeamService } from './team.service';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 import { TeamMembersService } from './team-members.service';
@@ -32,7 +32,7 @@ export class TeamController {
   @Roles([RoleType.COMPANY_ADMIN])
   async getTeamsAll(
     @Param('companyId', ValidateObjectId) companyId: string,
-  ): Promise<Company[]> {
+  ): Promise<CompanyModel[]> {
     return await this.teamService.getTeamsAll(companyId);
   }
 
@@ -50,7 +50,7 @@ export class TeamController {
   async createTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() teamDto: CreateTeamDto,
-  ): Promise<Company> {
+  ): Promise<CompanyModel> {
     return await this.teamService.createTeam(companyId, teamDto);
   }
 
@@ -60,7 +60,7 @@ export class TeamController {
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body() teamDto: UpdateTeamDto,
-  ): Promise<Company> {
+  ): Promise<CompanyModel> {
     return await this.teamService.updateTeam(companyId, teamId, teamDto);
   }
 
@@ -68,7 +68,7 @@ export class TeamController {
   @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeTeam(
     @Param('teamId', ValidateObjectId) teamId: string,
-  ): Promise<Company | HttpException> {
+  ): Promise<CompanyModel | HttpException> {
     return await this.teamService.removeTeam(teamId);
   }
 

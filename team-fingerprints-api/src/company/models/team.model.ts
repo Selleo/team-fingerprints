@@ -1,7 +1,7 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 
 @Schema({ autoIndex: false })
-export class Team {
+export class TeamModel {
   _id?: string;
 
   @Prop({ required: true })
@@ -19,4 +19,4 @@ export class Team {
   @Prop({ default: [], required: false })
   filterTemplates: any[];
 }
-export const TeamSchema = SchemaFactory.createForClass(Team);
+export const TeamSchema = SchemaFactory.createForClass(TeamModel);

@@ -1,6 +1,6 @@
-import { RoleType } from 'src/role/role.type';
+import { RoleType } from "../enums";
 
-export interface PrivilegeI {
+export type Privilege = {
   readonly roleId: string;
   readonly role: RoleType;
   readonly company?: {
@@ -17,4 +17,4 @@ export interface PrivilegeI {
     pointShape?: string;
     pointColor?: string;
   };
-}
+};

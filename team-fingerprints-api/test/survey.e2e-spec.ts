@@ -3,16 +3,16 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { getApplication } from './helpers/getApplication';
 import * as request from 'supertest';
-import { Survey } from 'src/survey/models/survey.model';
+import { SurveyModel } from 'src/survey/models/survey.model';
 import { UpdateSurveyDto } from 'src/survey/dto/survey.dto';
 
 describe('SurveyController', () => {
   let app: INestApplication;
-  let surveyModel: Model<Survey>;
+  let surveyModel: Model<SurveyModel>;
 
   beforeEach(async () => {
     app = await getApplication();
-    surveyModel = app.get(getModelToken(Survey.name));
+    surveyModel = app.get(getModelToken(SurveyModel.name));
   });
 
   describe('GET /surveys - get surveys with complete status for current user', () => {

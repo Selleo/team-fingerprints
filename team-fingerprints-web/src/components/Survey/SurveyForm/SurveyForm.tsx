@@ -6,14 +6,14 @@ import { useMutation } from "react-query";
 import { useStyles } from "./styles";
 import axios from "axios";
 import { queryClient } from "../../../App";
-import { Survey } from "../../../types/models";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import { FullSurvey } from "team-fingerprints-common";
 
 const SurveyForm = ({
   initialValues,
   onClose,
 }: {
-  initialValues?: Survey;
+  initialValues?: FullSurvey;
   onClose: () => void;
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -26,8 +26,10 @@ const SurveyForm = ({
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const createMutation = useMutation(
-    (newSurvey: Partial<Survey>) => {
-      return axios.post<Partial<Survey>>("/surveys", newSurvey).then(onClose);
+    (newSurvey: Partial<FullSurvey>) => {
+      return axios
+        .post<Partial<FullSurvey>>("/surveys", newSurvey)
+        .then(onClose);
     },
     {
       onSuccess,
@@ -36,9 +38,9 @@ const SurveyForm = ({
   );
 
   const updateMutation = useMutation(
-    (survey: Partial<Survey>) => {
+    (survey: Partial<FullSurvey>) => {
       return axios
-        .patch<Partial<Survey>>(`/surveys/${survey._id}`, survey)
+        .patch<Partial<FullSurvey>>(`/surveys/${survey._id}`, survey)
         .then(onClose);
     },
     {
@@ -48,7 +50,7 @@ const SurveyForm = ({
   );
 
   const { handleSubmit, handleChange, values, setValues, setTouched } =
-    useFormik<Partial<Survey>>({
+    useFormik<Partial<FullSurvey>>({
       initialValues: initialValues || { title: "" },
       onSubmit: (val) =>
         isUpdate ? updateMutation.mutate(val) : createMutation.mutate(val),

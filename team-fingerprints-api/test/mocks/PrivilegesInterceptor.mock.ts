@@ -7,19 +7,17 @@ import {
   NestInterceptor,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { TeamService } from 'src/company/team/team.service';
 import { RoleService } from 'src/role/role.service';
-import { RoleType } from '../role.type';
+import { RoleType } from 'src/role/role.type';
 
 @Injectable()
-export class PrivilegesInterceptor implements NestInterceptor {
+export class PrivilegesInterceptorMock implements NestInterceptor {
   constructor(
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
     @Inject(forwardRef(() => TeamService))
     private readonly teamService: TeamService,
-    private readonly configService: ConfigService,
   ) {}
 
   async intercept(context: ExecutionContext, handler: CallHandler) {
@@ -29,6 +27,16 @@ export class PrivilegesInterceptor implements NestInterceptor {
 
     const companyId = params.companyId ?? null;
     const teamId = params.teamId ?? null;
+
+    const superAdminRoleDocument = await this.roleService.findRoleDocument({
+      email,
+      role: RoleType.SUPER_ADMIN,
+    });
+
+    if (superAdminRoleDocument) {
+      request.roleDocument = superAdminRoleDocument;
+      return handler.handle();
+    }
 
     // Handle USER && TEAM LEADER
     if (companyId && teamId) {

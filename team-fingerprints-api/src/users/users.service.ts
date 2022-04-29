@@ -11,12 +11,6 @@ import { RoleService } from 'src/role/role.service';
 
 import { FilterService } from 'src/filter/filter.service';
 import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
-// import { SurveyCompleteStatus } from 'team-fingerprints-common/enums';
-// import {
-//   UserProfileI,
-//   UserDetailI,
-//   UserSurveyAnswerI,
-// } from 'team-fingerprints-common/types';
 import {
   UserProfile,
   UserDetail,

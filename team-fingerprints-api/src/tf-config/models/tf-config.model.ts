@@ -1,6 +1,6 @@
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema({ autoIndex: false })
+@Schema({ collection: 'tfconfigs', autoIndex: false })
 export class TfConfigModel {
   _id?: string;
 

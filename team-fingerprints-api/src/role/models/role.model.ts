@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 import { RoleType } from 'team-fingerprints-common';
 import { Role } from '../types/role.types';
 
-@Schema({ autoIndex: false, timestamps: true })
+@Schema({ collection: 'roles', autoIndex: false, timestamps: true })
 export class RoleModel extends Document implements Role {
   _id?: string;
 

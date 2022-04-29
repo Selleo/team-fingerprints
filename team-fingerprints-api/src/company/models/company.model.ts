@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { TeamModel, TeamSchema } from './team.model';
 
-@Schema({ autoIndex: false, timestamps: true })
+@Schema({ collection: 'companies', autoIndex: false, timestamps: true })
 export class CompanyModel extends Document {
   _id?: string;
 

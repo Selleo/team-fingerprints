@@ -4,7 +4,7 @@ import { Document, Types } from 'mongoose';
 import { Survey } from 'team-fingerprints-common';
 import { CategoryModel, CategorySchema } from './category.model';
 
-@Schema({ autoIndex: true, timestamps: true })
+@Schema({ collection: 'surveys', autoIndex: true, timestamps: true })
 export class SurveyModel extends Document implements Survey {
   _id?: string | Types.ObjectId;
 

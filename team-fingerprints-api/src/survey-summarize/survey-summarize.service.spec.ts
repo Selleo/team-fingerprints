@@ -5,7 +5,10 @@ import { SurveyModel } from './../survey/models/survey.model';
 import { UserModel } from '../users/models/user.model';
 import { SurveyModelMock, findById } from '../../test/mocks/survey.model.mock';
 import { UserModelMock, findOne } from '../../test/mocks/user.model.mock';
-import { SurveySummarizeService } from './survey-summarize.service';
+import {
+  SurveySummarizeService,
+  UserSurveyResult,
+} from './survey-summarize.service';
 
 const survey: Partial<SurveyModel> = {
   _id: new Types.ObjectId(),
@@ -40,7 +43,12 @@ const survey: Partial<SurveyModel> = {
   ],
 };
 
-const surveyAnswersDataForBaseUser = {
+const surveyAnswersDataForBaseUser: {
+  surveyId: string;
+  amountOfAnswers: number;
+  answers: { value: number; questionId: string }[];
+  surveyResult: UserSurveyResult[];
+} = {
   surveyId: survey._id.toString(),
 
   amountOfAnswers: 2,

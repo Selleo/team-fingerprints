@@ -6,12 +6,14 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Trim } from 'src/common/decorators/trim.decorator';
 import { Question } from 'team-fingerprints-common';
 
 export class CreateQuestionDto implements Partial<Question> {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Trim()
   readonly title: string;
 
   @ApiProperty()
@@ -25,6 +27,7 @@ export class UpdateQuestionDto implements Partial<Question> {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
+  @Trim()
   readonly title: string;
 
   @ApiProperty()

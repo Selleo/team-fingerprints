@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -5,22 +6,27 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { Trim } from 'src/common/decorators/trim.decorator';
 import { UserDetail, User } from 'team-fingerprints-common';
 
 export class CreateUserDto implements Partial<User> {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
+  @Type(() => String)
+  @Trim()
   readonly firstName?: string;
 
   @IsString()
   @IsOptional()
   @IsNotEmpty()
+  @Trim()
   readonly lastName?: string;
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
+  @Trim()
   readonly email: string;
 
   @IsString()
@@ -37,16 +43,19 @@ export class UpdateUserDto implements Partial<User> {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
+  @Trim()
   readonly firstName?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
+  @Trim()
   readonly lastName?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
+  @Trim()
   readonly email?: string;
 
   @IsString()

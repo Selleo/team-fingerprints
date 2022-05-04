@@ -13,7 +13,7 @@ export class TfConfigService {
     private readonly tfConfigModel: Model<TfConfigModel>,
   ) {}
 
-  async getEmailBlackList() {
+  async getEmailBlackList(): Promise<string[]> {
     const document = await this.tfConfigModel
       .findOne({ name: 'emailBlacklist' })
       .exec();

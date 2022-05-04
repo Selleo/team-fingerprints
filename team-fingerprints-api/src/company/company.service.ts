@@ -20,10 +20,6 @@ import { CompanyModel } from './models/company.model';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isDomainValid = require('is-valid-domain');
 
-interface DomainBlacklist {
-  domains: string[];
-}
-
 @Injectable()
 export class CompanyService {
   constructor(
@@ -72,10 +68,9 @@ export class CompanyService {
       if (!isDomainValid(domain))
         throw new BadRequestException('Invalid domain');
 
-      const data: DomainBlacklist =
-        await this.tfConfigService.getEmailBlackList();
+      const data: string[] = await this.tfConfigService.getEmailBlackList();
 
-      if (data?.domains?.includes(domain))
+      if (data?.includes(domain))
         throw new BadRequestException(
           'Can not add this domain to your company',
         );
@@ -119,8 +114,7 @@ export class CompanyService {
   ): Promise<CompanyModel> {
     const company = await this.companyModel.findById(companyId);
 
-    const { domains }: DomainBlacklist =
-      await this.tfConfigService.getEmailBlackList();
+    const domains: string[] = await this.tfConfigService.getEmailBlackList();
 
     if (newDomain && newDomain?.length > 0 && company?.domain !== newDomain) {
       if (!isDomainValid(newDomain))

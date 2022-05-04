@@ -65,3 +65,5 @@ export type UserWhoFinishedSurvey = {
   };
   userDetails: UserDetail[];
 };
+
+export type DetailQuery = { [key: string]: string };

@@ -25,7 +25,6 @@ export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
   @Get()
-  @UseInterceptors(CacheInterceptor)
   async getSurveysByRole(
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<(SurveyModel & 'completeStatus')[] | SurveyModel[]> {

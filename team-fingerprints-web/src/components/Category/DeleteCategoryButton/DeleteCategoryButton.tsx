@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { TrashIcon } from "@modulz/radix-icons";
 import { Button } from "@mantine/core";
 import { useMutation } from "react-query";
 import axios from "axios";
 import { queryClient } from "../../../App";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import ModalWrapper from "../../ModalWrapper";
 
 const DeleteCategoryButton = ({
   categoryId,
@@ -12,6 +14,7 @@ const DeleteCategoryButton = ({
   categoryId: string;
   surveyId: string;
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const mutation = useMutation(
@@ -27,16 +30,27 @@ const DeleteCategoryButton = ({
   );
 
   return (
-    <Button
-      leftIcon={<TrashIcon />}
-      variant="outline"
-      color="pink"
-      onClick={() => mutation.mutate()}
-      compact
-      style={{ color: "#ff0000", borderColor: "#ff0000" }}
+    <ModalWrapper
+      modalVisible={modalVisible}
+      setModalVisible={setModalVisible}
+      modalMsg="Are you sure you want to delete this category?"
+      onConfirm={() => {
+        mutation.mutate();
+      }}
     >
-      Delete Category
-    </Button>
+      <Button
+        leftIcon={<TrashIcon />}
+        variant="outline"
+        color="pink"
+        onClick={() => {
+          setModalVisible(true);
+        }}
+        compact
+        style={{ color: "#ff0000", borderColor: "#ff0000" }}
+      >
+        Delete Category
+      </Button>
+    </ModalWrapper>
   );
 };
 

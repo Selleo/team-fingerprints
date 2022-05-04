@@ -25,7 +25,7 @@ export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
   @Get()
-  @UseInterceptors(CacheInterceptor)
+  //@UseInterceptors(CacheInterceptor)
   async getSurveysByRole(
     @CurrentUserId(ValidateObjectId) userId: string,
   ): Promise<(SurveyModel & 'completeStatus')[] | SurveyModel[]> {
@@ -34,14 +34,14 @@ export class SurveyController {
 
   @Public()
   @Get('/public')
-  @UseInterceptors(CacheInterceptor)
+  //@UseInterceptors(CacheInterceptor)
   async getSurveys(): Promise<SurveyModel[]> {
     return await this.surveyService.getSurveys();
   }
 
   @Public()
   @Get('/:surveyId/public')
-  @UseInterceptors(CacheInterceptor)
+  //@UseInterceptors(CacheInterceptor)
   async getSurveyById(
     @Param('surveyId', ValidateObjectId) suveyId: string,
   ): Promise<SurveyModel> {
@@ -49,7 +49,7 @@ export class SurveyController {
   }
 
   @Get('/:surveyId')
-  @UseInterceptors(CacheInterceptor)
+  //@UseInterceptors(CacheInterceptor)
   async getSurvey(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @CurrentUserId(ValidateObjectId) userId: string,

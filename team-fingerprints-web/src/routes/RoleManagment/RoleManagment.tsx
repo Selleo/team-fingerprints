@@ -1,11 +1,14 @@
-import { Modal } from "@mantine/core";
 import axios from "axios";
+import { Modal } from "@mantine/core";
 import { groupBy, isEmpty, keys, map } from "lodash";
 import { useContext, useMemo, useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+
 import CompanyForm from "../../components/Company/CompanyForm";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
+import ModalWrapper from "../../components/ModalWrapper";
+
 import { ProfileContext } from "../../routes";
 import { ComplexRole } from "../../types/models";
 
@@ -14,6 +17,8 @@ import "./styles.sass";
 export const RoleManagment = () => {
   const { profile, invalidateProfile } = useContext(ProfileContext);
   const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalCompanyName, setModalCompanyName] = useState("");
   const emptyRoles = useMemo(() => isEmpty(profile?.privileges), [profile]);
   const navigate = useNavigate();
   const { onErrorWithTitle } = useDefaultErrorHandler();
@@ -86,12 +91,24 @@ export const RoleManagment = () => {
                           Manage
                         </a>
                       )}
-                      <a
-                        onClick={() => leaveRole(item)}
-                        className="managment__roles__role__leave"
+                      <ModalWrapper
+                        modalVisible={modalVisible}
+                        setModalVisible={setModalVisible}
+                        modalMsg={`Are you sure you want to leave ${modalCompanyName}?`}
+                        onConfirm={() => {
+                          leaveRole(item);
+                        }}
                       >
-                        Leave
-                      </a>
+                        <a
+                          onClick={() => {
+                            setModalVisible(true);
+                            setModalCompanyName(item.company.name);
+                          }}
+                          className="managment__roles__role__leave"
+                        >
+                          Leave
+                        </a>
+                      </ModalWrapper>
                     </div>
                   </li>
                 )

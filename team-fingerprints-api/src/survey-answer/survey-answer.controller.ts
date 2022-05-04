@@ -20,7 +20,7 @@ export class SurveyAnswerController {
   constructor(private readonly surveyAnswerService: SurveyAnswerService) {}
 
   @Get('/:surveyId')
-  @UseInterceptors(CacheInterceptor)
+  //@UseInterceptors(CacheInterceptor)
   async getUserAnswers(
     @CurrentUserId(ValidateObjectId) userId: any,
     @Param('surveyId', ValidateObjectId) surveyId: string,

@@ -1,12 +1,16 @@
-import { useEffect, useRef } from "react";
+import axios from "axios";
+
+import { useEffect, useRef, useState } from "react";
 import { TextInput, Button, Switch, Alert, Checkbox } from "@mantine/core";
 import { BellIcon } from "@modulz/radix-icons";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
-import { useStyles } from "./styles";
-import axios from "axios";
-import { queryClient } from "../../../App";
+
+import ModalWrapper from "../../ModalWrapper";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+
+import { useStyles } from "./styles";
+import { queryClient } from "../../../App";
 import { FullSurvey } from "team-fingerprints-common";
 
 const SurveyForm = ({
@@ -16,6 +20,8 @@ const SurveyForm = ({
   initialValues?: FullSurvey;
   onClose: () => void;
 }) => {
+  const [modalPublicVisible, setModalPublicVisible] = useState(false);
+  const [modalArchiveVisible, setModalArchiveVisible] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { classes } = useStyles();
   const isUpdate = !!initialValues;
@@ -76,12 +82,19 @@ const SurveyForm = ({
       />
 
       {isUpdate && !initialValues.isPublic && (
-        <>
+        <ModalWrapper
+          modalVisible={modalPublicVisible}
+          setModalVisible={setModalPublicVisible}
+          modalMsg="Are you sure you want to public this survey?"
+          onConfirm={() => {
+            setValues({ ...values, isPublic: !values.isPublic });
+            setTouched({ isPublic: true });
+          }}
+        >
           <Switch
             checked={values.isPublic}
-            onChange={(event) => {
-              setValues({ ...values, isPublic: event.currentTarget.checked });
-              setTouched({ isPublic: true });
+            onChange={() => {
+              setModalPublicVisible(true);
             }}
             color="red"
             label="public"
@@ -92,20 +105,33 @@ const SurveyForm = ({
               Remember! Public property can be changed only once!
             </Alert>
           )}
-        </>
+        </ModalWrapper>
       )}
 
       {isUpdate && (
-        <Checkbox
-          checked={values.archived}
-          onChange={(event) => {
-            setValues({ ...values, archived: event.currentTarget.checked });
+        <ModalWrapper
+          modalVisible={modalArchiveVisible}
+          setModalVisible={setModalArchiveVisible}
+          modalMsg={
+            values.archived
+              ? "Are you sure you want to unarchive this survey?"
+              : "Are you sure you want to archive this survey?"
+          }
+          onConfirm={() => {
+            setValues({ ...values, archived: !values.archived });
             setTouched({ archived: true });
           }}
-          color="dark"
-          label="archive"
-          style={{ marginTop: "15px" }}
-        />
+        >
+          <Checkbox
+            checked={values.archived}
+            onChange={() => {
+              setModalArchiveVisible(true);
+            }}
+            color="dark"
+            label="archive"
+            style={{ marginTop: "15px" }}
+          />
+        </ModalWrapper>
       )}
 
       <Button className={classes.submitButton} type="submit">

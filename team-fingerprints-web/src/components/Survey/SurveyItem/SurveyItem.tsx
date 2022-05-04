@@ -1,16 +1,20 @@
+import axios from "axios";
+
+import { useState } from "react";
 import { Button, Modal, TextInput } from "@mantine/core";
-import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../../App";
 import { FullSurvey } from "team-fingerprints-common";
+
 import SurveyForm from "../SurveyForm";
-import axios from "axios";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import ModalWrapper from "../../ModalWrapper";
 
 const SurveyItem = ({ item }: { item: FullSurvey }) => {
   const navigate = useNavigate();
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
   const [duplicateModalVisible, setDuplicateModalVisible] = useState(false);
   const [duplicationName, setDuplicationName] = useState(`${item.title} copy`);
   const { onErrorWithTitle } = useDefaultErrorHandler();
@@ -67,13 +71,22 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
             Duplicate
           </Button>
           {!item.isPublic && (
-            <Button
-              style={{ marginLeft: "10px" }}
-              onClick={() => deleteMutation.mutate(item._id)}
-              color="red"
+            <ModalWrapper
+              modalVisible={modalDeleteVisible}
+              setModalVisible={setModalDeleteVisible}
+              modalMsg="Are you sure you want to delete this survey?"
+              onConfirm={() => {
+                deleteMutation.mutate(item._id);
+              }}
             >
-              Delete
-            </Button>
+              <Button
+                style={{ marginLeft: "10px" }}
+                onClick={() => setModalDeleteVisible(true)}
+                color="red"
+              >
+                Delete
+              </Button>
+            </ModalWrapper>
           )}
         </td>
       </tr>

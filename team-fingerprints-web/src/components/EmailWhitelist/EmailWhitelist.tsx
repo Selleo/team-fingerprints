@@ -1,9 +1,10 @@
 import { Button, Table, Badge } from "@mantine/core";
 import { groupBy, keys, map } from "lodash";
-import { FC, useContext } from "react";
+import { FC, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileContext } from "../../routes";
 import { CompanyRole, Team } from "../../types/models";
+import ModalWrapper from "./../ModalWrapper";
 
 interface IProps {
   onRemove?: (email: string) => void;
@@ -12,6 +13,7 @@ interface IProps {
 }
 
 const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const { profile } = useContext(ProfileContext);
   const navigate = useNavigate();
   const grouped = groupBy(roles, "email");
@@ -50,9 +52,18 @@ const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
                     Self role managment
                   </Button>
                 ) : (
-                  <Button onClick={() => onRemove?.(role._id)} color="red">
-                    Remove
-                  </Button>
+                  <ModalWrapper
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    modalMsg="Are you sure you want to delete this user?"
+                    onConfirm={() => {
+                      onRemove?.(role._id);
+                    }}
+                  >
+                    <Button onClick={() => setModalVisible(true)} color="red">
+                      Remove
+                    </Button>
+                  </ModalWrapper>
                 )}
               </td>
             </tr>

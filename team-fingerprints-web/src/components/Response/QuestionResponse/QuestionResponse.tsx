@@ -1,14 +1,17 @@
-import { useState, useMemo, useEffect } from "react";
 import classNames from "classnames";
+import axios from "axios";
+
+import { useState, useMemo, useEffect } from "react";
 import { useMutation } from "react-query";
 import { toNumber } from "lodash";
-import axios from "axios";
 import { Progress } from "@mantine/core";
+
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import ModalWrapper from "../../ModalWrapper";
 
 import { Answer, Question } from "../../../types/models";
 import { ReactComponent as RightArrow } from "../../../assets/RightArrow.svg";
 import { ReactComponent as LeftArrowGray } from "../../../assets/LeftArrowGray.svg";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 import "./styles.sass";
 
@@ -41,6 +44,7 @@ export default function QuestionResponse({
   const currentQuestion = questionsWithAnswers[questionIndex];
   const numberOfQuestions = questionsWithAnswers.length;
   const [liveValue, setLiveValue] = useState(currentQuestion.answer?.value);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const progress = useMemo(() => {
     const x = questionIndex + 1;
@@ -121,19 +125,26 @@ export default function QuestionResponse({
     );
   };
 
-  const submitResponse = () => {
-    window.confirm("Do you want to finish the survey?") && finishSurvey();
-  };
-
   const submitButton = () => {
     return (
-      <button
-        onClick={submitResponse}
-        disabled={disabled}
-        className="survey-response__survey__nav__button--submit"
+      <ModalWrapper
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        modalMsg="Are you sure you want to finish this survey?"
+        onConfirm={() => {
+          finishSurvey();
+        }}
       >
-        Submit responses
-      </button>
+        <button
+          onClick={() => {
+            setModalVisible(true);
+          }}
+          disabled={disabled}
+          className="survey-response__survey__nav__button--submit"
+        >
+          Submit responses
+        </button>
+      </ModalWrapper>
     );
   };
 

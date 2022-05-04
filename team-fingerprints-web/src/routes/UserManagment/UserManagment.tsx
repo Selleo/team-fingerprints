@@ -1,12 +1,16 @@
+import axios from "axios";
+
+import { useState } from "react";
 import { Button, Group, TextInput, Title } from "@mantine/core";
 import { useNotifications } from "@mantine/notifications";
-import axios from "axios";
-import React, { useState } from "react";
 import { useMutation } from "react-query";
+
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
+import ModalWrapper from "../../components/ModalWrapper";
 
 export const UserManagment = () => {
   const [email, setEmail] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const { onErrorWithTitle } = useDefaultErrorHandler();
   const { showNotification } = useNotifications();
 
@@ -31,9 +35,18 @@ export const UserManagment = () => {
         onChange={(e) => setEmail(e.currentTarget.value as any)}
         value={email}
       ></TextInput>
-      <Button onClick={() => mutation.mutate(email)} color="red">
-        Remove User
-      </Button>
+      <ModalWrapper
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        modalMsg="Are you sure you want to delete this user?"
+        onConfirm={() => {
+          mutation.mutate(email);
+        }}
+      >
+        <Button onClick={() => setModalVisible(true)} color="red">
+          Remove User
+        </Button>
+      </ModalWrapper>
     </Group>
   );
 };

@@ -1,0 +1,42 @@
+@import 'styles/base/variables'
+@import 'styles/base/mixins'
+
+.modal
+  margin-top: 30vh
+  border: 1px solid #ffffffa3
+  width: 562px
+  border-radius: 8px
+
+  &__header
+    display: none
+
+  &__content
+    padding: 15px 20px
+
+  &__msg
+    font-size: 16px
+    line-height: 24px
+
+  &__buttons-wrapper
+    margin-top: 32px
+    display: flex
+    gap: 10px
+
+  &__button
+    padding: 12px 16px
+    font-size: 14px
+    font-weight: 600
+    color: #000
+    border-radius: 10px
+
+    &__confirm
+      background-color: $color-primary
+
+      &:hover
+        background-color: $color-primary-dark
+
+    &__cancel
+      background-color: #c9c9c9
+
+      &:hover
+        background-color: #8a8a8a

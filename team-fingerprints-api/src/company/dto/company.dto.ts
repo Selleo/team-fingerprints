@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import {
   IsDefined,
   IsEmail,
@@ -7,36 +6,37 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Trim } from 'src/common/decorators/trim.decorator';
 export class CreateCompanyDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly name: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   @IsDefined()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly description?: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly domain?: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly pointShape: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly pointColor: string;
 }
 
@@ -45,34 +45,34 @@ export class UpdateCompanyDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly name?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   @IsDefined()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly description?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly domain?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly pointShape?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly pointColor?: string;
 }
 
@@ -81,6 +81,6 @@ export class ValidateEmail {
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly email: string;
 }

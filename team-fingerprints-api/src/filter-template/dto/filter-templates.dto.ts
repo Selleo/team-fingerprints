@@ -1,23 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { Trim } from 'src/common/decorators/trim.decorator';
 
 export class TemplateFilterConfigDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   name: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   pointColor: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   pointShape: string;
 }

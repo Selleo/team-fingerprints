@@ -1,19 +1,19 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Trim } from 'src/common/decorators/trim.decorator';
 import { Trend } from 'team-fingerprints-common';
 
 export class CreateTrendDto implements Partial<Trend> {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly primary: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly secondary: string;
 }
 
@@ -22,14 +22,14 @@ export class UpdateTrendDto implements Partial<Trend> {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly primary?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   readonly secondary?: string;
 }
 

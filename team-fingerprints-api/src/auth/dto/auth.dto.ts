@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { Trim } from 'src/common/decorators/trim.decorator';
 import { UserDetail, UserProfile } from 'team-fingerprints-common';
 import { Privilege } from 'team-fingerprints-common';
 
@@ -14,7 +14,7 @@ export class ResponseAuthDto implements UserProfile {
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => value.trim())
+  @Trim()
   email: string;
 
   @ApiProperty()

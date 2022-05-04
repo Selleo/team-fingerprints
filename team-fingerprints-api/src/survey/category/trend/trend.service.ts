@@ -77,7 +77,7 @@ export class TrendService {
   async removeTrend({ surveyId, categoryId, trendId }: TrendParamsDto) {
     await this.surveyService.canEditSurvey(surveyId);
 
-    const { categories }: any = await this.surveyModel.findOne(
+    const { categories } = await this.surveyModel.findOne(
       {
         _id: surveyId,
       },

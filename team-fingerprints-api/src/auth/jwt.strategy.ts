@@ -7,16 +7,6 @@ import { UserModel } from 'src/users/models/user.model';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 
-interface authPayload {
-  iss: string;
-  sub: string;
-  aud: [string, string];
-  iat: number;
-  exp: number;
-  azp: string;
-  scope: string;
-}
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -41,7 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ sub }: authPayload): Promise<UserModel | HttpException> {
+  async validate({ sub }: { sub: string }): Promise<UserModel | HttpException> {
     const user: UserModel = await this.userService.getUserByAuthId(sub);
     if (user) {
       await this.authService.handleExistingUsers(user.email);

@@ -71,6 +71,12 @@ export class AuthService {
         given_name: lastName,
         picture,
         pictureUrl,
+      }: {
+        email: string;
+        family_name: string;
+        given_name: string;
+        picture: string;
+        pictureUrl: string;
       } = JSON.parse(body);
 
       user = await this.usersService.getUserByEmail(email);

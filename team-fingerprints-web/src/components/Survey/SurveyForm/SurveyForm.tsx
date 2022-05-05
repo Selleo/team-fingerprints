@@ -6,7 +6,7 @@ import { BellIcon } from "@modulz/radix-icons";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
 
-import ModalWrapper from "../../ModalWrapper";
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 import { useStyles } from "./styles";
@@ -20,8 +20,6 @@ const SurveyForm = ({
   initialValues?: FullSurvey;
   onClose: () => void;
 }) => {
-  const [modalPublicVisible, setModalPublicVisible] = useState(false);
-  const [modalArchiveVisible, setModalArchiveVisible] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { classes } = useStyles();
   const isUpdate = !!initialValues;
@@ -82,37 +80,40 @@ const SurveyForm = ({
       />
 
       {isUpdate && !initialValues.isPublic && (
-        <ModalWrapper
-          modalVisible={modalPublicVisible}
-          setModalVisible={setModalPublicVisible}
-          modalMsg="Are you sure you want to public this survey?"
-          onConfirm={() => {
-            setValues({ ...values, isPublic: !values.isPublic });
-            setTouched({ isPublic: true });
-          }}
-        >
-          <Switch
-            checked={values.isPublic}
-            onChange={() => {
-              setModalPublicVisible(true);
+        <>
+          <ModalConfirmTrigger
+            modalMessage={
+              !values.isPublic
+                ? "Are you sure you want to public this survey?"
+                : "Are you sure you want to unpublic this survey?"
+            }
+            onConfirm={() => {
+              setValues({ ...values, isPublic: !values.isPublic });
+              setTouched({ isPublic: true });
             }}
-            color="red"
-            label="public"
-            style={{ marginTop: "10px", marginBottom: "10px" }}
+            renderTrigger={(setModalVisible) => (
+              <Switch
+                checked={values.isPublic}
+                onChange={() => {
+                  setModalVisible(true);
+                }}
+                color="red"
+                label="public"
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              />
+            )}
           />
           {values.isPublic && (
             <Alert icon={<BellIcon />} title="Warning!" color="red">
               Remember! Public property can be changed only once!
             </Alert>
           )}
-        </ModalWrapper>
+        </>
       )}
 
       {isUpdate && (
-        <ModalWrapper
-          modalVisible={modalArchiveVisible}
-          setModalVisible={setModalArchiveVisible}
-          modalMsg={
+        <ModalConfirmTrigger
+          modalMessage={
             values.archived
               ? "Are you sure you want to unarchive this survey?"
               : "Are you sure you want to archive this survey?"
@@ -121,17 +122,18 @@ const SurveyForm = ({
             setValues({ ...values, archived: !values.archived });
             setTouched({ archived: true });
           }}
-        >
-          <Checkbox
-            checked={values.archived}
-            onChange={() => {
-              setModalArchiveVisible(true);
-            }}
-            color="dark"
-            label="archive"
-            style={{ marginTop: "15px" }}
-          />
-        </ModalWrapper>
+          renderTrigger={(setModalVisible) => (
+            <Checkbox
+              checked={values.archived}
+              onChange={() => {
+                setModalVisible(true);
+              }}
+              color="dark"
+              label="archive"
+              style={{ marginTop: "15px" }}
+            />
+          )}
+        />
       )}
 
       <Button className={classes.submitButton} type="submit">

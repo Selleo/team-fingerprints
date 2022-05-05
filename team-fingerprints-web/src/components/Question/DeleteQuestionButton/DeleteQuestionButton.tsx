@@ -5,7 +5,7 @@ import { useMutation } from "react-query";
 import axios from "axios";
 import { queryClient } from "../../../App";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ModalWrapper from "../../ModalWrapper";
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 
 const DeleteQuestionButton = ({
   trendId,
@@ -18,7 +18,6 @@ const DeleteQuestionButton = ({
   surveyId: string;
   questionId: string;
 }) => {
-  const [modalVisible, setModalVisible] = useState(false);
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const mutation = useMutation(
@@ -36,24 +35,23 @@ const DeleteQuestionButton = ({
   );
 
   return (
-    <ModalWrapper
-      modalVisible={modalVisible}
-      setModalVisible={setModalVisible}
-      modalMsg="Are you sure you want to delete this question?"
+    <ModalConfirmTrigger
+      modalMessage="Are you sure you want to delete this question?"
       onConfirm={() => {
         mutation.mutate();
       }}
-    >
-      <Button
-        leftIcon={<TrashIcon />}
-        variant="outline"
-        onClick={() => setModalVisible(true)}
-        compact
-        style={{ color: "#ff0000", borderColor: "#ff0000" }}
-      >
-        Delete Question
-      </Button>
-    </ModalWrapper>
+      renderTrigger={(setModalVisible) => (
+        <Button
+          leftIcon={<TrashIcon />}
+          variant="outline"
+          onClick={() => setModalVisible(true)}
+          compact
+          style={{ color: "#ff0000", borderColor: "#ff0000" }}
+        >
+          Delete Question
+        </Button>
+      )}
+    />
   );
 };
 

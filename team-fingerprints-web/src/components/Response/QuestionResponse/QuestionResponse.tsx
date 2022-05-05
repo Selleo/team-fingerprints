@@ -7,7 +7,7 @@ import { toNumber } from "lodash";
 import { Progress } from "@mantine/core";
 
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ModalWrapper from "../../ModalWrapper";
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 
 import { Answer, Question } from "../../../types/models";
 import { ReactComponent as RightArrow } from "../../../assets/RightArrow.svg";
@@ -44,7 +44,6 @@ export default function QuestionResponse({
   const currentQuestion = questionsWithAnswers[questionIndex];
   const numberOfQuestions = questionsWithAnswers.length;
   const [liveValue, setLiveValue] = useState(currentQuestion.answer?.value);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const progress = useMemo(() => {
     const x = questionIndex + 1;
@@ -127,24 +126,23 @@ export default function QuestionResponse({
 
   const submitButton = () => {
     return (
-      <ModalWrapper
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        modalMsg="Are you sure you want to finish this survey?"
+      <ModalConfirmTrigger
+        modalMessage="Are you sure you want to finish this survey?"
         onConfirm={() => {
           finishSurvey();
         }}
-      >
-        <button
-          onClick={() => {
-            setModalVisible(true);
-          }}
-          disabled={disabled}
-          className="survey-response__survey__nav__button--submit"
-        >
-          Submit responses
-        </button>
-      </ModalWrapper>
+        renderTrigger={(setModalVisible) => (
+          <button
+            onClick={() => {
+              setModalVisible(true);
+            }}
+            disabled={disabled}
+            className="survey-response__survey__nav__button--submit"
+          >
+            Submit responses
+          </button>
+        )}
+      />
     );
   };
 

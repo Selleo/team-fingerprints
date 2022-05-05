@@ -7,7 +7,7 @@ import { useMutation } from "react-query";
 import { queryClient } from "../../../App";
 
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ModalWrapper from "../../ModalWrapper";
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 
 const DeleteTrendButton = ({
   trendId,
@@ -18,7 +18,6 @@ const DeleteTrendButton = ({
   categoryId: string;
   surveyId: string;
 }) => {
-  const [modalVisible, setModalVisible] = useState(false);
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const mutation = useMutation(
@@ -36,25 +35,24 @@ const DeleteTrendButton = ({
   );
 
   return (
-    <ModalWrapper
-      modalVisible={modalVisible}
-      setModalVisible={setModalVisible}
-      modalMsg="Are you sure you want to delete this trend?"
+    <ModalConfirmTrigger
+      modalMessage="Are you sure you want to delete this trend?"
       onConfirm={() => {
         mutation.mutate();
       }}
-    >
-      <Button
-        leftIcon={<TrashIcon />}
-        variant="outline"
-        color="yellow"
-        onClick={() => setModalVisible(true)}
-        compact
-        style={{ color: "#ff0000", borderColor: "#ff0000" }}
-      >
-        Delete Trend
-      </Button>
-    </ModalWrapper>
+      renderTrigger={(setModalVisible) => (
+        <Button
+          leftIcon={<TrashIcon />}
+          variant="outline"
+          color="yellow"
+          onClick={() => setModalVisible(true)}
+          compact
+          style={{ color: "#ff0000", borderColor: "#ff0000" }}
+        >
+          Delete Trend
+        </Button>
+      )}
+    />
   );
 };
 

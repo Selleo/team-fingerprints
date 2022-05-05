@@ -4,7 +4,7 @@ import { FC, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileContext } from "../../routes";
 import { CompanyRole, Team } from "../../types/models";
-import ModalWrapper from "./../ModalWrapper";
+import ModalConfirmTrigger from "./../Modals/ModalConfirmTrigger";
 
 interface IProps {
   onRemove?: (email: string) => void;
@@ -13,7 +13,6 @@ interface IProps {
 }
 
 const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
-  const [modalVisible, setModalVisible] = useState(false);
   const { profile } = useContext(ProfileContext);
   const navigate = useNavigate();
   const grouped = groupBy(roles, "email");
@@ -52,18 +51,17 @@ const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
                     Self role managment
                   </Button>
                 ) : (
-                  <ModalWrapper
-                    modalVisible={modalVisible}
-                    setModalVisible={setModalVisible}
-                    modalMsg="Are you sure you want to delete this user?"
+                  <ModalConfirmTrigger
+                    modalMessage="Are you sure you want to delete this user?"
                     onConfirm={() => {
                       onRemove?.(role._id);
                     }}
-                  >
-                    <Button onClick={() => setModalVisible(true)} color="red">
-                      Remove
-                    </Button>
-                  </ModalWrapper>
+                    renderTrigger={(setModalVisible) => (
+                      <Button onClick={() => setModalVisible(true)} color="red">
+                        Remove
+                      </Button>
+                    )}
+                  />
                 )}
               </td>
             </tr>

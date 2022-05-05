@@ -9,12 +9,11 @@ import { FullSurvey } from "team-fingerprints-common";
 
 import SurveyForm from "../SurveyForm";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ModalWrapper from "../../ModalWrapper";
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 
 const SurveyItem = ({ item }: { item: FullSurvey }) => {
   const navigate = useNavigate();
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
   const [duplicateModalVisible, setDuplicateModalVisible] = useState(false);
   const [duplicationName, setDuplicationName] = useState(`${item.title} copy`);
   const { onErrorWithTitle } = useDefaultErrorHandler();
@@ -71,22 +70,21 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
             Duplicate
           </Button>
           {!item.isPublic && (
-            <ModalWrapper
-              modalVisible={modalDeleteVisible}
-              setModalVisible={setModalDeleteVisible}
-              modalMsg="Are you sure you want to delete this survey?"
+            <ModalConfirmTrigger
+              modalMessage="Are you sure you want to delete this survey?"
               onConfirm={() => {
                 deleteMutation.mutate(item._id);
               }}
-            >
-              <Button
-                style={{ marginLeft: "10px" }}
-                onClick={() => setModalDeleteVisible(true)}
-                color="red"
-              >
-                Delete
-              </Button>
-            </ModalWrapper>
+              renderTrigger={(setModalVisible) => (
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => setModalVisible(true)}
+                  color="red"
+                >
+                  Delete
+                </Button>
+              )}
+            />
           )}
         </td>
       </tr>

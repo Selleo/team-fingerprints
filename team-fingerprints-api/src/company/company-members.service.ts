@@ -8,7 +8,7 @@ import { isEmail } from 'class-validator';
 import { Model } from 'mongoose';
 import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
-import { RoleType } from 'team-fingerprints-common';
+import { Role, RoleType } from 'team-fingerprints-common';
 import { UsersService } from 'src/users/users.service';
 import { CompanyService } from './company.service';
 import { CompanyModel } from './models/company.model';
@@ -30,7 +30,7 @@ export class CompanyMembersService {
     });
   }
 
-  async handleUserInCompanyDomain(email: string) {
+  async handleUserInCompanyDomain(email: string): Promise<void> {
     const user = await this.usersService.getUserByEmail(email);
     if (user.inCompany) return;
 
@@ -55,10 +55,12 @@ export class CompanyMembersService {
     await this.usersService.userInCompany(user._id);
   }
 
-  async addUsersToCompanyWhitelist(emails: string[], companyId: string) {
-    if (!emails.every((el) => isEmail(el))) {
+  async addUsersToCompanyWhitelist(
+    emails: string[],
+    companyId: string,
+  ): Promise<string[]> {
+    if (!emails.every((el) => isEmail(el)))
       throw new BadRequestException('Invalid email');
-    }
 
     return await Promise.all(
       emails.map(async (email) => {
@@ -84,7 +86,7 @@ export class CompanyMembersService {
     );
   }
 
-  async addCompanyAdmin(email: string, companyId: string) {
+  async addCompanyAdmin(email: string, companyId: string): Promise<Role> {
     if (!isEmail(email)) throw new BadRequestException('Invalid email');
 
     const roleDocumentExists = await this.roleService.findRoleDocument({

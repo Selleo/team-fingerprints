@@ -15,7 +15,7 @@ import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { CompanyModel } from './models/company.model';
-import { CompanyAndRoles } from './company.interface';
+import { CompanyAndRoles } from './company.type';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isDomainValid = require('is-valid-domain');

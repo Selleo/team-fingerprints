@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { RoleType } from 'team-fingerprints-common';
+import { Role, RoleType } from 'team-fingerprints-common';
 import { CompanyModel } from '../models/company.model';
 import { TeamService } from './team.service';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
@@ -18,6 +18,8 @@ import { TeamMembersService } from './team-members.service';
 import { CompanyMembersService } from '../company-members.service';
 import { ValidateEmail } from '../dto/company.dto';
 import { Roles } from 'src/role/decorators/roles.decorator';
+import { TeamModel } from '../models/team.model';
+import { TeamAndRoles } from './team.type';
 
 @ApiTags('teams')
 @Controller({ version: '1' })
@@ -32,7 +34,7 @@ export class TeamController {
   @Roles([RoleType.COMPANY_ADMIN])
   async getTeamsAll(
     @Param('companyId', ValidateObjectId) companyId: string,
-  ): Promise<CompanyModel[]> {
+  ): Promise<TeamModel[]> {
     return await this.teamService.getTeamsAll(companyId);
   }
 
@@ -41,7 +43,7 @@ export class TeamController {
   async getTeamById(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-  ) {
+  ): Promise<TeamAndRoles> {
     return await this.teamService.getTeamById(companyId, teamId);
   }
 
@@ -78,11 +80,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body('emails') emails: string[],
-  ) {
-    await this.companyMembersService.addUsersToCompanyWhitelist(
-      emails,
-      companyId,
-    );
+  ): Promise<string[]> {
     return await this.teamMembersService.addUsersToTeamWhitelist(
       companyId,
       teamId,
@@ -96,7 +94,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email: memberEmail }: ValidateEmail,
-  ) {
+  ): Promise<{ success: boolean }> {
     return await this.teamMembersService.removeMemberFromTeam(
       companyId,
       teamId,
@@ -110,7 +108,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email }: ValidateEmail,
-  ) {
+  ): Promise<Role> {
     return await this.teamMembersService.assignTeamLeader(
       companyId,
       teamId,
@@ -124,7 +122,7 @@ export class TeamController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Body() { email }: ValidateEmail,
-  ) {
+  ): Promise<Role> {
     return await this.teamMembersService.removeTeamLeader(email, teamId);
   }
 }

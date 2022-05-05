@@ -8,7 +8,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
 import { CompanyModel } from '../models/company.model';
+import { TeamModel } from '../models/team.model';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
+import { TeamAndRoles } from './team.type';
 
 @Injectable()
 export class TeamService {
@@ -19,13 +21,13 @@ export class TeamService {
     private readonly roleService: RoleService,
   ) {}
 
-  async getTeamsAll(companyId): Promise<CompanyModel[]> {
+  async getTeamsAll(companyId: string): Promise<TeamModel[]> {
     return await this.companyModel
       .find({ _id: companyId }, { teams: 1 })
       .exec();
   }
 
-  async getTeamById(companyId: string, teamId: string) {
+  async getTeamById(companyId: string, teamId: string): Promise<TeamAndRoles> {
     const company: CompanyModel = await this.companyModel
       .findOne({ _id: companyId, 'teams._id': teamId })
       .exec();
@@ -45,7 +47,7 @@ export class TeamService {
     return { team, roles: roleDocuments };
   }
 
-  async getTeam(companyId: string, teamId: string) {
+  async getTeam(companyId: string, teamId: string): Promise<TeamModel> {
     const company: CompanyModel = await this.companyModel
       .findOne({ _id: companyId, 'teams._id': teamId })
       .exec();

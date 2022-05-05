@@ -1,21 +1,14 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { RoleType } from 'team-fingerprints-common';
+import { Role, RoleType } from 'team-fingerprints-common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { CompanyModel } from './models/company.model';
 import { CompanyMembersService } from './company-members.service';
 import { Roles } from 'src/role/decorators/roles.decorator';
+import { CompanyAndRoles } from './company.type';
 
 @ApiTags('companies')
 @Controller({ version: '1' })
@@ -33,7 +26,9 @@ export class CompanyController {
 
   @Get('/:companyId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.USER])
-  async getCompany(@Param('companyId', ValidateObjectId) companyId: string) {
+  async getCompany(
+    @Param('companyId', ValidateObjectId) companyId: string,
+  ): Promise<CompanyAndRoles> {
     return await this.companyService.getCompany(companyId);
   }
 
@@ -41,7 +36,7 @@ export class CompanyController {
   async createCompany(
     @Body() companyDto: CreateCompanyDto,
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<CompanyModel | HttpException> {
+  ): Promise<CompanyModel> {
     return await this.companyService.createCompany(userId, companyDto);
   }
 
@@ -59,7 +54,7 @@ export class CompanyController {
   async addUserToCompanyWhitelist(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body('emails') emails: string[],
-  ) {
+  ): Promise<string[]> {
     return await this.companyMembersService.addUsersToCompanyWhitelist(
       emails,
       companyId,
@@ -71,7 +66,7 @@ export class CompanyController {
   async addCompanyAdmin(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body('email') email: string,
-  ) {
+  ): Promise<Role> {
     return await this.companyMembersService.addCompanyAdmin(email, companyId);
   }
 }

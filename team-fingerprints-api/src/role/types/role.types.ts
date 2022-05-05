@@ -7,4 +7,5 @@ export type Role = {
   companyId: string;
   teamId: string;
   role: RoleType;
+  createdAt?: string;
 };

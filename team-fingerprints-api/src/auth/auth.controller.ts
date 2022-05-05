@@ -3,6 +3,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { UsersService } from 'src/users/users.service';
+import { UserProfile } from 'team-fingerprints-common';
 import { ResponseAuthDto } from './dto/auth.dto';
 
 @ApiTags('auth')
@@ -17,7 +18,7 @@ export class AuthController {
   @Get('/profile')
   async getUserProfile(
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<ResponseAuthDto> {
+  ): Promise<UserProfile> {
     return await this.usersService.getUserProfile(userId);
   }
 }

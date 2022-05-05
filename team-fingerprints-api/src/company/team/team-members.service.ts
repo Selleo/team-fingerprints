@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -13,6 +12,7 @@ import { CompanyService } from '../company.service';
 import { TeamService } from './team.service';
 import { isEmail } from 'class-validator';
 import { Role } from 'src/role/types/role.types';
+import { CompanyMembersService } from '../company-members.service';
 
 @Injectable()
 export class TeamMembersService {
@@ -22,6 +22,7 @@ export class TeamMembersService {
     private readonly roleService: RoleService,
     private readonly companyService: CompanyService,
     private readonly teamService: TeamService,
+    private readonly companyMembersService: CompanyMembersService,
   ) {}
 
   async isLeaderInTeam(teamId: string): Promise<string | boolean> {
@@ -47,7 +48,7 @@ export class TeamMembersService {
     return roleDocument ? roleDocument : null;
   }
 
-  async getTeamMembers(teamId: string): Promise<Role[] | []> {
+  async getTeamMembers(teamId: string): Promise<Role[]> {
     const roleDocuments = await this.roleService.findAllRoleDocuments({
       teamId,
     });
@@ -55,7 +56,7 @@ export class TeamMembersService {
     return roleDocuments;
   }
 
-  async isSuperAdminByEmail(email: string) {
+  async isSuperAdminByEmail(email: string): Promise<Role | boolean> {
     const roleDocument = await this.roleService.findRoleDocument({
       email,
       role: RoleType.SUPER_ADMIN,
@@ -68,7 +69,12 @@ export class TeamMembersService {
     companyId: string,
     teamId: string,
     emails: string[],
-  ) {
+  ): Promise<string[]> {
+    await this.companyMembersService.addUsersToCompanyWhitelist(
+      emails,
+      companyId,
+    );
+
     if (!emails.every((el) => isEmail(el))) {
       throw new BadRequestException('Invalid email');
     }
@@ -121,7 +127,7 @@ export class TeamMembersService {
     companyId: string,
     teamId: string,
     memberEmail: string,
-  ) {
+  ): Promise<{ success: boolean }> {
     const roleDocuments = await this.roleService.findAllRoleDocuments({
       email: memberEmail,
       companyId,
@@ -194,10 +200,7 @@ export class TeamMembersService {
     return newTeamLeader;
   }
 
-  async removeTeamLeader(
-    email: string,
-    teamId: string,
-  ): Promise<Role | HttpException> {
+  async removeTeamLeader(email: string, teamId: string): Promise<Role> {
     const roleDocument = await this.roleService.findRoleDocument({
       email,
       teamId,

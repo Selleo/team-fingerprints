@@ -9,6 +9,8 @@ import { TrendModule } from './trend/trend.module';
 
 @Module({
   imports: [
+    SurveyModule,
+    TrendModule,
     forwardRef(() => RoleModule),
     MongooseModule.forFeature([
       {
@@ -16,8 +18,6 @@ import { TrendModule } from './trend/trend.module';
         schema: SurveySchema,
       },
     ]),
-    SurveyModule,
-    TrendModule,
   ],
   controllers: [CategoryController],
   providers: [CategoryService],

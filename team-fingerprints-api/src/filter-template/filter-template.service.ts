@@ -5,6 +5,7 @@ import { CompanyModel } from 'src/company/models/company.model';
 import * as mongoose from 'mongoose';
 import { TeamModel } from 'src/company/models/team.model';
 import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
+import { FilterTemplate } from 'team-fingerprints-common';
 
 @Injectable()
 export class FilterTemplateService {
@@ -29,11 +30,11 @@ export class FilterTemplateService {
   }
 
   async createFilterTemplate(
-    templateFilterData: any,
+    templateFilterData: { [key: string]: string },
     templateFilterConfig: TemplateFilterConfigDto,
     companyId: string,
     teamId: string | null = null,
-  ) {
+  ): Promise<TeamModel> {
     const filterTemplates = {
       _id: new mongoose.Types.ObjectId().toString(),
       ...templateFilterData,
@@ -71,7 +72,7 @@ export class FilterTemplateService {
   }
 
   async updateFilterTemplate(
-    templateFilterData: any,
+    templateFilterData: { [key: string]: string },
     templateFilterConfig: TemplateFilterConfigDto,
     filterId: string,
     companyId: string,
@@ -127,7 +128,7 @@ export class FilterTemplateService {
     filterId: string,
     companyId: string,
     teamId: string | null = null,
-  ) {
+  ): Promise<FilterTemplate[] | TeamModel> {
     if (!teamId || teamId.length <= 0) {
       const { filterTemplates } = await this.companyModel.findOneAndUpdate(
         { _id: companyId },

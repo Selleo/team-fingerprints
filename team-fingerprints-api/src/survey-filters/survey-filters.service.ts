@@ -6,7 +6,7 @@ import { FilterModel } from 'src/filter/models/filter.model';
 import { Role } from 'src/role/types/role.types';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
-import { UserModel } from 'src/users/models/user.model';
+import { UserWhoFinishedSurvey } from 'team-fingerprints-common';
 
 @Injectable()
 export class SurveyFiltersService {
@@ -85,7 +85,7 @@ export class SurveyFiltersService {
           usersIds,
         )
       )
-        ?.map(({ userDetails }: UserModel) =>
+        ?.map(({ userDetails }: UserWhoFinishedSurvey) =>
           userDetails && Object.keys(userDetails).length > 0
             ? userDetails
             : null,

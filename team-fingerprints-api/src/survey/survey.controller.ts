@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { RoleType } from 'team-fingerprints-common';
+import { FullSurvey, RoleType } from 'team-fingerprints-common';
 import { SurveyModel } from './models/survey.model';
 import { SurveyService } from './survey.service';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
@@ -25,10 +25,11 @@ export class SurveyController {
   constructor(private readonly surveyService: SurveyService) {}
 
   @Get()
-  @UseInterceptors(CacheInterceptor)
   async getSurveysByRole(
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<(SurveyModel & 'completeStatus')[] | SurveyModel[]> {
+  ): Promise<
+    (Partial<SurveyModel> & { completeStatus: string })[] | FullSurvey[]
+  > {
     return await this.surveyService.getSurveysByRole(userId);
   }
 

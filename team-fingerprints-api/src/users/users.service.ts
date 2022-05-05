@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Privilege } from 'team-fingerprints-common';
+import { DetailQuery, Privilege, User } from 'team-fingerprints-common';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
@@ -42,24 +42,6 @@ export class UsersService {
     return await this.userModel.findOne({ authId });
   }
 
-  async prepareUserDetailsQuery(queries: any) {
-    const paths = Object.keys(queries);
-    if (paths.length <= 0) return;
-
-    const query = [];
-    paths.forEach((path) => {
-      if (Array.isArray(queries[path])) {
-        query[`userDetails.${path}`] = {
-          $in: queries[path],
-        };
-      } else {
-        query[`userDetails.${path}`] = queries[path];
-      }
-    });
-
-    return query;
-  }
-
   async getUsersAll(): Promise<UserModel[]> {
     return await this.userModel.find({});
   }
@@ -75,13 +57,16 @@ export class UsersService {
     return await Promise.all(profiles);
   }
 
-  async getUsersIdsByUserDetails(usersIds: string[], queries: any = {}) {
+  async getUsersIdsByUserDetails(
+    usersIds: string[],
+    queries: DetailQuery = {},
+  ): Promise<string[]> {
     if (Object.keys(queries).length <= 0) return usersIds;
 
     const ids = usersIds.map((id) => new Types.ObjectId(id));
     const query = await this.prepareUserDetailsQuery(queries);
 
-    const users = await this.userModel.aggregate([
+    const users: Partial<User[]> = await this.userModel.aggregate([
       {
         $match: {
           $and: [
@@ -172,7 +157,10 @@ export class UsersService {
     return await user.save();
   }
 
-  async setUserDetails(userId: string, userDetails: UserDetail) {
+  async setUserDetails(
+    userId: string,
+    userDetails: UserDetail,
+  ): Promise<UserProfile> {
     await this.filterService.validateUserDetails(userDetails);
 
     const user = await this.getUserById(userId);
@@ -184,7 +172,7 @@ export class UsersService {
       { new: true },
     );
 
-    const finishedSurveysIds = (
+    const finishedSurveysIds: string[] = (
       await this.userModel.aggregate([
         {
           $match: {
@@ -225,7 +213,7 @@ export class UsersService {
     );
   }
 
-  async userInCompany(userId: string) {
+  async userInCompany(userId: string): Promise<UserModel> {
     return await this.userModel.findOneAndUpdate(
       { _id: userId },
       {
@@ -237,7 +225,7 @@ export class UsersService {
     );
   }
 
-  async removeUserByEmail(email: string) {
+  async removeUserByEmail(email: string): Promise<UserModel> {
     const user = await this.getUserByEmail(email);
     if (!user) throw new NotFoundException('User does not exist');
 
@@ -274,5 +262,23 @@ export class UsersService {
     return await this.userModel
       .findByIdAndUpdate(user._id, user, { new: true })
       .exec();
+  }
+
+  async prepareUserDetailsQuery(queries: DetailQuery): Promise<DetailQuery[]> {
+    const paths = Object.keys(queries);
+    if (paths.length <= 0) return;
+
+    const query: DetailQuery[] = [];
+    paths.forEach((path) => {
+      if (Array.isArray(queries[path])) {
+        query[`userDetails.${path}`] = {
+          $in: queries[path],
+        };
+      } else {
+        query[`userDetails.${path}`] = queries[path];
+      }
+    });
+
+    return query;
   }
 }

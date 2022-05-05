@@ -1,15 +1,20 @@
+import { Types } from "mongoose";
+
 export type Question = {
+  _id?: string | Types.ObjectId;
   title: string;
   primary: boolean;
 };
 
 export type Trend = {
+  _id?: string | Types.ObjectId;
   primary: string;
   secondary: string;
   questions?: Question[];
 };
 
 export type Category = {
+  _id?: string | Types.ObjectId;
   title: string;
   trends?: Trend[];
 };

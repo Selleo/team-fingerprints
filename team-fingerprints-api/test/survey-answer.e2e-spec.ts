@@ -67,7 +67,7 @@ const surveyAnswersData = (survey: SurveyModel): UserSurveyAnswer => ({
         surveyData.categories[0].trends[0].questions[1]._id.toString(),
     },
   ],
-  surveyResult: [{}],
+  surveyResult: [],
 });
 
 const saveAnswersInUser = async (

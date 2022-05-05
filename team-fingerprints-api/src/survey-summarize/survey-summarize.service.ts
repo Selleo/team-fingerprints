@@ -5,9 +5,27 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CategoryModel } from 'src/survey/models/category.model';
 import { SurveyModel } from 'src/survey/models/survey.model';
 import { UserModel } from 'src/users/models/user.model';
+import {
+  Category,
+  Question,
+  Trend,
+  UserFinishedSurveyResult,
+} from 'team-fingerprints-common';
+
+export type AvgTrend = {
+  trendId: string;
+  trendPrimary: string;
+  trendSecondary: string;
+  avgTrendAnswer: number;
+};
+
+export type UserSurveyResult = {
+  categoryTitle: string;
+  categoryId: string;
+  avgTrends: AvgTrend[];
+};
 
 @Injectable()
 export class SurveySummarizeService {
@@ -33,10 +51,12 @@ export class SurveySummarizeService {
 
     const categories = survey.categories;
 
-    let questions = null;
-    categories.forEach((category) => {
-      category.trends.forEach((trend) => {
-        questions = trend.questions.map((question: any) => question);
+    const questions: Question[] = [];
+    categories.forEach((category: Category) => {
+      category.trends.forEach((trend: Trend) => {
+        trend.questions.forEach((question: Question) =>
+          questions.push(question),
+        );
       });
     });
 
@@ -47,13 +67,13 @@ export class SurveySummarizeService {
       throw new InternalServerErrorException('Something went wrong');
     }
 
-    const summary = [];
+    const summary: UserFinishedSurveyResult[] = [];
 
-    categories.forEach((category: CategoryModel) => {
-      const avgTrends = [];
-      category.trends.forEach((trend) => {
+    categories.forEach((category: Category) => {
+      const avgTrends: AvgTrend[] = [];
+      category.trends.forEach((trend: Trend) => {
         let trendCount = 0;
-        trend.questions.forEach((question) => {
+        trend.questions.forEach((question: Question) => {
           answers.forEach((answer) => {
             if (answer.questionId.toString() === question._id.toString()) {
               if (question.primary) {
@@ -81,13 +101,13 @@ export class SurveySummarizeService {
       if (summary[categoryId]) {
         summary[categoryId] = {
           categoryTitle: category.title,
-          categoryId: categoryId,
+          categoryId,
           avgTrends: [...avgTrends, ...summary[categoryId].avgTrends],
         };
       } else {
         summary[categoryId] = {
           categoryTitle: category.title,
-          categoryId: categoryId,
+          categoryId,
           avgTrends,
         };
       }

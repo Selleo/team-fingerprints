@@ -1,17 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpException,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/common/decorators/currentUserId.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
-import { RoleType } from 'team-fingerprints-common';
-import { UserModel } from './models/user.model';
+import { RoleType, User } from 'team-fingerprints-common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { Roles } from 'src/role/decorators/roles.decorator';
@@ -26,13 +17,13 @@ export class UsersController {
   @Get()
   async getUser(
     @CurrentUserId(ValidateObjectId) userId: string,
-  ): Promise<UserModel> {
+  ): Promise<User> {
     return await this.userService.getUserById(userId);
   }
 
   @Get('/all')
   @Roles([RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
-  async getUsersAll(): Promise<UserModel[]> {
+  async getUsersAll(): Promise<User[]> {
     return await this.userService.getUsersAll();
   }
 
@@ -46,14 +37,12 @@ export class UsersController {
   async setUserDetails(
     @CurrentUserId(ValidateObjectId) userId: string,
     @Body() userDetais: UserDetail,
-  ) {
+  ): Promise<UserProfile> {
     return await this.userService.setUserDetails(userId, userDetais);
   }
 
   @Post()
-  async createUser(
-    @Body() newUserData: CreateUserDto,
-  ): Promise<UserModel | HttpException> {
+  async createUser(@Body() newUserData: CreateUserDto): Promise<User> {
     return await this.userService.createUser(newUserData);
   }
 
@@ -61,13 +50,13 @@ export class UsersController {
   async updateUser(
     @CurrentUserId(ValidateObjectId) userId: string,
     @Body() updateUserData: UpdateUserDto,
-  ): Promise<UserModel> {
+  ): Promise<User> {
     return await this.userService.updateUser(userId, updateUserData);
   }
 
   @Delete()
   @Roles([RoleType.SUPER_ADMIN])
-  async removeUserByEmail(@Body() { email }: ValidateEmail) {
+  async removeUserByEmail(@Body() { email }: ValidateEmail): Promise<User> {
     return await this.userService.removeUserByEmail(email);
   }
 }

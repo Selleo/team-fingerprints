@@ -15,7 +15,20 @@ import { SurveyModel } from 'src/survey/models/survey.model';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UserModel } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
-import { SurveyCompleteStatus } from 'team-fingerprints-common';
+import {
+  Category,
+  SurveyCompleteStatus,
+  Trend,
+  UserWhoFinishedSurvey,
+} from 'team-fingerprints-common';
+
+type ResultSchema = {
+  category: string;
+  categoryTitle: string;
+  trend: string;
+  trendPrimary: string;
+  trendSecondary: string;
+};
 
 @Injectable()
 export class SurveyResultService {
@@ -107,10 +120,10 @@ export class SurveyResultService {
         `Survey id: ${surveyId} does not exist`,
       );
 
-    const schema = [];
+    const schema: ResultSchema[] = [];
 
-    survey.categories.forEach((category: any) => {
-      category.trends.forEach((trend: any) => {
+    survey.categories.forEach((category: Category) => {
+      category.trends.forEach((trend: Trend) => {
         schema.push({
           category: category._id.toString(),
           categoryTitle: category.title,
@@ -206,7 +219,10 @@ export class SurveyResultService {
     }
   }
 
-  async getUsersWhoFinishedSurvey(surveyId: string, usersIds: string[]) {
+  async getUsersWhoFinishedSurvey(
+    surveyId: string,
+    usersIds: string[],
+  ): Promise<UserWhoFinishedSurvey[]> {
     const ids = usersIds.map((id) => new Types.ObjectId(id));
     return await this.userModel
       .aggregate([

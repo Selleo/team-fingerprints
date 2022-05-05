@@ -119,10 +119,13 @@ export class SurveyService {
 
     let updateOptions = {};
 
-    if (surveyBeforeUpdate.isPublic) {
-      updateOptions = { title, archived };
-    } else {
+    if (
+      !surveyBeforeUpdate.isPublic &&
+      surveyBeforeUpdate.amountOfQuestions > 0
+    ) {
       updateOptions = { title, archived, isPublic };
+    } else {
+      updateOptions = { title, archived };
     }
 
     return await this.surveyModel

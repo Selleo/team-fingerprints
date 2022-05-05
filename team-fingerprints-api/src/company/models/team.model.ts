@@ -1,7 +1,8 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
+import { FilterTemplate, Team } from 'team-fingerprints-common';
 
 @Schema({ autoIndex: false })
-export class TeamModel {
+export class TeamModel implements Team {
   _id?: string;
 
   @Prop({ required: true })
@@ -17,6 +18,6 @@ export class TeamModel {
   pointColor: string;
 
   @Prop({ default: [], required: false })
-  filterTemplates: any[];
+  filterTemplates: FilterTemplate[];
 }
 export const TeamSchema = SchemaFactory.createForClass(TeamModel);

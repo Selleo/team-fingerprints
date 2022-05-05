@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { RoleType } from 'team-fingerprints-common';
+import { FullSurvey, RoleType } from 'team-fingerprints-common';
 import { CreateSurveyDto, UpdateSurveyDto } from './dto/survey.dto';
 import { SurveyAnswerService } from 'src/survey-answer/survey-answer.service';
 import { RoleService } from 'src/role/role.service';
@@ -29,17 +29,21 @@ export class SurveyService {
 
   async getSurveysByRole(
     userId: string,
-  ): Promise<(SurveyModel & 'completeStatus')[]> {
+  ): Promise<
+    (Partial<SurveyModel> & { completeStatus: string })[] | FullSurvey[]
+  > {
     const surveys = await this.surveyModel.find().exec();
 
-    const surveysWithCompleteStatus: any = surveys.map(async (survey: any) => {
-      const completeStatus =
-        await this.surveyAnswerService.getSurveyCompleteStatus(
-          userId,
-          survey._id,
-        );
-      return { completeStatus, ...survey._doc };
-    });
+    const surveysWithCompleteStatus = surveys.map(
+      async (survey: SurveyModel) => {
+        const completeStatus =
+          await this.surveyAnswerService.getSurveyCompleteStatus(
+            userId,
+            survey._id.toString(),
+          );
+        return { completeStatus, ...(survey as any)._doc };
+      },
+    );
 
     return await Promise.all(surveysWithCompleteStatus);
   }
@@ -115,10 +119,13 @@ export class SurveyService {
 
     let updateOptions = {};
 
-    if (surveyBeforeUpdate.isPublic) {
-      updateOptions = { title, archived };
-    } else {
+    if (
+      !surveyBeforeUpdate.isPublic &&
+      surveyBeforeUpdate.amountOfQuestions > 0
+    ) {
       updateOptions = { title, archived, isPublic };
+    } else {
+      updateOptions = { title, archived };
     }
 
     return await this.surveyModel

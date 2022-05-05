@@ -8,15 +8,15 @@ export type QuestionAnswer = {
 };
 
 export type User = {
-  _id?: string | Types.ObjectId;
+  _id?: string;
   authId: string;
   firstName: string;
   lastName: string;
   email: string;
   pictureUrl?: string;
+  inCompany: boolean;
   surveysAnswers: UserSurveyAnswer[];
   userDetails?: UserDetail[];
-  inCompany: boolean;
   createdAt?: string;
 };
 
@@ -24,7 +24,7 @@ export type UserSurveyAnswer = {
   surveyId: string;
   completeStatus: SurveyCompleteStatus;
   amountOfAnswers: number;
-  surveyResult: [any];
+  surveyResult: UserFinishedSurveyResult[];
   answers: QuestionAnswer[];
 };
 
@@ -43,3 +43,27 @@ export type UserProfile = {
   readonly userDetails: UserDetail[];
   readonly privileges: Privilege[];
 };
+
+export type AvgTrend = {
+  trendId: string;
+  trendPrimary: string;
+  trendSecondary: string;
+  avgTrendAnswer: number;
+};
+
+export type UserFinishedSurveyResult = {
+  categoryTitle: string;
+  categoryId: string;
+  avgTrends: AvgTrend[];
+};
+
+export type UserWhoFinishedSurvey = {
+  _id: Types.ObjectId;
+  email: string;
+  surveysAnswers: {
+    surveyResult: UserFinishedSurveyResult[];
+  };
+  userDetails: UserDetail[];
+};
+
+export type DetailQuery = { [key: string]: string };

@@ -197,6 +197,7 @@ describe('SurveyController', () => {
     it('returns updated survey', async () => {
       const surveyData = {
         title: 'Test survey',
+        amountOfQuestions: 1,
       };
 
       const newSurvey = await (await surveyModel.create(surveyData)).save();
@@ -219,7 +220,7 @@ describe('SurveyController', () => {
       expect(title).toBe(updateData.title);
       expect(isPublic).toBe(updateData.isPublic);
       expect(archived).toBe(updateData.archived);
-      expect(amountOfQuestions).toBe(0);
+      expect(amountOfQuestions).toBe(surveyData.amountOfQuestions);
       expect(categories).toEqual([]);
     });
   });

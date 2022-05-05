@@ -11,7 +11,7 @@ export class FilterService {
     private readonly filterModel: Model<FilterModel>,
   ) {}
 
-  async generateFilterPath(name: string) {
+  async generateFilterPath(name: string): Promise<string> {
     const filterPathCombined = name
       .split(' ')
       .map((el) => el.charAt(0).toUpperCase() + el.slice(1).toLowerCase())
@@ -22,21 +22,22 @@ export class FilterService {
     );
   }
 
-  async filterExists(filterId: string) {
+  async filterExists(filterId: string): Promise<FilterModel> {
     const filter = await this.filterModel.findById(filterId).exec();
     if (!filter) throw new NotFoundException(`Filer does not exist`);
     else return filter;
   }
 
-  async getFiltersList() {
-    return await this.filterModel.find();
-  }
-
-  async getFilter(filterId: string) {
+  async getFilter(filterId: string): Promise<FilterModel> {
+    await this.filterExists(filterId);
     return await this.filterModel.findById(filterId);
   }
 
-  async createFilter(name: string) {
+  async getFiltersList(): Promise<FilterModel[]> {
+    return await this.filterModel.find();
+  }
+
+  async createFilter(name: string): Promise<FilterModel> {
     const filterPath = await this.generateFilterPath(name);
     const newFilter = await this.filterModel.create({
       name,
@@ -45,7 +46,7 @@ export class FilterService {
     return await newFilter.save();
   }
 
-  async updateFilter(filterId: string, name: string) {
+  async updateFilter(filterId: string, name: string): Promise<FilterModel> {
     await this.filterExists(filterId);
 
     const filterPath = await this.generateFilterPath(name);
@@ -64,16 +65,16 @@ export class FilterService {
       .exec();
   }
 
-  async removeFilter(filterId: string) {
+  async removeFilter(filterId: string): Promise<FilterModel> {
     await this.filterExists(filterId);
 
     return await this.filterModel.findByIdAndRemove(filterId);
   }
 
-  async getFilterWithValues(filterId: string) {
+  async getFilterWithValues(filterId: string): Promise<FilterModel> {
     await this.filterExists(filterId);
 
-    return await this.filterModel.findById(filterId);
+    return await this.filterModel.findById(filterId, { values: 1 });
   }
 
   async addFilterValue(filterId: string, value: string) {

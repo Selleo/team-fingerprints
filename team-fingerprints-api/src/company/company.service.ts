@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ForbiddenException,
   forwardRef,
-  HttpException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -16,13 +15,10 @@ import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 import { CompanyModel } from './models/company.model';
+import { CompanyAndRoles } from './company.type';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isDomainValid = require('is-valid-domain');
-
-interface DomainBlacklist {
-  domains: string[];
-}
 
 @Injectable()
 export class CompanyService {
@@ -39,7 +35,7 @@ export class CompanyService {
     return await this.companyModel.findOne({ _id: companyId }).exec();
   }
 
-  async getCompany(companyId: string) {
+  async getCompany(companyId: string): Promise<CompanyAndRoles> {
     const company = await this.companyModel.findOne({ _id: companyId }).exec();
     if (!company) throw new NotFoundException();
 
@@ -48,7 +44,6 @@ export class CompanyService {
     });
 
     if (!roleDocuments || roleDocuments.length <= 0) return { company };
-
     return { company, roles: roleDocuments };
   }
 
@@ -67,23 +62,8 @@ export class CompanyService {
       pointColor,
       pointShape,
     }: CreateCompanyDto,
-  ): Promise<CompanyModel | HttpException> {
-    if (domain.length > 0) {
-      if (!isDomainValid(domain))
-        throw new BadRequestException('Invalid domain');
-
-      const data: DomainBlacklist =
-        await this.tfConfigService.getEmailBlackList();
-
-      if (data?.domains?.includes(domain))
-        throw new BadRequestException(
-          'Can not add this domain to your company',
-        );
-
-      if (await this.isDomainTaken(domain)) {
-        throw new ForbiddenException(`Domain ${domain} is already taken.`);
-      }
-    }
+  ): Promise<CompanyModel> {
+    if (domain.length > 0) await this.validateNewDomain(domain);
 
     const newCompany = await this.companyModel.create({
       name,
@@ -102,7 +82,8 @@ export class CompanyService {
       companyId: newCompany._id,
     });
 
-    if (!roleDocument) throw new InternalServerErrorException();
+    if (!roleDocument)
+      throw new InternalServerErrorException('Something went wrong');
 
     return newCompany;
   }
@@ -119,21 +100,8 @@ export class CompanyService {
   ): Promise<CompanyModel> {
     const company = await this.companyModel.findById(companyId);
 
-    const { domains }: DomainBlacklist =
-      await this.tfConfigService.getEmailBlackList();
-
-    if (newDomain && newDomain?.length > 0 && company?.domain !== newDomain) {
-      if (!isDomainValid(newDomain))
-        throw new BadRequestException('Invalid domain');
-
-      if (domains?.includes(newDomain))
-        throw new BadRequestException(
-          'Can not add this domain to your company',
-        );
-
-      if (await this.isDomainTaken(newDomain))
-        throw new ForbiddenException(`Domain ${newDomain} is already taken.`);
-    }
+    if (newDomain && newDomain?.length > 0 && company?.domain !== newDomain)
+      await this.validateNewDomain(newDomain);
 
     if (company.domain?.length > 0 && company.domain === newDomain)
       return company;
@@ -153,13 +121,6 @@ export class CompanyService {
       .exec();
   }
 
-  async isDomainTaken(domain: string): Promise<boolean> {
-    const companyByDomain = await this.companyModel
-      .findOne({ domain: domain.toLowerCase() })
-      .exec();
-    return companyByDomain ? true : false;
-  }
-
   async deleteCompany(companyId: string): Promise<CompanyModel> {
     return await this.companyModel.findByIdAndDelete(companyId);
   }
@@ -171,5 +132,25 @@ export class CompanyService {
     if (!roleDocuments || roleDocuments.length <= 0) {
       this.deleteCompany(companyId);
     }
+  }
+
+  async validateNewDomain(domain: string): Promise<void> {
+    if (!isDomainValid(domain)) throw new BadRequestException('Invalid domain');
+
+    const domains: string[] = await this.tfConfigService.getEmailBlackList();
+
+    if (domains?.includes(domain))
+      throw new BadRequestException('Can not add this domain to your company');
+
+    if (await this.isDomainTaken(domain)) {
+      throw new ForbiddenException(`Domain ${domain} is already taken.`);
+    }
+  }
+
+  async isDomainTaken(domain: string): Promise<boolean> {
+    const companyByDomain = await this.companyModel
+      .findOne({ domain: domain.toLowerCase() })
+      .exec();
+    return companyByDomain ? true : false;
   }
 }

@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Company, FilterTemplate } from 'team-fingerprints-common';
 import { TeamModel, TeamSchema } from './team.model';
 
 @Schema({ collection: 'companies', autoIndex: false, timestamps: true })
-export class CompanyModel extends Document {
+export class CompanyModel extends Document implements Company {
   _id?: string;
 
   @Prop()
@@ -25,7 +26,7 @@ export class CompanyModel extends Document {
   domain: string;
 
   @Prop({ default: [], required: false })
-  filterTemplates: any[];
+  filterTemplates: FilterTemplate[];
 }
 
 export const CompanySchema = SchemaFactory.createForClass(CompanyModel);

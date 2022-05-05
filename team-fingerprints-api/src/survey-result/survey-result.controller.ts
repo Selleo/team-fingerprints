@@ -16,7 +16,7 @@ export class SurveyResultController {
 
   @Public()
   @Get('/:surveyId/companies')
-  //@UseInterceptors(CacheInterceptor)
+  @UseInterceptors(CacheInterceptor)
   async getAvgResultForAllCompanies(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Query() queries: any,
@@ -28,7 +28,7 @@ export class SurveyResultController {
   }
 
   @Get('/:surveyId/companies/:companyId')
-  //@UseInterceptors(CacheInterceptor)
+  @UseInterceptors(CacheInterceptor)
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
@@ -42,7 +42,7 @@ export class SurveyResultController {
   }
 
   @Get('/:surveyId/companies/:companyId/teams/:teamId')
-  //@UseInterceptors(CacheInterceptor)
+  @UseInterceptors(CacheInterceptor)
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
@@ -56,7 +56,7 @@ export class SurveyResultController {
   }
 
   @Get('/:surveyId/companies/:companyId/teams/:teamId/users/:userId')
-  //@UseInterceptors(CacheInterceptor)
+  @UseInterceptors(CacheInterceptor)
   async getSurveyResultForUsers(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('userId', ValidateObjectId) userId: string,

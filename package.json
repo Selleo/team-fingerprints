@@ -1,1 +1,11 @@
-{}
+{
+  "name": "team-fingerprints",
+  "version": "0.0.1",
+  "scripts": {
+    "postinstall": "npm install --prefix team-fingerprints-api",
+    "build": "npm run build --prefix team-fingerprints-api"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^8.0.0"
+  }
+}

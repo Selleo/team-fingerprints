@@ -3,10 +3,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bull';
 import { FilterService } from 'src/filter/filter.service';
 import { FilterModel } from 'src/filter/models/filter.model';
-import { Role } from 'src/role/types/role.types';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
-import { UserWhoFinishedSurvey } from 'team-fingerprints-common';
+import { Role, UserWhoFinishedSurvey } from 'team-fingerprints-common';
 
 @Injectable()
 export class SurveyFiltersService {

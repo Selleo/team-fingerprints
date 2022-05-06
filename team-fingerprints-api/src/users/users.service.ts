@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { DetailQuery, Privilege, User } from 'team-fingerprints-common';
+import { DetailQuery, Privilege, Role, User } from 'team-fingerprints-common';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
@@ -17,7 +17,6 @@ import {
   SurveyCompleteStatus,
   UserSurveyAnswer,
 } from 'team-fingerprints-common';
-import { Role } from 'src/role/types/role.types';
 
 @Injectable()
 export class UsersService {

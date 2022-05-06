@@ -10,13 +10,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Queue } from 'bull';
 import { Model, Types } from 'mongoose';
 import { RoleService } from 'src/role/role.service';
-import { Role } from 'src/role/types/role.types';
 import { SurveyModel } from 'src/survey/models/survey.model';
 import { TfConfigService } from 'src/tf-config/tf-config.service';
 import { UserModel } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
 import {
   Category,
+  Role,
   SurveyCompleteStatus,
   Trend,
   UserWhoFinishedSurvey,

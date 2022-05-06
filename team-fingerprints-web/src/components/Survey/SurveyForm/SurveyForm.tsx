@@ -1,12 +1,16 @@
-import { useEffect, useRef } from "react";
+import axios from "axios";
+
+import { useEffect, useRef, useState } from "react";
 import { TextInput, Button, Switch, Alert, Checkbox } from "@mantine/core";
 import { BellIcon } from "@modulz/radix-icons";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
-import { useStyles } from "./styles";
-import axios from "axios";
-import { queryClient } from "../../../App";
+
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+
+import { useStyles } from "./styles";
+import { queryClient } from "../../../App";
 import { FullSurvey } from "team-fingerprints-common";
 
 const SurveyForm = ({
@@ -77,15 +81,27 @@ const SurveyForm = ({
 
       {isUpdate && !initialValues.isPublic && (
         <>
-          <Switch
-            checked={values.isPublic}
-            onChange={(event) => {
-              setValues({ ...values, isPublic: event.currentTarget.checked });
+          <ModalConfirmTrigger
+            modalMessage={
+              !values.isPublic
+                ? "Are you sure you want to public this survey?"
+                : "Are you sure you want to unpublic this survey?"
+            }
+            onConfirm={() => {
+              setValues({ ...values, isPublic: !values.isPublic });
               setTouched({ isPublic: true });
             }}
-            color="red"
-            label="public"
-            style={{ marginTop: "10px", marginBottom: "10px" }}
+            renderTrigger={(setModalVisible) => (
+              <Switch
+                checked={values.isPublic}
+                onChange={() => {
+                  setModalVisible(true);
+                }}
+                color="red"
+                label="public"
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              />
+            )}
           />
           {values.isPublic && (
             <Alert icon={<BellIcon />} title="Warning!" color="red">
@@ -96,15 +112,27 @@ const SurveyForm = ({
       )}
 
       {isUpdate && (
-        <Checkbox
-          checked={values.archived}
-          onChange={(event) => {
-            setValues({ ...values, archived: event.currentTarget.checked });
+        <ModalConfirmTrigger
+          modalMessage={
+            values.archived
+              ? "Are you sure you want to unarchive this survey?"
+              : "Are you sure you want to archive this survey?"
+          }
+          onConfirm={() => {
+            setValues({ ...values, archived: !values.archived });
             setTouched({ archived: true });
           }}
-          color="dark"
-          label="archive"
-          style={{ marginTop: "15px" }}
+          renderTrigger={(setModalVisible) => (
+            <Checkbox
+              checked={values.archived}
+              onChange={() => {
+                setModalVisible(true);
+              }}
+              color="dark"
+              label="archive"
+              style={{ marginTop: "15px" }}
+            />
+          )}
         />
       )}
 

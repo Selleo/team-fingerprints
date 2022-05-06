@@ -1,9 +1,10 @@
+import axios from "axios";
 import { TrashIcon } from "@modulz/radix-icons";
 import { Button } from "@mantine/core";
 import { useMutation } from "react-query";
-import axios from "axios";
 import { queryClient } from "../../../App";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 
 const DeleteCategoryButton = ({
   categoryId,
@@ -27,16 +28,25 @@ const DeleteCategoryButton = ({
   );
 
   return (
-    <Button
-      leftIcon={<TrashIcon />}
-      variant="outline"
-      color="pink"
-      onClick={() => mutation.mutate()}
-      compact
-      style={{ color: "#ff0000", borderColor: "#ff0000" }}
-    >
-      Delete Category
-    </Button>
+    <ModalConfirmTrigger
+      modalMessage="Are you sure you want to delete this category?"
+      onConfirm={() => {
+        mutation.mutate();
+      }}
+      renderTrigger={(setModalVisible) => (
+        <Button
+          leftIcon={<TrashIcon />}
+          variant="outline"
+          onClick={() => {
+            setModalVisible(true);
+          }}
+          compact
+          style={{ color: "#ff0000", borderColor: "#ff0000" }}
+        >
+          Delete Category
+        </Button>
+      )}
+    />
   );
 };
 

@@ -1,14 +1,17 @@
-import { useState, useMemo, useEffect } from "react";
 import classNames from "classnames";
+import axios from "axios";
+
+import { useState, useMemo, useEffect } from "react";
 import { useMutation } from "react-query";
 import { toNumber } from "lodash";
-import axios from "axios";
 import { Progress } from "@mantine/core";
+
+import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 
 import { Answer, Question } from "../../../types/models";
 import { ReactComponent as RightArrow } from "../../../assets/RightArrow.svg";
 import { ReactComponent as LeftArrowGray } from "../../../assets/LeftArrowGray.svg";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 import "./styles.sass";
 
@@ -121,19 +124,25 @@ export default function QuestionResponse({
     );
   };
 
-  const submitResponse = () => {
-    window.confirm("Do you want to finish the survey?") && finishSurvey();
-  };
-
   const submitButton = () => {
     return (
-      <button
-        onClick={submitResponse}
-        disabled={disabled}
-        className="survey-response__survey__nav__button--submit"
-      >
-        Submit responses
-      </button>
+      <ModalConfirmTrigger
+        modalMessage="Are you sure you want to finish this survey?"
+        onConfirm={() => {
+          finishSurvey();
+        }}
+        renderTrigger={(setModalVisible) => (
+          <button
+            onClick={() => {
+              setModalVisible(true);
+            }}
+            disabled={disabled}
+            className="survey-response__survey__nav__button--submit"
+          >
+            Submit responses
+          </button>
+        )}
+      />
     );
   };
 

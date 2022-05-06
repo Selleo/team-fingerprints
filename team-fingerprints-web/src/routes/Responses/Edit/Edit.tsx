@@ -173,89 +173,82 @@ export default function Edit() {
 
   const setDataForCompany =
     (role: ComplexRole) =>
-      (companyId: string, categoriesArray: any[], hidden: boolean) => {
-        setCompaniesResult((prev) => ({
-          ...prev,
-          [companyId]: { categoriesArray, role, team: false, hidden },
-        }));
-      };
+    (companyId: string, categoriesArray: any[], hidden: boolean) => {
+      setCompaniesResult((prev) => ({
+        ...prev,
+        [companyId]: { categoriesArray, role, team: false, hidden },
+      }));
+    };
 
   const setDataForTeam =
     (role: ComplexRole) =>
-      (
-        _companyId: string,
-        teamInfo: SimpleTeamType,
-        categoriesArray: any[],
-        hidden: boolean
-      ) => {
-        setCompaniesResult((prev) => ({
-          ...prev,
-          [teamInfo.teamId]: {
-            categoriesArray,
-            role,
-            team: true,
-            hidden: !usersTeams?.find((el) => el === teamInfo.teamId),
-            teamInfo,
-          },
-        }));
-      };
+    (
+      _companyId: string,
+      teamInfo: SimpleTeamType,
+      categoriesArray: any[],
+      hidden: boolean
+    ) => {
+      setCompaniesResult((prev) => ({
+        ...prev,
+        [teamInfo.teamId]: {
+          categoriesArray,
+          role,
+          team: true,
+          hidden: !usersTeams?.find((el) => el === teamInfo.teamId),
+          teamInfo,
+        },
+      }));
+    };
 
-  const renderContent = useMemo(
-    () =>
-      surveyIsFinished ? (
-        <SurveyFinishedWrapper surveyTitle={survey?.title} description="Compare your results with the company, the world or other
+  const surveyResults = useMemo(
+    () => (
+      <SurveyFinishedWrapper
+        surveyTitle={survey?.title}
+        description="Compare your results with the company, the world or other
         employees. To display the data on the chart, turn on the switch
-        next to the category name.">
-          <div className="survey-response__legend">
-            <div className="survey-response__legend__item survey-response__legend__item--first">
-              <div className="survey-response__legend__item__icon">
-                <CircleIcon stroke={"#32A89C"} />
-              </div>
-              <span>You</span>
-              <Switch value={showMyResults} setValue={setShowMyResults} />
+        next to the category name."
+      >
+        <div className="survey-response__legend">
+          <div className="survey-response__legend__item survey-response__legend__item--first">
+            <div className="survey-response__legend__item__icon">
+              <CircleIcon stroke={"#32A89C"} />
             </div>
-            {keys(visibleData).map((key) => {
-              const singleVisibleData = additionalData.find(
-                (el) => el.id === key
-              );
-              return (
-                <div className="survey-response__legend__item survey-response__legend__item--first">
-                  <div className="survey-response__legend__item__icon">
-                    <ColoredShape
-                      shape={singleVisibleData?.icon}
-                      color={singleVisibleData?.color}
-                    />
-                  </div>
-                  <span>{singleVisibleData?.name}</span>
-                  <Switch
-                    value={!!visibleData[key]}
-                    setValue={() =>
-                      setVisibleData({
-                        ...visibleData,
-                        [key]: !visibleData[key],
-                      })
-                    }
+            <span>You</span>
+            <Switch value={showMyResults} setValue={setShowMyResults} />
+          </div>
+          {keys(visibleData).map((key) => {
+            const singleVisibleData = additionalData.find(
+              (el) => el.id === key
+            );
+            return (
+              <div className="survey-response__legend__item survey-response__legend__item--first">
+                <div className="survey-response__legend__item__icon">
+                  <ColoredShape
+                    shape={singleVisibleData?.icon}
+                    color={singleVisibleData?.color}
                   />
                 </div>
-              );
-            })}
-          </div>
-          <Chart
-            surveyResult={surveyResult}
-            additionalData={filteredAdditionalData}
-            showMe={showMyResults}
-          />
-        </SurveyFinishedWrapper>
-      ) : (
-        <QuestionResponse
-          questionsWithAnswers={questionsWithAnswers}
-          refetch={refetch}
-          disabled={surveyIsFinished}
-          surveyId={surveyId || ""}
-          finishSurvey={finishSurvey.mutate}
-          surveyTitle={survey?.title}
+                <span>{singleVisibleData?.name}</span>
+                <Switch
+                  value={!!visibleData[key]}
+                  setValue={() =>
+                    setVisibleData({
+                      ...visibleData,
+                      [key]: !visibleData[key],
+                    })
+                  }
+                />
+              </div>
+            );
+          })}
+        </div>
+        <Chart
+          surveyResult={surveyResult}
+          additionalData={filteredAdditionalData}
+          showMe={showMyResults}
         />
-      ),
+      </SurveyFinishedWrapper>
+    ),
     [
       surveyIsFinished,
       survey?.title,
@@ -271,6 +264,27 @@ export default function Edit() {
     ]
   );
 
+  const surveyQuestionsForm = useMemo(
+    () => (
+      <QuestionResponse
+        questionsWithAnswers={questionsWithAnswers}
+        refetch={refetch}
+        disabled={surveyIsFinished}
+        surveyId={surveyId || ""}
+        finishSurvey={finishSurvey.mutate}
+        surveyTitle={survey?.title}
+      />
+    ),
+    [
+      questionsWithAnswers,
+      refetch,
+      surveyIsFinished,
+      surveyId,
+      finishSurvey.mutate,
+      survey?.title,
+    ]
+  );
+
   if (isLoadingSurvey || isLoadingSurveyResponse || isLoadingSurveyFinished) {
     return <LoadingData title="Loading survey" />;
   }
@@ -280,17 +294,38 @@ export default function Edit() {
   }
 
   if (errorLoadingSurvey) {
-    return <ErrorLoading title="Can't load survey info" />;
+    return (
+      <>
+        <BackToScreen name="Dashboard" />
+        <ErrorLoading title="Can't load survey info" />
+      </>
+    );
   }
 
   if (errorLoadingSurveyResponse) {
-    return <ErrorLoading title="Can't load survey responses" />;
+    return (
+      <>
+        <BackToScreen name="Dashboard" />
+        <ErrorLoading title="Can't load survey responses" />
+      </>
+    );
+  }
+
+  if (isEmpty(questionsWithAnswers)) {
+    return (
+      <>
+        <BackToScreen name="Dashboard" />
+        <ErrorLoading title="Survey is empty" />
+      </>
+    );
   }
 
   return (
     <>
       <BackToScreen name="Dashboard" />
-      <div className="survey-response">{renderContent}</div>
+      <div className="survey-response">
+        {surveyIsFinished ? surveyResults : surveyQuestionsForm}
+      </div>
       {profile?.privileges.map((role) => (
         <>
           {surveyId && role.company?._id && (
@@ -306,7 +341,7 @@ export default function Edit() {
           )}
         </>
       ))}
-      { }
+      {}
     </>
   );
 }

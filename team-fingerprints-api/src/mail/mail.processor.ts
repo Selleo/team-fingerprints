@@ -9,6 +9,7 @@ import {
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Job } from 'bull';
+import { emailtemplate } from 'src/templates/email.template';
 
 @Processor('mailsend')
 export class MailProcessor {
@@ -52,9 +53,9 @@ export class MailProcessor {
         from: 'fingerprints@selleo.com',
         subject:
           'Welcome to Selleo Team Fingerprints - testing new account mail',
-        html: `<p>Hi ${job.data.to} in <b>Selleo Team Fingerprint</b></p>
-          <p><a href="https://teamfingerprints.selleo.com/">Team Fingerprints</a></p>
-        `,
+        html: emailtemplate(
+          `Welcome ${job.data.to} in <b>Selleo Team Fingerprint`,
+        ),
       });
       return success;
     } catch (error) {
@@ -69,9 +70,10 @@ export class MailProcessor {
         to: job.data.to,
         from: this.configService.get<string>('MAIL_USER'),
         subject: `You were invited to ${job.data.companyName} company - testing new account mail`,
-        html: `<p>Hi ${job.data.to}, you were invited to <b> ${job.data.companyName} company</b></p>
-        <p><a href="https://teamfingerprints.selleo.com/manage">Team Fingerprints</a></p>
-        `,
+        html: emailtemplate(
+          `Hi ${job.data.to}, you were invited to ${job.data.companyName} company`,
+          'https://teamfingerprints.selleo.com/manage',
+        ),
       });
       return success;
     } catch (error) {
@@ -86,8 +88,9 @@ export class MailProcessor {
         to: job.data.to,
         from: this.configService.get<string>('MAIL_USER'),
         subject: `You were invited to ${job.data.companyName} company - testing new account mail`,
-        html: `<p>Hi ${job.data.to}, you were invited to <b> ${job.data.teamName} team</b> in ${job.data.companyName} company</p>
-        <p><a href="https://teamfingerprints.selleo.com/manage">Team Fingerprints</a></p>`,
+        html: emailtemplate(
+          `Hi ${job.data.to}, you were invited to ${job.data.teamName} team in ${job.data.companyName} company`,
+        ),
       });
       return success;
     } catch (error) {

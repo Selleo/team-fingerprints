@@ -47,6 +47,7 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
       <tr key={item._id}>
         <td>{item.title}</td>
         <td>{item.isPublic ? "public" : "not public"}</td>
+        <td>{item.archived ? "archived" : "not archived"}</td>
         <td>
           <Button
             onClick={() => navigate(`/admin/survey/${item._id}`)}

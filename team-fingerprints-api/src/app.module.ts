@@ -26,6 +26,7 @@ import {
 } from './config';
 import { SurveyFiltersModule } from './survey-filters/survey-filters.module';
 import * as redisStore from 'cache-manager-redis-store';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import * as redisStore from 'cache-manager-redis-store';
     TfConfigModule,
     FilterTemplateModule,
     SurveyFiltersModule,
+    RoleModule,
   ],
 })
 export class AppModule {}

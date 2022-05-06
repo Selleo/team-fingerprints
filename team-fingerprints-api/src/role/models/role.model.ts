@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { RoleType } from 'team-fingerprints-common';
-import { Role } from '../types/role.types';
+import { Role, RoleType } from 'team-fingerprints-common';
 
 @Schema({ collection: 'roles', autoIndex: false, timestamps: true })
 export class RoleModel extends Document implements Role {

@@ -13,8 +13,7 @@ import { Model } from 'mongoose';
 import { CompanyService } from 'src/company/company.service';
 import { UserModel } from 'src/users/models/user.model';
 import { RoleModel } from './models/role.model';
-import { RoleType } from 'team-fingerprints-common';
-import { Role } from './types/role.types';
+import { Role, RoleType } from 'team-fingerprints-common';
 
 @Injectable()
 export class RoleService {

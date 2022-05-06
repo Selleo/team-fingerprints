@@ -6,12 +6,11 @@ import {
 } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
 import { RoleService } from 'src/role/role.service';
-import { RoleType } from 'team-fingerprints-common';
+import { Role, RoleType } from 'team-fingerprints-common';
 import { UsersService } from 'src/users/users.service';
 import { CompanyService } from '../company.service';
 import { TeamService } from './team.service';
 import { isEmail } from 'class-validator';
-import { Role } from 'src/role/types/role.types';
 import { CompanyMembersService } from '../company-members.service';
 
 @Injectable()

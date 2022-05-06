@@ -4,7 +4,9 @@ import ModalTrigger from "../ModalTrigger";
 
 type Props = {
   onConfirm: () => void;
-  renderTrigger: (arg0: (arg0: boolean) => void) => ReactNode;
+  renderTrigger: (
+    changeModalState: (modalVisible: boolean) => void
+  ) => ReactNode;
   modalMessage: string;
 };
 

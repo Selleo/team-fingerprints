@@ -2,8 +2,12 @@ import { useState, ReactNode } from "react";
 import ModalWrapper from "../ModalWrapper";
 
 type Props = {
-  children: (arg0: (arg0: boolean) => void) => ReactNode | ReactNode;
-  renderTrigger: (arg0: (arg0: boolean) => void) => ReactNode;
+  children: (
+    changeModalState: (modalVisible: boolean) => void
+  ) => ReactNode | ReactNode;
+  renderTrigger: (
+    changeModalState: (modalVisible: boolean) => void
+  ) => ReactNode;
   modalMessage: string;
 };
 

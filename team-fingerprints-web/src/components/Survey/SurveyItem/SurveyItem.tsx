@@ -45,39 +45,12 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
     }
   );
 
-  const publishMutation = useMutation(
-    (surveyId: string) => {
-      return axios.patch<Partial<FullSurvey>>(`/surveys/${surveyId}`, {
-        isPublic: true,
-      });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["surveysAll"]);
-      },
-      onError: onErrorWithTitle("Can not update survey"),
-    }
-  );
-
-  const archiveMutation = useMutation(
-    (surveyId: string) => {
-      return axios.patch<Partial<FullSurvey>>(`/surveys/${surveyId}`, {
-        archived: true,
-      });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["surveysAll"]);
-      },
-      onError: onErrorWithTitle("Can not update survey"),
-    }
-  );
-
-  const unarchiveMutation = useMutation(
-    (surveyId: string) => {
-      return axios.patch<Partial<FullSurvey>>(`/surveys/${surveyId}`, {
-        archived: false,
-      });
+  const updateMutation = useMutation(
+    (survey: { id: string; update: { [key: string]: boolean } }) => {
+      return axios.patch<Partial<FullSurvey>>(
+        `/surveys/${survey.id}`,
+        survey.update
+      );
     },
     {
       onSuccess: () => {
@@ -123,8 +96,14 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
             onConfirm={() => {
               {
                 item.archived
-                  ? unarchiveMutation.mutate(item._id)
-                  : archiveMutation.mutate(item._id);
+                  ? updateMutation.mutate({
+                      id: item._id,
+                      update: { archived: false },
+                    })
+                  : updateMutation.mutate({
+                      id: item._id,
+                      update: { archived: true },
+                    });
               }
             }}
             renderTrigger={(setModalVisible) => (
@@ -157,7 +136,10 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
               <ModalConfirmTrigger
                 modalMessage="Are you sure you want to publish this survey?"
                 onConfirm={() => {
-                  publishMutation.mutate(item._id);
+                  updateMutation.mutate({
+                    id: item._id,
+                    update: { isPublic: true },
+                  });
                 }}
                 renderTrigger={(setModalVisible) => (
                   <Button

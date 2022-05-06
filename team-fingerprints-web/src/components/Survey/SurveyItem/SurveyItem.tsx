@@ -46,11 +46,8 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
   );
 
   const updateMutation = useMutation(
-    (survey: { id: string; update: { [key: string]: boolean } }) => {
-      return axios.patch<Partial<FullSurvey>>(
-        `/surveys/${survey.id}`,
-        survey.update
-      );
+    (survey: Partial<FullSurvey>) => {
+      return axios.patch<Partial<FullSurvey>>(`/surveys/${survey._id}`, survey);
     },
     {
       onSuccess: () => {
@@ -95,17 +92,10 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
             }
             onConfirm={() => {
               {
-                updateMutation.mutate(
-                  item.archived
-                    ? {
-                        id: item._id,
-                        update: { archived: false },
-                      }
-                    : {
-                        id: item._id,
-                        update: { archived: true },
-                      }
-                );
+                updateMutation.mutate({
+                  _id: item._id,
+                  archived: !item.archived,
+                });
               }
             }}
             renderTrigger={(setModalVisible) => (
@@ -139,8 +129,8 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
                 modalMessage="Are you sure you want to publish this survey?"
                 onConfirm={() => {
                   updateMutation.mutate({
-                    id: item._id,
-                    update: { isPublic: true },
+                    _id: item._id,
+                    isPublic: true,
                   });
                 }}
                 renderTrigger={(setModalVisible) => (

@@ -95,15 +95,17 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
             }
             onConfirm={() => {
               {
-                item.archived
-                  ? updateMutation.mutate({
-                      id: item._id,
-                      update: { archived: false },
-                    })
-                  : updateMutation.mutate({
-                      id: item._id,
-                      update: { archived: true },
-                    });
+                updateMutation.mutate(
+                  item.archived
+                    ? {
+                        id: item._id,
+                        update: { archived: false },
+                      }
+                    : {
+                        id: item._id,
+                        update: { archived: true },
+                      }
+                );
               }
             }}
             renderTrigger={(setModalVisible) => (

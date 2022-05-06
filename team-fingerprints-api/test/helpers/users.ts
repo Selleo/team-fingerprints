@@ -1,10 +1,9 @@
 import { Model } from 'mongoose';
-import { RoleType } from 'team-fingerprints-common';
+import { Role, RoleType } from 'team-fingerprints-common';
 import { UserModel } from 'src/users/models/user.model';
 import { createUser } from '../../test/factories/user.factory';
 import { create } from './create';
 import { baseUserData } from './data/baseUserData';
-import { Role } from 'src/role/types/role.types';
 
 export async function createBaseUser<T extends UserModel>(userModel: Model<T>) {
   const user = await create(UserModel, baseUserData());

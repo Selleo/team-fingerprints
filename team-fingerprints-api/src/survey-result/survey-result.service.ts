@@ -17,7 +17,7 @@ import { UsersService } from 'src/users/users.service';
 import {
   Category,
   Role,
-  SurveyCompleteStatus,
+  SurveyCompletionStatus,
   Trend,
   UserWhoFinishedSurvey,
 } from 'team-fingerprints-common';
@@ -243,7 +243,8 @@ export class SurveyResultService {
           $match: {
             $and: [
               {
-                'surveysAnswers.completeStatus': SurveyCompleteStatus.FINISHED,
+                'surveysAnswers.completionStatus':
+                  SurveyCompletionStatus.FINISHED,
               },
               { 'surveysAnswers.surveyId': surveyId },
             ],

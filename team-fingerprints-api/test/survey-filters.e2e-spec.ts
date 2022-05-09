@@ -20,7 +20,7 @@ import {
 } from './survey-result-filter.setup';
 import {
   UserSurveyAnswer,
-  SurveyCompleteStatus,
+  SurveyCompletionStatus,
 } from 'team-fingerprints-common';
 
 export const createCompanyWithTeam = async (
@@ -32,7 +32,7 @@ export const createCompanyWithTeam = async (
 
 const surveyAnswersDataForUser = (survey: SurveyModel): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
-  completeStatus: SurveyCompleteStatus.FINISHED,
+  completionStatus: SurveyCompletionStatus.FINISHED,
   amountOfAnswers: 2,
   answers: [
     {
@@ -64,7 +64,7 @@ const surveyAnswersDataForBaseUser = (
   survey: SurveyModel,
 ): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
-  completeStatus: SurveyCompleteStatus.FINISHED,
+  completionStatus: SurveyCompletionStatus.FINISHED,
   amountOfAnswers: 2,
   answers: [
     {

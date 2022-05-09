@@ -9,7 +9,7 @@ import { getBaseUser } from './helpers/getBaseUser';
 import { QuestionAnswerDto } from 'src/survey-answer/dto/question-answer.dto';
 import {
   UserSurveyAnswer,
-  SurveyCompleteStatus,
+  SurveyCompletionStatus,
 } from 'team-fingerprints-common';
 
 const surveyData: Partial<SurveyModel> = {
@@ -53,7 +53,7 @@ const createSurvey = async (
 
 const surveyAnswersData = (survey: SurveyModel): UserSurveyAnswer => ({
   surveyId: survey._id.toString(),
-  completeStatus: SurveyCompleteStatus.PENDING,
+  completionStatus: SurveyCompletionStatus.PENDING,
   amountOfAnswers: 2,
   answers: [
     {
@@ -129,8 +129,8 @@ describe('SurveyAnswerController', () => {
       expect(surveysAnswers[0].amountOfAnswers).toBe(
         surveyAnswersData(survey).amountOfAnswers,
       );
-      expect(surveysAnswers[0].completeStatus).toEqual(
-        SurveyCompleteStatus.PENDING,
+      expect(surveysAnswers[0].completionStatus).toEqual(
+        SurveyCompletionStatus.PENDING,
       );
       expect(surveysAnswers[0].surveyId).toEqual(survey._id.toString());
     });
@@ -159,8 +159,8 @@ describe('SurveyAnswerController', () => {
         questionAnswerData.value,
       );
       expect(surveysAnswers[0].amountOfAnswers).toBe(1);
-      expect(surveysAnswers[0].completeStatus).toEqual(
-        SurveyCompleteStatus.PENDING,
+      expect(surveysAnswers[0].completionStatus).toEqual(
+        SurveyCompletionStatus.PENDING,
       );
       expect(surveysAnswers[0].surveyId).toEqual(survey._id.toString());
     });
@@ -185,8 +185,8 @@ describe('SurveyAnswerController', () => {
       expect(surveysAnswers.length).toBe(1);
       expect(surveysAnswers[0].answers.length).toBe(2);
       expect(surveysAnswers[0].amountOfAnswers).toBe(2);
-      expect(surveysAnswers[0].completeStatus).toEqual(
-        SurveyCompleteStatus.PENDING,
+      expect(surveysAnswers[0].completionStatus).toEqual(
+        SurveyCompletionStatus.PENDING,
       );
       expect(surveysAnswers[0].surveyId).toEqual(survey._id.toString());
       expect(surveysAnswers[0].answers[0].questionId).toEqual(
@@ -219,8 +219,8 @@ describe('SurveyAnswerController', () => {
         expect(surveysAnswers.length).toBe(1);
         expect(surveysAnswers[0].answers.length).toBe(1);
         expect(surveysAnswers[0].amountOfAnswers).toBe(1);
-        expect(surveysAnswers[0].completeStatus).toEqual(
-          SurveyCompleteStatus.PENDING,
+        expect(surveysAnswers[0].completionStatus).toEqual(
+          SurveyCompletionStatus.PENDING,
         );
       });
     });
@@ -240,8 +240,8 @@ describe('SurveyAnswerController', () => {
 
       expect(body).toBeDefined();
       expect(body).not.toEqual({});
-      expect(surveysAnswers[0].completeStatus).toEqual(
-        SurveyCompleteStatus.FINISHED,
+      expect(surveysAnswers[0].completionStatus).toEqual(
+        SurveyCompletionStatus.FINISHED,
       );
     });
   });

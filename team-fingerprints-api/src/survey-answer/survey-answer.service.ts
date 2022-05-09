@@ -16,7 +16,7 @@ import { SurveySummarizeService } from 'src/survey-summarize/survey-summarize.se
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
 import { SurveyService } from 'src/survey/survey.service';
 import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service';
-import { SurveyCompleteStatus } from 'team-fingerprints-common';
+import { SurveyCompletionStatus } from 'team-fingerprints-common';
 
 @Injectable()
 export class SurveyAnswerService {
@@ -67,7 +67,7 @@ export class SurveyAnswerService {
                 surveysAnswers: {
                   questionAnswerData,
                   surveyId,
-                  completeStatus: SurveyCompleteStatus.PENDING,
+                  completionStatus: SurveyCompletionStatus.PENDING,
                 },
               },
             },
@@ -128,7 +128,7 @@ export class SurveyAnswerService {
         userId,
       ]);
 
-    await this.changeSurvayCompleteStatusToFinished(userId, surveyId);
+    await this.changeSurvayCompletionStatusToFinished(userId, surveyId);
 
     const calculatedAnswers =
       await this.surveySummarizeService.countPointsForUser(userId, surveyId);
@@ -216,7 +216,7 @@ export class SurveyAnswerService {
       .exec();
   }
 
-  async getSurveyCompleteStatus(userId: string, surveyId: string) {
+  async getSurveyCompletionStatus(userId: string, surveyId: string) {
     const user = await this.userModel
       .findOne({
         _id: new Types.ObjectId(userId).toString(),
@@ -224,24 +224,27 @@ export class SurveyAnswerService {
       })
       .exec();
 
-    if (!user) return SurveyCompleteStatus.NEW;
+    if (!user) return SurveyCompletionStatus.NEW;
 
     const surveyAnswer = user?.surveysAnswers?.find(
       (answer) => answer.surveyId === new Types.ObjectId(surveyId).toString(),
     );
-    if (!surveyAnswer) return SurveyCompleteStatus.NEW;
+    if (!surveyAnswer) return SurveyCompletionStatus.NEW;
 
-    return surveyAnswer.completeStatus;
+    return surveyAnswer.completionStatus;
   }
 
-  async changeSurvayCompleteStatusToFinished(userId: string, surveyId: string) {
+  async changeSurvayCompletionStatusToFinished(
+    userId: string,
+    surveyId: string,
+  ) {
     return await this.userModel
       .findOneAndUpdate(
         { _id: userId },
         {
           $set: {
-            'surveysAnswers.$[survey].completeStatus':
-              SurveyCompleteStatus.FINISHED,
+            'surveysAnswers.$[survey].completionStatus':
+              SurveyCompletionStatus.FINISHED,
           },
         },
         {
@@ -253,8 +256,8 @@ export class SurveyAnswerService {
   }
 
   async checkIfSurveyIsFinished(userId: string, surveyId: string) {
-    const result = await this.getSurveyCompleteStatus(userId, surveyId);
-    return result === SurveyCompleteStatus.FINISHED;
+    const result = await this.getSurveyCompletionStatus(userId, surveyId);
+    return result === SurveyCompletionStatus.FINISHED;
   }
 
   async surveyIsArchived(surveyId: string): Promise<boolean> {

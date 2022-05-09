@@ -1,7 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { DetailQuery, Privilege, Role, User } from 'team-fingerprints-common';
+import {
+  DetailQuery,
+  Privilege,
+  Role,
+  SurveyCompletionStatus,
+  User,
+} from 'team-fingerprints-common';
 import { CompanyService } from 'src/company/company.service';
 import { TeamService } from 'src/company/team/team.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
@@ -14,7 +20,6 @@ import { SurveyFiltersService } from 'src/survey-filters/survey-filters.service'
 import {
   UserProfile,
   UserDetail,
-  SurveyCompleteStatus,
   UserSurveyAnswer,
 } from 'team-fingerprints-common';
 
@@ -188,7 +193,7 @@ export class UsersService {
         },
         {
           $match: {
-            'surveysAnswers.completeStatus': SurveyCompleteStatus.FINISHED,
+            'surveysAnswers.completionStatus': SurveyCompletionStatus.FINISHED,
           },
         },
       ])
@@ -248,7 +253,7 @@ export class UsersService {
     const surveys: boolean[] = surveysAnswers
       .map(
         (el: UserSurveyAnswer) =>
-          el.completeStatus === SurveyCompleteStatus.FINISHED,
+          el.completionStatus === SurveyCompletionStatus.FINISHED,
       )
       .filter(Boolean);
 

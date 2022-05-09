@@ -137,7 +137,7 @@ export default function Edit() {
   );
 
   const surveyIsFinished =
-    surveyFinished?.surveysAnswers?.[0].completeStatus === "finished";
+    surveyFinished?.surveysAnswers?.[0].completionStatus === "finished";
 
   const {
     isLoading: isLoadingSurveyResponse,

@@ -1,6 +1,6 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
 import {
-  SurveyCompleteStatus,
+  SurveyCompletionStatus,
   UserSurveyAnswer,
 } from 'team-fingerprints-common';
 import {
@@ -13,8 +13,8 @@ export class UserSurveyAnswerModel implements UserSurveyAnswer {
   @Prop({ required: true })
   surveyId: string;
 
-  @Prop({ required: true, default: SurveyCompleteStatus.PENDING })
-  completeStatus: SurveyCompleteStatus;
+  @Prop({ required: true, default: SurveyCompletionStatus.PENDING })
+  completionStatus: SurveyCompletionStatus;
 
   @Prop({ default: 0, required: true })
   amountOfAnswers: number;

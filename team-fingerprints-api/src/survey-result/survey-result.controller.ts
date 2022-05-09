@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { DetailQuery } from 'team-fingerprints-common';
 import { SurveyResultService } from './survey-result.service';
 
 @Controller({ path: 'survey-results', version: '1' })
@@ -19,7 +20,7 @@ export class SurveyResultController {
   @UseInterceptors(CacheInterceptor)
   async getAvgResultForAllCompanies(
     @Param('surveyId', ValidateObjectId) surveyId: string,
-    @Query() queries: any,
+    @Query() queries: DetailQuery,
   ) {
     return await this.surveyResultService.getAvgResultForAllCompanies(
       surveyId,
@@ -32,7 +33,7 @@ export class SurveyResultController {
   async getAvgResultForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
-    @Query() queries: any,
+    @Query() queries: DetailQuery,
   ) {
     return await this.surveyResultService.getAvgResultForCompany(
       surveyId,
@@ -46,7 +47,7 @@ export class SurveyResultController {
   async getAvgResultForTeam(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Query() queries: any,
+    @Query() queries: DetailQuery,
   ) {
     return await this.surveyResultService.getAvgResultForTeam(
       surveyId,

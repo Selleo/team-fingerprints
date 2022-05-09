@@ -41,7 +41,7 @@ describe('SurveyController', () => {
       const {
         _id,
         title,
-        completeStatus,
+        completionStatus,
         isPublic,
         archived,
         amountOfQuestions,
@@ -50,7 +50,7 @@ describe('SurveyController', () => {
 
       expect(_id).toEqual(newSurvey._id.toString());
       expect(title).toBe(newSurvey.title);
-      expect(completeStatus).toEqual('new');
+      expect(completionStatus).toEqual('new');
       expect(isPublic).toBe(true);
       expect(archived).toBe(false);
       expect(amountOfQuestions).toBe(0);

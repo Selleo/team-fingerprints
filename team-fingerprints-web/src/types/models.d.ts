@@ -3,7 +3,7 @@ export type Survey = {
   isPublic: boolean;
   _id: string;
   createdAt: string;
-  completeStatus: string;
+  completionStatus: string;
   archived: boolean;
 };
 

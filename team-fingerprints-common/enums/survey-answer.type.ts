@@ -1,4 +1,4 @@
-export const enum SurveyCompleteStatus {
+export const enum SurveyCompletionStatus {
   FINISHED = "finished",
   PENDING = "pending",
   NEW = "new",

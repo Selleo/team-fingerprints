@@ -27,29 +27,33 @@ export class SurveyService {
     private readonly roleService: RoleService,
   ) {}
 
-  async getSurveysByRole(
+  async getSurveys(): Promise<SurveyModel[]> {
+    return await this.surveyModel.find({ isPublic: true, archived: false });
+  }
+
+  async getSurvey(surveyId: string): Promise<SurveyModel> {
+    return await this.surveyModel.findById(surveyId).exec();
+  }
+
+  async getSurveysWithCompletionStatus(
     userId: string,
   ): Promise<
-    (Partial<SurveyModel> & { completeStatus: string })[] | FullSurvey[]
+    (Partial<SurveyModel> & { completionStatus: string })[] | FullSurvey[]
   > {
     const surveys = await this.surveyModel.find().exec();
 
-    const surveysWithCompleteStatus = surveys.map(
+    const surveysWithCompletionStatus = surveys.map(
       async (survey: SurveyModel) => {
-        const completeStatus =
-          await this.surveyAnswerService.getSurveyCompleteStatus(
+        const completionStatus =
+          await this.surveyAnswerService.getSurveyCompletionStatus(
             userId,
             survey._id.toString(),
           );
-        return { completeStatus, ...(survey as any)._doc };
+        return { completionStatus, ...(survey as any)._doc };
       },
     );
 
-    return await Promise.all(surveysWithCompleteStatus);
-  }
-
-  async getSurveys() {
-    return await this.surveyModel.find({ isPublic: true, archived: false });
+    return await Promise.all(surveysWithCompletionStatus);
   }
 
   async getSurveyByRole(
@@ -66,10 +70,6 @@ export class SurveyService {
     return await this.surveyModel
       .findOne({ _id: surveyId, isPublic: true })
       .exec();
-  }
-
-  async getSurvey(surveyId: string): Promise<SurveyModel> {
-    return await this.surveyModel.findById(surveyId).exec();
   }
 
   async getPublicSurveyById(surveyId: string): Promise<SurveyModel> {

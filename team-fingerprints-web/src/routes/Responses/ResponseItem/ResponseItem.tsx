@@ -7,21 +7,21 @@ type typeProps = { item: ResponseItem };
 
 const SurveyItem = ({ item }: typeProps) => {
   const navigate = useNavigate();
-  const { _id, title, completeStatus } = item.survey;
+  const { _id, title, completionStatus } = item.survey;
 
   return (
     <li
       className="responses__survey"
       onClick={() => navigate(`/response/${_id}`)}
     >
-      <StatusIcon status={completeStatus} />
+      <StatusIcon status={completionStatus} />
       <span className="responses__survey__name">
         {title}
-        {completeStatus === "new" && (
+        {completionStatus === "new" && (
           <span className="responses__survey__new-indicator">New</span>
         )}
       </span>
-      <StatusInfo status={completeStatus} />
+      <StatusInfo status={completionStatus} />
     </li>
   );
 };

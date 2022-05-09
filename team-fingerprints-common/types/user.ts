@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { SurveyCompleteStatus } from "../enums";
+import { SurveyCompletionStatus } from "../enums";
 import { Privilege } from "./privilege";
 
 export type QuestionAnswer = {
@@ -22,7 +22,7 @@ export type User = {
 
 export type UserSurveyAnswer = {
   surveyId: string;
-  completeStatus: SurveyCompleteStatus;
+  completionStatus: SurveyCompletionStatus;
   amountOfAnswers: number;
   surveyResult: UserFinishedSurveyResult[];
   answers: QuestionAnswer[];

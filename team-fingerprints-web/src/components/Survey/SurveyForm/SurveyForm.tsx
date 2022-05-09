@@ -1,12 +1,16 @@
-import { useEffect, useRef } from "react";
+import axios from "axios";
+
+import { useEffect, useRef, useState } from "react";
 import { TextInput, Button, Switch, Alert, Checkbox } from "@mantine/core";
 import { BellIcon } from "@modulz/radix-icons";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
-import { useStyles } from "./styles";
-import axios from "axios";
-import { queryClient } from "../../../App";
+
+import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+
+import { useStyles } from "./styles";
+import { queryClient } from "../../../App";
 import { FullSurvey } from "team-fingerprints-common";
 
 const SurveyForm = ({
@@ -74,39 +78,6 @@ const SurveyForm = ({
         value={values.title}
         onChange={handleChange("title")}
       />
-
-      {isUpdate && !initialValues.isPublic && (
-        <>
-          <Switch
-            checked={values.isPublic}
-            onChange={(event) => {
-              setValues({ ...values, isPublic: event.currentTarget.checked });
-              setTouched({ isPublic: true });
-            }}
-            color="red"
-            label="public"
-            style={{ marginTop: "10px", marginBottom: "10px" }}
-          />
-          {values.isPublic && (
-            <Alert icon={<BellIcon />} title="Warning!" color="red">
-              Remember! Public property can be changed only once!
-            </Alert>
-          )}
-        </>
-      )}
-
-      {isUpdate && (
-        <Checkbox
-          checked={values.archived}
-          onChange={(event) => {
-            setValues({ ...values, archived: event.currentTarget.checked });
-            setTouched({ archived: true });
-          }}
-          color="dark"
-          label="archive"
-          style={{ marginTop: "15px" }}
-        />
-      )}
 
       <Button className={classes.submitButton} type="submit">
         {createMutation.isLoading || updateMutation.isLoading

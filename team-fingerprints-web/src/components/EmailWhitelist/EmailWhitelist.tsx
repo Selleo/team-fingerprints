@@ -1,9 +1,10 @@
 import { Button, Table, Badge } from "@mantine/core";
 import { groupBy, keys, map } from "lodash";
-import { FC, useContext } from "react";
+import { FC, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileContext } from "../../routes";
 import { CompanyRole, Team } from "../../types/models";
+import ModalConfirmTrigger from "./../Modals/ModalConfirmTrigger";
 
 interface IProps {
   onRemove?: (email: string) => void;
@@ -50,9 +51,17 @@ const EmailWhitelist: FC<IProps> = ({ onRemove, roles, teams }) => {
                     Self role managment
                   </Button>
                 ) : (
-                  <Button onClick={() => onRemove?.(role._id)} color="red">
-                    Remove
-                  </Button>
+                  <ModalConfirmTrigger
+                    modalMessage="Are you sure you want to delete this user?"
+                    onConfirm={() => {
+                      onRemove?.(role._id);
+                    }}
+                    renderTrigger={(setModalVisible) => (
+                      <Button onClick={() => setModalVisible(true)} color="red">
+                        Remove
+                      </Button>
+                    )}
+                  />
                 )}
               </td>
             </tr>

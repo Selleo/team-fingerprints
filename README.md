@@ -1,4 +1,4 @@
-## team-fingerprints
+##Selleo Team Fingerprints
 
 [![untitled](https://teamfingerprints.selleo.com/fingerprints.logo.png)](https://teamfingerprints.selleo.com/)
 

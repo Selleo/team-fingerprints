@@ -60,6 +60,7 @@ const Surveys = () => {
             <th>title</th>
             <th>is public</th>
             <th>is archived</th>
+            <th>questions</th>
             <th>actions</th>
           </tr>
         </thead>

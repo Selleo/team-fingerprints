@@ -79,63 +79,6 @@ const SurveyForm = ({
         onChange={handleChange("title")}
       />
 
-      {isUpdate && !initialValues.isPublic && (
-        <>
-          <ModalConfirmTrigger
-            modalMessage={
-              !values.isPublic
-                ? "Are you sure you want to public this survey?"
-                : "Are you sure you want to unpublic this survey?"
-            }
-            onConfirm={() => {
-              setValues({ ...values, isPublic: !values.isPublic });
-              setTouched({ isPublic: true });
-            }}
-            renderTrigger={(setModalVisible) => (
-              <Switch
-                checked={values.isPublic}
-                onChange={() => {
-                  setModalVisible(true);
-                }}
-                color="red"
-                label="public"
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            )}
-          />
-          {values.isPublic && (
-            <Alert icon={<BellIcon />} title="Warning!" color="red">
-              Remember! Public property can be changed only once!
-            </Alert>
-          )}
-        </>
-      )}
-
-      {isUpdate && (
-        <ModalConfirmTrigger
-          modalMessage={
-            values.archived
-              ? "Are you sure you want to unarchive this survey?"
-              : "Are you sure you want to archive this survey?"
-          }
-          onConfirm={() => {
-            setValues({ ...values, archived: !values.archived });
-            setTouched({ archived: true });
-          }}
-          renderTrigger={(setModalVisible) => (
-            <Checkbox
-              checked={values.archived}
-              onChange={() => {
-                setModalVisible(true);
-              }}
-              color="dark"
-              label="archive"
-              style={{ marginTop: "15px" }}
-            />
-          )}
-        />
-      )}
-
       <Button className={classes.submitButton} type="submit">
         {createMutation.isLoading || updateMutation.isLoading
           ? "Loading"

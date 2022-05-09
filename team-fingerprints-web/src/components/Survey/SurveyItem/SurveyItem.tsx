@@ -45,24 +45,38 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
     }
   );
 
+  const updateMutation = useMutation(
+    (survey: Partial<FullSurvey>) => {
+      return axios.patch<Partial<FullSurvey>>(`/surveys/${survey._id}`, survey);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["surveysAll"]);
+      },
+      onError: onErrorWithTitle("Can not update survey"),
+    }
+  );
+
   return (
     <>
       <tr key={item._id}>
         <td>{item.title}</td>
         <td>{item.isPublic ? "public" : "not public"}</td>
         <td>{item.archived ? "archived" : "not archived"}</td>
+        <td>{item.amountOfQuestions}</td>
         <td>
           <Button
             onClick={() => navigate(`/admin/survey/${item._id}`)}
             color="green"
-          >
-            Show
-          </Button>
-          <Button
-            style={{ marginLeft: "10px", opacity: item.isPublic ? ".3" : "1" }}
-            onClick={() => setModalVisible(true)}
+            disabled={item.isPublic}
           >
             Edit
+          </Button>
+          <Button
+            style={{ marginLeft: "10px" }}
+            onClick={() => setModalVisible(true)}
+          >
+            Edit Title
           </Button>
           <Button
             style={{ marginLeft: "10px" }}
@@ -70,22 +84,67 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
           >
             Duplicate
           </Button>
+          <ModalConfirmTrigger
+            modalMessage={
+              item.archived
+                ? "Are you sure you want to unarchive this survey?"
+                : "Are you sure you want to archive this survey?"
+            }
+            onConfirm={() => {
+              {
+                updateMutation.mutate({
+                  _id: item._id,
+                  archived: !item.archived,
+                });
+              }
+            }}
+            renderTrigger={(setModalVisible) => (
+              <Button
+                onClick={() => setModalVisible(true)}
+                style={{ marginLeft: "10px" }}
+                color={item.archived ? "pink" : "gray"}
+              >
+                {item.archived ? "Unarchive" : "Archive"}
+              </Button>
+            )}
+          />
           {!item.isPublic && (
-            <ModalConfirmTrigger
-              modalMessage="Are you sure you want to delete this survey?"
-              onConfirm={() => {
-                deleteMutation.mutate(item._id);
-              }}
-              renderTrigger={(setModalVisible) => (
-                <Button
-                  style={{ marginLeft: "10px" }}
-                  onClick={() => setModalVisible(true)}
-                  color="red"
-                >
-                  Delete
-                </Button>
-              )}
-            />
+            <>
+              <ModalConfirmTrigger
+                modalMessage="Are you sure you want to delete this survey?"
+                onConfirm={() => {
+                  deleteMutation.mutate(item._id);
+                }}
+                renderTrigger={(setModalVisible) => (
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => setModalVisible(true)}
+                    color="red"
+                  >
+                    Delete
+                  </Button>
+                )}
+              />
+              <ModalConfirmTrigger
+                modalMessage="Are you sure you want to publish this survey?"
+                onConfirm={() => {
+                  updateMutation.mutate({
+                    _id: item._id,
+                    isPublic: true,
+                  });
+                }}
+                renderTrigger={(setModalVisible) => (
+                  <Button
+                    onClick={() => setModalVisible(true)}
+                    style={{ marginLeft: "10px" }}
+                    disabled={item.amountOfQuestions < 1}
+                    color="green"
+                  >
+                    Publish
+                  </Button>
+                )}
+              />
+            </>
           )}
         </td>
       </tr>

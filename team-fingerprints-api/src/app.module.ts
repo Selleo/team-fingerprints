@@ -1,5 +1,5 @@
 import { CacheModule, Module } from '@nestjs/common';
-import { RouterModule } from '@nestjs/core';
+import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryModule } from './survey/category/category.module';
 import { QuestionModule } from './survey/category/trend/question/question.module';
@@ -27,6 +27,7 @@ import {
 import { SurveyFiltersModule } from './survey-filters/survey-filters.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { RoleModule } from './role/role.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -34,6 +35,10 @@ import { RoleModule } from './role/role.module';
     MongooseModule.forRootAsync(mongooseModuleConfig),
     BullModule.forRootAsync(bullModuleConfig),
     RouterModule.register(routes),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 20,
+    }),
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
@@ -63,6 +68,12 @@ import { RoleModule } from './role/role.module';
     FilterTemplateModule,
     SurveyFiltersModule,
     RoleModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

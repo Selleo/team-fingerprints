@@ -1,5 +1,5 @@
 @import 'vendor/normalize'
-
+@import 'base/_breakpoints'
 @import 'base/variables'
 @import 'base/mixins'
 
@@ -7,6 +7,10 @@
   main
     margin-left: 85px
     margin-right: 85px
+
+    @include media-breakpoint-down(sm)
+      margin: 0 20px
+      padding-left: 0
 
 .svg-background
   position: absolute

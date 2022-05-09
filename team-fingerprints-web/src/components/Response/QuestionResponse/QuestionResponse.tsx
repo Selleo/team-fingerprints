@@ -54,7 +54,7 @@ export default function QuestionResponse({
 
   const dotPosition = (value: any) => {
     const x = value - 1;
-    const result = (x / (OPTIONS.length - 1)) * 100 + "%";
+    const result = (x / (OPTIONS.length - 1)) * 100;
 
     return result;
   };
@@ -172,9 +172,8 @@ export default function QuestionResponse({
       <div className="survey-response__survey__answers">
         {OPTIONS.map((option) => (
           <label
-            className="survey-response__survey__answers__wrapper"
+            className={`survey-response__survey__answers__wrapper offset-${dotPosition(option.value)}`}
             htmlFor={option.value}
-            style={{ left: dotPosition(option.value) }}
           >
             <span className="survey-response__survey__answers__label">
               {option.label}
@@ -200,11 +199,10 @@ export default function QuestionResponse({
         ))}
         {liveValue && (
           <div
-            className="survey-response__survey__answers--checked"
+            className={`survey-response__survey__answers--checked offset-${dotPosition(liveValue)}`}
             onClick={() => {
               setAndSaveNewValue("");
             }}
-            style={{ left: dotPosition(liveValue) }}
           ></div>
         )}
       </div>
@@ -212,6 +210,6 @@ export default function QuestionResponse({
         <div>{questionIndex > 0 && previousButton()}</div>
         <div>{liveValue && nextStep()}</div>
       </div>
-    </div>
+    </div >
   );
 }

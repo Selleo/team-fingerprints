@@ -24,8 +24,8 @@ const AppHeader = () => {
       {user?.email && (
         <div className="header__menu">
           <img alt="avatar" src={user.picture} />
-          <span>{user?.email}</span>
-          <ChevronDownIcon />
+          <span className="header__menu__user">{user?.email}</span>
+          <ChevronDownIcon className="header__menu__icon" />
           <div className="header__menu__submenu">
             <button
               onClick={() => {

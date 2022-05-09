@@ -1,11 +1,15 @@
 @import 'styles/base/variables'
 @import 'styles/base/mixins'
+@import 'styles/base/_breakpoints.sass'
 
 .header
   border-bottom: 2px #ffffff0d solid
   display: flex
-  margin-left: 96px
-  margin-right: 96px
+  margin: 0 96px
+  justify-content: space-between
+
+  @include media-breakpoint-down(sm)
+    margin: 0 30px
 
   &__branding
     flex: 1
@@ -26,16 +30,29 @@
     box-sizing: border-box
     display: flex
     height: 68px
-    min-width: 200px
     padding-left: 20px
     padding-right: 16px
     position: relative
+
+    @include media-breakpoint-down(sm)
+      min-width: 50px
+      border: none
+      padding: 0 10px
+
+      &__user
+        display: none
+
+      &__icon
+        display: none
 
     img
       width: 42px
       height: 42px
       border-radius: 21px
       margin-right: 18px
+
+      @include media-breakpoint-down(sm)
+        margin-right: 0
 
     span
       font-size: 14px
@@ -84,12 +101,9 @@
           display: flex
           justify-content: center
 
-
         &:hover
           background-color: rgba(255, 255, 255, 0.1)
           padding-left: 30px
-
-
 
     &:hover
       background-color: rgba(255, 255, 255, 0.1)

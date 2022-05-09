@@ -16,6 +16,7 @@ import { UserModel } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
 import {
   Category,
+  DetailQuery,
   Role,
   SurveyCompletionStatus,
   Trend,
@@ -43,7 +44,7 @@ export class SurveyResultService {
     private readonly tfConfigService: TfConfigService,
   ) {}
 
-  async getAvgResultForAllCompanies(surveyId: string, queries: any) {
+  async getAvgResultForAllCompanies(surveyId: string, queries: DetailQuery) {
     const usersIds = await this.getUsersIds();
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');
@@ -78,7 +79,7 @@ export class SurveyResultService {
   async getAvgResultForCompany(
     surveyId: string,
     companyId: string,
-    queries: any,
+    queries: DetailQuery,
   ) {
     const usersIds = await this.getUsersIds({ companyId });
     if (!usersIds || usersIds.length <= 0)
@@ -91,7 +92,11 @@ export class SurveyResultService {
     return await this.countPoints(surveyId, filteredUsersIds);
   }
 
-  async getAvgResultForTeam(surveyId: string, teamId: string, queries: any) {
+  async getAvgResultForTeam(
+    surveyId: string,
+    teamId: string,
+    queries: DetailQuery,
+  ) {
     const usersIds = await this.getUsersIds({ teamId });
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');

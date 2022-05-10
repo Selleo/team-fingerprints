@@ -37,6 +37,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     RouterModule.register(routes),
     ThrottlerModule.forRoot({
       ttl: 60,
+      limit: 60,
     }),
     CacheModule.registerAsync({
       isGlobal: true,

@@ -24,9 +24,9 @@ const AppHeader = () => {
       {user?.email && (
         <div className="header__menu">
           <img alt="avatar" src={user.picture} />
-          <span className="header__menu__user">{user?.email}</span>
-          <ChevronDownIcon className="header__menu__icon" />
-          <div className="header__menu__submenu">
+          <span className="header__email">{user?.email}</span>
+          <ChevronDownIcon className="header__icon" />
+          <div className="header__submenu">
             <button
               onClick={() => {
                 navigate("/");

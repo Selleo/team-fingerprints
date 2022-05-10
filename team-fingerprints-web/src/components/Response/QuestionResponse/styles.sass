@@ -1,12 +1,10 @@
-@import 'styles/base/variables'
-@import 'styles/base/_breakpoints.sass'
+@import 'styles/application'
 
-.survey-response__survey
-  width: 874px
-  margin: 0 auto
+.survey-response
 
-  @include media-breakpoint-down(sm)
-    width: 100%
+  &__survey
+    width: 60%
+    margin: 0 auto
 
   &__header
     display: flex
@@ -33,10 +31,6 @@
     margin-bottom: 100px
     color: #D0D0D0
 
-    @include media-breakpoint-down(sm)
-      font-size: 20px
-      margin-bottom: 40px
-
   &__answers
     display: flex
     justify-content: space-between
@@ -44,11 +38,6 @@
     position: relative
     margin: 0 30px
     margin-bottom: 70px
-
-    @include media-breakpoint-down(sm)
-      height: 200px
-      margin-left: 0
-      margin-bottom: 100px
 
     &::after
       border-top: 5px solid #4F4F4F
@@ -59,9 +48,6 @@
       left: 0px
       top: 82px
 
-      @include media-breakpoint-down(sm)
-        display: none
-
     &__wrapper
       display: flex
       flex-direction: column
@@ -70,47 +56,22 @@
       position: absolute
       transform: translateX(-50%)
 
-      @include media-breakpoint-down(sm)
-        flex-direction: row-reverse
-        justify-content: flex-end
-        transform: none
-
     .offset
 
       &-0
         left: 0%
 
-        @include media-breakpoint-down(sm)
-          top: 0%
-          left: 0
-
       &-25
         left: 25%
-
-        @include media-breakpoint-down(sm)
-          top: 25%
-          left: 0
 
       &-50
         left: 50%
 
-        @include media-breakpoint-down(sm)
-          top: 50%
-          left: 0
-
       &-75
         left: 75%
 
-        @include media-breakpoint-down(sm)
-          top: 75%
-          left: 0
-
       &-100
         left: 100%
-
-        @include media-breakpoint-down(sm)
-          top: 100%
-          left: 0
 
     &__label
       display: flex
@@ -120,10 +81,6 @@
       align-items: center
       height: 50px
       cursor: pointer
-
-      @include media-breakpoint-down(sm)
-        max-width: none
-        height: 35px
 
     &__label:hover + &__input
       border: 4px solid #32A89C
@@ -150,11 +107,6 @@
       transform: translateX(-50%)
       transition: left 300ms ease-out
       cursor: pointer
-
-      @include media-breakpoint-down(sm)
-        transition: top 300ms ease-out
-        transform: none
-        margin-left: -3px
 
   &__nav
     display: flex
@@ -210,3 +162,60 @@
     width: 0
   100%
     width: 100%
+
+
+@include media-breakpoint-down(sm)
+
+  .survey-response
+    margin-top: 40px
+
+    &__survey
+      width: 100%
+
+    &__title
+      font-size: 20px
+      margin-bottom: 40px
+
+    &__answers
+      height: 200px
+      margin-left: 0
+      margin-bottom: 100px
+
+      &::after
+        display: none
+
+      &__wrapper
+        flex-direction: row-reverse
+        justify-content: flex-end
+        transform: none
+
+      .offset
+
+        &-0
+          top: 0%
+          left: 0
+
+        &-25
+          top: 25%
+          left: 0
+
+        &-50
+          top: 50%
+          left: 0
+
+        &-75
+          top: 75%
+          left: 0
+
+        &-100
+          top: 100%
+          left: 0
+
+      &__label
+        max-width: none
+        height: 35px
+
+      &--checked
+        transition: top 300ms ease-out
+        transform: none
+        margin-left: -3px

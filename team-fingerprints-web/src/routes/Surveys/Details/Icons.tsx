@@ -20,7 +20,7 @@ export const TrendIcon = () => {
 
 export const SecondaryIcon = () => {
   return (
-    <ThemeIcon style={{ backgroundColor: "#48bd66" }} size={30} radius="xl">
+    <ThemeIcon style={{ backgroundColor: "#FEC92D" }} size={30} radius="xl">
       <Text style={{ color: "#2b2b2b" }}>S</Text>
     </ThemeIcon>
   );
@@ -28,7 +28,7 @@ export const SecondaryIcon = () => {
 
 export const PrimaryIcon = () => {
   return (
-    <ThemeIcon style={{ backgroundColor: "#FEC92D" }} size={30} radius="xl">
+    <ThemeIcon style={{ backgroundColor: "#48bd66" }} size={30} radius="xl">
       <Text style={{ color: "#2b2b2b" }}>P</Text>
     </ThemeIcon>
   );

@@ -24,25 +24,25 @@
     padding-right: 16px
     position: relative
 
-    img
-      width: 42px
-      height: 42px
-      border-radius: 21px
-      margin-right: 18px
-
-    span
-      font-size: 14px
-      line-height: 24px
-      font-weight: 700
-      margin-right: 4px
-      flex: 1
-
     &:hover
       background-color: rgba(255, 255, 255, 0.1)
       transition: background-color 300ms ease-in
 
       .header__submenu
         display: flex
+
+  &__avatar
+    width: 42px
+    height: 42px
+    border-radius: 21px
+    margin-right: 18px
+
+  &__email
+    font-size: 14px
+    line-height: 24px
+    font-weight: 700
+    margin-right: 4px
+    flex: 1
 
   &__submenu
     position: absolute
@@ -61,33 +61,32 @@
     padding-top: 15px
     flex-direction: column
 
-    button
-      all: unset
-      height: 38px
-      padding-left: 16px
-      padding-right: 22px
-      position: relative
-      display: flex
-      align-items: center
-      transition: padding-left 400ms ease-in
-      +ellipsis
+  &__button
+    all: unset
+    height: 38px
+    padding-left: 16px
+    padding-right: 22px
+    position: relative
+    display: flex
+    align-items: center
+    transition: padding-left 400ms ease-in
+    +ellipsis
 
-      span
-        font-size: 12px
-        font-weight: 400
-        color: rgba(255, 255, 255, 0.64)
-        flex: 1
-        text-align: left
+  &__name
+    font-size: 12px
+    font-weight: 400
+    color: rgba(255, 255, 255, 0.64)
+    flex: 1
+    text-align: left
 
-      .svg-wrap
-        flex: 0 0 29px
-        display: flex
-        justify-content: center
+  &__icon
+    flex: 0 0 29px
+    display: flex
+    justify-content: center
 
-      &:hover
-        background-color: rgba(255, 255, 255, 0.1)
-        padding-left: 30px
-
+    &:hover
+      background-color: rgba(255, 255, 255, 0.1)
+      padding-left: 30px
 
 @include media-breakpoint-down(sm)
 
@@ -99,11 +98,11 @@
       border: none
       padding: 0 10px
 
-      img
-        margin-right: 0
+    &__avatar
+      margin-right: 0
 
     &__email
       display: none
 
-    &__icon
+    &__arrow
       display: none

@@ -1,7 +1,6 @@
 =box-shadow($color)
   box-shadow: 0 5px 15px rgba($color, .2)
 
-// DEPRECATED - you should not use floats for columns anymore
 =clearfix
   &:after
     clear: both
@@ -13,15 +12,12 @@
   text-overflow: ellipsis
   white-space: nowrap
 
-// UNOFF - watch the browser support for this one here https://caniuse.com/#search=line-clamp
 =ellipsis-multiline($lines: 3)
-  /* autoprefixer: ignore next */
   -webkit-box-orient: vertical
   -webkit-line-clamp: $lines
   display: -webkit-box
   overflow: hidden
 
-// experimental hover device detection, if you use this IE will not get any hovers
 =hover
   @media (hover: hover) and (pointer: fine)
     &:hover
@@ -50,4 +46,3 @@
   right: $right
   bottom: $bottom
   left: $left
-  

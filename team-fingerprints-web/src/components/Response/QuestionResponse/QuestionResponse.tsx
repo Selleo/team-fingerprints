@@ -101,7 +101,7 @@ export default function QuestionResponse({
   const previousButton = () => {
     return (
       <button
-        className="survey-response__nav__button --previous"
+        className="survey-response__button --previous"
         onClick={() => {
           changeQuestion(questionIndex - 1);
         }}
@@ -114,7 +114,7 @@ export default function QuestionResponse({
   const nextButton = () => {
     return (
       <button
-        className="survey-response__nav__button --next"
+        className="survey-response__button --next"
         onClick={() => {
           changeQuestion(questionIndex + 1);
         }}
@@ -137,7 +137,7 @@ export default function QuestionResponse({
               setModalVisible(true);
             }}
             disabled={disabled}
-            className="survey-response__nav__button--submit"
+            className="survey-response__button--submit"
           >
             Submit responses
           </button>
@@ -172,16 +172,14 @@ export default function QuestionResponse({
       <div className="survey-response__answers">
         {OPTIONS.map((option) => (
           <label
-            className={`survey-response__answers__wrapper offset-${dotPosition(
+            className={`survey-response__wrapper offset-${dotPosition(
               option.value
             )}`}
             htmlFor={option.value}
           >
-            <span className="survey-response__answers__label">
-              {option.label}
-            </span>
+            <span className="survey-response__label">{option.label}</span>
             <div
-              className={classNames("survey-response__answers__input", {
+              className={classNames("survey-response__input", {
                 "--checked": option.value == liveValue,
               })}
             ></div>
@@ -201,7 +199,7 @@ export default function QuestionResponse({
         ))}
         {liveValue && (
           <div
-            className={`survey-response__answers--checked offset-${dotPosition(
+            className={`survey-response--checked offset-${dotPosition(
               liveValue
             )}`}
             onClick={() => {

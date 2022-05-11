@@ -33,7 +33,7 @@ const createFilterTemplateInCompany = async (
   companyId: string,
 ) => {
   const filterTemplateData = {
-    _id: new Types.ObjectId().toString(),
+    id: new Types.ObjectId().toString(),
     country: 'Croatia',
     name: 'Test template filter',
     pointColor: '#123456',

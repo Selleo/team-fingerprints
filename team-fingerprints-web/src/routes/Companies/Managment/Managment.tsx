@@ -115,7 +115,13 @@ const CompaniesManagment = () => {
             shape={company?.pointShape}
           />
         </h1>
-
+        <Button
+          onClick={() => navigate(`surveys`)}
+          className={classes.addButton}
+          color="green"
+        >
+          Show Results
+        </Button>
         <Button
           onClick={() => setEditModalVisible(true)}
           className={classes.addButton}

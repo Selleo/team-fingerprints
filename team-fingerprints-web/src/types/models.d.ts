@@ -140,6 +140,7 @@ export type AdditionalData = {
   icon: Shape;
   color: string;
   categories: CategoryResults[];
+  _id?: string;
   id: string;
   name: string;
 };

@@ -6,9 +6,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-18.04
-    defaults:
-      run:
-        working-directory: ./team-fingerprints-web
     strategy:
       matrix:
         node_version: [14]
@@ -27,4 +24,4 @@ jobs:
       - name: run CI
         run: |
           npm install
-          npm run lint
+          npm run lint-web

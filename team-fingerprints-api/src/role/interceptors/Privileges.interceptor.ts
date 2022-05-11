@@ -83,19 +83,15 @@ export class PrivilegesInterceptor implements NestInterceptor {
     }
 
     // Handle SUPER_ADMIN
-    if (
-      (!companyId || companyId.length <= 0) &&
-      (!teamId || teamId.length <= 0)
-    ) {
-      const superAdminRoleDocument = await this.roleService.findRoleDocument({
-        email,
-        role: RoleType.SUPER_ADMIN,
-      });
 
-      if (superAdminRoleDocument) {
-        request.roleDocument = superAdminRoleDocument;
-        return handler.handle();
-      }
+    const superAdminRoleDocument = await this.roleService.findRoleDocument({
+      email,
+      role: RoleType.SUPER_ADMIN,
+    });
+
+    if (superAdminRoleDocument) {
+      request.roleDocument = superAdminRoleDocument;
+      return handler.handle();
     }
 
     throw new UnauthorizedException();

@@ -2,8 +2,10 @@
   "name": "team-fingerprints",
   "version": "0.0.1",
   "scripts": {
-    "postinstall": "npm install --prefix team-fingerprints-api",
-    "build": "npm run build --prefix team-fingerprints-api"
+    "postinstall": "npm install --prefix team-fingerprints-api && npm install --prefix team-fingerprints-common && npm install --prefix team-fingerprints-web",
+    "build": "npm run build --prefix team-fingerprints-api",
+    "lint-web": "npm run lint --prefix team-fingerprints-web",
+    "tsc-web": "npm run tsc --prefix team-fingerprints-web"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0"

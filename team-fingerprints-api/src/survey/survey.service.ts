@@ -49,7 +49,7 @@ export class SurveyService {
             userId,
             survey._id.toString(),
           );
-        return { completionStatus, ...(survey as any)._doc };
+        return { completionStatus, ...survey.toObject() };
       },
     );
 

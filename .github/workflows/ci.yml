@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        node_version: [14]
+        node_version: [16.13.2]
         python: [3.8]
 
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node_version: ${{ matrix.node_version }}
       - name: Use Python ${{ matrix.python }}

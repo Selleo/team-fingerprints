@@ -20,11 +20,12 @@ import {
 import {
   UserSurveyAnswer,
   SurveyCompletionStatus,
+  DetailQuery,
 } from 'team-fingerprints-common';
 
 const createCompanyWithTeam = async (
   companyModel: Model<CompanyModel>,
-  data: any,
+  data: unknown,
 ): Promise<CompanyModel> => {
   return await (await companyModel.create(data)).save();
 };
@@ -123,7 +124,7 @@ const userDatailsData = [
 const saveDetailsInUser = async (
   userModel: Model<UserModel>,
   userId: string,
-  userDetails: any,
+  userDetails: DetailQuery,
 ) => {
   return await userModel.findByIdAndUpdate(
     userId,

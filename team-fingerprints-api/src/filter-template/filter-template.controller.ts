@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { Roles } from 'src/role/decorators/roles.decorator';
-import { RoleType } from 'team-fingerprints-common';
+import { DetailQuery, RoleType } from 'team-fingerprints-common';
 import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
 import { FilterTemplateService } from './filter-template.service';
 
@@ -29,7 +29,7 @@ export class FilterTemplateController {
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
-    @Body('templateFilter') templateFilter: any,
+    @Body('templateFilter') templateFilter: DetailQuery,
     @Body('templateFilterConfig')
     templateFilterConfig: TemplateFilterConfigDto,
   ) {
@@ -45,7 +45,7 @@ export class FilterTemplateController {
   async updateFilterTemplateForCompany(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
-    @Body('templateFilter') templateFilter: any,
+    @Body('templateFilter') templateFilter: DetailQuery,
     @Body('templateFilterConfig')
     templateFilterConfig: TemplateFilterConfigDto,
   ) {
@@ -86,7 +86,7 @@ export class FilterTemplateController {
   async createFilterTemplateForTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('templateFilter') templateFilter: any,
+    @Body('templateFilter') templateFilter: DetailQuery,
     @Body('templateFilterConfig')
     templateFilterConfig: TemplateFilterConfigDto,
   ) {
@@ -104,7 +104,7 @@ export class FilterTemplateController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
-    @Body('templateFilter') templateFilter: any,
+    @Body('templateFilter') templateFilter: DetailQuery,
     @Body('templateFilterConfig')
     templateFilterConfig: TemplateFilterConfigDto,
   ) {

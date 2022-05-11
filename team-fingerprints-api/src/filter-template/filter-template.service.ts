@@ -5,7 +5,7 @@ import { CompanyModel } from 'src/company/models/company.model';
 import * as mongoose from 'mongoose';
 import { TeamModel } from 'src/company/models/team.model';
 import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
-import { FilterTemplate } from 'team-fingerprints-common';
+import { DetailQuery, FilterTemplate } from 'team-fingerprints-common';
 
 @Injectable()
 export class FilterTemplateService {
@@ -30,7 +30,7 @@ export class FilterTemplateService {
   }
 
   async createFilterTemplate(
-    templateFilterData: { [key: string]: string },
+    templateFilterData: DetailQuery,
     templateFilterConfig: TemplateFilterConfigDto,
     companyId: string,
     teamId: string | null = null,
@@ -72,7 +72,7 @@ export class FilterTemplateService {
   }
 
   async updateFilterTemplate(
-    templateFilterData: { [key: string]: string },
+    templateFilterData: DetailQuery,
     templateFilterConfig: TemplateFilterConfigDto,
     filterId: string,
     companyId: string,

@@ -25,7 +25,7 @@ import {
 
 export const createCompanyWithTeam = async (
   companyModel: Model<CompanyModel>,
-  data: any,
+  data: unknown,
 ): Promise<CompanyModel> => {
   return await (await companyModel.create(data)).save();
 };

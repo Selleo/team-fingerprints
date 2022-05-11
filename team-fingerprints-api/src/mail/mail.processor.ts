@@ -29,7 +29,7 @@ export class MailProcessor {
   }
 
   @OnQueueCompleted()
-  onComplete(job: Job, result: any) {
+  onComplete(job: Job, result: unknown) {
     this.logger.log(
       `Processor:@OnQueueCompleted - Completed job ${job.id} of type ${
         job.name
@@ -38,7 +38,7 @@ export class MailProcessor {
   }
 
   @OnQueueFailed()
-  onError(job: Job<any>, error: any) {
+  onError(job: Job<any>, error: Error) {
     this.logger.error(
       `Processor:@OnQueueFailed - Failed job ${job.id} of type ${job.name}: ${error.stack}`,
       error.stack,

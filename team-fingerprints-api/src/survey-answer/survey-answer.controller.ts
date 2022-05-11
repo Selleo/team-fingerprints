@@ -13,7 +13,7 @@ export class SurveyAnswerController {
 
   @Get('/:surveyId')
   async getUserAnswers(
-    @CurrentUserId(ValidateObjectId) userId: any,
+    @CurrentUserId(ValidateObjectId) userId: string,
     @Param('surveyId', ValidateObjectId) surveyId: string,
   ): Promise<UserModel> {
     return await this.surveyAnswerService.getUserAnswers(userId, surveyId);

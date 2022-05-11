@@ -1,5 +1,5 @@
 import axios from "axios";
-import { TrashIcon } from "@modulz/radix-icons";
+import { TrashIcon } from "@radix-ui/react-icons";
 import { Button } from "@mantine/core";
 import { useMutation } from "react-query";
 import { queryClient } from "../../../App";

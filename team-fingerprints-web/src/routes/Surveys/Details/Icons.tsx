@@ -1,4 +1,4 @@
-import { GridIcon, SliderIcon } from "@modulz/radix-icons";
+import { GridIcon, SliderIcon } from "@radix-ui/react-icons";
 import { Text } from "@mantine/core";
 import { ThemeIcon } from "@mantine/core";
 

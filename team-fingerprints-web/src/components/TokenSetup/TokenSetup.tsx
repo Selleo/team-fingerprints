@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { FC, useEffect, useState } from "react";
 
-export const TokenSetup: FC = ({ children }) => {
+export const TokenSetup: FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
   const [tokenPresent, setTokenPresent] = useState(false);
 

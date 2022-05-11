@@ -24,7 +24,7 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
   }, [item]);
 
   const onChangeCallback = useCallback(
-    async (e) => {
+    async (e: string) => {
       await handleChange(item.filterPath)(e);
       await handleSubmit();
     },

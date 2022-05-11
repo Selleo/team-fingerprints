@@ -31,7 +31,7 @@ export const UserManagment = () => {
       <Title>Remove user by email</Title>
       <TextInput
         placeholder="Email to remove"
-        onChange={(e) => setEmail(e.currentTarget.value as any)}
+        onChange={(e) => setEmail(e.currentTarget.value)}
         value={email}
       ></TextInput>
 

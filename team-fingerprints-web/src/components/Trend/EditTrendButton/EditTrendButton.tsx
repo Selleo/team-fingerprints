@@ -1,5 +1,5 @@
 import { Button, Modal } from "@mantine/core";
-import { Pencil1Icon } from "@modulz/radix-icons";
+import { Pencil1Icon } from "@radix-ui/react-icons";
 import React, { useState } from "react";
 import { Trend } from "../../../types/models";
 import TrendForm from "../TrendForm";

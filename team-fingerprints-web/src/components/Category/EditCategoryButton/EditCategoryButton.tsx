@@ -1,5 +1,5 @@
 import { Button, Modal } from "@mantine/core";
-import { Pencil1Icon } from "@modulz/radix-icons";
+import { Pencil1Icon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { Category } from "../../../types/models";
 import CategoryForm from "../CategoryForm";

@@ -177,8 +177,8 @@ export type FormData = {
 
 export type ProfileSelectorProp = {
   item: Filter;
-  handleChange: (e: string | ChangeEvent<any>) => any;
-  handleSubmit: () => void;
+  handleChange: (e: string) => Promise;
+  handleSubmit: () => Promise;
   values: FormData;
 };
 

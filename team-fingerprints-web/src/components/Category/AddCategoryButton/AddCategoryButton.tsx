@@ -1,5 +1,5 @@
 import { Button, Modal } from "@mantine/core";
-import { PlusCircledIcon } from "@modulz/radix-icons";
+import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import CategoryForm from "../CategoryForm";
 

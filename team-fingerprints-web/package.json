@@ -43,7 +43,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "tsc": "tsc --noEmit",
-    "link": "eslint src/**/*.ts{,x}"
+    "lint": "eslint src/**/*.ts{,x}"
   },
   "eslintConfig": {
     "extends": [

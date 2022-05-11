@@ -173,32 +173,32 @@ export default function Edit() {
 
   const setDataForCompany =
     (role: ComplexRole) =>
-      (companyId: string, categoriesArray: any[], hidden: boolean) => {
-        setCompaniesResult((prev) => ({
-          ...prev,
-          [companyId]: { categoriesArray, role, team: false, hidden },
-        }));
-      };
+    (companyId: string, categoriesArray: any[], hidden: boolean) => {
+      setCompaniesResult((prev) => ({
+        ...prev,
+        [companyId]: { categoriesArray, role, team: false, hidden },
+      }));
+    };
 
   const setDataForTeam =
     (role: ComplexRole) =>
-      (
-        _companyId: string,
-        teamInfo: SimpleTeamType,
-        categoriesArray: any[],
-        hidden: boolean
-      ) => {
-        setCompaniesResult((prev) => ({
-          ...prev,
-          [teamInfo.teamId]: {
-            categoriesArray,
-            role,
-            team: true,
-            hidden: !usersTeams?.find((el) => el === teamInfo.teamId),
-            teamInfo,
-          },
-        }));
-      };
+    (
+      _companyId: string,
+      teamInfo: SimpleTeamType,
+      categoriesArray: any[],
+      hidden: boolean
+    ) => {
+      setCompaniesResult((prev) => ({
+        ...prev,
+        [teamInfo.teamId]: {
+          categoriesArray,
+          role,
+          team: true,
+          hidden: !usersTeams?.find((el) => el === teamInfo.teamId),
+          teamInfo,
+        },
+      }));
+    };
 
   const surveyResults = useMemo(
     () => (
@@ -341,7 +341,7 @@ export default function Edit() {
           )}
         </>
       ))}
-      { }
+      {}
     </>
   );
 }

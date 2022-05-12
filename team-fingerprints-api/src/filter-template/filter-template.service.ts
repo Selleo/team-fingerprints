@@ -14,11 +14,20 @@ export class FilterTemplateService {
     private readonly companyModel: Model<CompanyModel>,
   ) {}
 
-  async getFilterTemplates(companyId: string, teamId: string | null = null) {
+  async getFilterTemplates(
+    surveyId: string,
+    companyId: string,
+    teamId: string | null = null,
+  ) {
     if (!teamId || teamId.length <= 0) {
-      const { filterTemplates } = await this.companyModel.findById(companyId);
-      return filterTemplates;
+      const company = await this.companyModel.findById(companyId);
+      const filterTemplates = company.filterTemplates.filter(Boolean);
+      if (!filterTemplates || filterTemplates.length <= 0) return [];
+      return filterTemplates.filter(
+        (template) => template.surveyId === surveyId,
+      );
     }
+
     const { teams } = await this.companyModel.findById(companyId, {
       teams: 1,
     });
@@ -26,18 +35,23 @@ export class FilterTemplateService {
     const team: TeamModel = teams.find(
       (team) => team._id.toString() === teamId,
     );
-    return team.filterTemplates;
+
+    return team.filterTemplates.filter(
+      (template) => template.surveyId === surveyId,
+    );
   }
 
   async createFilterTemplate(
-    templateFilterData: DetailQuery,
+    surveyId: string,
+    filters: DetailQuery,
     templateFilterConfig: TemplateFilterConfigDto,
     companyId: string,
     teamId: string | null = null,
   ): Promise<TeamModel> {
-    const filterTemplates = {
+    const filterTemplate = {
       _id: new mongoose.Types.ObjectId().toString(),
-      ...templateFilterData,
+      surveyId,
+      filters,
     };
 
     if (!teamId || teamId.length <= 0) {
@@ -45,7 +59,7 @@ export class FilterTemplateService {
         { _id: companyId },
         {
           $push: {
-            filterTemplates: { ...filterTemplates, ...templateFilterConfig },
+            filterTemplates: { ...filterTemplate, ...templateFilterConfig },
           },
         },
         { new: true },
@@ -59,7 +73,7 @@ export class FilterTemplateService {
         {
           $push: {
             'teams.$.filterTemplates': {
-              ...filterTemplates,
+              ...filterTemplate,
               ...templateFilterConfig,
             },
           },
@@ -72,15 +86,17 @@ export class FilterTemplateService {
   }
 
   async updateFilterTemplate(
-    templateFilterData: DetailQuery,
+    surveyId: string,
+    filters: DetailQuery,
     templateFilterConfig: TemplateFilterConfigDto,
     filterId: string,
     companyId: string,
     teamId: string | null = null,
   ) {
     const newFilterTemplate = {
-      _id: new mongoose.Types.ObjectId(filterId).toString(),
-      ...templateFilterData,
+      surveyId,
+      _id: filterId,
+      filters,
     };
 
     if (!teamId || teamId.length <= 0) {
@@ -125,6 +141,7 @@ export class FilterTemplateService {
   }
 
   async removeFilterTemplate(
+    surveyId: string,
     filterId: string,
     companyId: string,
     teamId: string | null = null,
@@ -132,7 +149,7 @@ export class FilterTemplateService {
     if (!teamId || teamId.length <= 0) {
       const { filterTemplates } = await this.companyModel.findOneAndUpdate(
         { _id: companyId },
-        { $unset: { filterTemplates: { _id: filterId } } },
+        { $pull: { filterTemplates: { _id: filterId, surveyId } } },
         { new: true },
       );
       return filterTemplates;

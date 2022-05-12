@@ -17,99 +17,113 @@ import { FilterTemplateService } from './filter-template.service';
 export class FilterTemplateController {
   constructor(private readonly filterTemplateService: FilterTemplateService) {}
 
-  @Get('/:companyId/filters')
+  @Get('/:surveyId/companies/:companyId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getFilterTemplatesForCompany(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
   ) {
-    return await this.filterTemplateService.getFilterTemplates(companyId);
+    return await this.filterTemplateService.getFilterTemplates(
+      surveyId,
+      companyId,
+    );
   }
 
-  @Post('/:companyId/filters')
+  @Post('/:surveyId/companies/:companyId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForCompany(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
-    @Body('templateFilter') templateFilter: DetailQuery,
-    @Body('templateFilterConfig')
-    templateFilterConfig: TemplateFilterConfigDto,
+    @Body('filters') filters: DetailQuery,
+    @Body() templateFilterConfig: TemplateFilterConfigDto,
   ) {
     return await this.filterTemplateService.createFilterTemplate(
-      templateFilter,
+      surveyId,
+      filters,
       templateFilterConfig,
       companyId,
     );
   }
 
-  @Put('/:companyId/filters/:filterId')
+  @Put('/:surveyId/companies/:companyId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async updateFilterTemplateForCompany(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
-    @Body('templateFilter') templateFilter: DetailQuery,
-    @Body('templateFilterConfig')
-    templateFilterConfig: TemplateFilterConfigDto,
+    @Body('filters') filters: DetailQuery,
+    @Body() templateFilterConfig: TemplateFilterConfigDto,
   ) {
     return await this.filterTemplateService.updateFilterTemplate(
-      templateFilter,
+      surveyId,
+      filters,
       templateFilterConfig,
       filterId,
       companyId,
     );
   }
 
-  @Delete('/:companyId/filters/:filterId')
+  @Delete('/:surveyId/companies/:companyId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeFilterTemplateFromCompany(
-    @Param('companyId', ValidateObjectId) companyId: string,
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
+    @Param('companyId', ValidateObjectId) companyId: string,
   ) {
     return await this.filterTemplateService.removeFilterTemplate(
+      surveyId,
       filterId,
       companyId,
     );
   }
 
-  @Get('/:companyId/teams/:teamId/filters')
+  @Get('/:surveyId/companies/:companyId/teams/:teamId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async getFilterTemplatesForTeam(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
   ) {
     return await this.filterTemplateService.getFilterTemplates(
+      surveyId,
       companyId,
       teamId,
     );
   }
 
-  @Post('/:companyId/teams/:teamId/filters')
+  @Post('/:surveyId/companies/:companyId/teams/:teamId/filters')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async createFilterTemplateForTeam(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body('templateFilter') templateFilter: DetailQuery,
-    @Body('templateFilterConfig')
+    @Body('filters') filters: DetailQuery,
+    @Body()
     templateFilterConfig: TemplateFilterConfigDto,
   ) {
     return await this.filterTemplateService.createFilterTemplate(
-      templateFilter,
+      surveyId,
+      filters,
       templateFilterConfig,
       companyId,
       teamId,
     );
   }
 
-  @Put('/:companyId/teams/:teamId/filters/:filterId')
+  @Put('/:surveyId/companies/:companyId/teams/:teamId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async updateFilterTemplateForTeam(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
-    @Body('templateFilter') templateFilter: DetailQuery,
-    @Body('templateFilterConfig')
+    @Body('filters') filters: DetailQuery,
+    @Body()
     templateFilterConfig: TemplateFilterConfigDto,
   ) {
     return await this.filterTemplateService.updateFilterTemplate(
-      templateFilter,
+      surveyId,
+      filters,
       templateFilterConfig,
       filterId,
       companyId,
@@ -117,14 +131,16 @@ export class FilterTemplateController {
     );
   }
 
-  @Delete('/:companyId/teams/:teamId/filters/:filterId')
+  @Delete('/:surveyId/companies/:companyId/teams/:teamId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeFilterTemplateFromTeam(
+    @Param('surveyId', ValidateObjectId) surveyId: string,
+    @Param('filterId', ValidateObjectId) filterId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Param('filterId', ValidateObjectId) filterId: string,
   ) {
     return await this.filterTemplateService.removeFilterTemplate(
+      surveyId,
       filterId,
       companyId,
       teamId,

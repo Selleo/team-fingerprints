@@ -15,10 +15,10 @@ const SurveyItem = ({ item }: typeProps) => {
       onClick={() => navigate(`/response/${_id}`)}
     >
       <StatusIcon status={completionStatus} />
-      <span className="responses__survey__name">
+      <span className="responses__name">
         {title}
         {completionStatus === "new" && (
-          <span className="responses__survey__new-indicator">New</span>
+          <span className="responses__new-indicator">New</span>
         )}
       </span>
       <StatusInfo status={completionStatus} />

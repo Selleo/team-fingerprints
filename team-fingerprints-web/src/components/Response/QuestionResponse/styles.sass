@@ -1,6 +1,10 @@
-.survey-response__survey
-  width: 874px
-  margin: 0 auto
+@import 'styles/application'
+
+.survey-response
+
+  &__survey
+    width: 60%
+    margin: 0 auto
 
   &__header
     display: flex
@@ -44,97 +48,112 @@
       left: 0px
       top: 82px
 
-    &__wrapper
-      display: flex
-      flex-direction: column
-      align-items: center
-      gap: 21px
-      position: absolute
-      transform: translateX(-50%)
+  &__wrapper
+    display: flex
+    flex-direction: column
+    align-items: center
+    gap: 21px
+    position: absolute
+    transform: translateX(-50%)
 
-    &__label
-      display: flex
-      max-width: 35px
-      justify-content: center
-      text-align: center
-      align-items: center
-      height: 50px
-      cursor: pointer
+  .offset
 
-    &__label:hover + &__input
+    &-0
+      left: 0%
+
+    &-25
+      left: 25%
+
+    &-50
+      left: 50%
+
+    &-75
+      left: 75%
+
+    &-100
+      left: 100%
+
+  &__label
+    display: flex
+    max-width: 35px
+    justify-content: center
+    text-align: center
+    align-items: center
+    height: 50px
+    cursor: pointer
+
+  &__label:hover + &__input
+    border: 4px solid #32A89C
+
+  &__input
+    width: 28px
+    height: 28px
+    border-radius: 100%
+    background-color: #121212
+    border: 4px solid #4F4F4F
+    cursor: pointer
+
+    &:hover
       border: 4px solid #32A89C
 
-    &__input
-      width: 28px
-      height: 28px
-      border-radius: 100%
-      background-color: #121212
-      border: 4px solid #4F4F4F
-      cursor: pointer
-
-      &:hover
-        border: 4px solid #32A89C
-
-    &--checked
-      border: 8px solid #32A89C
-      width: 35px
-      height: 35px
-      border-radius: 100%
-      left: 25%
-      bottom: 8px
-      position: absolute
-      transform: translateX(-50%)
-      transition: left 300ms ease-out
-      cursor: pointer
+  &--checked
+    border: 8px solid #32A89C
+    width: 35px
+    height: 35px
+    border-radius: 100%
+    left: 25%
+    bottom: 8px
+    position: absolute
+    transform: translateX(-50%)
+    transition: left 300ms ease-out
+    cursor: pointer
 
   &__nav
     display: flex
     justify-content: space-between
 
-    &__button
-      display: flex
-      border: 1px solid #A9A9A9
+  &__button
+    display: flex
+    border: 1px solid #A9A9A9
+    background-color: #121212
+    border-radius: 12px
+    color: #A9A9A9
+    padding: 12px 16px
+    font-size: 16px
+    gap: 8px
+    cursor: pointer
+
+    &--submit
       background-color: #121212
-      border-radius: 12px
-      color: #A9A9A9
+      color: #2f9e44
+      border: 1px solid #2f9e44
       padding: 12px 16px
       font-size: 16px
-      gap: 8px
+      border-radius: 12px
       cursor: pointer
 
-      &--submit
-        background-color: #121212
-        color: #2f9e44
-        border: 1px solid #2f9e44
-        padding: 12px 16px
-        font-size: 16px
-        border-radius: 12px
-        cursor: pointer
+  .--previous
+    .left-arrow
+      position: relative
+      left: 0
 
-    .--previous
-      .left-arrow
-        position: relative
-        left: 0
+    &:hover .left-arrow
+      left: -8px
+      transition: left 300ms ease-out
 
-      &:hover .left-arrow
-        left: -8px
-        transition: left 300ms ease-out
+  .--next
+    border: 1px solid #32A89C
+    background-color: #121212
+    color: #32A89C
+    animation: next 300ms
 
-    .--next
-      border: 1px solid #32A89C
-      background-color: #121212
-      color: #32A89C
-      animation: next 300ms
+    .right-arrow
+      position: relative
+      left: 0
 
-      .right-arrow
-        position: relative
-        left: 0
-
-      &:hover .right-arrow
-        left: 8px
-        transition: left 300ms ease-out
-
-
+    &:hover .right-arrow
+      left: 8px
+      transition: left 300ms ease-out
 
 // animations
 
@@ -143,3 +162,59 @@
     width: 0
   100%
     width: 100%
+
+@include media-breakpoint-down(sm)
+
+  .survey-response
+    margin-top: 40px
+
+    &__survey
+      width: 100%
+
+    &__title
+      font-size: 20px
+      margin-bottom: 40px
+
+    &__answers
+      height: 200px
+      margin-left: 0
+      margin-bottom: 100px
+
+      &::after
+        display: none
+
+    &__wrapper
+      flex-direction: row-reverse
+      justify-content: flex-end
+      transform: none
+
+    .offset
+
+      &-0
+        top: 0%
+        left: 0
+
+      &-25
+        top: 25%
+        left: 0
+
+      &-50
+        top: 50%
+        left: 0
+
+      &-75
+        top: 75%
+        left: 0
+
+      &-100
+        top: 100%
+        left: 0
+
+    &__label
+      max-width: none
+      height: 35px
+
+    &--checked
+      transition: top 300ms ease-out
+      transform: none
+      margin-left: -3px

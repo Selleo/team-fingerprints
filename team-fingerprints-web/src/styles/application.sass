@@ -1,5 +1,5 @@
 @import 'vendor/normalize'
-
+@import 'base/breakpoints'
 @import 'base/variables'
 @import 'base/mixins'
 
@@ -7,6 +7,7 @@
   main
     margin-left: 85px
     margin-right: 85px
+    padding: 0
 
 .svg-background
   position: absolute
@@ -18,5 +19,11 @@
   display: flex
   justify-content: center
   z-index: -1
+
 .trapeze
   transform: rotate(45deg)
+
+@include media-breakpoint-down(sm)
+  .app-shell
+    main
+      margin: 0 20px

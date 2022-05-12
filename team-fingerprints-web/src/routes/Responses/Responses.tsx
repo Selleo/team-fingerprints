@@ -1,18 +1,18 @@
+import axios from "axios";
 import { useEffect, useMemo } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { isArray, isEmpty, times } from "lodash";
 import { Skeleton } from "@mantine/core";
-import axios from "axios";
 
 import { Survey } from "../../types/models";
 import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 
 import ResponseItem from "./ResponseItem";
 
-import "./styles.sass";
 import ErrorLoading from "../../components/ErrorLoading";
+import "./styles.sass";
 
 const Responses = () => {
   const navigation = useNavigate();
@@ -66,7 +66,7 @@ const Responses = () => {
     );
   }, [data, error, isLoading]);
 
-  //TODO map responses together with surveys
+  // TODO map responses together with surveys
 
   return (
     <div className="responses">

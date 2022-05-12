@@ -5,7 +5,11 @@ import { CompanyModel } from 'src/company/models/company.model';
 import * as mongoose from 'mongoose';
 import { TeamModel } from 'src/company/models/team.model';
 import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
-import { DetailQuery, FilterTemplate } from 'team-fingerprints-common';
+import {
+  DetailQuery,
+  FilterTemplate,
+  FilterTemplateResponse,
+} from 'team-fingerprints-common';
 
 @Injectable()
 export class FilterTemplateService {
@@ -18,14 +22,11 @@ export class FilterTemplateService {
     surveyId: string,
     companyId: string,
     teamId: string | null = null,
-  ) {
+  ): Promise<FilterTemplateResponse> {
     if (!teamId || teamId.length <= 0) {
       const company = await this.companyModel.findById(companyId);
       const filterTemplates = company.filterTemplates.filter(Boolean);
-      if (!filterTemplates || filterTemplates.length <= 0) return [];
-      return filterTemplates.filter(
-        (template) => template.surveyId === surveyId,
-      );
+      return await this.convertResponseToObject(filterTemplates, surveyId);
     }
 
     const { teams } = await this.companyModel.findById(companyId, {
@@ -36,9 +37,7 @@ export class FilterTemplateService {
       (team) => team._id.toString() === teamId,
     );
 
-    return team.filterTemplates.filter(
-      (template) => template.surveyId === surveyId,
-    );
+    return await this.convertResponseToObject(team.filterTemplates, surveyId);
   }
 
   async createFilterTemplate(
@@ -47,7 +46,7 @@ export class FilterTemplateService {
     templateFilterConfig: TemplateFilterConfigDto,
     companyId: string,
     teamId: string | null = null,
-  ): Promise<TeamModel> {
+  ): Promise<FilterTemplateResponse> {
     const filterTemplate = {
       _id: new mongoose.Types.ObjectId().toString(),
       surveyId,
@@ -55,7 +54,7 @@ export class FilterTemplateService {
     };
 
     if (!teamId || teamId.length <= 0) {
-      return await this.companyModel.findOneAndUpdate(
+      const { filterTemplates } = await this.companyModel.findOneAndUpdate(
         { _id: companyId },
         {
           $push: {
@@ -64,6 +63,8 @@ export class FilterTemplateService {
         },
         { new: true },
       );
+
+      return await this.convertResponseToObject(filterTemplates, surveyId);
     } else {
       const { teams } = await this.companyModel.findOneAndUpdate(
         {
@@ -81,7 +82,11 @@ export class FilterTemplateService {
         { new: true },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId)[0];
+      const { filterTemplates } = teams.filter(
+        (team) => team._id.toString() === teamId,
+      )[0];
+
+      return await this.convertResponseToObject(filterTemplates, surveyId);
     }
   }
 
@@ -92,7 +97,7 @@ export class FilterTemplateService {
     filterId: string,
     companyId: string,
     teamId: string | null = null,
-  ) {
+  ): Promise<FilterTemplateResponse> {
     const newFilterTemplate = {
       surveyId,
       _id: filterId,
@@ -112,7 +117,8 @@ export class FilterTemplateService {
         },
         { arrayFilters: [{ 'filterId._id': filterId }], new: true },
       );
-      return filterTemplates;
+
+      return await this.convertResponseToObject(filterTemplates, surveyId);
     } else {
       const { teams } = await this.companyModel.findOneAndUpdate(
         {
@@ -136,7 +142,11 @@ export class FilterTemplateService {
         },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId)[0];
+      const { filterTemplates } = teams.filter(
+        (team) => team._id.toString() === teamId,
+      )[0];
+
+      return await this.convertResponseToObject(filterTemplates, surveyId);
     }
   }
 
@@ -145,14 +155,15 @@ export class FilterTemplateService {
     filterId: string,
     companyId: string,
     teamId: string | null = null,
-  ): Promise<FilterTemplate[] | TeamModel> {
+  ): Promise<FilterTemplateResponse> {
     if (!teamId || teamId.length <= 0) {
       const { filterTemplates } = await this.companyModel.findOneAndUpdate(
         { _id: companyId },
         { $pull: { filterTemplates: { _id: filterId, surveyId } } },
         { new: true },
       );
-      return filterTemplates;
+
+      return await this.convertResponseToObject(filterTemplates, surveyId);
     } else {
       const { teams } = await this.companyModel.findOneAndUpdate(
         {
@@ -173,7 +184,26 @@ export class FilterTemplateService {
         },
       );
 
-      return teams.filter((team) => team._id.toString() === teamId)[0];
+      const { filterTemplates } = teams.filter(
+        (team) => team._id.toString() === teamId,
+      )[0];
+
+      return await this.convertResponseToObject(filterTemplates, surveyId);
     }
+  }
+
+  async convertResponseToObject(
+    filterTemplates: FilterTemplate[],
+    surveyId: string,
+  ): Promise<FilterTemplateResponse> {
+    if (!filterTemplates || filterTemplates.length <= 0) return {};
+
+    const templates = {};
+
+    filterTemplates
+      .filter((template) => template.surveyId === surveyId)
+      .forEach((template) => (templates[template._id] = template));
+
+    return templates;
   }
 }

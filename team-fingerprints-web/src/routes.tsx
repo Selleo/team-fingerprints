@@ -20,6 +20,7 @@ import { queryClient } from "./App";
 import LoadingData from "./components/LoadingData";
 import ProfileDetails from "./routes/ProfileDetails";
 import UserManagment from "./routes/UserManagment";
+import OnboardingProfileModal from "./components/OnboardingProfileModal";
 
 interface ProfileContextInterface {
   profile: Profile | undefined;
@@ -49,43 +50,46 @@ const AppRoutes = () => {
 
   return (
     <ProfileContext.Provider value={{ profile: data, invalidateProfile }}>
-      <AppShell
-        // navbarOffsetBreakpoint controls when navbar should no longer be offset with padding-left
-        navbarOffsetBreakpoint="sm"
-        fixed
-        header={<AppHeader />}
-        className="app-shell"
-      >
-        {isLoading ? (
-          <LoadingData />
-        ) : (
-          <Routes>
-            <Route path="/" element={<Responses />} />
-            <Route path="manage" element={<RoleManagment />} />
-            <Route path="admin">
-              <Route path="surveys" element={<Surveys />} />
-              <Route path="survey/:id" element={<SurveyDetails />} />
-              <Route path="users" element={<UserManagment />} />
-            </Route>
-            <Route path="profile" element={<ProfileDetails />} />
-            <Route path="companies/new" element={<CompaniesNew />} />
-            <Route path="companies/:id" element={<CompaniesManagment />} />
-            <Route path="companies/:id/team">
-              <Route path=":teamId" element={<TeamManagement />} />
-            </Route>
+      <>
+        <AppShell
+          // navbarOffsetBreakpoint controls when navbar should no longer be offset with padding-left
+          navbarOffsetBreakpoint="sm"
+          fixed
+          header={<AppHeader />}
+          className="app-shell"
+        >
+          {isLoading ? (
+            <LoadingData />
+          ) : (
+            <Routes>
+              <Route path="/" element={<Responses />} />
+              <Route path="manage" element={<RoleManagment />} />
+              <Route path="admin">
+                <Route path="surveys" element={<Surveys />} />
+                <Route path="survey/:id" element={<SurveyDetails />} />
+                <Route path="users" element={<UserManagment />} />
+              </Route>
+              <Route path="profile" element={<ProfileDetails />} />
+              <Route path="companies/new" element={<CompaniesNew />} />
+              <Route path="companies/:id" element={<CompaniesManagment />} />
+              <Route path="companies/:id/team">
+                <Route path=":teamId" element={<TeamManagement />} />
+              </Route>
 
-            <Route
-              path="*"
-              element={
-                <main style={{ padding: "1rem" }}>
-                  <p>There's nothing here!</p>
-                </main>
-              }
-            />
-            <Route path="response/:surveyId" element={<ResponseEdit />} />
-          </Routes>
-        )}
-      </AppShell>
+              <Route
+                path="*"
+                element={
+                  <main style={{ padding: "1rem" }}>
+                    <p>There's nothing here!</p>
+                  </main>
+                }
+              />
+              <Route path="response/:surveyId" element={<ResponseEdit />} />
+            </Routes>
+          )}
+        </AppShell>
+        <OnboardingProfileModal />
+      </>
     </ProfileContext.Provider>
   );
 };

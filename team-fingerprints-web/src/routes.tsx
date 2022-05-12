@@ -22,6 +22,7 @@ import { queryClient } from "./App";
 import LoadingData from "./components/LoadingData";
 import ProfileDetails from "./routes/ProfileDetails";
 import UserManagment from "./routes/UserManagment";
+import OnboardingProfileModal from "./components/OnboardingProfileModal";
 
 interface ProfileContextInterface {
   profile: Profile | undefined;
@@ -96,6 +97,7 @@ const AppRoutes = () => {
           </Routes>
         )}
       </AppShell>
+      <OnboardingProfileModal />
     </ProfileContext.Provider>
   );
 };

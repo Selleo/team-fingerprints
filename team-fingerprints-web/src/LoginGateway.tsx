@@ -1,19 +1,10 @@
-import { useLocation } from "react-router-dom";
 import { Route, Routes } from "react-router-dom";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import ShowPublicResults from "./routes/PublicSurveys/PublicSurveyResults";
-import PublicSurveysList from "./routes/PublicSurveys/PublicSurveysList";
+
 import { useAuth0 } from "@auth0/auth0-react";
 import { NotificationsProvider } from "@mantine/notifications";
-import {
-  AppShell,
-  Button,
-  Center,
-  MantineProvider,
-  Text,
-  Title,
-} from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import WelcomeScreen from "./WelcomeScreen";
 import { queryClient } from "./App";
 import AppRoutes from "./routes";
@@ -21,9 +12,14 @@ import TokenSetup from "./components/TokenSetup";
 
 import "./login-gateway.sass";
 
+import AnimationMember from "./routes/Animation/AnimationMember";
+import AnimationLeader from "./routes/Animation/AnimationLeader";
+import ShowPublicResults from "./routes/PublicSurveys/PublicSurveyResults";
+import PublicSurveysList from "./routes/PublicSurveys/PublicSurveysList";
+import LandingPage from "./routes/LandingPage";
+
 const LoginGateway = () => {
-  const { isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
-  const { pathname } = useLocation();
+  const { isAuthenticated, isLoading } = useAuth0();
 
   return (
     <MantineProvider
@@ -60,20 +56,14 @@ const LoginGateway = () => {
             <QueryClientProvider client={queryClient}>
               <Routes>
                 <Route path="/public" element={<PublicSurveysList />} />
-                <Route
-                  path="/"
-                  element={
-                    <WelcomeScreen
-                      loginWithRedirect={loginWithRedirect}
-                      isLoading={isLoading}
-                      pathname={pathname}
-                    />
-                  }
-                />
+                <Route path="/" element={<WelcomeScreen />} />
                 <Route
                   path="survey/:surveyId"
                   element={<ShowPublicResults />}
                 />
+                <Route path="/intro/member" element={<AnimationMember />} />
+                <Route path="/intro/leader" element={<AnimationLeader />} />
+                <Route path="/landing" element={<LandingPage />} />
               </Routes>
             </QueryClientProvider>
           </>

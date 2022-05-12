@@ -1,7 +1,7 @@
 import { Button } from "@mantine/core";
 import { useLottie } from "lottie-react";
 import { useNavigate } from "react-router-dom";
-import json from "./fingerprint.json";
+import json from "./member.json";
 
 import "./styles.sass";
 

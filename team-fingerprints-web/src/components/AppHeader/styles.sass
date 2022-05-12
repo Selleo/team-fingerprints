@@ -46,17 +46,16 @@
 
   &__submenu
     position: absolute
-    width: 282px
+    width: 100%
     min-height: 60px
-    background-color: yellow
-    top: 68px
+    top: 67px
     right: 0px
     z-index: 10
     display: none
     background-color: #202020
     border: 0.25px solid rgba(255, 255, 255, 0.26)
     box-sizing: border-box
-    border-radius: 5px
+    border-radius: 12px
     padding-bottom: 15px
     padding-top: 15px
     flex-direction: column
@@ -72,8 +71,12 @@
     transition: padding-left 400ms ease-in
     +ellipsis
 
+    &:hover
+      background-color: rgba(255, 255, 255, 0.1)
+      padding-left: 30px
+
   &__name
-    font-size: 12px
+    font-size: 14px
     font-weight: 400
     color: rgba(255, 255, 255, 0.64)
     flex: 1
@@ -84,9 +87,7 @@
     display: flex
     justify-content: center
 
-    &:hover
-      background-color: rgba(255, 255, 255, 0.1)
-      padding-left: 30px
+
 
 @include media-breakpoint-down(sm)
 
@@ -97,6 +98,9 @@
       min-width: 50px
       border: none
       padding: 0 10px
+
+    &__submenu
+      width: 80vw
 
     &__avatar
       margin-right: 0

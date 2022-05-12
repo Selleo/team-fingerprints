@@ -2,15 +2,19 @@ import { Button, Center, Text, Title } from "@mantine/core";
 import { ReactComponent as Manager } from "./assets/Manager-background.svg";
 import { ReactComponent as Employer } from "./assets/Employer-background.svg";
 import { ReactComponent as Thunder } from "./assets/Thunder.svg";
+import { useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import LoadingData from "./components/LoadingData";
 
-type LoginScreenProps = {
-  loginWithRedirect: any;
-  isLoading: any;
-  pathname: any;
-};
+const WelcomeScreen = () => {
+  const { isLoading } = useAuth0();
+  const navigate = useNavigate();
 
-const WelcomeScreen = (props: LoginScreenProps) => {
-  const { loginWithRedirect, isLoading, pathname } = props;
+  if (isLoading) {
+    <div className="welcome-screen">
+      <LoadingData title="Loading profile data" />
+    </div>;
+  }
 
   return (
     <div className="welcome-screen">
@@ -25,12 +29,7 @@ const WelcomeScreen = (props: LoginScreenProps) => {
           </Text>
           <Button
             className="login__button --manager"
-            onClick={() =>
-              loginWithRedirect({
-                connection: "google-oauth2",
-                appState: { returnTo: pathname },
-              })
-            }
+            onClick={() => navigate("/intro/leader")}
           >
             {isLoading ? "Loading" : "Get Started"}
           </Button>
@@ -50,12 +49,7 @@ const WelcomeScreen = (props: LoginScreenProps) => {
           </Text>
           <Button
             className="login__button"
-            onClick={() =>
-              loginWithRedirect({
-                connection: "google-oauth2",
-                appState: { returnTo: pathname },
-              })
-            }
+            onClick={() => navigate("/intro/member")}
           >
             {isLoading ? "Loading" : "Get Started"}
           </Button>

@@ -1,0 +1,18 @@
+@import 'styles/base/variables'
+@import 'styles/base/mixins'
+
+.onboarding-profile-modal
+  &__button
+    +transition(background-color)
+    background-color: $color-primary
+    border: none
+    border-radius: $border-radius-sm
+    color: $color-background
+    cursor: pointer
+    display: flex
+    font-weight: 700
+    font-size: $font-size-base
+    margin: 0 auto
+    padding: $m-xs $m-sm
+    width: fit-content
+    height: 48px

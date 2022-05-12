@@ -6,14 +6,7 @@ import ShowPublicResults from "./routes/PublicSurveys/PublicSurveyResults";
 import PublicSurveysList from "./routes/PublicSurveys/PublicSurveysList";
 import { useAuth0 } from "@auth0/auth0-react";
 import { NotificationsProvider } from "@mantine/notifications";
-import {
-  AppShell,
-  Button,
-  Center,
-  MantineProvider,
-  Text,
-  Title,
-} from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import WelcomeScreen from "./WelcomeScreen";
 import { queryClient } from "./App";
 import AppRoutes from "./routes";

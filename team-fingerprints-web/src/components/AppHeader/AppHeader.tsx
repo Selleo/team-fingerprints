@@ -23,41 +23,45 @@ const AppHeader = () => {
       </div>
       {user?.email && (
         <div className="header__menu">
-          <img alt="avatar" src={user.picture} />
-          <span>{user?.email}</span>
-          <ChevronDownIcon />
-          <div className="header__menu__submenu">
+          <img className="header__avatar" alt="avatar" src={user.picture} />
+          <span className="header__email">{user?.email}</span>
+          <ChevronDownIcon className="header__arrow" />
+          <div className="header__submenu">
             <button
+              className="header__button"
               onClick={() => {
                 navigate("/");
               }}
             >
-              <div className="svg-wrap">
+              <div className="header__icon">
                 <PencilIcon />
               </div>
-              <span>Put answers</span>
+              <span className="header__name">Put answers</span>
             </button>
             <button
+              className="header__button"
               onClick={() => {
                 navigate(`manage`);
               }}
             >
-              <div className="svg-wrap">
+              <div className="header__icon">
                 <GearIcon />
               </div>
-              <span>Manage Roles and Companies</span>
+              <span className="header__name">Manage Roles and Companies</span>
             </button>
             <button
+              className="header__button"
               onClick={() => {
                 navigate("profile");
               }}
             >
-              <div className="svg-wrap">
+              <div className="header__icon">
                 <UserIcon />
               </div>
-              <span>Profile</span>
+              <span className="header__name">Profile</span>
             </button>
             <button
+              className="header__button"
               onClick={() => {
                 logout({
                   returnTo: window.location.origin,
@@ -66,10 +70,10 @@ const AppHeader = () => {
                 queryClient.clear();
               }}
             >
-              <div className="svg-wrap">
+              <div className="header__icon">
                 <LogoutIcon />
               </div>
-              <span>Log Out</span>
+              <span className="header__name">Log Out</span>
             </button>
           </div>
         </div>

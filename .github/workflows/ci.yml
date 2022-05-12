@@ -1,0 +1,28 @@
+name: CI web
+
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        node_version: [16.13.2]
+        python: [3.8]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v2
+        with:
+          node_version: ${{ matrix.node_version }}
+      - name: Use Python ${{ matrix.python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: run CI
+        run: |
+          npm install
+          npm run lint-web
+          npm run tsc-web

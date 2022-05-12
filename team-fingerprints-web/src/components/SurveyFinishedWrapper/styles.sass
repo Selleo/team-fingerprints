@@ -1,5 +1,4 @@
-@import 'styles/base/variables'
-@import 'styles/base/mixins'
+@import 'styles/application'
 
 .survey-response
   margin-top: 72px
@@ -121,4 +120,7 @@
         align-items: center
         width: 40px
 
-      &__selects
+@include media-breakpoint-down(sm)
+
+  .survey-response
+    margin-top: 43px

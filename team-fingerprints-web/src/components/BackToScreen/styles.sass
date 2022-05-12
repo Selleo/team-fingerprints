@@ -1,4 +1,4 @@
-@import 'styles/base/variables'
+@import 'styles/application'
 
 .back
   &__wrapper
@@ -24,3 +24,12 @@
       font-weight: 600
       font-size: 16px
       line-height: 24px
+
+@include media-breakpoint-down(sm)
+
+.back
+  &__wrapper
+    margin-top: 30px
+
+    span
+      font-size: 14px

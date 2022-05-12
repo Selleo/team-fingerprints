@@ -9,7 +9,7 @@ import * as request from 'request';
 import { UserModel } from 'src/users/models/user.model';
 import { RoleService } from 'src/role/role.service';
 import { CompanyMembersService } from 'src/company/company-members.service';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import * as qs from 'qs';
 import { MailService } from 'src/mail/mail.service';
 
@@ -108,7 +108,7 @@ export class AuthService {
       'AUTH0_API_EXPLORER_CLIENT_AUDIENCE',
     );
 
-    const options = {
+    const options: AxiosRequestConfig = {
       method: 'POST',
       url: 'https://dev-llkte41m.us.auth0.com/oauth/token',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -120,7 +120,7 @@ export class AuthService {
       }),
     };
 
-    const response = await axios.request(options as any);
+    const response = await axios.request(options);
     if (response.status !== 200) throw new UnauthorizedException();
 
     return response.data.access_token;

@@ -137,22 +137,26 @@ export type CategoryResults = {
 };
 
 export type AdditionalData = {
-  icon: Shape;
+  name: string;
   color: string;
+  icon: Shape;
   categories: CategoryResults[];
   _id?: string;
   id: string;
+};
+
+export type FiltersSet = {
   name: string;
-};
-
-export type FiltersSet = AdditionalData & {
+  pointColor: string;
+  pointShape: Shape;
+  categories: CategoryResults[];
+  _id: string;
   visible: boolean;
-  filterValues: { [key: string]: Array<string> };
-
   collapsed: boolean;
+  filters: { [key: string]: Array<string> };
 };
 
-export type FilterSets = { [key: string]: FiltersSet };
+export type FilterSets = { [key: string]: FiltersSet } | {};
 
 export type ChangeFilterValue = <T extends keyof FiltersSet>(
   id: string,

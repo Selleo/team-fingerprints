@@ -46,8 +46,6 @@ export default function PublicSurveyResults() {
     return data;
   });
 
-  console.log(filtersSets);
-
   const createFilterSet = () => {
     const id = uniqueId();
     const lightColor = "hsl(" + Math.floor(Math.random() * 361) + ",50%,75%)";

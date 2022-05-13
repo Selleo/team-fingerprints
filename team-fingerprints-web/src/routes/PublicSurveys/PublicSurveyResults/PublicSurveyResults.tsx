@@ -51,6 +51,7 @@ export default function PublicSurveyResults() {
     setFiltersSets({
       ...filtersSets,
       [id]: {
+        _id: id,
         name: `Filter Set #${id}`,
         pointColor: lightColor,
         pointShape: "trapeze",
@@ -63,6 +64,7 @@ export default function PublicSurveyResults() {
   };
 
   const changeFilterValue: ChangeFilterValue = (id, valueName, newValue) => {
+    console.log(id, valueName, newValue);
     const callback = (filtersSets: any) => {
       const newFilterSet = {
         ...filtersSets[id],

@@ -17,6 +17,7 @@ type Props = {
   changeFilterValue: any;
   setFilterSurveyResults: any;
   filterSurveyResults: any;
+  companyId: string | undefined;
 };
 
 const ResultsFilters = ({
@@ -26,6 +27,7 @@ const ResultsFilters = ({
   filterSet,
   setFilterSurveyResults,
   filterSurveyResults,
+  companyId,
 }: Props) => {
   const [filterSetName, setFilterSetName] = useState("");
   const [filterSave, setFilterSave] = useState(false);
@@ -43,7 +45,7 @@ const ResultsFilters = ({
     ["chartData", surveyId, currentFiltersValues],
     async () => {
       const { data } = await axios.get<any>(
-        `/survey-results/${surveyId}/companies`,
+        `/survey-results/${surveyId}/companies/${companyId}`,
         { params: currentFiltersValues }
       );
       return data;
@@ -74,7 +76,7 @@ const ResultsFilters = ({
     ["surveyFiltersPublic", surveyId],
     async () => {
       const { data } = await axios.get<FilterSets>(
-        `/survey-filters/${surveyId}/companies`
+        `/survey-filters/${surveyId}/companies/${companyId}`
       );
       return data;
     }

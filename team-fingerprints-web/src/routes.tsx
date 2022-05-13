@@ -10,6 +10,8 @@ import CompaniesNew from "./routes/Companies/New";
 import RoleManagment from "./routes/RoleManagment";
 import SurveyResults from "./routes/Companies/Managment/SurveyResults";
 import SurveysList from "./routes/Companies/Managment/SurveyResults/SurveysList";
+import TeamSurveysList from "./routes/TeamManagement/Management/SurveyResults/SurveysList";
+import TeamSurveyResults from "./routes/TeamManagement/Management/SurveyResults";
 
 import CompaniesManagment from "./routes/Companies/Managment";
 import TeamManagement from "./routes/TeamManagement";
@@ -83,6 +85,11 @@ const AppRoutes = () => {
             />
             <Route path="companies/:id/team">
               <Route path=":teamId" element={<TeamManagement />} />
+              <Route path=":teamId/surveys" element={<TeamSurveysList />} />
+              <Route
+                path=":teamId/surveys/:surveyId"
+                element={<TeamSurveyResults />}
+              />
             </Route>
 
             <Route

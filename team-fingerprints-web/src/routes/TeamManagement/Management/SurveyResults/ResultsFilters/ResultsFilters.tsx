@@ -17,6 +17,8 @@ type Props = {
   changeFilterValue: any;
   setFilterSurveyResults: any;
   filterSurveyResults: any;
+  teamId: string | undefined;
+  companyId: string | undefined;
 };
 
 const ResultsFilters = ({
@@ -26,10 +28,11 @@ const ResultsFilters = ({
   filterSet,
   setFilterSurveyResults,
   filterSurveyResults,
+  teamId,
+  companyId,
 }: Props) => {
   const [filterSetName, setFilterSetName] = useState("");
   const [filterSave, setFilterSave] = useState(false);
-
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
     initialValues: currentFiltersValues,
@@ -63,7 +66,7 @@ const ResultsFilters = ({
       },
     });
     setFilterSetName(filterSet.name);
-  }, [surveyResult, filterSave, surveyId]);
+  }, [surveyResult, filterSave, surveyId, teamId]);
 
   useEffect(
     () => changeFilterValue({ ...filterSet, name: filterSetName }),

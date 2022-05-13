@@ -156,6 +156,13 @@ const TeamManagment = () => {
 
         <Group>
           <Button
+            onClick={() => navigation(`surveys`)}
+            className={classes.addButton}
+            color="green"
+          >
+            Show Results
+          </Button>
+          <Button
             onClick={() => setEditModalVisible(true)}
             className={classes.addButton}
           >

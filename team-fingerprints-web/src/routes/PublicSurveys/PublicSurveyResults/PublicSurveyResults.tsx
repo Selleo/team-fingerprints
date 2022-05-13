@@ -51,33 +51,29 @@ export default function PublicSurveyResults() {
     setFiltersSets({
       ...filtersSets,
       [id]: {
-        id: id,
         name: `Filter Set #${id}`,
-        icon: "trapeze",
-        color: lightColor,
+        pointColor: lightColor,
+        pointShape: "trapeze",
         categories: [],
         visible: true,
-        filterValues: {},
         collapsed: false,
+        filters: {},
       },
     });
   };
 
   const changeFilterValue: ChangeFilterValue = (id, valueName, newValue) => {
-    const callback = (filtersSets: FilterSets) => {
+    const callback = (filtersSets: any) => {
       const newFilterSet = {
         ...filtersSets[id],
         [valueName]: newValue,
       };
-
       const newFilterSets = {
         ...filtersSets,
         [id]: newFilterSet,
       };
-
       return newFilterSets;
     };
-
     setFiltersSets(callback);
   };
 
@@ -96,12 +92,12 @@ export default function PublicSurveyResults() {
         <div className="survey-response__filters">
           {Object.values(filtersSets).map((filterSet) => {
             return (
-              <React.Fragment key={filterSet.id}>
+              <React.Fragment key={filterSet._id}>
                 <div className="survey-response__filters__item">
                   <div className="survey-response__filters__item__icon">
                     <ColoredShape
-                      shape={filterSet?.icon}
-                      color={filterSet?.color}
+                      shape={filterSet?.pointShape}
+                      color={filterSet?.pointColor}
                     />
                   </div>
                   <span>{filterSet?.name}</span>
@@ -109,7 +105,7 @@ export default function PublicSurveyResults() {
                     value={!!filterSet.visible}
                     setValue={() =>
                       changeFilterValue(
-                        filterSet.id,
+                        filterSet._id,
                         "visible",
                         !filterSet.visible
                       )
@@ -119,7 +115,7 @@ export default function PublicSurveyResults() {
                     className="survey-response__filters__item__collapse"
                     onClick={() =>
                       changeFilterValue(
-                        filterSet.id,
+                        filterSet._id,
                         "collapsed",
                         !filterSet.collapsed
                       )
@@ -134,8 +130,8 @@ export default function PublicSurveyResults() {
                 >
                   {surveyId && (
                     <ResultsFilters
-                      currentFiltersValues={filterSet.filterValues}
-                      id={filterSet.id}
+                      currentFiltersValues={filterSet.filters}
+                      id={filterSet._id}
                       surveyId={surveyId}
                       changeFilterValue={changeFilterValue}
                     />

@@ -197,6 +197,7 @@ const SurveyResults = () => {
                       changeFilterValue={changeFilterValue}
                       setFilterSurveyResults={setFilterSurveyResults}
                       filterSurveyResults={filterSurveyResults}
+                      companyId={companyId}
                     />
                   </React.Fragment>
                 );

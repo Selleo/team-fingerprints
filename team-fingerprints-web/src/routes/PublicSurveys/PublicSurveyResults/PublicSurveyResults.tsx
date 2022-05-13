@@ -16,13 +16,14 @@ import SurveyFinishedWrapper from "../../../components/SurveyFinishedWrapper/Sur
 import { Switch } from "../../../components/Switch";
 import {
   SurveyDetails,
-  ChangeFilterValue,
+  ChangeFilterValuePublic,
   FilterSets,
+  PublicFilterSets,
 } from "../../../types/models";
 
 export default function PublicSurveyResults() {
   const { surveyId } = useParams();
-  const [filtersSets, setFiltersSets] = useState<FilterSets>({});
+  const [filtersSets, setFiltersSets] = useState<PublicFilterSets>({});
 
   const {
     isLoading: isLoadingSurveys,
@@ -51,9 +52,10 @@ export default function PublicSurveyResults() {
     setFiltersSets({
       ...filtersSets,
       [id]: {
+        _id: id,
         name: `Filter Set #${id}`,
-        pointColor: lightColor,
-        pointShape: "trapeze",
+        color: lightColor,
+        icon: "trapeze",
         categories: [],
         visible: true,
         collapsed: false,
@@ -62,7 +64,11 @@ export default function PublicSurveyResults() {
     });
   };
 
-  const changeFilterValue: ChangeFilterValue = (id, valueName, newValue) => {
+  const changeFilterValue: ChangeFilterValuePublic = (
+    id,
+    valueName,
+    newValue
+  ) => {
     const callback = (filtersSets: any) => {
       const newFilterSet = {
         ...filtersSets[id],
@@ -96,8 +102,8 @@ export default function PublicSurveyResults() {
                 <div className="survey-response__filters__item">
                   <div className="survey-response__filters__item__icon">
                     <ColoredShape
-                      shape={filterSet?.pointShape}
-                      color={filterSet?.pointColor}
+                      shape={filterSet?.icon}
+                      color={filterSet?.color}
                     />
                   </div>
                   <span>{filterSet?.name}</span>

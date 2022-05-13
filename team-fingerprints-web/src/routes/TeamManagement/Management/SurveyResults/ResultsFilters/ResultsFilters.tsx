@@ -66,7 +66,7 @@ const ResultsFilters = ({
       },
     });
     setFilterSetName(filterSet.name);
-  }, [surveyResult, filterSave, surveyId, teamId]);
+  }, [surveyResult, filterSave, surveyId, teamId, filterSet.visible]);
 
   useEffect(
     () => changeFilterValue({ ...filterSet, name: filterSetName }),

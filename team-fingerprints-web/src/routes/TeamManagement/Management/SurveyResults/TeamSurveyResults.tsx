@@ -19,8 +19,8 @@ import { SurveyDetails, FiltersSet } from "../../../../types/models";
 
 import "./styles.sass";
 
-const SurveyResults = () => {
-  const { companyId, surveyId } = useParams();
+const TeamSurveyResults = () => {
+  const { id, surveyId, teamId } = useParams();
   const [filterSurveyResults, setFilterSurveyResults] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -40,7 +40,7 @@ const SurveyResults = () => {
     Error
   >(["publicSurvey", surveyId], async () => {
     const { data } = await axios.get<SurveyDetails>(
-      `/survey-results/${surveyId}/companies/${companyId}`
+      `/survey-results/${surveyId}/companies/${id}`
     );
     return data;
   });
@@ -49,9 +49,9 @@ const SurveyResults = () => {
     isLoading: isLoadingFilters,
     data: FiltersData,
     refetch: refetchFilters,
-  } = useQuery<any, Error>(["filterSets", surveyId, companyId], async () => {
+  } = useQuery<any, Error>(["filterSets", surveyId, id, teamId], async () => {
     const { data } = await axios.get<any>(
-      `/filter-templates/${surveyId}/companies/${companyId}/filters`
+      `/filter-templates/${surveyId}/companies/${id}/teams/${teamId}/filters`
     );
     const getFilterSet = { ...data };
     return getFilterSet;
@@ -60,7 +60,7 @@ const SurveyResults = () => {
   const createMutation = useMutation(
     async (filtersSets: any) => {
       return axios.post(
-        `/filter-templates/${surveyId}/companies/${companyId}/filters`,
+        `/filter-templates/${surveyId}/companies/${id}/teams/${teamId}/filters`,
         filtersSets
       );
     },
@@ -74,7 +74,7 @@ const SurveyResults = () => {
   const updateMutation = useMutation(
     async (values: any) => {
       return axios.put(
-        `/filter-templates/${surveyId}/companies/${companyId}/filters/${values._id}`,
+        `/filter-templates/${surveyId}/companies/${id}/teams/${teamId}/filters/${values._id}`,
         values
       );
     },
@@ -91,7 +91,7 @@ const SurveyResults = () => {
       delete newFilterSurveyResult[filterSetId];
       setFilterSurveyResults(newFilterSurveyResult);
       return axios.delete(
-        `/filter-templates/${surveyId}/companies/${companyId}/filters/${filterSetId}`
+        `/filter-templates/${surveyId}/companies/${id}/teams/${teamId}/filters/${filterSetId}`
       );
     },
     {
@@ -116,7 +116,6 @@ const SurveyResults = () => {
     };
 
     createMutation.mutate(newFilterSet);
-    setModalVisible(true);
   };
 
   const changeFilterValue: any = (values: any) => {
@@ -197,6 +196,8 @@ const SurveyResults = () => {
                       changeFilterValue={changeFilterValue}
                       setFilterSurveyResults={setFilterSurveyResults}
                       filterSurveyResults={filterSurveyResults}
+                      teamId={teamId}
+                      companyId={id}
                     />
                   </React.Fragment>
                 );
@@ -214,4 +215,4 @@ const SurveyResults = () => {
   );
 };
 
-export default SurveyResults;
+export default TeamSurveyResults;

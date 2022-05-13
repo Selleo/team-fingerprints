@@ -14,8 +14,8 @@ import { ReactComponent as BGIcons } from "../../../../../assets/BGIcons.svg";
 
 import "./styles.sass";
 
-const SurveysList = () => {
-  const { companyId } = useParams();
+const TeamSurveysList = () => {
+  const { id, teamId } = useParams();
   const { isLoading, error, data } = useQuery<Survey[]>(
     "surveysAllPublic",
     async () => {
@@ -50,7 +50,8 @@ const SurveysList = () => {
             <ResponseItem
               key={item.survey._id}
               item={item}
-              companyId={companyId}
+              companyId={id}
+              teamId={teamId}
             />
           ))}
         </ul>
@@ -60,7 +61,7 @@ const SurveysList = () => {
 
   return (
     <div className="responses">
-      <BackToScreen name="Company Managment" />
+      <BackToScreen name="Team Managment" />
       <h1 className="responses__headline">Surveys List</h1>
       {content}
       <div className="svg-background">
@@ -70,4 +71,4 @@ const SurveysList = () => {
   );
 };
 
-export default SurveysList;
+export default TeamSurveysList;

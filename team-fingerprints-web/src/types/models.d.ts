@@ -158,10 +158,10 @@ export type FiltersSet = {
 
 export type PublicFiltersSet = {
   name: string;
-  pointColor: string;
-  pointShape: Shape;
+  color: string;
+  icon: Shape;
   categories: CategoryResults[];
-  id: string;
+  _id: string;
   visible: boolean;
   collapsed: boolean;
   filters: { [key: string]: Array<string> };
@@ -172,6 +172,12 @@ export type PublicFilterSets = { [key: string]: PublicFiltersSet } | {};
 export type FilterSets = { [key: string]: FiltersSet } | {};
 
 export type ChangeFilterValue = <T extends keyof FiltersSet>(
+  id: string,
+  valueName: T,
+  newValue: FiltersSet[T]
+) => void;
+
+export type ChangeFilterValuePublic = <T extends keyof PublicFiltersSet>(
   id: string,
   valueName: T,
   newValue: FiltersSet[T]

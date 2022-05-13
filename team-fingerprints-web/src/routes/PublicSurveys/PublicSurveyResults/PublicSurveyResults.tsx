@@ -64,7 +64,6 @@ export default function PublicSurveyResults() {
   };
 
   const changeFilterValue: ChangeFilterValue = (id, valueName, newValue) => {
-    console.log(id, valueName, newValue);
     const callback = (filtersSets: any) => {
       const newFilterSet = {
         ...filtersSets[id],

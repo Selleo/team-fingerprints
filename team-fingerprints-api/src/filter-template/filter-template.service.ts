@@ -150,7 +150,6 @@ export class FilterTemplateService {
       const { filterTemplates } = await this.companyModel.findOneAndUpdate(
         { _id: companyId },
         { $pull: { filterTemplates: { _id: filterId, surveyId } } },
-        { new: true },
       );
       return filterTemplates;
     } else {
@@ -169,7 +168,6 @@ export class FilterTemplateService {
             { 'teamId._id': teamId },
             { 'filterId._id': filterId },
           ],
-          new: true,
         },
       );
 

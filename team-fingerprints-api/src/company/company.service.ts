@@ -93,28 +93,35 @@ export class CompanyService {
     {
       name,
       description = '',
-      domain: newDomain = '',
+      domain: newDomain,
       pointColor,
       pointShape,
     }: UpdateCompanyDto,
   ): Promise<CompanyModel> {
     const company = await this.companyModel.findById(companyId);
 
-    if (newDomain && newDomain?.length > 0 && company?.domain !== newDomain)
-      await this.validateNewDomain(newDomain);
+    const updateData = {
+      name,
+      description,
+      domain: null,
+      pointColor,
+      pointShape,
+    };
 
-    if (company.domain?.length > 0 && company.domain === newDomain)
-      return company;
+    if (newDomain !== company.domain && newDomain !== '') {
+      await this.validateNewDomain(newDomain);
+      updateData.domain = newDomain;
+    } else if (newDomain === '') {
+      updateData.domain = '';
+    } else {
+      updateData.domain = company.domain;
+    }
 
     return await this.companyModel
       .findOneAndUpdate(
         { _id: companyId },
         {
-          name,
-          description,
-          domain: newDomain?.length > 0 ? newDomain.toLowerCase() : '',
-          pointColor,
-          pointShape,
+          ...updateData,
         },
         { new: true },
       )

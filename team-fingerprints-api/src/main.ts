@@ -21,6 +21,23 @@ async function bootstrap() {
       .setDescription('API documentation')
       .setVersion('1.0')
       .addBearerAuth()
+      .addTag('auth', 'Add tag description')
+      .addTag('role', 'Add tag description')
+      .addTag('users', 'Add tag description')
+      .addTag('companies', 'Add tag description')
+      .addTag('teams', 'Add tag description')
+
+      .addTag('surveys', 'Add tag description')
+      .addTag('categories', 'Add tag description')
+      .addTag('trends', 'Add tag description')
+      .addTag('questions', 'Add tag description')
+
+      .addTag('survey-answers', 'Add tag description')
+      .addTag('survey-results', 'Add tag description')
+      .addTag('filter-templates', 'Add tag description')
+
+      .addTag('filters', 'Add tag description')
+      .addTag('survey-filters', 'Add tag description')
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);

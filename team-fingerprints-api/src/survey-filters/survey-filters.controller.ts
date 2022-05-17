@@ -5,10 +5,12 @@ import {
   Param,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { SurveyFiltersService } from './survey-filters.service';
 
+@ApiTags('survey-filters')
 @Controller({ path: 'survey-filters', version: '1' })
 export class SurveyFiltersController {
   constructor(private readonly surveyFiltersService: SurveyFiltersService) {}

@@ -146,10 +146,8 @@ describe('FilterTemplateController', () => {
         .send(newFilterTemplate)
         .expect(201);
 
-      const { filterTemplates } = body;
-
-      expect(filterTemplates[0]).toMatchObject(newFilterTemplate);
-      expect(filterTemplates[0]._id).toBeDefined();
+      expect(body).toMatchObject(newFilterTemplate);
+      expect(body._id).toBeDefined();
     });
   });
 
@@ -178,7 +176,7 @@ describe('FilterTemplateController', () => {
         .send(updateFilterTemplate)
         .expect(200);
 
-      expect(body[0]).toMatchObject(updateFilterTemplate);
+      expect(body).toMatchObject(updateFilterTemplate);
     });
   });
 
@@ -197,7 +195,7 @@ describe('FilterTemplateController', () => {
         )
         .expect(200);
 
-      expect(body[0]).toMatchObject(filterTemplateDataForCompany);
+      expect(body).toMatchObject(filterTemplateDataForCompany);
     });
   });
 
@@ -241,10 +239,8 @@ describe('FilterTemplateController', () => {
         .send(newFilterTemplate)
         .expect(201);
 
-      const { filterTemplates } = body;
-
-      expect(filterTemplates[0]).toMatchObject(newFilterTemplate);
-      expect(filterTemplates[0]._id).toBeDefined();
+      expect(body).toMatchObject(newFilterTemplate);
+      expect(body).toBeDefined();
     });
   });
 
@@ -274,7 +270,7 @@ describe('FilterTemplateController', () => {
         .send(updateFilterTemplate)
         .expect(200);
 
-      expect(body.filterTemplates[0]).toMatchObject(updateFilterTemplate);
+      expect(body).toMatchObject(updateFilterTemplate);
     });
   });
 
@@ -294,7 +290,7 @@ describe('FilterTemplateController', () => {
         )
         .expect(200);
 
-      expect(body.filterTemplates[0]).toMatchObject(filterTemplateDataForTeam);
+      expect(body).toMatchObject(filterTemplateDataForTeam);
     });
   });
 });

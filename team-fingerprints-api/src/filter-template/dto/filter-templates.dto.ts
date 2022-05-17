@@ -24,9 +24,4 @@ export class TemplateFilterConfigDto {
   @IsBoolean()
   @IsNotEmpty()
   visible: boolean;
-
-  @ApiProperty()
-  @IsBoolean()
-  @IsNotEmpty()
-  collapsed: boolean;
 }

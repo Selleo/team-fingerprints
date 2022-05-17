@@ -2,7 +2,7 @@ import { Prop, SchemaFactory, Schema, raw } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { DetailQuery, FilterTemplate } from 'team-fingerprints-common';
 
-@Schema({ _id: false })
+@Schema()
 export class FilterTemplateModel implements FilterTemplate {
   @ApiProperty()
   _id: string;

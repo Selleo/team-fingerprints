@@ -5,6 +5,7 @@ import { DetailQuery, FilterTemplate } from 'team-fingerprints-common';
 @Schema()
 export class FilterTemplateModel implements FilterTemplate {
   @ApiProperty()
+  @Prop({ required: true })
   _id: string;
 
   @ApiProperty()

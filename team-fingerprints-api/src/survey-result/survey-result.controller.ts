@@ -6,11 +6,13 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
 import { DetailQuery } from 'team-fingerprints-common';
 import { SurveyResultService } from './survey-result.service';
 
+@ApiTags('survey-results')
 @Controller({ path: 'survey-results', version: '1' })
 export class SurveyResultController {
   constructor(private readonly surveyResultService: SurveyResultService) {}

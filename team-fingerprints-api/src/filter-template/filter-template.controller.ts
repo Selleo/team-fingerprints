@@ -7,12 +7,16 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiResponse, ApiTags, refs } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { FilterTemplateModel } from 'src/company/models/filter-template.model';
+import { TeamModel } from 'src/company/models/team.model';
 import { Roles } from 'src/role/decorators/roles.decorator';
 import { DetailQuery, RoleType } from 'team-fingerprints-common';
 import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
 import { FilterTemplateService } from './filter-template.service';
 
+@ApiTags('filter-templates')
 @Controller({ path: 'filter-templates', version: '1' })
 export class FilterTemplateController {
   constructor(private readonly filterTemplateService: FilterTemplateService) {}
@@ -131,6 +135,14 @@ export class FilterTemplateController {
     );
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Removing filter template by its id',
+    schema: {
+      oneOf: refs(FilterTemplateModel, TeamModel),
+    },
+    type: FilterTemplateModel,
+  })
   @Delete('/:surveyId/companies/:companyId/teams/:teamId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeFilterTemplateFromTeam(
@@ -138,7 +150,7 @@ export class FilterTemplateController {
     @Param('filterId', ValidateObjectId) filterId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-  ) {
+  ): Promise<FilterTemplateModel[] | TeamModel> {
     return await this.filterTemplateService.removeFilterTemplate(
       surveyId,
       filterId,

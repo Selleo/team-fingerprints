@@ -18,7 +18,7 @@ import "./styles.sass";
 
 const SurveyResults = () => {
   const { companyId, surveyId } = useParams();
-  const [filterSets, setFilterSets] = useState<FilterSets>([]);
+  const [filterSets, setFilterSets] = useState<FilterSets>({});
 
   const {
     isLoading: isLoadingSurveys,

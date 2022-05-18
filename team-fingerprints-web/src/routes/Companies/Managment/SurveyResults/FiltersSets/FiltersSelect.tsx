@@ -8,7 +8,7 @@ type Props = {
   filter: FilterSelect;
   handleSubmit: () => void;
   setFieldValue: (filterPath: string, value: Array<string>) => void;
-  filterSets: any;
+  filterSet: any;
 };
 
 type Values = {
@@ -26,7 +26,7 @@ const FiltersSelect = ({
   filter,
   handleSubmit,
   setFieldValue,
-  filterSets,
+  filterSet,
 }: Props) => {
   const itemSelect = useMemo(() => {
     const data = [
@@ -47,7 +47,7 @@ const FiltersSelect = ({
       placeholder="Select"
       searchable
       clearable
-      //value={filterSets?.filters[filter.filterPath]}
+      value={filterSet?.filters[filter.filterPath]}
       data={itemSelect}
       onChange={(values) => {
         setFieldValue(filter.filterPath, values);

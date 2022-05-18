@@ -35,11 +35,29 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
     return getFilterSet;
   });
 
+  useEffect(() => {
+    setFilterSets({ ...FiltersData });
+  }, [FiltersData]);
+
   const createMutation = useMutation(
     async (filtersSets: any) => {
       return axios.post(
         `/filter-templates/${surveyId}/companies/${companyId}/filters`,
         filtersSets
+      );
+    },
+    {
+      onSuccess: () => {
+        refetchFilters();
+      },
+    }
+  );
+
+  const updateMutation = useMutation(
+    async (values: any) => {
+      return axios.put(
+        `/filter-templates/${surveyId}/companies/${companyId}/filters/${values._id}`,
+        values
       );
     },
     {
@@ -78,46 +96,32 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
         pointShape: "trapeze",
         categories: [],
         visible: true,
-        collapsed: true,
+        showModal: true,
         filters: {},
       },
     });
-
-    //createMutation.mutate(newFilterSet);
   };
 
-  // const changeFilterValue: any = (values: any) => {
-  //   //updateMutation.mutate(values);
-
-  //   setFilterSets({
-  //     ...filterSets,
-  //     values,
-  //   });
-  // };
-
   const changeFilterValue: any = (id: any, valueName: any, newValue: any) => {
-    const callback = (filtersSets: any) => {
-      const newFilterSet = {
-        ...filtersSets[id],
-        [valueName]: newValue,
-      };
-      const newFilterSets = {
-        ...filtersSets,
-        [id]: newFilterSet,
-      };
-      return newFilterSets;
-    };
-    setFilterSets(callback);
+    const newFilterSet = Object.values(filterSets).map((filterSet: any) =>
+      filterSet._id === id ? { ...filterSet, [valueName]: newValue } : filterSet
+    );
+
+    setFilterSets({ ...newFilterSet });
   };
 
   if (isLoadingFilters) {
     return <LoadingData title="Loading filters" />;
   }
 
-  console.log(filterSets);
+  console.log("sets", filterSets);
 
-  const handleSave = () => {
-    createMutation.mutate(filterSets);
+  const handleSave = (filterSetId: any, index: any) => {
+    if (filterSetId) {
+      updateMutation.mutate(filterSets[index]);
+    } else {
+      createMutation.mutate(filterSets[index]);
+    }
   };
 
   return (
@@ -131,7 +135,6 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
       {Object.values(filterSets)?.map((filterSet: any, index: any) => {
         return (
           <React.Fragment key={filterSet?._id}>
-            {console.log(index)}
             <div className="survey-response__filters__item">
               <div className="survey-response__filters__item__icon">
                 <ColoredShape
@@ -145,8 +148,8 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
                 onClick={() => {
                   changeFilterValue(
                     filterSet._id,
-                    "collapsed",
-                    !filterSet.collapsed
+                    "showModal",
+                    !filterSet.showModal
                   );
                 }}
               >
@@ -154,13 +157,13 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
               </span>
               <Switch
                 value={!!filterSet.visible}
-                setValue={() =>
+                setValue={() => {
                   changeFilterValue(
                     filterSet._id,
                     "visible",
                     !filterSet.visible
-                  )
-                }
+                  );
+                }}
               />
 
               <Button
@@ -175,8 +178,6 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
               filterSet={filterSet}
               surveyId={surveyId}
               changeFilterValue={changeFilterValue}
-              setFilterSets={setFilterSets}
-              filterSets={filterSets}
               companyId={companyId}
               handleSave={handleSave}
               index={index}

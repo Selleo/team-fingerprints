@@ -15,8 +15,6 @@ type Props = {
   currentFiltersValues: { [key: string]: Array<string> };
   surveyId?: string;
   changeFilterValue: any;
-  setFilterSets: any;
-  filterSets: any;
   companyId: string | undefined;
   handleSave: any;
   index: any;
@@ -27,21 +25,16 @@ const ResultsFilters = ({
   surveyId,
   changeFilterValue,
   filterSet,
-  setFilterSets,
-  filterSets,
   companyId,
   handleSave,
   index,
 }: Props) => {
-  const [filterSetName, setFilterSetName] = useState("");
-  const [filterSave, setFilterSave] = useState(false);
-
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
     initialValues: currentFiltersValues,
     onSubmit: (values) => {
       const valuesWithoutEmpties = omitBy(values, isEmpty);
-      changeFilterValue(index, "filters", valuesWithoutEmpties);
+      changeFilterValue(filterSet._id, "filters", valuesWithoutEmpties);
     },
   });
 
@@ -56,27 +49,6 @@ const ResultsFilters = ({
     }
   );
 
-  // useEffect(() => {
-  //   const categoriesArray = lodashValues(surveyResult);
-  //   setFilterSets({
-  //     ...filterSets,
-  //     [filterSet._id]: {
-  //       name: filterSet.name,
-  //       id: filterSet._id,
-  //       categories: categoriesArray,
-  //       color: filterSet.pointColor,
-  //       icon: filterSet.pointShape,
-  //       visible: filterSet.visible,
-  //     },
-  //   });
-  //   setFilterSetName(filterSet.name);
-  // }, [surveyResult, filterSave, surveyId, filterSet.visible]);
-
-  useEffect(
-    () => changeFilterValue({ ...filterSet, name: filterSetName }),
-    [filterSetName]
-  );
-
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyFiltersPublic", surveyId],
     async () => {
@@ -87,28 +59,15 @@ const ResultsFilters = ({
     }
   );
 
-  const updateMutation = useMutation(
-    async (values: any) => {
-      return axios.put(
-        `/filter-templates/${surveyId}/companies/${companyId}/filters/${values._id}`,
-        values
-      );
-    },
-    {
-      onSuccess: () => {
-        //refetchFilters();
-      },
-    }
-  );
+  useEffect(() => {
+    changeFilterValue(filterSet._id, "categories", surveyResult);
+  }, [surveyResult]);
 
   return (
     <ModalWrapper
-      modalVisible={filterSet.collapsed}
+      modalVisible={filterSet.showModal}
       setModalVisible={() => {
-        changeFilterValue({
-          ...filterSet,
-          collapsed: !filterSet.collapsed,
-        });
+        changeFilterValue(filterSet._id, "showModal", !filterSet.showModal);
       }}
     >
       <div className="survey-response__selects">
@@ -127,9 +86,9 @@ const ResultsFilters = ({
           <div>
             <TextInput
               label="Name"
-              value={filterSetName}
+              value={filterSet.name}
               onChange={(e) => {
-                setFilterSetName(e.target.value);
+                changeFilterValue(filterSet._id, "name", e.target.value);
               }}
             />
             <Select
@@ -143,7 +102,9 @@ const ResultsFilters = ({
                 { value: "circle", label: "Circle" },
                 { value: "trapeze", label: "Trapeze" },
               ]}
-              onChange={(e: Shape) => changeFilterValue(index, "pointShape", e)}
+              onChange={(e: Shape) =>
+                changeFilterValue(filterSet._id, "pointShape", e)
+              }
             />
           </div>
           <div>
@@ -155,7 +116,7 @@ const ResultsFilters = ({
               format="hex"
               value={filterSet.pointColor}
               onChange={(e) => {
-                changeFilterValue(index, "pointColor", e);
+                changeFilterValue(filterSet._id, "pointColor", e);
               }}
               size="md"
             />
@@ -167,18 +128,18 @@ const ResultsFilters = ({
             filter={filter}
             handleSubmit={handleSubmit}
             setFieldValue={setFieldValue}
-            filterSets={filterSets}
+            filterSet={filterSet}
           />
         ))}
         <div className="modal__footer">
           <Button
             onClick={() => {
-              // setFilterSave(!filterSave);
-              handleSave();
-              changeFilterValue({
-                ...filterSet,
-                collapsed: !filterSet.collapsed,
-              });
+              handleSave(filterSet._id, index);
+              changeFilterValue(
+                filterSet._id,
+                "showModal",
+                !filterSet.showModal
+              );
             }}
             className="modal__save"
           >

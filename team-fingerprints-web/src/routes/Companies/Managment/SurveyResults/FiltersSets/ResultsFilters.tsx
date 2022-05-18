@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
 import { Button, ColorPicker, Select, TextInput } from "@mantine/core";
@@ -15,9 +15,11 @@ type Props = {
   currentFiltersValues: { [key: string]: Array<string> };
   surveyId?: string;
   changeFilterValue: any;
-  setFilterSurveyResults: any;
-  filterSurveyResults: any;
+  setFilterSets: any;
+  filterSets: any;
   companyId: string | undefined;
+  handleSave: any;
+  index: any;
 };
 
 const ResultsFilters = ({
@@ -25,9 +27,11 @@ const ResultsFilters = ({
   surveyId,
   changeFilterValue,
   filterSet,
-  setFilterSurveyResults,
-  filterSurveyResults,
+  setFilterSets,
+  filterSets,
   companyId,
+  handleSave,
+  index,
 }: Props) => {
   const [filterSetName, setFilterSetName] = useState("");
   const [filterSave, setFilterSave] = useState(false);
@@ -37,7 +41,7 @@ const ResultsFilters = ({
     initialValues: currentFiltersValues,
     onSubmit: (values) => {
       const valuesWithoutEmpties = omitBy(values, isEmpty);
-      changeFilterValue({ ...filterSet, filters: valuesWithoutEmpties });
+      changeFilterValue(index, "filters", valuesWithoutEmpties);
     },
   });
 
@@ -52,20 +56,21 @@ const ResultsFilters = ({
     }
   );
 
-  useEffect(() => {
-    const categoriesArray = lodashValues(surveyResult);
-    setFilterSurveyResults({
-      ...filterSurveyResults,
-      [filterSet._id]: {
-        id: filterSet._id,
-        categories: categoriesArray,
-        color: filterSet.pointColor,
-        icon: filterSet.pointShape,
-        visible: filterSet.visible,
-      },
-    });
-    setFilterSetName(filterSet.name);
-  }, [surveyResult, filterSave, surveyId, filterSet.visible]);
+  // useEffect(() => {
+  //   const categoriesArray = lodashValues(surveyResult);
+  //   setFilterSets({
+  //     ...filterSets,
+  //     [filterSet._id]: {
+  //       name: filterSet.name,
+  //       id: filterSet._id,
+  //       categories: categoriesArray,
+  //       color: filterSet.pointColor,
+  //       icon: filterSet.pointShape,
+  //       visible: filterSet.visible,
+  //     },
+  //   });
+  //   setFilterSetName(filterSet.name);
+  // }, [surveyResult, filterSave, surveyId, filterSet.visible]);
 
   useEffect(
     () => changeFilterValue({ ...filterSet, name: filterSetName }),
@@ -79,6 +84,20 @@ const ResultsFilters = ({
         `/survey-filters/${surveyId}/companies/${companyId}`
       );
       return data;
+    }
+  );
+
+  const updateMutation = useMutation(
+    async (values: any) => {
+      return axios.put(
+        `/filter-templates/${surveyId}/companies/${companyId}/filters/${values._id}`,
+        values
+      );
+    },
+    {
+      onSuccess: () => {
+        //refetchFilters();
+      },
     }
   );
 
@@ -124,9 +143,7 @@ const ResultsFilters = ({
                 { value: "circle", label: "Circle" },
                 { value: "trapeze", label: "Trapeze" },
               ]}
-              onChange={(e: Shape) =>
-                changeFilterValue({ ...filterSet, pointShape: e })
-              }
+              onChange={(e: Shape) => changeFilterValue(index, "pointShape", e)}
             />
           </div>
           <div>
@@ -138,7 +155,7 @@ const ResultsFilters = ({
               format="hex"
               value={filterSet.pointColor}
               onChange={(e) => {
-                changeFilterValue({ ...filterSet, pointColor: e });
+                changeFilterValue(index, "pointColor", e);
               }}
               size="md"
             />
@@ -150,13 +167,14 @@ const ResultsFilters = ({
             filter={filter}
             handleSubmit={handleSubmit}
             setFieldValue={setFieldValue}
-            filterSet={filterSet}
+            filterSets={filterSets}
           />
         ))}
         <div className="modal__footer">
           <Button
             onClick={() => {
-              setFilterSave(!filterSave);
+              // setFilterSave(!filterSave);
+              handleSave();
               changeFilterValue({
                 ...filterSet,
                 collapsed: !filterSet.collapsed,

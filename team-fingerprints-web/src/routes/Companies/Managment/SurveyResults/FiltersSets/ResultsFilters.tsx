@@ -8,10 +8,10 @@ import ColoredShape from "../../../../../components/ColoredShape";
 import ModalWrapper from "../../../../../components/Modals/ModalWrapper";
 
 import FiltersSelect from "./FiltersSelect";
-import { FilterSelect, Shape, FilterSets } from "../../../../../types/models";
+import { FilterSelect, Shape, FiltersSet } from "../../../../../types/models";
 
 type Props = {
-  filterSet: any;
+  filterSet: FiltersSet;
   currentFiltersValues: { [key: string]: Array<string> };
   surveyId?: string;
   changeFilterValue: any;
@@ -58,7 +58,7 @@ const ResultsFilters = ({
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyFiltersPublic", surveyId],
     async () => {
-      const { data } = await axios.get<FilterSets>(
+      const { data } = await axios.get<FiltersSet>(
         `/survey-filters/${surveyId}/companies/${companyId}`
       );
       return data;

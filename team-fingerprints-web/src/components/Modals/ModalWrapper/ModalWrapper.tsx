@@ -5,7 +5,7 @@ import "./styles.sass";
 
 type Props = {
   children: ReactNode;
-  modalVisible: boolean;
+  modalVisible: boolean | undefined;
   setModalVisible: (modalVisible: boolean) => void;
   modalMessage?: string;
 };
@@ -18,7 +18,7 @@ const ModalWrapper = ({
 }: Props) => {
   return (
     <Modal
-      opened={modalVisible}
+      opened={Boolean(modalVisible)}
       onClose={() => setModalVisible(false)}
       classNames={{
         modal: "modal",

@@ -63,7 +63,7 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
             categories: dataAndRoleForCompany.categoriesArray,
             pointColor: dataAndRoleForCompany.teamInfo.pointColor,
             pointShape: dataAndRoleForCompany.teamInfo.pointShape,
-            id: dataAndRoleForCompany.teamInfo.teamId,
+            _id: dataAndRoleForCompany.teamInfo.teamId,
             name: `${dataAndRoleForCompany.role.company.name} / ${dataAndRoleForCompany.teamInfo.teamName}`,
           });
         } else {
@@ -71,7 +71,7 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
             categories: dataAndRoleForCompany.categoriesArray,
             pointColor: dataAndRoleForCompany.role.company.pointColor,
             pointShape: dataAndRoleForCompany.role.company.pointShape,
-            id: companyOrTeamId,
+            _id: companyOrTeamId,
             name: dataAndRoleForCompany.role.company.name,
           });
         }
@@ -88,7 +88,7 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
 
   const filteredAdditionalData = useMemo(() => {
     return additionalData.filter((element) => {
-      return visibleData[element.id];
+      return visibleData[element._id];
     });
   }, [additionalData, visibleData]);
 
@@ -143,7 +143,7 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
             </div>
             {keys(visibleData).map((key) => {
               const singleVisibleData = additionalData.find(
-                (el) => el.id === key
+                (el) => el._id === key
               );
               return (
                 <div className="survey-response__legend__item survey-response__legend__item--first">

@@ -11,13 +11,18 @@ import ResultsFilters from "./ResultsFilters";
 import ColoredShape from "../../../../../components/ColoredShape";
 
 import { Switch } from "../../../../../components/Switch";
-import { SurveyDetails, FiltersSet } from "../../../../../types/models";
+import {
+  SurveyDetails,
+  FiltersSet,
+  FilterSets,
+  ChangeFilterValue,
+} from "../../../../../types/models";
 
 import "./styles.sass";
 
 type Props = {
-  filterSets: any;
-  setFilterSets: any;
+  filterSets: FilterSets;
+  setFilterSets: (filtersData: any) => void;
 };
 
 const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
@@ -25,25 +30,24 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
 
   const {
     isLoading: isLoadingFilters,
-    data: FiltersData,
+    data: filtersData,
     refetch: refetchFilters,
   } = useQuery<any, Error>(["filterSets", surveyId, companyId], async () => {
     const { data } = await axios.get<any>(
       `/filter-templates/${surveyId}/companies/${companyId}/filters`
     );
-    const getFilterSet = { ...data };
-    return getFilterSet;
+    return { ...data };
   });
 
   useEffect(() => {
-    setFilterSets({ ...FiltersData });
-  }, [FiltersData]);
+    setFilterSets({ ...filtersData });
+  }, [filtersData]);
 
   const createMutation = useMutation(
-    async (filtersSets: any) => {
+    async (filtersSet: FiltersSet) => {
       return axios.post(
         `/filter-templates/${surveyId}/companies/${companyId}/filters`,
-        filtersSets
+        filtersSet
       );
     },
     {
@@ -53,22 +57,15 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
     }
   );
 
-  const updateMutation = useMutation(
-    async (values: any) => {
-      return axios.put(
-        `/filter-templates/${surveyId}/companies/${companyId}/filters/${values._id}`,
-        values
-      );
-    },
-    {
-      onSuccess: () => {
-        //refetchFilters();
-      },
-    }
-  );
+  const updateMutation = useMutation(async (filtersSet: FiltersSet) => {
+    return axios.put(
+      `/filter-templates/${surveyId}/companies/${companyId}/filters/${filtersSet._id}`,
+      filtersSet
+    );
+  });
 
   const deleteMutation = useMutation(
-    async (filterSetId: any) => {
+    async (filterSetId: string) => {
       const newFilterSurveyResult = { ...filterSets };
       delete newFilterSurveyResult[filterSetId];
       setFilterSets(newFilterSurveyResult);
@@ -97,14 +94,19 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
         visible: true,
         showModal: true,
         filters: { country: "" },
+        modalVisible: false,
       },
     });
   };
 
-  const changeFilterValue: any = (id: any, valueName: any, newValue: any) => {
-    setFilterSets((prevFilterSets: any) => {
+  const changeFilterValue: ChangeFilterValue = (
+    filterSetId,
+    valueName,
+    newValue
+  ) => {
+    setFilterSets((prevFilterSets: FiltersSet) => {
       const newFilterSet = Object.values(prevFilterSets).map((filterSet: any) =>
-        filterSet._id === id
+        filterSet._id === filterSetId
           ? { ...filterSet, [valueName]: newValue }
           : filterSet
       );
@@ -116,7 +118,7 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
     return <LoadingData title="Loading filters" />;
   }
 
-  const handleSave = (filterSetId: any, index: any) => {
+  const handleSave = (filterSetId: string, index: number) => {
     if (filterSetId) {
       updateMutation.mutate(filterSets[index]);
     } else {
@@ -132,7 +134,7 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
       >
         Create new filter set
       </Button>
-      {Object.values(filterSets)?.map((filterSet: any, index: any) => {
+      {Object.values<FiltersSet>(filterSets)?.map((filterSet, index) => {
         return (
           <React.Fragment key={filterSet?._id}>
             <div className="survey-response__filters__item">

@@ -141,8 +141,7 @@ export type AdditionalData = {
   pointColor: string;
   pointShape: Shape;
   categories: CategoryResults[];
-  _id?: string;
-  id: string;
+  _id: string;
 };
 
 export type FiltersSet = {
@@ -153,10 +152,11 @@ export type FiltersSet = {
   _id: string;
   visible: boolean;
   collapsed: boolean;
+  showModal?: boolean;
   filters: { [key: string]: Array<string> };
 };
 
-export type FilterSets = { [key: string]: FiltersSet } | {};
+export type FilterSets = { [key: string | number]: FiltersSet };
 
 export type ChangeFilterValue = <T extends keyof FiltersSet>(
   id: string,

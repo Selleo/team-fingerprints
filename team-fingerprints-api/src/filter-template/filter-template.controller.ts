@@ -7,12 +7,16 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiResponse, ApiTags, refs } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common/pipes/ValidateObjectId.pipe';
+import { FilterTemplateModel } from 'src/company/models/filter-template.model';
+import { TeamModel } from 'src/company/models/team.model';
 import { Roles } from 'src/role/decorators/roles.decorator';
 import { DetailQuery, RoleType } from 'team-fingerprints-common';
 import { TemplateFilterConfigDto } from './dto/filter-templates.dto';
 import { FilterTemplateService } from './filter-template.service';
 
+@ApiTags('filter-templates')
 @Controller({ path: 'filter-templates', version: '1' })
 export class FilterTemplateController {
   constructor(private readonly filterTemplateService: FilterTemplateService) {}
@@ -22,8 +26,8 @@ export class FilterTemplateController {
   async getFilterTemplatesForCompany(
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
-  ) {
-    return await this.filterTemplateService.getFilterTemplates(
+  ): Promise<FilterTemplateModel[]> {
+    return await this.filterTemplateService.getFilterTemplatesForCompany(
       surveyId,
       companyId,
     );
@@ -36,8 +40,8 @@ export class FilterTemplateController {
     @Param('companyId', ValidateObjectId) companyId: string,
     @Body('filters') filters: DetailQuery,
     @Body() templateFilterConfig: TemplateFilterConfigDto,
-  ) {
-    return await this.filterTemplateService.createFilterTemplate(
+  ): Promise<FilterTemplateModel> {
+    return await this.filterTemplateService.createFilterTemplateInCompany(
       surveyId,
       filters,
       templateFilterConfig,
@@ -53,8 +57,8 @@ export class FilterTemplateController {
     @Param('filterId', ValidateObjectId) filterId: string,
     @Body('filters') filters: DetailQuery,
     @Body() templateFilterConfig: TemplateFilterConfigDto,
-  ) {
-    return await this.filterTemplateService.updateFilterTemplate(
+  ): Promise<FilterTemplateModel> {
+    return await this.filterTemplateService.updateFilterTemplateInCompany(
       surveyId,
       filters,
       templateFilterConfig,
@@ -69,8 +73,8 @@ export class FilterTemplateController {
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('filterId', ValidateObjectId) filterId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
-  ) {
-    return await this.filterTemplateService.removeFilterTemplate(
+  ): Promise<FilterTemplateModel> {
+    return await this.filterTemplateService.removeFilterTemplateFromCompany(
       surveyId,
       filterId,
       companyId,
@@ -83,8 +87,8 @@ export class FilterTemplateController {
     @Param('surveyId', ValidateObjectId) surveyId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-  ) {
-    return await this.filterTemplateService.getFilterTemplates(
+  ): Promise<FilterTemplateModel[]> {
+    return await this.filterTemplateService.getFilterTemplatesForTeam(
       surveyId,
       companyId,
       teamId,
@@ -100,8 +104,8 @@ export class FilterTemplateController {
     @Body('filters') filters: DetailQuery,
     @Body()
     templateFilterConfig: TemplateFilterConfigDto,
-  ) {
-    return await this.filterTemplateService.createFilterTemplate(
+  ): Promise<FilterTemplateModel> {
+    return await this.filterTemplateService.createFilterTemplateInTeam(
       surveyId,
       filters,
       templateFilterConfig,
@@ -120,8 +124,8 @@ export class FilterTemplateController {
     @Body('filters') filters: DetailQuery,
     @Body()
     templateFilterConfig: TemplateFilterConfigDto,
-  ) {
-    return await this.filterTemplateService.updateFilterTemplate(
+  ): Promise<FilterTemplateModel> {
+    return await this.filterTemplateService.updateFilterTemplateInTeam(
       surveyId,
       filters,
       templateFilterConfig,
@@ -131,6 +135,14 @@ export class FilterTemplateController {
     );
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Removing filter template by its id',
+    schema: {
+      oneOf: refs(FilterTemplateModel, TeamModel),
+    },
+    type: FilterTemplateModel,
+  })
   @Delete('/:surveyId/companies/:companyId/teams/:teamId/filters/:filterId')
   @Roles([RoleType.SUPER_ADMIN, RoleType.COMPANY_ADMIN, RoleType.TEAM_LEADER])
   async removeFilterTemplateFromTeam(
@@ -138,8 +150,8 @@ export class FilterTemplateController {
     @Param('filterId', ValidateObjectId) filterId: string,
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-  ) {
-    return await this.filterTemplateService.removeFilterTemplate(
+  ): Promise<FilterTemplateModel> {
+    return await this.filterTemplateService.removeFilterTemplateFromTeam(
       surveyId,
       filterId,
       companyId,

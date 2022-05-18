@@ -39,7 +39,7 @@ const ResultsFilters = ({
   });
 
   const { data: surveyResult } = useQuery<any, Error>(
-    ["chartData", surveyId, currentFiltersValues],
+    [`chartData-${filterSet._id}`, companyId, currentFiltersValues],
     async () => {
       const { data } = await axios.get<any>(
         `/survey-results/${surveyId}/companies/${companyId}`,
@@ -48,6 +48,12 @@ const ResultsFilters = ({
       return data;
     }
   );
+
+  useEffect(() => {
+    const categoriesArray = lodashValues(surveyResult);
+    changeFilterValue(filterSet._id, "categories", categoriesArray);
+    console.log("useEffect", filterSet._id);
+  }, [surveyResult, filterSet._id, companyId]);
 
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyFiltersPublic", surveyId],
@@ -58,10 +64,6 @@ const ResultsFilters = ({
       return data;
     }
   );
-
-  useEffect(() => {
-    changeFilterValue(filterSet._id, "categories", surveyResult);
-  }, [surveyResult]);
 
   return (
     <ModalWrapper

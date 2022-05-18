@@ -9,7 +9,7 @@ import FiltersSelect from "./FiltersSelect";
 import {
   FilterSelect,
   Shape,
-  ChangeFilterValuePublic,
+  ChangeFilterValue,
   FilterSets,
 } from "../../../../types/models";
 
@@ -17,7 +17,7 @@ type Props = {
   id: string;
   currentFiltersValues: { [key: string]: Array<string> };
   surveyId: string;
-  changeFilterValue: ChangeFilterValuePublic;
+  changeFilterValue: ChangeFilterValue;
 };
 
 const PublicResultsFilters = ({
@@ -72,7 +72,7 @@ const PublicResultsFilters = ({
           { value: "circle", label: "Circle" },
           { value: "trapeze", label: "Trapeze" },
         ]}
-        onChange={(e: Shape) => changeFilterValue(id, "icon", e)}
+        onChange={(e: Shape) => changeFilterValue(id, "pointShape", e)}
       />
       <label className="survey-response__selects__shapes-label">
         Shape's color
@@ -80,7 +80,7 @@ const PublicResultsFilters = ({
       <ColorPicker
         format="hex"
         onChange={(e) => {
-          changeFilterValue(id, "color", e);
+          changeFilterValue(id, "pointColor", e);
         }}
         size="md"
       />

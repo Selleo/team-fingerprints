@@ -62,7 +62,7 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
     },
     {
       onSuccess: () => {
-        refetchFilters();
+        //refetchFilters();
       },
     }
   );
@@ -90,31 +90,31 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
     setFilterSets({
       ...filterSets,
       [id]: {
-        _id: id,
         name: `Filter Set #${id}`,
         pointColor: lightColor,
         pointShape: "trapeze",
         categories: [],
         visible: true,
         showModal: true,
-        filters: {},
+        filters: { country: "" },
       },
     });
   };
 
   const changeFilterValue: any = (id: any, valueName: any, newValue: any) => {
-    const newFilterSet = Object.values(filterSets).map((filterSet: any) =>
-      filterSet._id === id ? { ...filterSet, [valueName]: newValue } : filterSet
-    );
-
-    setFilterSets({ ...newFilterSet });
+    setFilterSets((prevFilterSets: any) => {
+      const newFilterSet = Object.values(prevFilterSets).map((filterSet: any) =>
+        filterSet._id === id
+          ? { ...filterSet, [valueName]: newValue }
+          : filterSet
+      );
+      return newFilterSet;
+    });
   };
 
   if (isLoadingFilters) {
     return <LoadingData title="Loading filters" />;
   }
-
-  console.log("sets", filterSets);
 
   const handleSave = (filterSetId: any, index: any) => {
     if (filterSetId) {
@@ -162,6 +162,21 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
                     filterSet._id,
                     "visible",
                     !filterSet.visible
+                  );
+                  updateMutation.mutate(
+                    {
+                      ...filterSet,
+                      visible: !filterSet.visible,
+                    },
+                    {
+                      onError: () => {
+                        changeFilterValue(
+                          filterSet._id,
+                          "visible",
+                          filterSet.visible
+                        );
+                      },
+                    }
                   );
                 }}
               />

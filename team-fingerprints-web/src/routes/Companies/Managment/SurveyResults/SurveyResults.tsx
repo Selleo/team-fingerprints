@@ -49,6 +49,8 @@ const SurveyResults = () => {
     return <ErrorLoading title="Can't load survey info" />;
   }
 
+  console.log("sets", filterSets);
+
   return (
     <div className="app-shell">
       <BackToScreen name="Surveys List" />

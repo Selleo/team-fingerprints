@@ -25,8 +25,8 @@ export class RoleService {
 
   async createRoleDocument(
     user: Partial<UserModel>,
-    roleDocumentData: Partial<Role> = {},
-  ): Promise<Role> {
+    roleDocumentData: Partial<RoleModel> = {},
+  ): Promise<RoleModel> {
     const roleDocument = await this.roleModel.create({
       email: user.email,
       role: RoleType.USER,
@@ -37,7 +37,9 @@ export class RoleService {
     return roleDocument;
   }
 
-  async findRoleDocument(searchParams: Partial<Role | null>): Promise<Role> {
+  async findRoleDocument(
+    searchParams: Partial<Role | null>,
+  ): Promise<RoleModel> {
     const roleDocument = await this.roleModel.findOne(searchParams).exec();
     if (!roleDocument) return null;
     return roleDocument;
@@ -52,7 +54,7 @@ export class RoleService {
   async updateRoleDocument(
     searchParams: Partial<Role>,
     updateData: Partial<Role>,
-  ): Promise<Role> {
+  ): Promise<RoleModel> {
     const updatedRoleDocument = await this.roleModel
       .findOneAndUpdate(searchParams, updateData, { new: true })
       .exec();
@@ -62,7 +64,7 @@ export class RoleService {
     return updatedRoleDocument;
   }
 
-  async removeRoleDocumentById(roleDocument: Role): Promise<Role> {
+  async removeRoleDocumentById(roleDocument: Role): Promise<RoleModel> {
     const deletedRoleDocument = await this.roleModel
       .findByIdAndDelete(roleDocument._id.toString(), {
         new: true,
@@ -76,7 +78,7 @@ export class RoleService {
     return deletedRoleDocument;
   }
 
-  async leave(userId: string, roleId: string) {
+  async leave(userId: string, roleId: string): Promise<RoleModel> {
     const roleDocument = await this.findRoleDocument({
       _id: roleId,
       userId,
@@ -87,7 +89,7 @@ export class RoleService {
     return await this.removeRoleDocumentById(roleDocument);
   }
 
-  async removeRole(roleId: string, currentUserId: string) {
+  async removeRole(roleId: string, currentUserId: string): Promise<RoleModel> {
     const roleDocumentToRemove = await this.findRoleDocument({
       _id: roleId,
     });
@@ -126,7 +128,7 @@ export class RoleService {
     throw new UnauthorizedException();
   }
 
-  async addSuperAdminRole(email: string) {
+  async addSuperAdminRole(email: string): Promise<RoleModel> {
     if (!isEmail(email)) throw new BadRequestException('Invalid email');
 
     const roleDocumenExists = await this.findRoleDocument({
@@ -141,12 +143,16 @@ export class RoleService {
       email,
       role: RoleType.SUPER_ADMIN,
     });
-    if (!roleDocument) throw new InternalServerErrorException();
+    if (!roleDocument)
+      throw new InternalServerErrorException('Something went wrong');
     await roleDocument.save();
     return roleDocument;
   }
 
-  async addCompanyAdminRole(email: string, companyId: string) {
+  async addCompanyAdminRole(
+    email: string,
+    companyId: string,
+  ): Promise<RoleModel> {
     const roleDocument = await this.roleModel.create({
       email,
       companyId,

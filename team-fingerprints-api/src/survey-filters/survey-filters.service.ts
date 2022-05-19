@@ -1,12 +1,14 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bull';
+import { Types } from 'mongoose';
 import { FilterService } from 'src/filter/filter.service';
 import { FilterModel } from 'src/filter/models/filter.model';
 import { SurveyResultService } from 'src/survey-result/survey-result.service';
-import { TfConfigService } from 'src/tf-config/tf-config.service';
+import { Filter, TfConfigService } from 'src/tf-config/tf-config.service';
 import { Role, UserWhoFinishedSurvey } from 'team-fingerprints-common';
 
+export type FilterValue = { value: string; _id: Types.ObjectId | string };
 @Injectable()
 export class SurveyFiltersService {
   constructor(
@@ -16,7 +18,7 @@ export class SurveyFiltersService {
     private readonly filterService: FilterService,
   ) {}
 
-  async getAvailableFiltersForCompanies(surveyId: string) {
+  async getAvailableFiltersForCompanies(surveyId: string): Promise<Filter[]> {
     const availableFilters =
       await this.tfConfigService.getGlobalAvailableFilters(surveyId);
 
@@ -40,7 +42,7 @@ export class SurveyFiltersService {
 
   async updateGlobalAvailableFiltersWhenUserChangeUserDetails(
     surveysIds: string[],
-  ) {
+  ): Promise<void> {
     const usersIds = await this.getUsersForFilters();
 
     surveysIds.forEach(async (surveyId) => {
@@ -76,7 +78,10 @@ export class SurveyFiltersService {
     });
   }
 
-  async getAvailableFilters(surveyId: string, usersIds: string[]) {
+  async getAvailableFilters(
+    surveyId: string,
+    usersIds: string[],
+  ): Promise<Filter[]> {
     const usersDetails =
       (
         await this.surveyResultService.getUsersWhoFinishedSurvey(
@@ -95,7 +100,11 @@ export class SurveyFiltersService {
 
     const filtersPaths = filters.map((filter) => filter.filterPath);
 
-    const groupedFilters = [];
+    const groupedFilters: {
+      [key: string]: {
+        values: FilterValue[];
+      };
+    }[] = [];
 
     usersDetails.forEach((detail) => {
       filtersPaths.forEach((path) => {
@@ -116,10 +125,10 @@ export class SurveyFiltersService {
     const availableFilters = Object.keys(groupedFilters).map((path) => {
       let values = groupedFilters[path].values.filter(
         (item: string, index: number) =>
-          groupedFilters[path].values.indexOf(item) == index,
+          groupedFilters[path].values.indexOf(item) === index,
       );
 
-      values = values.map((value: string) =>
+      values = values.map((value) =>
         filters
           .find((filter) => filter.filterPath === path)
           .values.find((el) => el._id.toString() === value),

@@ -17,6 +17,7 @@ import { UsersService } from 'src/users/users.service';
 import {
   Category,
   DetailQuery,
+  FinishedSurveyResult,
   Role,
   SurveyCompletionStatus,
   Trend,
@@ -29,6 +30,21 @@ type ResultSchema = {
   trend: string;
   trendPrimary: string;
   trendSecondary: string;
+};
+
+export type AvgTrend = {
+  trendId: string;
+  trendPrimary: string;
+  trendSecondary: string;
+  avgTrendAnswer: number;
+};
+
+export type SurveyResult = {
+  [key: string]: {
+    categoryTitle: string;
+    categoryId: string;
+    avgTrends: AvgTrend[];
+  };
 };
 
 @Injectable()
@@ -44,7 +60,10 @@ export class SurveyResultService {
     private readonly tfConfigService: TfConfigService,
   ) {}
 
-  async getAvgResultForAllCompanies(surveyId: string, queries: DetailQuery) {
+  async getAvgResultForAllCompanies(
+    surveyId: string,
+    queries: DetailQuery,
+  ): Promise<SurveyResult> {
     const usersIds = await this.getUsersIds();
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');
@@ -80,7 +99,7 @@ export class SurveyResultService {
     surveyId: string,
     companyId: string,
     queries: DetailQuery,
-  ) {
+  ): Promise<SurveyResult> {
     const usersIds = await this.getUsersIds({ companyId });
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');
@@ -96,7 +115,7 @@ export class SurveyResultService {
     surveyId: string,
     teamId: string,
     queries: DetailQuery,
-  ) {
+  ): Promise<SurveyResult> {
     const usersIds = await this.getUsersIds({ teamId });
     if (!usersIds || usersIds.length <= 0)
       throw new NotFoundException('Users was not found');
@@ -108,17 +127,23 @@ export class SurveyResultService {
     return await this.countPoints(surveyId, filteredUsersIds);
   }
 
-  async getSurveyResultForUsers(surveyId: string, usersIds: string[]) {
+  async getSurveyResultForUsers(
+    surveyId: string,
+    usersIds: string[],
+  ): Promise<FinishedSurveyResult[][]> {
     return (await this.getUsersWhoFinishedSurvey(surveyId, usersIds)).map(
       (user) => user.surveysAnswers.surveyResult,
     );
   }
 
-  async countPointsJob(surveyId: string) {
+  async countPointsJob(surveyId: string): Promise<void> {
     await this.surveyResultsQueue.add('count-points', { surveyId });
   }
 
-  async countPoints(surveyId: string, usersIds: string[]) {
+  async countPoints(
+    surveyId: string,
+    usersIds: string[],
+  ): Promise<SurveyResult> {
     const survey = await this.surveyModel.findById(surveyId);
     if (!survey)
       throw new InternalServerErrorException(
@@ -153,10 +178,10 @@ export class SurveyResultService {
       }
     });
 
-    const surveyResult = {};
+    const surveyResult: SurveyResult = {};
 
     schema.forEach((obj) => {
-      const avgTrends = [];
+      const avgTrends: AvgTrend[] = [];
 
       let trendCount = 0;
       let counter = 0;

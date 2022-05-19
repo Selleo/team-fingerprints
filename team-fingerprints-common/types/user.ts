@@ -24,7 +24,7 @@ export type UserSurveyAnswer = {
   surveyId: string;
   completionStatus: SurveyCompletionStatus;
   amountOfAnswers: number;
-  surveyResult: UserFinishedSurveyResult[];
+  surveyResult: FinishedSurveyResult[];
   answers: QuestionAnswer[];
 };
 
@@ -51,7 +51,7 @@ export type AvgTrend = {
   avgTrendAnswer: number;
 };
 
-export type UserFinishedSurveyResult = {
+export type FinishedSurveyResult = {
   categoryTitle: string;
   categoryId: string;
   avgTrends: AvgTrend[];
@@ -61,7 +61,7 @@ export type UserWhoFinishedSurvey = {
   _id: Types.ObjectId;
   email: string;
   surveysAnswers: {
-    surveyResult: UserFinishedSurveyResult[];
+    surveyResult: FinishedSurveyResult[];
   };
   userDetails: UserDetail[];
 };

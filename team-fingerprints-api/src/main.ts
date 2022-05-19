@@ -21,9 +21,9 @@ async function bootstrap() {
       .setDescription('API documentation')
       .setVersion('1.0')
       .addBearerAuth()
-      .addTag('auth', 'Add tag description')
-      .addTag('role', 'Add tag description')
-      .addTag('users', 'Add tag description')
+      .addTag('auth', 'Obtaining the currently logged in user profile')
+      .addTag('role', 'Handling roles')
+      .addTag('users', 'Handle users')
       .addTag('companies', 'Add tag description')
       .addTag('teams', 'Add tag description')
 

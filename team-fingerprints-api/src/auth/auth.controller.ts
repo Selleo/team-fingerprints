@@ -14,7 +14,11 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @ApiResponse({ type: ResponseAuthDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Get user profile with privileges and user details',
+    type: ResponseAuthDto,
+  })
   @Get('/profile')
   async getUserProfile(
     @CurrentUserId(ValidateObjectId) userId: string,

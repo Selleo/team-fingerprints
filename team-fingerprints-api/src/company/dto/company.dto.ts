@@ -76,7 +76,7 @@ export class UpdateCompanyDto {
   readonly pointColor?: string;
 }
 
-export class ValidateEmail {
+export class EmailDto {
   @ApiProperty()
   @IsString()
   @IsEmail()

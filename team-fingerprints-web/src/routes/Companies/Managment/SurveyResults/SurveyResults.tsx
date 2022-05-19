@@ -14,8 +14,6 @@ import { FilterSets } from "../../../../types/models";
 
 import { SurveyDetails } from "../../../../types/models";
 
-import "./styles.sass";
-
 const SurveyResults = () => {
   const { companyId, surveyId } = useParams();
   const [filterSets, setFilterSets] = useState<FilterSets>({});

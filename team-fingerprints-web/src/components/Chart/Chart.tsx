@@ -26,13 +26,13 @@ interface IProps {
 
 const ROW_HEIGHT_PX = 60;
 
-type TrendToDisplay = TrendResults & { categoryTitile: string };
+type TrendToDisplay = TrendResults & { categoryTitle: string };
 
 const asTrends = (data: CategoryResults[]) => {
   const tmpTrends: TrendToDisplay[] = [];
   data?.forEach?.((category) => {
     category.avgTrends.forEach((trend) => {
-      tmpTrends.push({ ...trend, categoryTitile: category.categoryTitile });
+      tmpTrends.push({ ...trend, categoryTitle: category.categoryTitle });
     });
   });
   return tmpTrends;

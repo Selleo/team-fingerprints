@@ -132,7 +132,7 @@ export type TrendResults = {
 
 export type CategoryResults = {
   categoryId: string;
-  categoryTitile: string;
+  categoryTitle: string;
   avgTrends: TrendResults[];
 };
 

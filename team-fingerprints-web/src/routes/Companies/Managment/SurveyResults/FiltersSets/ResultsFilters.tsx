@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useQuery, useMutation } from "react-query";
+import { useEffect } from "react";
+import { useQuery } from "react-query";
 import { isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
 import { Button, ColorPicker, Select, TextInput } from "@mantine/core";
@@ -8,16 +8,22 @@ import ColoredShape from "../../../../../components/ColoredShape";
 import ModalWrapper from "../../../../../components/Modals/ModalWrapper";
 
 import FiltersSelect from "./FiltersSelect";
-import { FilterSelect, Shape, FiltersSet } from "../../../../../types/models";
+import {
+  FilterSelect,
+  Shape,
+  FiltersSet,
+  ChangeFilterValue,
+} from "../../../../../types/models";
 
 type Props = {
   filterSet: FiltersSet;
   currentFiltersValues: { [key: string]: Array<string> };
   surveyId?: string;
-  changeFilterValue: any;
+  changeFilterValue: ChangeFilterValue;
   companyId: string | undefined;
-  handleSave: any;
-  index: any;
+  handleSave: (filterSetId: string, index: number) => void;
+  index: number;
+  deleteMutation: any;
 };
 
 const ResultsFilters = ({
@@ -28,6 +34,7 @@ const ResultsFilters = ({
   companyId,
   handleSave,
   index,
+  deleteMutation,
 }: Props) => {
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
@@ -52,11 +59,10 @@ const ResultsFilters = ({
   useEffect(() => {
     const categoriesArray = lodashValues(surveyResult);
     changeFilterValue(filterSet._id, "categories", categoriesArray);
-    console.log("useEffect", filterSet._id);
-  }, [surveyResult, filterSet._id, companyId]);
+  }, [surveyResult, filterSet._id, companyId, filterSet.visible]);
 
   const { data: availableFilters } = useQuery<any, Error>(
-    ["surveyFiltersPublic", surveyId],
+    ["surveyFiltersPublic", surveyId, companyId],
     async () => {
       const { data } = await axios.get<FiltersSet>(
         `/survey-filters/${surveyId}/companies/${companyId}`
@@ -72,19 +78,19 @@ const ResultsFilters = ({
         changeFilterValue(filterSet._id, "showModal", !filterSet.showModal);
       }}
     >
-      <div className="survey-response__selects">
-        <div className="modal__header">
-          <div className="modal__info">
-            <div className="modal__icon">
+      <div className="filters__selects">
+        <div className="filters__header">
+          <div className="filters__info">
+            <div className="filters__shape">
               <ColoredShape
                 shape={filterSet?.pointShape}
                 color={filterSet?.pointColor}
               />
             </div>
-            <div className="modal__name">{filterSet.name}</div>
+            <div className="filters__name">{filterSet.name}</div>
           </div>
         </div>
-        <div className="modal__config">
+        <div className="filters__config">
           <div>
             <TextInput
               label="Name"
@@ -110,9 +116,7 @@ const ResultsFilters = ({
             />
           </div>
           <div>
-            <label className="survey-response__selects__shapes-label">
-              Shape's color
-            </label>
+            <label className="filters__shapes-label">Shape's color</label>
             <ColorPicker
               style={{ width: "200px", height: "150px" }}
               format="hex"
@@ -133,7 +137,13 @@ const ResultsFilters = ({
             filterSet={filterSet}
           />
         ))}
-        <div className="modal__footer">
+        <div className="filters__footer">
+          <Button
+            className="filters__delete"
+            onClick={() => deleteMutation.mutate(filterSet._id)}
+          >
+            DELETE
+          </Button>
           <Button
             onClick={() => {
               handleSave(filterSet._id, index);
@@ -143,7 +153,7 @@ const ResultsFilters = ({
                 !filterSet.showModal
               );
             }}
-            className="modal__save"
+            className="filters__save"
           >
             SAVE
           </Button>

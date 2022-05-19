@@ -2,8 +2,8 @@ import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { uniqueId, filter } from "lodash";
-import { Button, Collapse } from "@mantine/core";
+import { uniqueId } from "lodash";
+import { Button } from "@mantine/core";
 
 import LoadingData from "../../../../../components/LoadingData";
 import ErrorLoading from "../../../../../components/ErrorLoading";
@@ -127,18 +127,12 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
   };
 
   return (
-    <div className="survey-response__filters">
-      <Button
-        className="survey-response__finished__new-filter-button"
-        onClick={createFilterSet}
-      >
-        Create new filter set
-      </Button>
+    <div className="filters">
       {Object.values<FiltersSet>(filterSets)?.map((filterSet, index) => {
         return (
           <React.Fragment key={filterSet?._id}>
-            <div className="survey-response__filters__item">
-              <div className="survey-response__filters__item__icon">
+            <div className="filters__item">
+              <div className="filters__icon">
                 <ColoredShape
                   shape={filterSet?.pointShape}
                   color={filterSet?.pointColor}
@@ -182,13 +176,6 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
                   );
                 }}
               />
-
-              <Button
-                className="survey-response__filters__item__collapse"
-                onClick={() => deleteMutation.mutate(filterSet._id)}
-              >
-                DELETE
-              </Button>
             </div>
             <ResultsFilters
               currentFiltersValues={filterSet.filters}
@@ -198,10 +185,14 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
               companyId={companyId}
               handleSave={handleSave}
               index={index}
+              deleteMutation={deleteMutation}
             />
           </React.Fragment>
         );
       })}
+      <Button className="filters__new" onClick={createFilterSet}>
+        Add new filterset
+      </Button>
     </div>
   );
 };

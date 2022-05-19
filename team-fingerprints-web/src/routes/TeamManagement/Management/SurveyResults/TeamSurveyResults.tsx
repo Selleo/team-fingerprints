@@ -17,8 +17,6 @@ import ModalWrapper from "../../../../components/Modals/ModalWrapper";
 import { Switch } from "../../../../components/Switch";
 import { SurveyDetails, FiltersSet } from "../../../../types/models";
 
-import "./styles.sass";
-
 const TeamSurveyResults = () => {
   const { id, surveyId, teamId } = useParams();
   const [filterSurveyResults, setFilterSurveyResults] = useState([]);

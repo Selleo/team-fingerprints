@@ -16,7 +16,7 @@ import { TeamService } from './team.service';
 import { CreateTeamDto, UpdateTeamDto } from './dto/team.dto';
 import { TeamMembersService } from './team-members.service';
 import { CompanyMembersService } from '../company-members.service';
-import { ValidateEmail } from '../dto/company.dto';
+import { EmailDto } from '../dto/company.dto';
 import { Roles } from 'src/role/decorators/roles.decorator';
 import { TeamModel } from '../models/team.model';
 import { TeamAndRoles } from './team.type';
@@ -93,7 +93,7 @@ export class TeamController {
   async removeMemberFromTeam(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body() { email: memberEmail }: ValidateEmail,
+    @Body() { email: memberEmail }: EmailDto,
   ): Promise<{ success: boolean }> {
     return await this.teamMembersService.removeMemberFromTeam(
       companyId,
@@ -107,7 +107,7 @@ export class TeamController {
   async assignTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body() { email }: ValidateEmail,
+    @Body() { email }: EmailDto,
   ): Promise<Role> {
     return await this.teamMembersService.assignTeamLeader(
       companyId,
@@ -121,7 +121,7 @@ export class TeamController {
   async removeTeamLeader(
     @Param('companyId', ValidateObjectId) companyId: string,
     @Param('teamId', ValidateObjectId) teamId: string,
-    @Body() { email }: ValidateEmail,
+    @Body() { email }: EmailDto,
   ): Promise<Role> {
     return await this.teamMembersService.removeTeamLeader(email, teamId);
   }

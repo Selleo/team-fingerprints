@@ -11,7 +11,7 @@ import {
   Category,
   Question,
   Trend,
-  UserFinishedSurveyResult,
+  FinishedSurveyResult,
 } from 'team-fingerprints-common';
 
 export type AvgTrend = {
@@ -35,7 +35,10 @@ export class SurveySummarizeService {
     private readonly surveyModel: Model<SurveyModel>,
   ) {}
 
-  async countPointsForUser(userId: string, surveyId: string) {
+  async countPointsForUser(
+    userId: string,
+    surveyId: string,
+  ): Promise<FinishedSurveyResult[]> {
     const { surveysAnswers } = await this.userModel.findOne({
       _id: userId,
       'surveysAnswers.surveyId': surveyId,
@@ -67,7 +70,7 @@ export class SurveySummarizeService {
       throw new InternalServerErrorException('Something went wrong');
     }
 
-    const summary: UserFinishedSurveyResult[] = [];
+    const summary: FinishedSurveyResult[] = [];
 
     categories.forEach((category: Category) => {
       const avgTrends: AvgTrend[] = [];

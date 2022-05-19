@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { SurveyResult } from 'src/survey-result/survey-result.service';
 import { TfConfigModel } from './models/tf-config.model';
 
 const SURVEY_RESULTS = 'survey-results';
 const GLOBAL_FILTERS = 'global-filters';
+
+export type Filter = {
+  _id: string;
+  name: string;
+  filterPath: string;
+  values: { value: string; _id: Types.ObjectId | string }[];
+};
 
 @Injectable()
 export class TfConfigService {
@@ -22,13 +30,18 @@ export class TfConfigService {
 
   // Storing global survey results
 
-  async getGlobalSurveysResults(surveyId: string) {
+  async getGlobalSurveysResults(
+    surveyId: string,
+  ): Promise<{ data: SurveyResult }> {
     return await this.tfConfigModel
       .findOne({ name: SURVEY_RESULTS, surveyId })
       .exec();
   }
 
-  async createGlobalSurveysResults(surveyId: string, result: unknown = {}) {
+  async createGlobalSurveysResults(
+    surveyId: string,
+    result: SurveyResult = {},
+  ): Promise<{ data: SurveyResult }> {
     return await (
       await this.tfConfigModel.create({
         name: SURVEY_RESULTS,
@@ -50,13 +63,22 @@ export class TfConfigService {
 
   // Storing available global filters
 
-  async getGlobalAvailableFilters(surveyId: string) {
+  async getGlobalAvailableFilters(surveyId: string): Promise<{
+    data: Filter[];
+  }> {
     return await this.tfConfigModel
       .findOne({ name: GLOBAL_FILTERS, surveyId })
       .exec();
   }
 
-  async createGlobalAvailableFilters(surveyId: string, filters: unknown = {}) {
+  async createGlobalAvailableFilters(
+    surveyId: string,
+    filters: unknown = {},
+  ): Promise<{
+    data: Filter[];
+    surveyId: string;
+    name: string;
+  }> {
     return await (
       await this.tfConfigModel.create({
         name: GLOBAL_FILTERS,
@@ -69,7 +91,11 @@ export class TfConfigService {
   async updateGlobalAvailableFilters(
     surveyId: string,
     newFilters: unknown = {},
-  ) {
+  ): Promise<{
+    data: Filter[];
+    surveyId: string;
+    name: string;
+  }> {
     return await this.tfConfigModel
       .findOneAndUpdate(
         { name: GLOBAL_FILTERS, surveyId },

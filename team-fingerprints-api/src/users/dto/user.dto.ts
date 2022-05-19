@@ -7,7 +7,12 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Trim } from 'src/common/decorators/trim.decorator';
-import { UserDetail, User } from 'team-fingerprints-common';
+import {
+  UserDetail,
+  User,
+  UserProfile,
+  Privilege,
+} from 'team-fingerprints-common';
 
 export class CreateUserDto implements Partial<User> {
   @IsString()
@@ -67,4 +72,11 @@ export class UpdateUserDto implements Partial<User> {
   @IsOptional()
   @ValidateNested()
   readonly userDetails?: UserDetail[];
+}
+
+export class Profile implements UserProfile {
+  _id: string;
+  email: string;
+  userDetails: UserDetail[];
+  privileges: Privilege[];
 }

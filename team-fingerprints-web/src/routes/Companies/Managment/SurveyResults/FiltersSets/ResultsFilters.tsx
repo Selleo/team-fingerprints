@@ -92,6 +92,7 @@ const ResultsFilters = ({
         </div>
         <div className="filters__config">
           <div>
+            <div>Appearance</div>
             <TextInput
               label="Name"
               value={filterSet.name}
@@ -100,7 +101,7 @@ const ResultsFilters = ({
               }}
             />
             <Select
-              style={{ marginTop: "20px" }}
+              style={{ marginTop: "10px" }}
               label="Shape"
               placeholder="Pick one"
               value={filterSet.pointShape}
@@ -114,29 +115,33 @@ const ResultsFilters = ({
                 changeFilterValue(filterSet._id, "pointShape", e)
               }
             />
+            <div>
+              <label className="filters__shapes-label">Shape's color</label>
+              <ColorPicker
+                style={{ width: "200px", height: "150px" }}
+                format="hex"
+                value={filterSet.pointColor}
+                onChange={(e) => {
+                  changeFilterValue(filterSet._id, "pointColor", e);
+                }}
+                size="md"
+              />
+            </div>
           </div>
+
           <div>
-            <label className="filters__shapes-label">Shape's color</label>
-            <ColorPicker
-              style={{ width: "200px", height: "150px" }}
-              format="hex"
-              value={filterSet.pointColor}
-              onChange={(e) => {
-                changeFilterValue(filterSet._id, "pointColor", e);
-              }}
-              size="md"
-            />
+            <div>Data</div>
+            {availableFilters?.map((filter: FilterSelect) => (
+              <FiltersSelect
+                key={filter._id}
+                filter={filter}
+                handleSubmit={handleSubmit}
+                setFieldValue={setFieldValue}
+                filterSet={filterSet}
+              />
+            ))}
           </div>
         </div>
-        {availableFilters?.map((filter: FilterSelect) => (
-          <FiltersSelect
-            key={filter._id}
-            filter={filter}
-            handleSubmit={handleSubmit}
-            setFieldValue={setFieldValue}
-            filterSet={filterSet}
-          />
-        ))}
         <div className="filters__footer">
           <Button
             className="filters__delete"

@@ -46,7 +46,7 @@ const ResultsFilters = ({
   });
 
   const { data: surveyResult } = useQuery<any, Error>(
-    [`chartData-${filterSet._id}`, companyId, currentFiltersValues],
+    [`chartData-${filterSet._id}`, companyId, currentFiltersValues, filterSet],
     async () => {
       const { data } = await axios.get<any>(
         `/survey-results/${surveyId}/companies/${companyId}`,

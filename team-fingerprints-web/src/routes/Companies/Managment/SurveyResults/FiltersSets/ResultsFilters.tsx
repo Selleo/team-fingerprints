@@ -24,7 +24,6 @@ type Props = {
   handleSave: (filterSetId: string, index: number) => void;
   index: number;
   deleteMutation: any;
-  filtersData: any;
 };
 
 const ResultsFilters = ({
@@ -36,7 +35,6 @@ const ResultsFilters = ({
   handleSave,
   index,
   deleteMutation,
-  filtersData,
 }: Props) => {
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
@@ -48,20 +46,16 @@ const ResultsFilters = ({
   });
 
   const { data: surveyResult } = useQuery<any, Error>(
-    [`chartData-${filterSet._id}`, companyId, currentFiltersValues, filterSet],
+    [`chartData-${filterSet._id}`, companyId, currentFiltersValues],
     async () => {
       const { data } = await axios.get<any>(
         `/survey-results/${surveyId}/companies/${companyId}`,
         { params: currentFiltersValues }
       );
-      return data;
+      const categoriesArray = lodashValues(data);
+      changeFilterValue(filterSet._id, "categories", categoriesArray);
     }
   );
-
-  useEffect(() => {
-    const categoriesArray = lodashValues(surveyResult);
-    changeFilterValue(filterSet._id, "categories", categoriesArray);
-  }, [surveyResult]);
 
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyFiltersPublic", surveyId, companyId],

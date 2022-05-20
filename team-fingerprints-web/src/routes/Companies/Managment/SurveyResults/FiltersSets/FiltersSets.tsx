@@ -184,7 +184,6 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
               handleSave={handleSave}
               index={index}
               deleteMutation={deleteMutation}
-              filtersData={filtersData}
             />
           </React.Fragment>
         );

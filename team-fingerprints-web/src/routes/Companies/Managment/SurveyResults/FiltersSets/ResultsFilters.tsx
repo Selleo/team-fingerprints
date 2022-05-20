@@ -45,17 +45,14 @@ const ResultsFilters = ({
     },
   });
 
-  const { data: surveyResult } = useQuery<any, Error>(
-    [`chartData-${filterSet._id}`, companyId, currentFiltersValues, filterSet],
-    async () => {
-      const { data } = await axios.get<any>(
-        `/survey-results/${surveyId}/companies/${companyId}`,
-        { params: currentFiltersValues }
-      );
-      const categoriesArray = lodashValues(data);
-      changeFilterValue(filterSet._id, "categories", categoriesArray);
-    }
-  );
+  const {} = useQuery<any, Error>([`chartData-`, filterSet], async () => {
+    const { data } = await axios.get<any>(
+      `/survey-results/${surveyId}/companies/${companyId}`,
+      { params: currentFiltersValues }
+    );
+    const categoriesArray = lodashValues(data);
+    changeFilterValue(filterSet._id, "categories", categoriesArray);
+  });
 
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyFiltersPublic", surveyId, companyId],

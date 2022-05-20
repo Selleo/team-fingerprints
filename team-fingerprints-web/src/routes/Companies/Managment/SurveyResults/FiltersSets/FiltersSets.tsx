@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { uniqueId } from "lodash";
+import { filter, uniqueId } from "lodash";
 import { Button } from "@mantine/core";
 
 import LoadingData from "../../../../../components/LoadingData";
@@ -44,15 +44,20 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
   }, [filtersData]);
 
   const createMutation = useMutation(
-    async (filtersSet: FiltersSet) => {
+    async (filtersSet: any) => {
       return axios.post(
         `/filter-templates/${surveyId}/companies/${companyId}/filters`,
         filtersSet
       );
     },
     {
-      onSuccess: () => {
-        refetchFilters();
+      onSuccess: (data) => {
+        const id = uniqueId("0");
+
+        setFilterSets({
+          ...filterSets,
+          [id]: data.data,
+        });
       },
     }
   );
@@ -65,38 +70,31 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
   });
 
   const deleteMutation = useMutation(
-    async (filterSetId: string) => {
+    async (filterSet: { _id: string; index: number }) => {
       const newFilterSurveyResult = { ...filterSets };
-      delete newFilterSurveyResult[filterSetId];
+      delete newFilterSurveyResult[filterSet.index];
       setFilterSets(newFilterSurveyResult);
       return axios.delete(
-        `/filter-templates/${surveyId}/companies/${companyId}/filters/${filterSetId}`
+        `/filter-templates/${surveyId}/companies/${companyId}/filters/${filterSet._id}`
       );
-    },
-    {
-      onSuccess: () => {
-        refetchFilters();
-      },
     }
   );
 
   const createFilterSet = () => {
-    const id = uniqueId();
     const lightColor = "hsl(" + Math.floor(Math.random() * 361) + ",50%,75%)";
 
-    setFilterSets({
-      ...filterSets,
-      [id]: {
-        name: `Filter Set #${id}`,
-        pointColor: lightColor,
-        pointShape: "trapeze",
-        categories: [],
-        visible: true,
-        showModal: true,
-        filters: { country: "" },
-        modalVisible: false,
-      },
-    });
+    const newFilterSet = {
+      name: `Filter Set`,
+      pointColor: lightColor,
+      pointShape: "trapeze",
+      categories: [],
+      visible: true,
+      showModal: false,
+      filters: { country: "623ae947b92be5c33bfee380" },
+      modalVisible: false,
+    };
+
+    createMutation.mutate(newFilterSet);
   };
 
   const changeFilterValue: ChangeFilterValue = (
@@ -130,7 +128,7 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
     <div className="filters">
       {Object.values<FiltersSet>(filterSets)?.map((filterSet, index) => {
         return (
-          <React.Fragment key={filterSet?._id}>
+          <React.Fragment key={index}>
             <div className="filters__item">
               <div className="filters__icon">
                 <ColoredShape
@@ -186,6 +184,7 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
               handleSave={handleSave}
               index={index}
               deleteMutation={deleteMutation}
+              filtersData={filtersData}
             />
           </React.Fragment>
         );

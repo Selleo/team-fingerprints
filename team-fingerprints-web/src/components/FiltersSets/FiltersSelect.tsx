@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { MultiSelect } from "@mantine/core";
-import { FilterSelect } from "../../../../../types/models";
+import { FilterSelect } from "../../types/models";
 
 import "./styles.sass";
 

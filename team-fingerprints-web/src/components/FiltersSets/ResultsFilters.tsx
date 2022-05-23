@@ -1,11 +1,10 @@
-import axios from "axios";
-import { useEffect } from "react";
-import { useQuery } from "react-query";
+import axios, { AxiosResponse } from "axios";
+import { useQuery, UseMutationResult } from "react-query";
 import { isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
 import { Button, ColorPicker, Select, TextInput } from "@mantine/core";
-import ColoredShape from "../../../../../components/ColoredShape";
-import ModalWrapper from "../../../../../components/Modals/ModalWrapper";
+import ColoredShape from "../ColoredShape";
+import ModalWrapper from "../Modals/ModalWrapper";
 
 import FiltersSelect from "./FiltersSelect";
 import {
@@ -13,29 +12,34 @@ import {
   Shape,
   FiltersSet,
   ChangeFilterValue,
-} from "../../../../../types/models";
-import ModalConfirmTrigger from "../../../../../components/Modals/ModalConfirmTrigger";
+} from "../../types/models";
+import ModalConfirmTrigger from "../Modals/ModalConfirmTrigger";
 
 type Props = {
   filterSet: FiltersSet;
   currentFiltersValues: { [key: string]: Array<string> };
-  surveyId?: string;
   changeFilterValue: ChangeFilterValue;
-  companyId: string | undefined;
   handleSave: (filterSetId: string, index: number) => void;
   index: number;
-  deleteMutation: any;
+  deleteMutation: UseMutationResult<
+    AxiosResponse<any, any>,
+    unknown,
+    { _id: string; index: number },
+    unknown
+  >;
+  apiUrl?: string;
+  isPublic?: boolean;
 };
 
 const ResultsFilters = ({
   currentFiltersValues,
-  surveyId,
   changeFilterValue,
   filterSet,
-  companyId,
   handleSave,
   index,
   deleteMutation,
+  apiUrl,
+  isPublic,
 }: Props) => {
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
@@ -47,23 +51,20 @@ const ResultsFilters = ({
   });
 
   const {} = useQuery<any, Error>(
-    [`chartData-${filterSet._id}`, companyId, currentFiltersValues, filterSet],
+    [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues, filterSet],
     async () => {
-      const { data } = await axios.get<any>(
-        `/survey-results/${surveyId}/companies/${companyId}`,
-        { params: currentFiltersValues }
-      );
+      const { data } = await axios.get<any>(`/survey-results/${apiUrl}`, {
+        params: currentFiltersValues,
+      });
       const categoriesArray = lodashValues(data);
       changeFilterValue(filterSet._id, "categories", categoriesArray);
     }
   );
 
   const { data: availableFilters } = useQuery<any, Error>(
-    ["surveyFiltersPublic", surveyId, companyId],
+    ["surveyFiltersPublic", apiUrl],
     async () => {
-      const { data } = await axios.get<FiltersSet>(
-        `/survey-filters/${surveyId}/companies/${companyId}`
-      );
+      const { data } = await axios.get<FiltersSet>(`/survey-filters/${apiUrl}`);
       return data;
     }
   );
@@ -139,7 +140,7 @@ const ResultsFilters = ({
         </div>
         <div className="filters__footer">
           <ModalConfirmTrigger
-            modalMessage="Are you sure you want to delete this filterset?"
+            modalMessage={`Are you sure you want to delete ${filterSet.name}?`}
             onConfirm={() => {
               deleteMutation.mutate({ _id: filterSet._id, index: index });
             }}
@@ -154,7 +155,9 @@ const ResultsFilters = ({
           />
           <Button
             onClick={() => {
-              handleSave(filterSet._id, index);
+              if (!isPublic) {
+                handleSave(filterSet._id, index);
+              }
               changeFilterValue(
                 filterSet._id,
                 "showModal",

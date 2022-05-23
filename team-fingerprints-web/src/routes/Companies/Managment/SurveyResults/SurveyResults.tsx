@@ -9,10 +9,8 @@ import ErrorLoading from "../../../../components/ErrorLoading";
 import Chart from "../../../../components/Chart/Chart";
 import BackToScreen from "../../../../components/BackToScreen/BackToScreen";
 import SurveyFinishedWrapper from "../../../../components/SurveyFinishedWrapper/SurveyFinishedWrapper";
-import FiltersSets from "./FiltersSets";
-import { FilterSets } from "../../../../types/models";
-
-import { SurveyDetails } from "../../../../types/models";
+import FiltersSets from "../../../../components/FiltersSets";
+import { SurveyDetails, FilterSets } from "../../../../types/models";
 
 const SurveyResults = () => {
   const { companyId, surveyId } = useParams();
@@ -22,7 +20,7 @@ const SurveyResults = () => {
     isLoading: isLoadingSurveys,
     error: errorLoadingSurvey,
     data: survey,
-  } = useQuery<SurveyDetails, Error>("publicSurveysList", async () => {
+  } = useQuery<SurveyDetails, Error>("companySurveysList", async () => {
     const { data } = await axios.get<SurveyDetails>(
       `/surveys/${surveyId}/public`
     );
@@ -32,7 +30,7 @@ const SurveyResults = () => {
   const { isLoading: isLoadingSurvey, data: surveyResult } = useQuery<
     any,
     Error
-  >(["publicSurvey", surveyId], async () => {
+  >([`companySurvey-${surveyId}`, companyId], async () => {
     const { data } = await axios.get<SurveyDetails>(
       `/survey-results/${surveyId}/companies/${companyId}`
     );
@@ -47,8 +45,6 @@ const SurveyResults = () => {
     return <ErrorLoading title="Can't load survey info" />;
   }
 
-  console.log("sets", filterSets);
-
   return (
     <div className="app-shell">
       <BackToScreen name="Surveys List" />
@@ -57,7 +53,11 @@ const SurveyResults = () => {
           surveyTitle={survey?.title}
           description="See trends in companies."
         >
-          <FiltersSets filterSets={filterSets} setFilterSets={setFilterSets} />
+          <FiltersSets
+            filterSets={filterSets}
+            setFilterSets={setFilterSets}
+            apiUrl={`${surveyId}/companies/${companyId}`}
+          />
           <Chart
             surveyResult={Object.values(surveyResult || {})}
             additionalData={filter(filterSets, "visible")}

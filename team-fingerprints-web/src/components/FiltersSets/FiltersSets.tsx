@@ -5,47 +5,53 @@ import { useMutation, useQuery } from "react-query";
 import { uniqueId } from "lodash";
 import { Button } from "@mantine/core";
 
-import LoadingData from "../../../../../components/LoadingData";
+import LoadingData from "../LoadingData";
 import ResultsFilters from "./ResultsFilters";
-import ColoredShape from "../../../../../components/ColoredShape";
+import ColoredShape from "../ColoredShape";
 
-import { Switch } from "../../../../../components/Switch";
-import {
-  FiltersSet,
-  FilterSets,
-  ChangeFilterValue,
-} from "../../../../../types/models";
+import { Switch } from "../Switch";
+import { FiltersSet, FilterSets, ChangeFilterValue } from "../../types/models";
 
 import "./styles.sass";
 
 type Props = {
   filterSets: FilterSets;
   setFilterSets: (filtersData: any) => void;
+  apiUrl?: string;
+  isPublic?: boolean;
 };
 
-const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
+const FiltersSets = ({
+  filterSets,
+  setFilterSets,
+  apiUrl,
+  isPublic,
+}: Props) => {
   const { companyId, surveyId } = useParams();
 
   const { isLoading: isLoadingFilters, data: filtersData } = useQuery<
     any,
     Error
-  >(["filterSets", surveyId, companyId], async () => {
-    const { data } = await axios.get<any>(
-      `/filter-templates/${surveyId}/companies/${companyId}/filters`
-    );
-    return { ...data };
-  });
+  >(
+    ["filterSets", surveyId, companyId],
+    async () => {
+      const { data } = await axios.get<any>(
+        `/filter-templates/${apiUrl}/filters`
+      );
+      return { ...data };
+    },
+    { enabled: !isPublic }
+  );
 
   useEffect(() => {
-    setFilterSets({ ...filtersData });
+    if (!isPublic) {
+      setFilterSets({ ...filtersData });
+    }
   }, [filtersData]);
 
   const createMutation = useMutation(
     async (filtersSet: any) => {
-      return axios.post(
-        `/filter-templates/${surveyId}/companies/${companyId}/filters`,
-        filtersSet
-      );
+      return axios.post(`/filter-templates/${apiUrl}/filters`, filtersSet);
     },
     {
       onSuccess: (data) => {
@@ -61,7 +67,7 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
 
   const updateMutation = useMutation(async (filtersSet: FiltersSet) => {
     return axios.put(
-      `/filter-templates/${surveyId}/companies/${companyId}/filters/${filtersSet._id}`,
+      `/filter-templates/${apiUrl}/filters/${filtersSet._id}`,
       filtersSet
     );
   });
@@ -72,7 +78,7 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
       delete newFilterSurveyResult[filterSet.index];
       setFilterSets(newFilterSurveyResult);
       return axios.delete(
-        `/filter-templates/${surveyId}/companies/${companyId}/filters/${filterSet._id}`
+        `/filter-templates/${apiUrl}/filters/${filterSet._id}`
       );
     }
   );
@@ -91,7 +97,25 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
       modalVisible: false,
     };
 
-    createMutation.mutate(newFilterSet);
+    if (!isPublic) {
+      createMutation.mutate(newFilterSet);
+    } else {
+      const id = uniqueId();
+      setFilterSets({
+        ...filterSets,
+        [id]: {
+          _id: id,
+          name: `Filter Set ${id}`,
+          pointColor: lightColor,
+          pointShape: "trapeze",
+          categories: [],
+          visible: true,
+          showModal: false,
+          filters: { country: "623ae947b92be5c33bfee380" },
+          modalVisible: false,
+        },
+      });
+    }
   };
 
   const changeFilterValue: ChangeFilterValue = (
@@ -109,8 +133,10 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
     });
   };
 
-  if (isLoadingFilters) {
-    return <LoadingData title="Loading filters" />;
+  if (!isPublic) {
+    if (isLoadingFilters) {
+      return <LoadingData title="Loading filters" />;
+    }
   }
 
   const handleSave = (filterSetId: string, index: number) => {
@@ -154,33 +180,35 @@ const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
                     "visible",
                     !filterSet.visible
                   );
-                  updateMutation.mutate(
-                    {
-                      ...filterSet,
-                      visible: !filterSet.visible,
-                    },
-                    {
-                      onError: () => {
-                        changeFilterValue(
-                          filterSet._id,
-                          "visible",
-                          filterSet.visible
-                        );
+                  if (!isPublic) {
+                    updateMutation.mutate(
+                      {
+                        ...filterSet,
+                        visible: !filterSet.visible,
                       },
-                    }
-                  );
+                      {
+                        onError: () => {
+                          changeFilterValue(
+                            filterSet._id,
+                            "visible",
+                            filterSet.visible
+                          );
+                        },
+                      }
+                    );
+                  }
                 }}
               />
             </div>
             <ResultsFilters
               currentFiltersValues={filterSet.filters}
               filterSet={filterSet}
-              surveyId={surveyId}
               changeFilterValue={changeFilterValue}
-              companyId={companyId}
               handleSave={handleSave}
               index={index}
               deleteMutation={deleteMutation}
+              apiUrl={apiUrl}
+              isPublic={isPublic}
             />
           </React.Fragment>
         );

@@ -1,133 +1,7 @@
-.filters
-    display: flex
-    flex-direction: column
-    width: 20vw
-    margin-top: 20px
-    margin-bottom: 30px
+@import 'styles/base/variables'
+@import 'styles/base/mixins'
 
-    &__item
-      border-top: 1px solid #FFFFFF1A
-      display: flex
-      align-items: center
-      border: none
-      margin-bottom: 10px
-
-    &__shapes-label
-      display: inline-block
-      margin-bottom: 4px
-      font-size: 14px
-      font-weight: 500
-      margin-top: 10px
-      word-break: break-word
-      -webkit-tap-highlight-color: transparent
-
-    &__selects
-      width: 100%
-
-    span
-      flex: 1 1 40px
-      font-size: 16px
-      font-weight: 600
-      line-height: 19px
-      letter-spacing: 0em
-      margin-right: 20px
-      flex-wrap: nowrap
-
-    &__icon
-      display: flex
-      justify-content: flex-start
-      align-items: center
-      width: 40px
-
-    &__name-input
-      background-color: #121212
-
-    &__section
-      margin-bottom: 10px
-
-    &__shape-title
-      margin-top: 20px
-
-    &__shape-wrapper
-      display: flex
-      align-content: center
-      justify-content: space-between
-      margin-left: 5px
-
-    &__shape
-      margin-top: 10px
-      display: flex
-      align-items: center
-
-    &__color
-      width: 100%
-
-    &__appearance
-      width: 35%
-
-    &__data
-      width: 60%
-
-    &__new
-      background-color: #121212
-      color: #32A89C
-      text-decoration: underline
-      padding: 0
-      margin-top: 10px
-
-      &:hover
-        background-color: #121212
-
-    &__info
-      display: flex
-      gap: 20px
-      margin-bottom: 10px
-      align-items: center
-      margin-top: -40px
-
-    &__buttons-wrapper
-      margin-top: 0
-
-    &__shape
-      margin-top: 5px
-
-    &__config
-      display: flex
-      justify-content: space-between
-
-    &__footer
-      display: flex
-      justify-content: space-between
-      margin-top: 30px
-
-    &__save
-      background-color: #32A89C
-      border: none
-      border-radius: 8px
-      color: #121212
-      cursor: pointer
-      display: flex
-      font-weight: 500
-      font-size: 16px
-      padding: 8px 30px
-      width: -moz-fit-content
-      width: fit-content
-
-    &__delete
-      background-color: #fc6969
-      border: none
-      border-radius: 8px
-      color: #121212
-      cursor: pointer
-      display: flex
-      font-weight: 500
-      font-size: 16px
-      padding: 8px 16px
-      width: -moz-fit-content
-      width: fit-content
-
-
-.modal
+.filterset-modal
   margin-top: 0
   width: 800px
 
@@ -138,5 +12,131 @@
       margin: 0
       display: block
 
+  &__wrapper
+    margin-top: 0
+
+
+.filters
+  display: flex
+  flex-direction: column
+  width: 20vw
+  margin-top: 20px
+  margin-bottom: 30px
+
+  &__item
+    border-top: 1px solid #FFFFFF1A
+    display: flex
+    align-items: center
+    border: none
+    margin-bottom: 10px
+
+  &__shapes-label
+    display: inline-block
+    margin-bottom: 4px
+    font-size: 14px
+    font-weight: 500
+    margin-top: 10px
+    word-break: break-word
+    -webkit-tap-highlight-color: transparent
+
+  &__selects
+    width: 100%
+
+  span
+    flex: 1 1 40px
+    font-size: 16px
+    font-weight: 600
+    line-height: 19px
+    letter-spacing: 0em
+    margin-right: 20px
+    flex-wrap: nowrap
+
+  &__icon
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    width: 40px
+
+  &__name-input
+    background-color: #121212
+
+  &__section
+    margin-bottom: 10px
+
+  &__shape-title
+    margin-top: 20px
+
+  &__shape-wrapper
+    display: flex
+    align-content: center
+    justify-content: space-between
+    margin-left: 5px
+
+  &__shape
+    margin-top: 10px
+    display: flex
+    align-items: center
+
+  &__color
+    width: 100%
+
+  &__appearance
+    width: 35%
+
+  &__data
+    width: 60%
+
+  &__new
+    background-color: #121212
+    color: #32A89C
+    text-decoration: underline
+    padding: 0
+    margin-top: 10px
+
+    &:hover
+      background-color: #121212
+
+  &__info
+    display: flex
+    gap: 20px
+    margin-bottom: 10px
+    align-items: center
+    margin-top: -40px
+
   &__buttons-wrapper
     margin-top: 0
+
+  &__shape
+    margin-top: 5px
+
+  &__config
+    display: flex
+    justify-content: space-between
+
+  &__footer
+    display: flex
+    justify-content: space-between
+    margin-top: 30px
+
+  &__button
+    background-color: $color-primary
+    border: none
+    border-radius: 8px
+    color: #121212
+    cursor: pointer
+    display: flex
+    font-weight: 500
+    font-size: 16px
+    padding: 8px 30px
+    width: -moz-fit-content
+    width: fit-content
+
+    &:hover
+        background-color: $color-primary-dark
+
+  &__delete
+    background-color: $color-red
+    padding: 8px 24px
+
+    &:hover
+        background-color: $color-red-dark

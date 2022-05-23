@@ -14,6 +14,7 @@ import {
   FiltersSet,
   ChangeFilterValue,
 } from "../../../../../types/models";
+import ModalConfirmTrigger from "../../../../../components/Modals/ModalConfirmTrigger";
 
 type Props = {
   filterSet: FiltersSet;
@@ -45,14 +46,17 @@ const ResultsFilters = ({
     },
   });
 
-  const {} = useQuery<any, Error>([`chartData-`, filterSet], async () => {
-    const { data } = await axios.get<any>(
-      `/survey-results/${surveyId}/companies/${companyId}`,
-      { params: currentFiltersValues }
-    );
-    const categoriesArray = lodashValues(data);
-    changeFilterValue(filterSet._id, "categories", categoriesArray);
-  });
+  const {} = useQuery<any, Error>(
+    [`chartData-${filterSet._id}`, companyId, currentFiltersValues, filterSet],
+    async () => {
+      const { data } = await axios.get<any>(
+        `/survey-results/${surveyId}/companies/${companyId}`,
+        { params: currentFiltersValues }
+      );
+      const categoriesArray = lodashValues(data);
+      changeFilterValue(filterSet._id, "categories", categoriesArray);
+    }
+  );
 
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyFiltersPublic", surveyId, companyId],
@@ -70,6 +74,7 @@ const ResultsFilters = ({
       setModalVisible={() => {
         changeFilterValue(filterSet._id, "showModal", !filterSet.showModal);
       }}
+      className="filterset-modal"
     >
       <div className="filters__selects">
         <div className="filters__config">
@@ -133,14 +138,20 @@ const ResultsFilters = ({
           </div>
         </div>
         <div className="filters__footer">
-          <Button
-            className="filters__delete"
-            onClick={() =>
-              deleteMutation.mutate({ _id: filterSet._id, index: index })
-            }
-          >
-            DELETE
-          </Button>
+          <ModalConfirmTrigger
+            modalMessage="Are you sure you want to delete this filterset?"
+            onConfirm={() => {
+              deleteMutation.mutate({ _id: filterSet._id, index: index });
+            }}
+            renderTrigger={(setModalVisible) => (
+              <Button
+                className="filters__button filters__delete"
+                onClick={() => setModalVisible(true)}
+              >
+                DELETE
+              </Button>
+            )}
+          />
           <Button
             onClick={() => {
               handleSave(filterSet._id, index);
@@ -150,7 +161,7 @@ const ResultsFilters = ({
                 !filterSet.showModal
               );
             }}
-            className="filters__save"
+            className="filters__button"
           >
             SAVE
           </Button>

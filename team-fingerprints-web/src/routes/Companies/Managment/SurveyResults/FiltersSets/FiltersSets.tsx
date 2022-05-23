@@ -1,18 +1,16 @@
 import axios from "axios";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { filter, uniqueId } from "lodash";
+import { uniqueId } from "lodash";
 import { Button } from "@mantine/core";
 
 import LoadingData from "../../../../../components/LoadingData";
-import ErrorLoading from "../../../../../components/ErrorLoading";
 import ResultsFilters from "./ResultsFilters";
 import ColoredShape from "../../../../../components/ColoredShape";
 
 import { Switch } from "../../../../../components/Switch";
 import {
-  SurveyDetails,
   FiltersSet,
   FilterSets,
   ChangeFilterValue,
@@ -28,11 +26,10 @@ type Props = {
 const FiltersSets = ({ filterSets, setFilterSets }: Props) => {
   const { companyId, surveyId } = useParams();
 
-  const {
-    isLoading: isLoadingFilters,
-    data: filtersData,
-    refetch: refetchFilters,
-  } = useQuery<any, Error>(["filterSets", surveyId, companyId], async () => {
+  const { isLoading: isLoadingFilters, data: filtersData } = useQuery<
+    any,
+    Error
+  >(["filterSets", surveyId, companyId], async () => {
     const { data } = await axios.get<any>(
       `/filter-templates/${surveyId}/companies/${companyId}/filters`
     );

@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { ReactNode } from "react";
 import { Modal } from "@mantine/core";
 
@@ -8,6 +9,7 @@ type Props = {
   modalVisible: boolean | undefined;
   setModalVisible: (modalVisible: boolean) => void;
   modalMessage?: string;
+  className?: string;
 };
 
 const ModalWrapper = ({
@@ -15,19 +17,40 @@ const ModalWrapper = ({
   modalVisible,
   setModalVisible,
   modalMessage,
+  className,
 }: Props) => {
   return (
     <Modal
       opened={Boolean(modalVisible)}
       onClose={() => setModalVisible(false)}
       classNames={{
-        modal: "modal",
-        header: "modal__header",
+        modal: `modal ${className}`,
+        header: classNames("modal__header", {
+          [`${className}__header`]: className,
+        }),
       }}
     >
-      <div className="modal__content">
-        {modalMessage && <div className="modal__msg">{modalMessage}</div>}
-        <div className="modal__buttons-wrapper">{children}</div>
+      <div
+        className={classNames("modal__content", {
+          [`${className}__content`]: className,
+        })}
+      >
+        {modalMessage && (
+          <div
+            className={classNames("modal__msg", {
+              [`${className}__msg`]: className,
+            })}
+          >
+            {modalMessage}
+          </div>
+        )}
+        <div
+          className={classNames("modal__wrapper", {
+            [`${className}__wrapper`]: className,
+          })}
+        >
+          {children}
+        </div>
       </div>
     </Modal>
   );

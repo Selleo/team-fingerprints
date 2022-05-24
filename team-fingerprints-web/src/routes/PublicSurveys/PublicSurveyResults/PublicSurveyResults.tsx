@@ -39,9 +39,9 @@ export default function PublicSurveyResults() {
   const { isLoading: isLoadingSurvey, data: surveyResult } = useQuery<
     any,
     Error
-  >([`publicSurvey-${surveyId}`], async () => {
+  >(["publicSurvey", surveyId], async () => {
     const { data } = await axios.get<SurveyDetails>(
-      `/survey-results/${surveyId}/companies/`
+      `/survey-results/${surveyId}/companies`
     );
     return data;
   });

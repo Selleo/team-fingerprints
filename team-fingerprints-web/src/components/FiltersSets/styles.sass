@@ -17,8 +17,6 @@
 
 
 .filters
-  display: flex
-  flex-direction: column
   width: 20vw
   margin-top: 20px
   margin-bottom: 30px
@@ -42,7 +40,7 @@
   &__selects
     width: 100%
 
-  span
+  &__name
     flex: 1 1 40px
     font-size: 16px
     font-weight: 600
@@ -50,6 +48,7 @@
     letter-spacing: 0em
     margin-right: 20px
     flex-wrap: nowrap
+    cursor: pointer
 
   &__icon
     display: flex
@@ -86,11 +85,19 @@
   &__data
     width: 60%
 
+  &__filter
+    margin: 10px 0
+
+  &__filter-label
+    text-transform: capitalize
+
   &__new
     background-color: #121212
     color: #32A89C
+    font-size: 16px
     text-decoration: underline
     padding: 0
+    margin-left: 0
     margin-top: 10px
 
     &:hover

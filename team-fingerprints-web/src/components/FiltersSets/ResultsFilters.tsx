@@ -50,7 +50,7 @@ const ResultsFilters = ({
     },
   });
 
-  const {} = useQuery<any, Error>(
+  useQuery<any, Error>(
     [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues, filterSet],
     async () => {
       const { data } = await axios.get<any>(`/survey-results/${apiUrl}`, {
@@ -62,12 +62,19 @@ const ResultsFilters = ({
   );
 
   const { data: availableFilters } = useQuery<any, Error>(
-    ["surveyFiltersPublic", apiUrl],
+    ["surveyAvailableFilters", apiUrl],
     async () => {
       const { data } = await axios.get<FiltersSet>(`/survey-filters/${apiUrl}`);
       return data;
     }
   );
+
+  const saveButton = (filterSet: FiltersSet) => {
+    if (!isPublic) {
+      handleSave(filterSet._id, index);
+    }
+    changeFilterValue(filterSet._id, "showModal", !filterSet.showModal);
+  };
 
   return (
     <ModalWrapper
@@ -155,14 +162,7 @@ const ResultsFilters = ({
           />
           <Button
             onClick={() => {
-              if (!isPublic) {
-                handleSave(filterSet._id, index);
-              }
-              changeFilterValue(
-                filterSet._id,
-                "showModal",
-                !filterSet.showModal
-              );
+              saveButton(filterSet);
             }}
             className="filters__button"
           >

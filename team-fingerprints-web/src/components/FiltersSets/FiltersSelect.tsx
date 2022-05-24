@@ -18,8 +18,8 @@ type Values = {
 };
 
 const selectClasses = {
-  root: "survey-response__selects__item",
-  label: "survey-response__selects__item__label",
+  root: "filters__filter",
+  label: "filters__filter-label",
 };
 
 const FiltersSelect = ({

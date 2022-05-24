@@ -26,7 +26,7 @@ const TeamSurveyResults = () => {
     isLoading: isLoadingSurveys,
     error: errorLoadingSurvey,
     data: survey,
-  } = useQuery<SurveyDetails, Error>("teamSurveysList", async () => {
+  } = useQuery<SurveyDetails, Error>("publicSurveysList", async () => {
     const { data } = await axios.get<SurveyDetails>(
       `/surveys/${surveyId}/public`
     );
@@ -36,7 +36,7 @@ const TeamSurveyResults = () => {
   const { isLoading: isLoadingSurvey, data: surveyResult } = useQuery<
     any,
     Error
-  >([`teamSurvey-${surveyId}`, teamId], async () => {
+  >([`teamSurvey-${surveyId}`, companyId, teamId], async () => {
     const { data } = await axios.get<SurveyDetails>(
       `/survey-results/${surveyId}/companies/${companyId}/teams/${teamId}`
     );

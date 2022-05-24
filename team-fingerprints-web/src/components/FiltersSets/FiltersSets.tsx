@@ -8,6 +8,7 @@ import { Button } from "@mantine/core";
 import LoadingData from "../LoadingData";
 import ResultsFilters from "./ResultsFilters";
 import ColoredShape from "../ColoredShape";
+import { getRandomLightColor } from "../../utils/utils";
 
 import { Switch } from "../Switch";
 import { FiltersSet, FilterSets, ChangeFilterValue } from "../../types/models";
@@ -55,11 +56,9 @@ const FiltersSets = ({
     },
     {
       onSuccess: (data) => {
-        const id = uniqueId("0");
-
         setFilterSets({
           ...filterSets,
-          [id]: data.data,
+          [data.data._id]: data.data,
         });
       },
     }
@@ -74,17 +73,21 @@ const FiltersSets = ({
 
   const deleteMutation = useMutation(
     async (filterSet: { _id: string; index: number }) => {
-      const newFilterSurveyResult = { ...filterSets };
-      delete newFilterSurveyResult[filterSet.index];
-      setFilterSets(newFilterSurveyResult);
       return axios.delete(
         `/filter-templates/${apiUrl}/filters/${filterSet._id}`
       );
+    },
+    {
+      onSuccess: (data, filterSet) => {
+        const newFilterSurveyResult = { ...filterSets };
+        delete newFilterSurveyResult[filterSet.index];
+        setFilterSets(newFilterSurveyResult);
+      },
     }
   );
 
   const createFilterSet = () => {
-    const lightColor = "hsl(" + Math.floor(Math.random() * 361) + ",50%,75%)";
+    const lightColor = getRandomLightColor();
 
     const newFilterSet = {
       name: `Filter Set`,
@@ -111,7 +114,7 @@ const FiltersSets = ({
           categories: [],
           visible: true,
           showModal: false,
-          filters: { country: "623ae947b92be5c33bfee380" },
+          filters: {},
           modalVisible: false,
         },
       });
@@ -124,20 +127,13 @@ const FiltersSets = ({
     newValue
   ) => {
     setFilterSets((prevFilterSets: FiltersSet) => {
-      const newFilterSet = Object.values(prevFilterSets).map((filterSet: any) =>
+      return Object.values(prevFilterSets).map((filterSet: any) =>
         filterSet._id === filterSetId
           ? { ...filterSet, [valueName]: newValue }
           : filterSet
       );
-      return newFilterSet;
     });
   };
-
-  if (!isPublic) {
-    if (isLoadingFilters) {
-      return <LoadingData title="Loading filters" />;
-    }
-  }
 
   const handleSave = (filterSetId: string, index: number) => {
     if (filterSetId) {
@@ -147,72 +143,70 @@ const FiltersSets = ({
     }
   };
 
+  const handleVisible = (filterSet: FiltersSet) => {
+    changeFilterValue(filterSet._id, "visible", !filterSet.visible);
+    if (!isPublic) {
+      updateMutation.mutate(
+        {
+          ...filterSet,
+          visible: !filterSet.visible,
+        },
+        {
+          onError: () => {
+            changeFilterValue(filterSet._id, "visible", filterSet.visible);
+          },
+        }
+      );
+    }
+  };
+
+  if (!isPublic) {
+    if (isLoadingFilters) {
+      return <LoadingData title="Loading filters" />;
+    }
+  }
+
   return (
     <div className="filters">
-      {Object.values<FiltersSet>(filterSets)?.map((filterSet, index) => {
-        return (
-          <React.Fragment key={index}>
-            <div className="filters__item">
-              <div className="filters__icon">
-                <ColoredShape
-                  shape={filterSet?.pointShape}
-                  color={filterSet?.pointColor}
-                />
-              </div>
-
-              <span
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  changeFilterValue(
-                    filterSet._id,
-                    "showModal",
-                    !filterSet.showModal
-                  );
-                }}
-              >
-                {filterSet?.name}
-              </span>
-              <Switch
-                value={!!filterSet.visible}
-                setValue={() => {
-                  changeFilterValue(
-                    filterSet._id,
-                    "visible",
-                    !filterSet.visible
-                  );
-                  if (!isPublic) {
-                    updateMutation.mutate(
-                      {
-                        ...filterSet,
-                        visible: !filterSet.visible,
-                      },
-                      {
-                        onError: () => {
-                          changeFilterValue(
-                            filterSet._id,
-                            "visible",
-                            filterSet.visible
-                          );
-                        },
-                      }
-                    );
-                  }
-                }}
+      {Object.values<FiltersSet>(filterSets)?.map((filterSet, index) => (
+        <React.Fragment key={index}>
+          <div className="filters__item">
+            <div className="filters__icon">
+              <ColoredShape
+                shape={filterSet?.pointShape}
+                color={filterSet?.pointColor}
               />
             </div>
-            <ResultsFilters
-              currentFiltersValues={filterSet.filters}
-              filterSet={filterSet}
-              changeFilterValue={changeFilterValue}
-              handleSave={handleSave}
-              index={index}
-              deleteMutation={deleteMutation}
-              apiUrl={apiUrl}
-              isPublic={isPublic}
+
+            <span
+              className="filters__name"
+              onClick={() => {
+                changeFilterValue(
+                  filterSet._id,
+                  "showModal",
+                  !filterSet.showModal
+                );
+              }}
+            >
+              {filterSet?.name}
+            </span>
+            <Switch
+              value={!!filterSet.visible}
+              setValue={() => handleVisible(filterSet)}
             />
-          </React.Fragment>
-        );
-      })}
+          </div>
+          <ResultsFilters
+            currentFiltersValues={filterSet.filters}
+            filterSet={filterSet}
+            changeFilterValue={changeFilterValue}
+            handleSave={handleSave}
+            index={index}
+            deleteMutation={deleteMutation}
+            apiUrl={apiUrl}
+            isPublic={isPublic}
+          />
+        </React.Fragment>
+      ))}
       <Button className="filters__new" onClick={createFilterSet}>
         Add new filterset
       </Button>

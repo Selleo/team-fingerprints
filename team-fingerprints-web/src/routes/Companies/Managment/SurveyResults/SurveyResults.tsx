@@ -20,7 +20,7 @@ const SurveyResults = () => {
     isLoading: isLoadingSurveys,
     error: errorLoadingSurvey,
     data: survey,
-  } = useQuery<SurveyDetails, Error>("companySurveysList", async () => {
+  } = useQuery<SurveyDetails, Error>("publicSurveysList", async () => {
     const { data } = await axios.get<SurveyDetails>(
       `/surveys/${surveyId}/public`
     );

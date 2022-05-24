@@ -6,7 +6,7 @@ import "./styles.sass";
 
 type Props = {
   children: ReactNode;
-  modalVisible: boolean | undefined;
+  modalVisible?: boolean;
   setModalVisible: (modalVisible: boolean) => void;
   modalMessage?: string;
   className?: string;

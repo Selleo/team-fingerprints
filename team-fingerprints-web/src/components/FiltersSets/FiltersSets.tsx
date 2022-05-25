@@ -73,6 +73,11 @@ const FiltersSets = ({
 
   const deleteMutation = useMutation(
     async (filterSet: { _id: string; index: number }) => {
+      if (isPublic) {
+        const newFilterSurveyResult = { ...filterSets };
+        delete newFilterSurveyResult[filterSet.index];
+        setFilterSets(newFilterSurveyResult);
+      }
       return axios.delete(
         `/filter-templates/${apiUrl}/filters/${filterSet._id}`
       );

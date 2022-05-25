@@ -14,6 +14,7 @@ import {
   ChangeFilterValue,
 } from "../../types/models";
 import ModalConfirmTrigger from "../Modals/ModalConfirmTrigger";
+import { useEffect } from "react";
 
 type Props = {
   filterSet: FiltersSet;
@@ -45,16 +46,20 @@ const ResultsFilters = ({
     },
   });
 
-  useQuery<any, Error>(
-    [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues, filterSet],
+  const { data: filtersResults } = useQuery<any, Error>(
+    [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues],
     async () => {
       const { data } = await axios.get<any>(`/survey-results/${apiUrl}`, {
         params: currentFiltersValues,
       });
-      const categoriesArray = lodashValues(data);
-      changeFilterValue(filterSet._id, "categories", categoriesArray);
+      return data;
     }
   );
+
+  useEffect(() => {
+    const categoriesArray = lodashValues(filtersResults);
+    changeFilterValue(filterSet._id, "categories", categoriesArray);
+  }, [filterSet._id, filtersResults, changeFilterValue]);
 
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyAvailableFilters", apiUrl],

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { useQuery, UseMutationResult } from "react-query";
-import { isEmpty, omitBy, values as lodashValues } from "lodash";
+import { findIndex, isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
 import { Button, ColorPicker, Select, TextInput } from "@mantine/core";
 import ColoredShape from "../ColoredShape";
@@ -21,12 +21,7 @@ type Props = {
   changeFilterValue: ChangeFilterValue;
   handleSave: (filterSetId: string, index: number) => void;
   index: number;
-  deleteMutation: UseMutationResult<
-    AxiosResponse<any, any>,
-    unknown,
-    { _id: string; index: number },
-    unknown
-  >;
+  handleDelete: (filterSet: FiltersSet, index: number) => void;
   apiUrl?: string;
   isPublic?: boolean;
 };
@@ -37,7 +32,7 @@ const ResultsFilters = ({
   filterSet,
   handleSave,
   index,
-  deleteMutation,
+  handleDelete,
   apiUrl,
   isPublic,
 }: Props) => {
@@ -149,7 +144,7 @@ const ResultsFilters = ({
           <ModalConfirmTrigger
             modalMessage={`Are you sure you want to delete ${filterSet.name}?`}
             onConfirm={() => {
-              deleteMutation.mutate({ _id: filterSet._id, index: index });
+              handleDelete(filterSet, index);
             }}
             renderTrigger={(setModalVisible) => (
               <Button

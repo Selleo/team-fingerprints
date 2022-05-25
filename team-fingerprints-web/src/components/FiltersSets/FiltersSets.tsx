@@ -73,11 +73,6 @@ const FiltersSets = ({
 
   const deleteMutation = useMutation(
     async (filterSet: { _id: string; index: number }) => {
-      if (isPublic) {
-        const newFilterSurveyResult = { ...filterSets };
-        delete newFilterSurveyResult[filterSet.index];
-        setFilterSets(newFilterSurveyResult);
-      }
       return axios.delete(
         `/filter-templates/${apiUrl}/filters/${filterSet._id}`
       );
@@ -148,6 +143,16 @@ const FiltersSets = ({
     }
   };
 
+  const handleDelete = (filterSet: FiltersSet, index: number) => {
+    if (!isPublic) {
+      deleteMutation.mutate({ _id: filterSet._id, index: index });
+    } else {
+      const newFilterSurveyResult = { ...filterSets };
+      delete newFilterSurveyResult[index];
+      setFilterSets(newFilterSurveyResult);
+    }
+  };
+
   const handleVisible = (filterSet: FiltersSet) => {
     changeFilterValue(filterSet._id, "visible", !filterSet.visible);
     if (!isPublic) {
@@ -206,7 +211,7 @@ const FiltersSets = ({
             changeFilterValue={changeFilterValue}
             handleSave={handleSave}
             index={index}
-            deleteMutation={deleteMutation}
+            handleDelete={handleDelete}
             apiUrl={apiUrl}
             isPublic={isPublic}
           />

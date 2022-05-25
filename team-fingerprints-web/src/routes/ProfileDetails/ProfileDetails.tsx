@@ -11,6 +11,9 @@ import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import ErrorLoading from "../../components/ErrorLoading";
 import { FormData } from "../../types/models";
 import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
+import { ReactComponent as ProfileCircle } from "../../assets/ProfileCircle.svg";
+import { ReactComponent as ProfileCircleFilled } from "../../assets/ProfileCircleFilled.svg";
+
 import { Filter } from "../../types/models";
 import { ProfileContext } from "../../routes";
 
@@ -65,6 +68,17 @@ const ProfileDetails = () => {
     },
   });
 
+  const progress = useMemo(() => {
+    if (data && profile) {
+      const x = Object.keys(profile.userDetails).length;
+      const result = (x / data?.length) * 100 + "%";
+
+      return result;
+    }
+  }, [data, profile]);
+
+  console.log(progress);
+
   const content = useMemo(() => {
     if (isLoading)
       return (
@@ -82,22 +96,39 @@ const ProfileDetails = () => {
         </>
       );
 
+    if (profile) {
+      console.log("profile", Object.keys(profile.userDetails).length);
+    }
+
     if (error) return <ErrorLoading title="Can't load filters" />;
 
     if (!data || isEmpty(data))
       return <h3 className="profile__empty">No available filters</h3>;
 
+    console.log(data.length);
+
     return (
-      <ul className="profile__details">
-        {data.map((item: Filter) => (
-          <ProfileSelect
-            item={item}
-            handleSubmit={handleSubmit}
-            handleChange={handleChange}
-            values={values}
-          />
-        ))}
-      </ul>
+      <div className="profile__wrapper">
+        <div className="profile__progress">
+          <ProfileCircle className="profile__circle" />
+          <div
+            style={{ height: `${progress}` }}
+            className="profile__circle-wrapper"
+          >
+            <ProfileCircleFilled className="profile__circle-filled" />
+          </div>
+        </div>
+        <ul className="profile__details">
+          {data.map((item: Filter) => (
+            <ProfileSelect
+              item={item}
+              handleSubmit={handleSubmit}
+              handleChange={handleChange}
+              values={values}
+            />
+          ))}
+        </ul>
+      </div>
     );
   }, [data, error, isLoading, values, handleSubmit, handleChange]);
 

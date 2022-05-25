@@ -18,6 +18,7 @@ import { Filter } from "../../types/models";
 import { ProfileContext } from "../../routes";
 
 import "./styles.sass";
+import BackToScreen from "../../components/BackToScreen/BackToScreen";
 
 const ProfileDetails = () => {
   const { profile, invalidateProfile } = useContext(ProfileContext);
@@ -77,8 +78,6 @@ const ProfileDetails = () => {
     }
   }, [data, profile]);
 
-  console.log(progress);
-
   const content = useMemo(() => {
     if (isLoading)
       return (
@@ -104,8 +103,6 @@ const ProfileDetails = () => {
 
     if (!data || isEmpty(data))
       return <h3 className="profile__empty">No available filters</h3>;
-
-    console.log(data.length);
 
     return (
       <div className="profile__wrapper">
@@ -139,6 +136,16 @@ const ProfileDetails = () => {
       <div className="svg-background">
         <BGIcons />
       </div>
+      {progress === "100%" && (
+        <div className="profile__footer">
+          <span className="profile__message">
+            Good job! Now you can check what surveys are waiting for you!
+          </span>
+          <div className="profile__back">
+            <BackToScreen name="Dashboard" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

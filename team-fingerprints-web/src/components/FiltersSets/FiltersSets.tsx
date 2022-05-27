@@ -54,7 +54,6 @@ const FiltersSets = ({
         {}
       );
       setFilterSets(filtersDataResult);
-      console.log("useEffectFilterSets", filtersData);
     }
   }, [isPublic, filtersData]);
 
@@ -63,8 +62,6 @@ const FiltersSets = ({
     surveyId,
     companyId,
   ]);
-
-  console.log("queryDataFilterSets", queryData);
 
   const createMutation = useMutation(
     async (filtersSet: any) => {
@@ -136,8 +133,6 @@ const FiltersSets = ({
     }
   };
 
-  console.log("filterSets", filterSets);
-
   const updateFilterSet = (filterSetData: FiltersSet) => {
     setFilterSets((prevFilterSets: FilterSets) => {
       return { ...prevFilterSets, [filterSetData._id]: filterSetData };
@@ -164,7 +159,6 @@ const FiltersSets = ({
     } else {
       createMutation.mutate(filterSetData);
     }
-    // refetchFilterSets();
   };
 
   const handleDelete = (filterSet: FiltersSet, index: number) => {
@@ -199,8 +193,6 @@ const FiltersSets = ({
       return <LoadingData title="Loading filters" />;
     }
   }
-
-  console.log("values", Object.values<FiltersSet>(filterSets));
 
   return (
     <div className="filters">

@@ -30,7 +30,7 @@ type Props = {
   handleDelete: (filterSet: FiltersSet, index: number) => void;
   apiUrl?: string;
   isPublic?: boolean;
-  handleVisible: any;
+  handleVisible: (filterSet: FiltersSet) => void;
 };
 
 const ResultsFilters = ({
@@ -47,10 +47,6 @@ const ResultsFilters = ({
   const [filterSetData, setFilterSetData] = useState<any>({});
   const [showModal, setShowModal] = useState(false);
 
-  // useEffect(() => {
-  //   setFilterSetData(filterSet);
-  // }, []);
-
   const changeFilterDataValue: any = (valueName: string, newValue: string) => {
     console.log("newValue", valueName, newValue);
     setFilterSetData((prevFilterSet: FiltersSet) => {
@@ -60,18 +56,18 @@ const ResultsFilters = ({
 
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
-    initialValues: filterSetData.filters,
+    initialValues: currentFiltersValues,
     onSubmit: (values) => {
       const valuesWithoutEmpties = omitBy(values, isEmpty);
       changeFilterDataValue("filters", valuesWithoutEmpties);
     },
   });
 
-  const { refetch: refetchCategories } = useQuery<any, Error>(
-    [`chartData-${filterSet._id}`, apiUrl, filterSetData.filters],
+  useQuery<any, Error>(
+    [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues],
     async () => {
       const { data } = await axios.get<any>(`/survey-results/${apiUrl}`, {
-        params: filterSetData.filters,
+        params: currentFiltersValues,
       });
       const categoriesArray = lodashValues(data);
       console.log("changeFiltersResults", filterSet._id);
@@ -80,13 +76,9 @@ const ResultsFilters = ({
   );
 
   const saveButton = (filterSetData: FiltersSet) => {
-    if (!isPublic) {
-      handleSave(filterSetData);
-    }
+    handleSave(filterSetData);
     setShowModal(false);
   };
-
-  // console.log(filterSetData);
 
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyAvailableFilters", apiUrl],

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { uniqueId } from "lodash";
@@ -12,7 +12,6 @@ import { getRandomLightColor } from "../../utils/utils";
 import { FiltersSet, FilterSets, ChangeFilterValue } from "../../types/models";
 
 import "./styles.sass";
-import { queryClient } from "../../App";
 
 type Props = {
   filterSets: FilterSets;
@@ -56,12 +55,6 @@ const FiltersSets = ({
       setFilterSets(filtersDataResult);
     }
   }, [isPublic, filtersData]);
-
-  const queryData = queryClient.getQueryData([
-    "filterSets",
-    surveyId,
-    companyId,
-  ]);
 
   const createMutation = useMutation(
     async (filtersSet: any) => {
@@ -205,7 +198,6 @@ const FiltersSets = ({
           index={index}
           handleDelete={handleDelete}
           apiUrl={apiUrl}
-          isPublic={isPublic}
           handleVisible={handleVisible}
         />
       ))}

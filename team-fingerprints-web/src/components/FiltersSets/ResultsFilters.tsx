@@ -1,6 +1,7 @@
+import React, { useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
-import { filter, isEmpty, omitBy, values as lodashValues } from "lodash";
+import { isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
 import { Button, ColorPicker, Select, TextInput } from "@mantine/core";
 import { Switch } from "../Switch";
@@ -17,9 +18,6 @@ import {
   FilterSets,
 } from "../../types/models";
 import ModalConfirmTrigger from "../Modals/ModalConfirmTrigger";
-import { useEffect, useState } from "react";
-import FiltersSets from "./FiltersSets";
-import React from "react";
 
 type Props = {
   filterSet: FiltersSet;
@@ -29,7 +27,6 @@ type Props = {
   index: number;
   handleDelete: (filterSet: FiltersSet, index: number) => void;
   apiUrl?: string;
-  isPublic?: boolean;
   handleVisible: (filterSet: FiltersSet) => void;
 };
 
@@ -41,7 +38,6 @@ const ResultsFilters = ({
   index,
   handleDelete,
   apiUrl,
-  isPublic,
   handleVisible,
 }: Props) => {
   const [filterSetData, setFilterSetData] = useState<any>({});

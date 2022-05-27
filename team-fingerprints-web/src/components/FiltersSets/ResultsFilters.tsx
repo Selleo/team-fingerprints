@@ -1,8 +1,10 @@
-import axios, { AxiosResponse } from "axios";
-import { useQuery, UseMutationResult } from "react-query";
-import { findIndex, isEmpty, omitBy, values as lodashValues } from "lodash";
+import axios from "axios";
+import { useQuery } from "react-query";
+import { filter, isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
 import { Button, ColorPicker, Select, TextInput } from "@mantine/core";
+import { Switch } from "../Switch";
+
 import ColoredShape from "../ColoredShape";
 import ModalWrapper from "../Modals/ModalWrapper";
 
@@ -12,19 +14,23 @@ import {
   Shape,
   FiltersSet,
   ChangeFilterValue,
+  FilterSets,
 } from "../../types/models";
 import ModalConfirmTrigger from "../Modals/ModalConfirmTrigger";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import FiltersSets from "./FiltersSets";
+import React from "react";
 
 type Props = {
   filterSet: FiltersSet;
   currentFiltersValues: { [key: string]: Array<string> };
   changeFilterValue: ChangeFilterValue;
-  handleSave: (filterSetId: string, index: number) => void;
+  handleSave: (filterSetData: FiltersSet) => void;
   index: number;
   handleDelete: (filterSet: FiltersSet, index: number) => void;
   apiUrl?: string;
   isPublic?: boolean;
+  handleVisible: any;
 };
 
 const ResultsFilters = ({
@@ -36,30 +42,51 @@ const ResultsFilters = ({
   handleDelete,
   apiUrl,
   isPublic,
+  handleVisible,
 }: Props) => {
+  const [filterSetData, setFilterSetData] = useState<any>({});
+  const [showModal, setShowModal] = useState(false);
+
+  // useEffect(() => {
+  //   setFilterSetData(filterSet);
+  // }, []);
+
+  const changeFilterDataValue: any = (valueName: string, newValue: string) => {
+    console.log("newValue", valueName, newValue);
+    setFilterSetData((prevFilterSet: FiltersSet) => {
+      return { ...prevFilterSet, [valueName]: newValue };
+    });
+  };
+
   const { handleSubmit, setFieldValue } = useFormik({
     enableReinitialize: true,
-    initialValues: currentFiltersValues,
+    initialValues: filterSetData.filters,
     onSubmit: (values) => {
       const valuesWithoutEmpties = omitBy(values, isEmpty);
-      changeFilterValue(filterSet._id, "filters", valuesWithoutEmpties);
+      changeFilterDataValue("filters", valuesWithoutEmpties);
     },
   });
 
-  const { data: filtersResults } = useQuery<any, Error>(
-    [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues],
+  const { refetch: refetchCategories } = useQuery<any, Error>(
+    [`chartData-${filterSet._id}`, apiUrl, filterSetData.filters],
     async () => {
       const { data } = await axios.get<any>(`/survey-results/${apiUrl}`, {
-        params: currentFiltersValues,
+        params: filterSetData.filters,
       });
-      return data;
+      const categoriesArray = lodashValues(data);
+      console.log("changeFiltersResults", filterSet._id);
+      changeFilterValue(filterSet?._id, "categories", categoriesArray);
     }
   );
 
-  useEffect(() => {
-    const categoriesArray = lodashValues(filtersResults);
-    changeFilterValue(filterSet._id, "categories", categoriesArray);
-  }, [filterSet._id, filtersResults, changeFilterValue]);
+  const saveButton = (filterSetData: FiltersSet) => {
+    if (!isPublic) {
+      handleSave(filterSetData);
+    }
+    setShowModal(false);
+  };
+
+  // console.log(filterSetData);
 
   const { data: availableFilters } = useQuery<any, Error>(
     ["surveyAvailableFilters", apiUrl],
@@ -69,108 +96,125 @@ const ResultsFilters = ({
     }
   );
 
-  const saveButton = (filterSet: FiltersSet) => {
-    if (!isPublic) {
-      handleSave(filterSet._id, index);
-    }
-    changeFilterValue(filterSet._id, "showModal", !filterSet.showModal);
-  };
-
   return (
-    <ModalWrapper
-      modalVisible={filterSet.showModal}
-      setModalVisible={() => {
-        changeFilterValue(filterSet._id, "showModal", !filterSet.showModal);
-      }}
-      className="filterset-modal"
-    >
-      <div className="filters__selects">
-        <div className="filters__config">
-          <div className="filters__appearance">
-            <div className="filters__section">Appearance</div>
-            <TextInput
-              className="filters__name-input"
-              label="Name"
-              value={filterSet.name}
-              onChange={(e) => {
-                changeFilterValue(filterSet._id, "name", e.target.value);
-              }}
-            />
-            <div className="filters__shape-title">Shape</div>
-            <div className="filters__shape-wrapper">
-              <div className="filters__shape">
-                <ColoredShape
-                  shape={filterSet?.pointShape}
-                  color={filterSet?.pointColor}
+    <React.Fragment key={index}>
+      <div className="filters__item">
+        <div className="filters__icon">
+          <ColoredShape
+            shape={filterSet?.pointShape}
+            color={filterSet?.pointColor}
+          />
+        </div>
+
+        <span
+          className="filters__name"
+          onClick={() => {
+            setShowModal(true);
+            setFilterSetData(filterSet);
+          }}
+        >
+          {filterSet?.name}
+        </span>
+        <Switch
+          value={!!filterSet.visible}
+          setValue={() => handleVisible(filterSet)}
+        />
+      </div>
+      <ModalWrapper
+        modalVisible={showModal}
+        setModalVisible={() => {
+          setShowModal(!showModal);
+        }}
+        className="filterset-modal"
+      >
+        <div className="filters__selects">
+          <div className="filters__config">
+            <div className="filters__appearance">
+              <div className="filters__section">Appearance</div>
+              <TextInput
+                className="filters__name-input"
+                label="Name"
+                value={filterSetData.name}
+                onChange={(e) => {
+                  changeFilterDataValue("name", e.target.value);
+                }}
+              />
+              <div className="filters__shape-title">Shape</div>
+              <div className="filters__shape-wrapper">
+                <div className="filters__shape">
+                  <ColoredShape
+                    shape={filterSetData?.pointShape}
+                    color={filterSetData?.pointColor}
+                  />
+                </div>
+                <Select
+                  className="filters__shape"
+                  placeholder="Pick one"
+                  value={filterSetData.pointShape}
+                  data={[
+                    { value: "triangle", label: "Triangle" },
+                    { value: "square", label: "Square" },
+                    { value: "circle", label: "Circle" },
+                    { value: "trapeze", label: "Trapeze" },
+                  ]}
+                  onChange={(e: Shape) =>
+                    changeFilterDataValue("pointShape", e)
+                  }
                 />
               </div>
-              <Select
-                className="filters__shape"
-                placeholder="Pick one"
-                value={filterSet.pointShape}
-                data={[
-                  { value: "triangle", label: "Triangle" },
-                  { value: "square", label: "Square" },
-                  { value: "circle", label: "Circle" },
-                  { value: "trapeze", label: "Trapeze" },
-                ]}
-                onChange={(e: Shape) =>
-                  changeFilterValue(filterSet._id, "pointShape", e)
-                }
-              />
+              <div>
+                <label className="filters__shapes-label">Color</label>
+                <ColorPicker
+                  className="filters__color"
+                  format="hex"
+                  value={filterSetData.pointColor}
+                  size="md"
+                  onChange={(e) => {
+                    changeFilterDataValue("pointColor", e);
+                  }}
+                />
+              </div>
             </div>
-            <div>
-              <label className="filters__shapes-label">Color</label>
-              <ColorPicker
-                className="filters__color"
-                format="hex"
-                value={filterSet.pointColor}
-                onChange={(e) => {
-                  changeFilterValue(filterSet._id, "pointColor", e);
-                }}
-                size="md"
-              />
+            <div className="filters__data">
+              <div>Data</div>
+              {availableFilters?.map((filter: FilterSelect) => (
+                <FiltersSelect
+                  key={filter._id}
+                  filter={filter}
+                  handleSubmit={handleSubmit}
+                  setFieldValue={setFieldValue}
+                  filterSet={filterSetData}
+                />
+              ))}
             </div>
           </div>
-          <div className="filters__data">
-            <div>Data</div>
-            {availableFilters?.map((filter: FilterSelect) => (
-              <FiltersSelect
-                key={filter._id}
-                filter={filter}
-                handleSubmit={handleSubmit}
-                setFieldValue={setFieldValue}
-                filterSet={filterSet}
-              />
-            ))}
+          <div className="filters__footer">
+            <ModalConfirmTrigger
+              modalMessage={`Are you sure you want to delete ${filterSetData.name}?`}
+              onConfirm={() => {
+                handleDelete(filterSet, index);
+              }}
+              renderTrigger={(setModalVisible) => (
+                <Button
+                  className="filters__button filters__delete"
+                  onClick={() => setModalVisible(true)}
+                >
+                  DELETE
+                </Button>
+              )}
+            />
+            <Button
+              onClick={() => {
+                saveButton(filterSetData);
+              }}
+              className="filters__button"
+            >
+              SAVE
+            </Button>
           </div>
         </div>
-        <div className="filters__footer">
-          <ModalConfirmTrigger
-            modalMessage={`Are you sure you want to delete ${filterSet.name}?`}
-            onConfirm={() => {
-              handleDelete(filterSet, index);
-            }}
-            renderTrigger={(setModalVisible) => (
-              <Button
-                className="filters__button filters__delete"
-                onClick={() => setModalVisible(true)}
-              >
-                DELETE
-              </Button>
-            )}
-          />
-          <Button
-            onClick={() => {
-              saveButton(filterSet);
-            }}
-            className="filters__button"
-          >
-            SAVE
-          </Button>
-        </div>
-      </div>
-    </ModalWrapper>
+      </ModalWrapper>
+    </React.Fragment>
   );
 };
 

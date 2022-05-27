@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { uniqueId } from "lodash";
@@ -7,17 +7,16 @@ import { Button } from "@mantine/core";
 
 import LoadingData from "../LoadingData";
 import ResultsFilters from "./ResultsFilters";
-import ColoredShape from "../ColoredShape";
 import { getRandomLightColor } from "../../utils/utils";
 
-import { Switch } from "../Switch";
 import { FiltersSet, FilterSets, ChangeFilterValue } from "../../types/models";
 
 import "./styles.sass";
+import { queryClient } from "../../App";
 
 type Props = {
   filterSets: FilterSets;
-  setFilterSets: (filtersData: any) => void;
+  setFilterSets: React.Dispatch<React.SetStateAction<FilterSets>>;
   apiUrl?: string;
   isPublic?: boolean;
 };
@@ -30,25 +29,42 @@ const FiltersSets = ({
 }: Props) => {
   const { companyId, surveyId } = useParams();
 
-  const { isLoading: isLoadingFilters, data: filtersData } = useQuery<
-    any,
-    Error
-  >(
+  const {
+    isLoading: isLoadingFilters,
+    data: filtersData,
+    refetch: refetchFilterSets,
+  } = useQuery<any, Error>(
     ["filterSets", surveyId, companyId],
     async () => {
       const { data } = await axios.get<any>(
         `/filter-templates/${apiUrl}/filters`
       );
-      return { ...data };
+      return data;
     },
-    { enabled: !isPublic }
+    { enabled: !isPublic, cacheTime: 0 }
   );
 
   useEffect(() => {
-    if (!isPublic) {
-      setFilterSets({ ...filtersData });
+    if (!isPublic && filtersData) {
+      const filtersDataResult = filtersData.reduce(
+        (acc: FilterSets, filterSet: FiltersSet) => {
+          acc[filterSet._id] = filterSet;
+          return acc;
+        },
+        {}
+      );
+      setFilterSets(filtersDataResult);
+      console.log("useEffectFilterSets", filtersData);
     }
-  }, [filtersData]);
+  }, [isPublic, filtersData]);
+
+  const queryData = queryClient.getQueryData([
+    "filterSets",
+    surveyId,
+    companyId,
+  ]);
+
+  console.log("queryDataFilterSets", queryData);
 
   const createMutation = useMutation(
     async (filtersSet: any) => {
@@ -115,32 +131,40 @@ const FiltersSets = ({
           visible: true,
           showModal: false,
           filters: {},
-          modalVisible: false,
         },
       });
     }
   };
 
-  const changeFilterValue: ChangeFilterValue = (
-    filterSetId,
-    valueName,
-    newValue
-  ) => {
-    setFilterSets((prevFilterSets: FiltersSet) => {
-      return Object.values(prevFilterSets).map((filterSet: any) =>
-        filterSet._id === filterSetId
-          ? { ...filterSet, [valueName]: newValue }
-          : filterSet
-      );
+  console.log("filterSets", filterSets);
+
+  const updateFilterSet = (filterSetData: FiltersSet) => {
+    setFilterSets((prevFilterSets: FilterSets) => {
+      return { ...prevFilterSets, [filterSetData._id]: filterSetData };
     });
   };
 
-  const handleSave = (filterSetId: string, index: number) => {
-    if (filterSetId) {
-      updateMutation.mutate(filterSets[index]);
+  const changeFilterValue: any = (
+    filterSetId: string,
+    valueName: string,
+    newValue: string
+  ) => {
+    const newFilterSet = {
+      ...filterSets[filterSetId],
+      [valueName]: newValue,
+    };
+
+    updateFilterSet(newFilterSet);
+  };
+
+  const handleSave = (filterSetData: any) => {
+    if (filterSetData._id) {
+      updateFilterSet(filterSetData);
+      updateMutation.mutate(filterSetData);
     } else {
-      createMutation.mutate(filterSets[index]);
+      createMutation.mutate(filterSetData);
     }
+    // refetchFilterSets();
   };
 
   const handleDelete = (filterSet: FiltersSet, index: number) => {
@@ -176,46 +200,22 @@ const FiltersSets = ({
     }
   }
 
+  console.log("values", Object.values<FiltersSet>(filterSets));
+
   return (
     <div className="filters">
       {Object.values<FiltersSet>(filterSets)?.map((filterSet, index) => (
-        <React.Fragment key={index}>
-          <div className="filters__item">
-            <div className="filters__icon">
-              <ColoredShape
-                shape={filterSet?.pointShape}
-                color={filterSet?.pointColor}
-              />
-            </div>
-
-            <span
-              className="filters__name"
-              onClick={() => {
-                changeFilterValue(
-                  filterSet._id,
-                  "showModal",
-                  !filterSet.showModal
-                );
-              }}
-            >
-              {filterSet?.name}
-            </span>
-            <Switch
-              value={!!filterSet.visible}
-              setValue={() => handleVisible(filterSet)}
-            />
-          </div>
-          <ResultsFilters
-            currentFiltersValues={filterSet.filters}
-            filterSet={filterSet}
-            changeFilterValue={changeFilterValue}
-            handleSave={handleSave}
-            index={index}
-            handleDelete={handleDelete}
-            apiUrl={apiUrl}
-            isPublic={isPublic}
-          />
-        </React.Fragment>
+        <ResultsFilters
+          currentFiltersValues={filterSet.filters}
+          filterSet={filterSet}
+          changeFilterValue={changeFilterValue}
+          handleSave={handleSave}
+          index={index}
+          handleDelete={handleDelete}
+          apiUrl={apiUrl}
+          isPublic={isPublic}
+          handleVisible={handleVisible}
+        />
       ))}
       <Button className="filters__new" onClick={createFilterSet}>
         Add new filterset

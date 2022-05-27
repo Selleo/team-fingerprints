@@ -151,7 +151,6 @@ export type FiltersSet = {
   categories: CategoryResults[];
   _id: string;
   visible: boolean;
-  collapsed: boolean;
   showModal?: boolean;
   filters: { [key: string]: Array<string> };
 };

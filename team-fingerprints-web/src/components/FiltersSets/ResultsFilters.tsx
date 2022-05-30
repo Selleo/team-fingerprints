@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import axios from "axios";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
@@ -15,7 +15,7 @@ import {
   Shape,
   FiltersSet,
   ChangeFilterValue,
-  FilterSets,
+  ChangeFilterDataValue,
 } from "../../types/models";
 import ModalConfirmTrigger from "../Modals/ModalConfirmTrigger";
 
@@ -24,8 +24,7 @@ type Props = {
   currentFiltersValues: { [key: string]: Array<string> };
   changeFilterValue: ChangeFilterValue;
   handleSave: (filterSetData: FiltersSet) => void;
-  index: number;
-  handleDelete: (filterSet: FiltersSet, index: number) => void;
+  handleDelete: (filterSet: FiltersSet) => void;
   apiUrl?: string;
   handleVisible: (filterSet: FiltersSet) => void;
 };
@@ -35,16 +34,17 @@ const ResultsFilters = ({
   changeFilterValue,
   filterSet,
   handleSave,
-  index,
   handleDelete,
   apiUrl,
   handleVisible,
 }: Props) => {
-  const [filterSetData, setFilterSetData] = useState<any>({});
+  const [filterSetData, setFilterSetData] = useState<FiltersSet>(filterSet);
   const [showModal, setShowModal] = useState(false);
 
-  const changeFilterDataValue: any = (valueName: string, newValue: string) => {
-    console.log("newValue", valueName, newValue);
+  const changeFilterDataValue: ChangeFilterDataValue = (
+    valueName,
+    newValue
+  ) => {
     setFilterSetData((prevFilterSet: FiltersSet) => {
       return { ...prevFilterSet, [valueName]: newValue };
     });
@@ -66,7 +66,6 @@ const ResultsFilters = ({
         params: currentFiltersValues,
       });
       const categoriesArray = lodashValues(data);
-      console.log("changeFiltersResults", filterSet._id);
       changeFilterValue(filterSet?._id, "categories", categoriesArray);
     }
   );
@@ -85,7 +84,7 @@ const ResultsFilters = ({
   );
 
   return (
-    <React.Fragment key={index}>
+    <React.Fragment key={filterSet?._id}>
       <div className="filters__item">
         <div className="filters__icon">
           <ColoredShape
@@ -93,12 +92,10 @@ const ResultsFilters = ({
             color={filterSet?.pointColor}
           />
         </div>
-
         <span
           className="filters__name"
           onClick={() => {
             setShowModal(true);
-            setFilterSetData(filterSet);
           }}
         >
           {filterSet?.name}
@@ -180,7 +177,7 @@ const ResultsFilters = ({
             <ModalConfirmTrigger
               modalMessage={`Are you sure you want to delete ${filterSetData.name}?`}
               onConfirm={() => {
-                handleDelete(filterSet, index);
+                handleDelete(filterSet);
               }}
               renderTrigger={(setModalVisible) => (
                 <Button

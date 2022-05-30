@@ -151,7 +151,6 @@ export type FiltersSet = {
   categories: CategoryResults[];
   _id: string;
   visible: boolean;
-  showModal?: boolean;
   filters: { [key: string]: Array<string> };
 };
 
@@ -159,6 +158,11 @@ export type FilterSets = { [key: string | number]: FiltersSet };
 
 export type ChangeFilterValue = <T extends keyof FiltersSet>(
   id: string,
+  valueName: T,
+  newValue: FiltersSet[T]
+) => void;
+
+export type ChangeFilterDataValue = <T extends keyof FiltersSet>(
   valueName: T,
   newValue: FiltersSet[T]
 ) => void;

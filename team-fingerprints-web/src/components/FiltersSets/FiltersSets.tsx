@@ -28,11 +28,10 @@ const FiltersSets = ({
 }: Props) => {
   const { companyId, surveyId } = useParams();
 
-  const {
-    isLoading: isLoadingFilters,
-    data: filtersData,
-    refetch: refetchFilterSets,
-  } = useQuery<any, Error>(
+  const { isLoading: isLoadingFilters, data: filtersData } = useQuery<
+    any,
+    Error
+  >(
     ["filterSets", surveyId, companyId],
     async () => {
       const { data } = await axios.get<any>(
@@ -42,6 +41,8 @@ const FiltersSets = ({
     },
     { enabled: !isPublic, cacheTime: 0 }
   );
+
+  console.log(filterSets);
 
   useEffect(() => {
     if (!isPublic && filtersData) {
@@ -78,7 +79,7 @@ const FiltersSets = ({
   });
 
   const deleteMutation = useMutation(
-    async (filterSet: { _id: string; index: number }) => {
+    async (filterSet: FiltersSet) => {
       return axios.delete(
         `/filter-templates/${apiUrl}/filters/${filterSet._id}`
       );
@@ -86,7 +87,7 @@ const FiltersSets = ({
     {
       onSuccess: (data, filterSet) => {
         const newFilterSurveyResult = { ...filterSets };
-        delete newFilterSurveyResult[filterSet.index];
+        delete newFilterSurveyResult[filterSet._id];
         setFilterSets(newFilterSurveyResult);
       },
     }
@@ -101,9 +102,7 @@ const FiltersSets = ({
       pointShape: "trapeze",
       categories: [],
       visible: true,
-      showModal: false,
-      filters: { country: "623ae947b92be5c33bfee380" },
-      modalVisible: false,
+      filters: { country: ["623ae947b92be5c33bfee380"] },
     };
 
     if (!isPublic) {
@@ -119,7 +118,6 @@ const FiltersSets = ({
           pointShape: "trapeze",
           categories: [],
           visible: true,
-          showModal: false,
           filters: {},
         },
       });
@@ -132,10 +130,10 @@ const FiltersSets = ({
     });
   };
 
-  const changeFilterValue: any = (
-    filterSetId: string,
-    valueName: string,
-    newValue: string
+  const changeFilterValue: ChangeFilterValue = (
+    filterSetId,
+    valueName,
+    newValue
   ) => {
     const newFilterSet = {
       ...filterSets[filterSetId],
@@ -145,21 +143,19 @@ const FiltersSets = ({
     updateFilterSet(newFilterSet);
   };
 
-  const handleSave = (filterSetData: any) => {
-    if (filterSetData._id) {
-      updateFilterSet(filterSetData);
+  const handleSave = (filterSetData: FiltersSet) => {
+    if (!isPublic) {
       updateMutation.mutate(filterSetData);
-    } else {
-      createMutation.mutate(filterSetData);
     }
+    updateFilterSet(filterSetData);
   };
 
-  const handleDelete = (filterSet: FiltersSet, index: number) => {
+  const handleDelete = (filterSet: FiltersSet) => {
     if (!isPublic) {
-      deleteMutation.mutate({ _id: filterSet._id, index: index });
+      deleteMutation.mutate(filterSet);
     } else {
       const newFilterSurveyResult = { ...filterSets };
-      delete newFilterSurveyResult[index];
+      delete newFilterSurveyResult[filterSet._id];
       setFilterSets(newFilterSurveyResult);
     }
   };
@@ -189,13 +185,12 @@ const FiltersSets = ({
 
   return (
     <div className="filters">
-      {Object.values<FiltersSet>(filterSets)?.map((filterSet, index) => (
+      {Object.values<FiltersSet>(filterSets)?.map((filterSet) => (
         <ResultsFilters
           currentFiltersValues={filterSet.filters}
           filterSet={filterSet}
           changeFilterValue={changeFilterValue}
           handleSave={handleSave}
-          index={index}
           handleDelete={handleDelete}
           apiUrl={apiUrl}
           handleVisible={handleVisible}

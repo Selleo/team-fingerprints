@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { MultiSelect } from "@mantine/core";
-import { FilterSelect } from "../../types/models";
+import { FilterSelect, FiltersSet } from "../../types/models";
 
 import "./styles.sass";
 
@@ -8,7 +8,7 @@ type Props = {
   filter: FilterSelect;
   handleSubmit: () => void;
   setFieldValue: (filterPath: string, value: Array<string>) => void;
-  filterSet: any;
+  filterSet: FiltersSet;
 };
 
 type Values = {

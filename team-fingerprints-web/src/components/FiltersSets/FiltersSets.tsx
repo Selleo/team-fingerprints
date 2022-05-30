@@ -42,8 +42,6 @@ const FiltersSets = ({
     { enabled: !isPublic, cacheTime: 0 }
   );
 
-  console.log(filterSets);
-
   useEffect(() => {
     if (!isPublic && filtersData) {
       const filtersDataResult = filtersData.reduce(

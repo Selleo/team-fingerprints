@@ -60,7 +60,7 @@ const ResultsFilters = ({
   });
 
   useQuery<any, Error>(
-    [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues],
+    [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues, showModal],
     async () => {
       const { data } = await axios.get<any>(`/survey-results/${apiUrl}`, {
         params: currentFiltersValues,

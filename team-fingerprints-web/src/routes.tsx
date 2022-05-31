@@ -83,7 +83,7 @@ const AppRoutes = () => {
               path="companies/:companyId/results/:surveyId"
               element={<SurveyResults />}
             />
-            <Route path="companies/:id/team">
+            <Route path="companies/:companyId/team">
               <Route path=":teamId" element={<TeamManagement />} />
               <Route path=":teamId/surveys" element={<TeamSurveysList />} />
               <Route

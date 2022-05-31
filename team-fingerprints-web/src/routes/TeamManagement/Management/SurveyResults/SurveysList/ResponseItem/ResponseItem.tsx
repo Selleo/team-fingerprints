@@ -15,6 +15,7 @@ const SurveyItem = ({ item, companyId, teamId }: typeProps) => {
 
   return (
     <li
+      key={item.survey._id}
       className="responses__survey"
       onClick={() =>
         navigate(`/companies/${companyId}/team/${teamId}/surveys/${_id}`)

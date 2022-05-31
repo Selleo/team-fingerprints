@@ -61,17 +61,17 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
         if (dataAndRoleForCompany.teamInfo) {
           tmp.push({
             categories: dataAndRoleForCompany.categoriesArray,
-            color: dataAndRoleForCompany.teamInfo.pointColor,
-            icon: dataAndRoleForCompany.teamInfo.pointShape,
-            id: dataAndRoleForCompany.teamInfo.teamId,
+            pointColor: dataAndRoleForCompany.teamInfo.pointColor,
+            pointShape: dataAndRoleForCompany.teamInfo.pointShape,
+            _id: dataAndRoleForCompany.teamInfo.teamId,
             name: `${dataAndRoleForCompany.role.company.name} / ${dataAndRoleForCompany.teamInfo.teamName}`,
           });
         } else {
           tmp.push({
             categories: dataAndRoleForCompany.categoriesArray,
-            color: dataAndRoleForCompany.role.company.pointColor,
-            icon: dataAndRoleForCompany.role.company.pointShape,
-            id: companyOrTeamId,
+            pointColor: dataAndRoleForCompany.role.company.pointColor,
+            pointShape: dataAndRoleForCompany.role.company.pointShape,
+            _id: companyOrTeamId,
             name: dataAndRoleForCompany.role.company.name,
           });
         }
@@ -88,7 +88,7 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
 
   const filteredAdditionalData = useMemo(() => {
     return additionalData.filter((element) => {
-      return visibleData[element.id];
+      return visibleData[element._id];
     });
   }, [additionalData, visibleData]);
 
@@ -143,14 +143,14 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
             </div>
             {keys(visibleData).map((key) => {
               const singleVisibleData = additionalData.find(
-                (el) => el.id === key
+                (el) => el._id === key
               );
               return (
                 <div className="survey-response__legend__item survey-response__legend__item--first">
                   <div className="survey-response__legend__item__icon">
                     <ColoredShape
-                      shape={singleVisibleData?.icon}
-                      color={singleVisibleData?.color}
+                      shape={singleVisibleData?.pointShape}
+                      color={singleVisibleData?.pointColor}
                     />
                   </div>
                   <span>{singleVisibleData?.name}</span>

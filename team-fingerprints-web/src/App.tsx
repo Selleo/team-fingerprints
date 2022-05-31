@@ -5,7 +5,13 @@ import LoginGateway from "./LoginGateway";
 
 import "./styles/application.sass";
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => {
   const navigate = useNavigate();

@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { ResponseItem } from "../../../../../../types/models";
+import { ResponseItem } from "../../../types/models";
 import StatusIcon from "./StatusIcon";
 import StatusInfo from "./StatusInfo";
 
 type typeProps = {
   item: ResponseItem;
   companyId: string | undefined;
-  teamId: string | undefined;
+  teamId?: string | undefined;
 };
 
 const SurveyItem = ({ item, companyId, teamId }: typeProps) => {
@@ -18,7 +18,9 @@ const SurveyItem = ({ item, companyId, teamId }: typeProps) => {
       key={item.survey._id}
       className="responses__survey"
       onClick={() =>
-        navigate(`/companies/${companyId}/team/${teamId}/surveys/${_id}`)
+        teamId
+          ? navigate(`/companies/${companyId}/team/${teamId}/surveys/${_id}`)
+          : navigate(`/companies/${companyId}/results/${_id}`)
       }
     >
       <StatusIcon status={completionStatus} />

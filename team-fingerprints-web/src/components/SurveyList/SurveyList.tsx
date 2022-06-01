@@ -4,17 +4,17 @@ import { isArray, isEmpty, times } from "lodash";
 import { Skeleton } from "@mantine/core";
 import axios from "axios";
 
-import ErrorLoading from "../../../../../components/ErrorLoading";
-import BackToScreen from "../../../../../components/BackToScreen/BackToScreen";
+import ErrorLoading from "../ErrorLoading/ErrorLoading";
+import BackToScreen from "../BackToScreen/BackToScreen";
 import ResponseItem from "./ResponseItem";
 
 import { useParams } from "react-router-dom";
-import { Survey } from "../../../../../types/models";
-import { ReactComponent as BGIcons } from "../../../../../assets/BGIcons.svg";
+import { Survey } from "../../types/models";
+import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 
 import "./styles.sass";
 
-const TeamSurveysList = () => {
+const SurveyList = () => {
   const { companyId, teamId } = useParams();
   const { isLoading, error, data } = useQuery<Survey[]>(
     "surveysAllPublic",
@@ -71,4 +71,4 @@ const TeamSurveysList = () => {
   );
 };
 
-export default TeamSurveysList;
+export default SurveyList;

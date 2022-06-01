@@ -27,14 +27,22 @@ const SurveyResults = () => {
     return data;
   });
 
+  const apiUrl = () => {
+    if (teamId) {
+      return `${surveyId}/companies/${companyId}/teams/${teamId}`;
+    } else if (companyId) {
+      return `${surveyId}/companies/${companyId}`;
+    } else {
+      return `${surveyId}/companies/`;
+    }
+  };
+
   const { isLoading: isLoadingSurvey, data: surveyResult } = useQuery<
     any,
     Error
   >([`companySurvey-${surveyId}`, companyId], async () => {
     const { data } = await axios.get<SurveyDetails>(
-      teamId
-        ? `/survey-results/${surveyId}/companies/${companyId}/teams/${teamId}`
-        : `/survey-results/${surveyId}/companies/${companyId}`
+      `/survey-results/${apiUrl()}`
     );
     return data;
   });
@@ -58,11 +66,8 @@ const SurveyResults = () => {
           <FiltersSets
             filterSets={filterSets}
             setFilterSets={setFilterSets}
-            apiUrl={
-              teamId
-                ? `${surveyId}/companies/${companyId}/teams/${teamId}`
-                : `${surveyId}/companies/${companyId}`
-            }
+            apiUrl={apiUrl()}
+            isPublic={companyId ? false : true}
           />
           <Chart
             surveyResult={Object.values(surveyResult || {})}

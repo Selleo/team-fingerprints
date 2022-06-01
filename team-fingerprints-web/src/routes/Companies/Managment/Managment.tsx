@@ -15,6 +15,7 @@ import TeamForm from "../../../components/Team/TeamForm/TeamForm";
 import ColoredShape from "../../../components/ColoredShape";
 import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 import ErrorLoading from "../../../components/ErrorLoading";
+import BackToScreen from "../../../components/BackToScreen/BackToScreen";
 
 type CompanyResponse = {
   company: Company;
@@ -106,6 +107,7 @@ const CompaniesManagment = () => {
 
   return (
     <>
+      <BackToScreen name="your companies and roles" />
       <div className={classes.header}>
         <h1 className={classes.headerTitle}>
           Company Managment

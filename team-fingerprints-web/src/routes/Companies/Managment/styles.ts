@@ -13,6 +13,7 @@ export const useStyles = createStyles((theme) => ({
   },
   header: {
     display: "flex",
+    marginTop: "40px",
   },
   headerTitle: {
     flex: 1,

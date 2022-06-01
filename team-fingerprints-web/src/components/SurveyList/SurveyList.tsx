@@ -59,9 +59,19 @@ const SurveyList = () => {
     );
   }, [data, error, isLoading]);
 
+  const backToScreen = () => {
+    if (teamId) {
+      return "Team Managment";
+    } else if (companyId) {
+      return "Company Managment";
+    } else {
+      return "Login";
+    }
+  };
+
   return (
     <div className="responses">
-      <BackToScreen name="Team Managment" />
+      <BackToScreen name={backToScreen()} />
       <h1 className="responses__headline">Surveys List</h1>
       {content}
       <div className="svg-background">

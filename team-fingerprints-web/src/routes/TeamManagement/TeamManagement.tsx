@@ -1,5 +1,5 @@
 import { Button, Group, Modal, Skeleton } from "@mantine/core";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import times from "lodash/times";
 
@@ -15,6 +15,7 @@ import TeamForm from "../../components/Team/TeamForm/TeamForm";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import ErrorLoading from "../../components/ErrorLoading";
 import ColoredShape from "../../components/ColoredShape";
+import BackToScreen from "../../components/BackToScreen/BackToScreen";
 
 type TeamResponse = {
   team: Team;
@@ -144,6 +145,7 @@ const TeamManagment = () => {
 
   return (
     <>
+      <BackToScreen name="Company Managment" />
       <div className={classes.header}>
         <h1 className={classes.headerTitle}>
           Team Managment

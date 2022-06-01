@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { filter } from "lodash";
@@ -27,22 +27,31 @@ const SurveyResults = () => {
     return data;
   });
 
-  const apiUrl = () => {
+  const api = useMemo(() => {
     if (teamId) {
-      return `${surveyId}/companies/${companyId}/teams/${teamId}`;
-    } else if (companyId) {
-      return `${surveyId}/companies/${companyId}`;
-    } else {
-      return `${surveyId}/companies/`;
+      return {
+        header: [`teamSurvey-${surveyId}`, companyId, teamId],
+        url: `${surveyId}/companies/${companyId}/teams/${teamId}`,
+      };
     }
-  };
+    if (companyId) {
+      return {
+        header: [`companySurvey-${surveyId}`, companyId],
+        url: `${surveyId}/companies/${companyId}`,
+      };
+    }
+    return {
+      header: [`publicSurvey-${surveyId}`],
+      url: `${surveyId}/companies/`,
+    };
+  }, [teamId, companyId, surveyId]);
 
   const { isLoading: isLoadingSurvey, data: surveyResult } = useQuery<
     any,
     Error
-  >([`companySurvey-${surveyId}`, companyId], async () => {
+  >(api.header, async () => {
     const { data } = await axios.get<SurveyDetails>(
-      `/survey-results/${apiUrl()}`
+      `/survey-results/${api.url}`
     );
     return data;
   });
@@ -66,8 +75,8 @@ const SurveyResults = () => {
           <FiltersSets
             filterSets={filterSets}
             setFilterSets={setFilterSets}
-            apiUrl={apiUrl()}
-            isPublic={companyId ? false : true}
+            apiUrl={api.url}
+            isPublic={!companyId}
           />
           <Chart
             surveyResult={Object.values(surveyResult || {})}

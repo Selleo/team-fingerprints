@@ -1,14 +1,15 @@
+import axios from "axios";
+
 import { useMemo } from "react";
 import { useQuery } from "react-query";
 import { isArray, isEmpty, times } from "lodash";
 import { Skeleton } from "@mantine/core";
-import axios from "axios";
+import { useParams } from "react-router-dom";
 
-import ErrorLoading from "../ErrorLoading/ErrorLoading";
-import BackToScreen from "../BackToScreen/BackToScreen";
+import ErrorLoading from "../ErrorLoading";
+import BackToScreen from "../BackToScreen";
 import ResponseItem from "./ResponseItem";
 
-import { useParams } from "react-router-dom";
 import { Survey } from "../../types/models";
 import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 
@@ -59,19 +60,19 @@ const SurveyList = () => {
     );
   }, [data, error, isLoading]);
 
-  const backToScreen = () => {
+  const backToScreen = useMemo(() => {
     if (teamId) {
       return "Team Managment";
-    } else if (companyId) {
-      return "Company Managment";
-    } else {
-      return "Login";
     }
-  };
+    if (companyId) {
+      return "Company Managment";
+    }
+    return "Login";
+  }, [teamId, companyId]);
 
   return (
     <div className="responses">
-      <BackToScreen name={backToScreen()} />
+      <BackToScreen name={backToScreen} />
       <h1 className="responses__headline">Surveys List</h1>
       {content}
       <div className="svg-background">

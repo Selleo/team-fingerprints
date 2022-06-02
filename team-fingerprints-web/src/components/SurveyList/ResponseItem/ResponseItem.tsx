@@ -25,19 +25,17 @@ const SurveyItem = ({ item, companyId, teamId }: typeProps) => {
   }, [teamId, companyId]);
 
   return (
-    <li
-      key={item.survey._id}
-      className="responses__survey"
-      onClick={() => navigate(navigateUrl)}
-    >
-      <StatusIcon status={completionStatus} />
-      <span className="responses__survey__name">
-        {title}
-        {completionStatus === "new" && (
-          <span className="responses__survey__new-indicator">New</span>
-        )}
-      </span>
-      <StatusInfo status={completionStatus} />
+    <li key={item.survey._id}>
+      <div className="responses__survey" onClick={() => navigate(navigateUrl)}>
+        <StatusIcon status={completionStatus} />
+        <span className="responses__survey__name">
+          {title}
+          {completionStatus === "new" && (
+            <span className="responses__survey__new-indicator">New</span>
+          )}
+        </span>
+        <StatusInfo status={completionStatus} />
+      </div>
     </li>
   );
 };

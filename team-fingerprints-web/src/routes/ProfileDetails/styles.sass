@@ -51,31 +51,48 @@
 
   &__detail
     align-items: center
-    border-radius: 12px
-    border: 1px solid #ffffff42
     box-sizing: border-box
     display: flex
     flex-direction: row
-    height: 73px
-    margin-bottom: 16px
+    margin-bottom: 10px
     padding-left: 27px
     padding-right: 27px
-    width: 560px
+    position: relative
 
-    &__select
-      display: flex
-      align-items: center
-      justify-content: space-between
-      font-size: 20px
-      width: 560px
+  &__select
+    align-items: center
+    justify-content: space-between
+    font-size: 16px
+    height: 48px
+    font-weight: 400
+    width: 232px
+    border: 1px solid #fff
+    border-radius: 10px
+    padding: 12px 16px
+    background-color: #121212
+    margin-bottom: 10px
 
-      &__label
-        display: flex
-        justify-content: flex-start
-        text-transform: uppercase
-        font-weight: 500
-        font-size: 16px
-        line-height: 24px
+  &__select--selected
+
+    .profile__select--label
+      display: block
+
+  &__select--dropdown
+    color: #fff
+    background-color: #121212
+
+  &__select--label
+    text-transform: capitalize
+    font-weight: 500
+    font-size: 12px
+    line-height: 24px
+    padding: 0 10px
+    top: -10px
+    left: 35px
+    position: absolute
+    z-index: 1
+    background-color: #121212
+
 
   &__footer
     margin-top: 40px

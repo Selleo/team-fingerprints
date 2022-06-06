@@ -1,16 +1,20 @@
+import axios from "axios";
 import { useContext, useMemo } from "react";
 import { useMutation, useQuery } from "react-query";
 import { isEmpty, times, reduce, omitBy } from "lodash";
 import { useNotifications } from "@mantine/notifications";
 import { Skeleton } from "@mantine/core";
 import { useFormik } from "formik";
-import axios from "axios";
 
 import ProfileSelect from "./ProfileSelect";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import ErrorLoading from "../../components/ErrorLoading";
+import BackToScreen from "../../components/BackToScreen/BackToScreen";
 import { FormData } from "../../types/models";
 import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
+import { ReactComponent as ProfileCircle } from "../../assets/ProfileCircle.svg";
+import { ReactComponent as ProfileCircleFilled } from "../../assets/ProfileCircleFilled.svg";
+
 import { Filter } from "../../types/models";
 import { ProfileContext } from "../../routes";
 
@@ -65,6 +69,15 @@ const ProfileDetails = () => {
     },
   });
 
+  const progress = useMemo(() => {
+    if (data && profile) {
+      const x = Object.keys(profile.userDetails).length;
+      const result = (x / data?.length) * 100 + "%";
+
+      return result;
+    }
+  }, [data, profile]);
+
   const content = useMemo(() => {
     if (isLoading)
       return (
@@ -88,16 +101,27 @@ const ProfileDetails = () => {
       return <h3 className="profile__empty">No available filters</h3>;
 
     return (
-      <ul className="profile__details">
-        {data.map((item: Filter) => (
-          <ProfileSelect
-            item={item}
-            handleSubmit={handleSubmit}
-            handleChange={handleChange}
-            values={values}
-          />
-        ))}
-      </ul>
+      <div className="profile__wrapper">
+        <div className="profile__progress">
+          <ProfileCircle className="profile__circle" />
+          <div
+            style={{ height: `${progress}` }}
+            className="profile__circle-wrapper"
+          >
+            <ProfileCircleFilled className="profile__circle-filled" />
+          </div>
+        </div>
+        <ul className="profile__details">
+          {data.map((item: Filter) => (
+            <ProfileSelect
+              item={item}
+              handleSubmit={handleSubmit}
+              handleChange={handleChange}
+              values={values}
+            />
+          ))}
+        </ul>
+      </div>
     );
   }, [data, error, isLoading, values, handleSubmit, handleChange]);
 
@@ -108,6 +132,16 @@ const ProfileDetails = () => {
       <div className="svg-background">
         <BGIcons />
       </div>
+      {progress === "100%" && (
+        <div className="profile__footer">
+          <span className="profile__message">
+            Good job! Now you can check what surveys are waiting for you!
+          </span>
+          <div className="profile__back">
+            <BackToScreen name="Dashboard" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

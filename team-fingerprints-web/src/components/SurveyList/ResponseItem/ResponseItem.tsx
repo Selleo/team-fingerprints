@@ -8,25 +8,19 @@ type typeProps = {
   item: ResponseItem;
   companyId?: string;
   teamId?: string;
+  navigateUrl: string;
 };
 
-const SurveyItem = ({ item, companyId, teamId }: typeProps) => {
+const SurveyItem = ({ item, companyId, teamId, navigateUrl }: typeProps) => {
   const navigate = useNavigate();
   const { _id, title, completionStatus } = item.survey;
 
-  const navigateUrl = useMemo(() => {
-    if (teamId) {
-      return `/companies/${companyId}/team/${teamId}/surveys/${_id}`;
-    }
-    if (companyId) {
-      return `/companies/${companyId}/results/${_id}`;
-    }
-    return `/survey/${_id}`;
-  }, [teamId, companyId]);
-
   return (
     <li key={item.survey._id}>
-      <div className="responses__survey" onClick={() => navigate(navigateUrl)}>
+      <div
+        className="responses__survey"
+        onClick={() => navigate(navigateUrl + _id)}
+      >
         <StatusIcon status={completionStatus} />
         <span className="responses__survey__name">
           {title}

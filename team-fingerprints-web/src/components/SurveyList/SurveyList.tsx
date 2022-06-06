@@ -25,6 +25,16 @@ const SurveyList = () => {
     }
   );
 
+  const navigateUrl = useMemo(() => {
+    if (teamId) {
+      return `/companies/${companyId}/team/${teamId}/surveys/`;
+    }
+    if (companyId) {
+      return `/companies/${companyId}/results/`;
+    }
+    return `/survey/`;
+  }, [teamId, companyId]);
+
   const content = useMemo(() => {
     if (isLoading)
       return (
@@ -53,6 +63,7 @@ const SurveyList = () => {
               item={item}
               companyId={companyId}
               teamId={teamId}
+              navigateUrl={navigateUrl}
             />
           ))}
         </ul>

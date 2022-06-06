@@ -3,8 +3,10 @@ import { useCallback, useMemo, memo } from "react";
 import { ProfileSelectorProp } from "../../types/models";
 
 const classes = {
-  root: "profile__detail__select",
-  label: "profile__detail__select__label",
+  input: "profile__select",
+  label: "profile__select--label",
+  dropdown: "profile__select--dropdown",
+  root: "profile__select--root",
 };
 
 const MemoizedSelect = memo(Select);
@@ -36,8 +38,8 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
       <MemoizedSelect
         searchable={item.filterPath === "country"}
         classNames={classes}
-        label={item.name}
-        placeholder="Pick one"
+        label={values[item.filterPath] && item.name}
+        placeholder={item.name}
         data={itemSelect}
         onChange={onChangeCallback}
         value={values[item.filterPath]}

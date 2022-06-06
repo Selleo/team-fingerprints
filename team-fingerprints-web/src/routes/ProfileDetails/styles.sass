@@ -7,44 +7,103 @@
   justify-content: center
   align-items: center
 
+  &__wrapper
+    display: flex
+    justify-content: space-between
+    width: 800px
+    align-items: center
+
   &__headline
     font-size: 49px
     line-height: 59px
     margin-top: 86px
     margin-bottom: 45px
 
+  &__progress
+    width: 50%
+    position: relative
+    height: 300px
+
+  &__circle
+    width: 300px
+    height: 300px
+
+  &__circle-wrapper
+    overflow: hidden
+    position: absolute
+    bottom: 0
+    height: 0px
+    transition: height 500ms
+    display: flex
+    transform: rotate(180deg)
+
+  &__circle-filled
+    width: 300px
+    height: 300px
+
   &__details
     list-style-type: none
     flex-direction: column
     display: flex
-    width: 100%
+    width: 50%
     align-items: center
     padding-left: 0
 
   &__detail
     align-items: center
-    border-radius: 12px
-    border: 1px solid #ffffff42
     box-sizing: border-box
     display: flex
     flex-direction: row
-    height: 73px
-    margin-bottom: 16px
+    margin-bottom: 10px
     padding-left: 27px
     padding-right: 27px
-    width: 560px
+    position: relative
 
-    &__select
-      display: flex
-      align-items: center
-      justify-content: space-between
-      font-size: 20px
-      width: 560px
+  &__select
+    align-items: center
+    justify-content: space-between
+    font-size: 16px
+    height: 48px
+    font-weight: 400
+    width: 232px
+    border: 1px solid #fff
+    border-radius: 10px
+    padding: 12px 16px
+    background-color: #121212
+    margin-bottom: 10px
 
-      &__label
-        display: flex
-        justify-content: flex-start
-        text-transform: uppercase
-        font-weight: 500
-        font-size: 16px
-        line-height: 24px
+  &__select--dropdown
+    background-color: #202020
+    border-radius: 10px
+
+  &__select--root:focus-within
+
+    .profile__select--label
+      color: $color-primary
+
+    .profile__select
+       border-color: $color-primary !important
+
+  &__select--label
+    text-transform: capitalize
+    font-weight: 500
+    font-size: 12px
+    line-height: 24px
+    padding: 0 10px
+    top: -12px
+    left: 40px
+    position: absolute
+    z-index: 1
+    background-color: #121212
+
+  &__footer
+    margin-top: 40px
+
+  &__message
+    font-weight: 600
+    font-size: 20px
+
+  &__back
+    margin: 0 auto
+    width: 200px
+    margin-bottom: 100px

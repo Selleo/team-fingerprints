@@ -1,4 +1,4 @@
-@import 'styles/base/variables'
+@import 'styles/application'
 
 .profile
   position: relative
@@ -20,25 +20,18 @@
     margin-bottom: 45px
 
   &__progress
-    width: 50%
     position: relative
-    height: 300px
-
-  &__circle
-    width: 300px
+    margin: 0 auto
     height: 300px
 
   &__circle-wrapper
     overflow: hidden
     position: absolute
     bottom: 0
-    height: 0px
     transition: height 500ms
-    display: flex
     transform: rotate(180deg)
 
   &__circle-filled
-    width: 300px
     height: 300px
 
   &__details
@@ -107,3 +100,24 @@
     margin: 0 auto
     width: 200px
     margin-bottom: 100px
+
+
+@include media-breakpoint-down(sm)
+
+  .profile
+    margin-bottom: 40%
+
+    &__wrapper
+      width: 100%
+      position: relative
+      flex-direction: column
+
+    &__progress
+      height: 150px
+      margin-bottom: 30px
+
+    &__circle-filled
+      height: 150px
+
+    &__footer
+      margin-top: 20px

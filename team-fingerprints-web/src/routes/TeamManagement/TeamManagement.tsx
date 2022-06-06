@@ -146,7 +146,7 @@ const TeamManagment = () => {
 
   return (
     <>
-      <BackToScreen name="Company Managment" />
+      <BackToScreen name="Company Management" />
       <div className={classes.header}>
         <h1 className={classes.headerTitle}>
           Team Managment

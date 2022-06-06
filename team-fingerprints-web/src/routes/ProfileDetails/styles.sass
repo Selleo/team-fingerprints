@@ -10,7 +10,7 @@
   &__wrapper
     display: flex
     justify-content: space-between
-    width: 60vw
+    width: 800px
     align-items: center
 
   &__headline
@@ -72,14 +72,17 @@
     background-color: #121212
     margin-bottom: 10px
 
-  &__select--selected
+  &__select--dropdown
+    background-color: #202020
+    border-radius: 10px
+
+  &__select--root:focus-within
 
     .profile__select--label
-      display: block
+      color: $color-primary
 
-  &__select--dropdown
-    color: #fff
-    background-color: #121212
+    .profile__select
+       border-color: $color-primary !important
 
   &__select--label
     text-transform: capitalize
@@ -87,12 +90,11 @@
     font-size: 12px
     line-height: 24px
     padding: 0 10px
-    top: -10px
-    left: 35px
+    top: -12px
+    left: 40px
     position: absolute
     z-index: 1
     background-color: #121212
-
 
   &__footer
     margin-top: 40px

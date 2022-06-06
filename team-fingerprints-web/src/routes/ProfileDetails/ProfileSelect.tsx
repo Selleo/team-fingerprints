@@ -16,7 +16,6 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
 
   const itemSelect = useMemo(() => {
     const data = [
-      { value: "", label: "" },
       ...item.values?.map((value) => ({
         value: value._id,
         label: value.value,
@@ -41,10 +40,10 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
         classNames={{
           input: "profile__select",
           label: "profile__select--label",
-          selected: "profile__select--selected",
           dropdown: "profile__select--dropdown",
+          root: "profile__select--root",
         }}
-        label={item.name}
+        label={values[item.filterPath] && item.name}
         placeholder={item.name}
         data={itemSelect}
         onChange={onChangeCallback}

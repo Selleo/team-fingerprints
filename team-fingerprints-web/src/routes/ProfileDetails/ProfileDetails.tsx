@@ -1,14 +1,15 @@
+import axios from "axios";
 import { useContext, useMemo } from "react";
 import { useMutation, useQuery } from "react-query";
 import { isEmpty, times, reduce, omitBy } from "lodash";
 import { useNotifications } from "@mantine/notifications";
 import { Skeleton } from "@mantine/core";
 import { useFormik } from "formik";
-import axios from "axios";
 
 import ProfileSelect from "./ProfileSelect";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import ErrorLoading from "../../components/ErrorLoading";
+import BackToScreen from "../../components/BackToScreen/BackToScreen";
 import { FormData } from "../../types/models";
 import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 import { ReactComponent as ProfileCircle } from "../../assets/ProfileCircle.svg";
@@ -18,7 +19,6 @@ import { Filter } from "../../types/models";
 import { ProfileContext } from "../../routes";
 
 import "./styles.sass";
-import BackToScreen from "../../components/BackToScreen/BackToScreen";
 
 const ProfileDetails = () => {
   const { profile, invalidateProfile } = useContext(ProfileContext);
@@ -94,10 +94,6 @@ const ProfileDetails = () => {
           ))}
         </>
       );
-
-    if (profile) {
-      console.log("profile", Object.keys(profile.userDetails).length);
-    }
 
     if (error) return <ErrorLoading title="Can't load filters" />;
 

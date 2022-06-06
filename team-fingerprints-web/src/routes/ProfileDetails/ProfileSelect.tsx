@@ -5,8 +5,8 @@ import { ProfileSelectorProp } from "../../types/models";
 const classes = {
   input: "profile__select",
   label: "profile__select--label",
-  selected: "profile__select--selected",
   dropdown: "profile__select--dropdown",
+  root: "profile__select--root",
 };
 
 const MemoizedSelect = memo(Select);
@@ -37,12 +37,7 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
     <li className="profile__detail">
       <MemoizedSelect
         searchable={item.filterPath === "country"}
-        classNames={{
-          input: "profile__select",
-          label: "profile__select--label",
-          dropdown: "profile__select--dropdown",
-          root: "profile__select--root",
-        }}
+        classNames={classes}
         label={values[item.filterPath] && item.name}
         placeholder={item.name}
         data={itemSelect}

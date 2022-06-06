@@ -26,13 +26,13 @@ interface IProps {
 
 const ROW_HEIGHT_PX = 60;
 
-type TrendToDisplay = TrendResults & { categoryTitile: string };
+type TrendToDisplay = TrendResults & { categoryTitle: string };
 
 const asTrends = (data: CategoryResults[]) => {
   const tmpTrends: TrendToDisplay[] = [];
   data?.forEach?.((category) => {
     category.avgTrends.forEach((trend) => {
-      tmpTrends.push({ ...trend, categoryTitile: category.categoryTitile });
+      tmpTrends.push({ ...trend, categoryTitle: category.categoryTitle });
     });
   });
   return tmpTrends;
@@ -161,9 +161,9 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
     });
 
     showMe && renderResults(userMappedTrendsData, ctx, "#32A89C", "circle");
-    each(additionalData, ({ categories, color, icon }) => {
+    each(additionalData, ({ categories, pointColor, pointShape }) => {
       const datasetAsTrends = asTrends(categories);
-      renderResults(datasetAsTrends, ctx, color, icon);
+      renderResults(datasetAsTrends, ctx, pointColor, pointShape);
     });
   }, [
     width,

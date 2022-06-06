@@ -132,17 +132,16 @@ export type TrendResults = {
 
 export type CategoryResults = {
   categoryId: string;
-  categoryTitile: string;
+  categoryTitle: string;
   avgTrends: TrendResults[];
 };
 
 export type AdditionalData = {
   name: string;
-  color: string;
-  icon: Shape;
+  pointColor: string;
+  pointShape: Shape;
   categories: CategoryResults[];
-  _id?: string;
-  id: string;
+  _id: string;
 };
 
 export type FiltersSet = {
@@ -152,24 +151,10 @@ export type FiltersSet = {
   categories: CategoryResults[];
   _id: string;
   visible: boolean;
-  collapsed: boolean;
   filters: { [key: string]: Array<string> };
 };
 
-export type PublicFiltersSet = {
-  name: string;
-  color: string;
-  icon: Shape;
-  categories: CategoryResults[];
-  _id: string;
-  visible: boolean;
-  collapsed: boolean;
-  filters: { [key: string]: Array<string> };
-};
-
-export type PublicFilterSets = { [key: string]: PublicFiltersSet } | {};
-
-export type FilterSets = { [key: string]: FiltersSet } | {};
+export type FilterSets = { [key: string | number]: FiltersSet };
 
 export type ChangeFilterValue = <T extends keyof FiltersSet>(
   id: string,
@@ -177,8 +162,7 @@ export type ChangeFilterValue = <T extends keyof FiltersSet>(
   newValue: FiltersSet[T]
 ) => void;
 
-export type ChangeFilterValuePublic = <T extends keyof PublicFiltersSet>(
-  id: string,
+export type ChangeFilterDataValue = <T extends keyof FiltersSet>(
   valueName: T,
   newValue: FiltersSet[T]
 ) => void;

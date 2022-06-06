@@ -30,7 +30,7 @@ const TeamManagment = () => {
 
   const [whitelistModalVisible, setWhitelistModalVisible] = useState(false);
 
-  const companyId = params.id;
+  const companyId = params.companyId;
   const teamId = params.teamId;
 
   const { isLoading, error, data } = useQuery<TeamResponse>(

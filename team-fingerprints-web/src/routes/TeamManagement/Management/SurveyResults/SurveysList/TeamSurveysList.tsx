@@ -15,7 +15,7 @@ import { ReactComponent as BGIcons } from "../../../../../assets/BGIcons.svg";
 import "./styles.sass";
 
 const TeamSurveysList = () => {
-  const { id, teamId } = useParams();
+  const { companyId, teamId } = useParams();
   const { isLoading, error, data } = useQuery<Survey[]>(
     "surveysAllPublic",
     async () => {
@@ -50,7 +50,7 @@ const TeamSurveysList = () => {
             <ResponseItem
               key={item.survey._id}
               item={item}
-              companyId={id}
+              companyId={companyId}
               teamId={teamId}
             />
           ))}

@@ -16,14 +16,14 @@ import SurveyFinishedWrapper from "../../../components/SurveyFinishedWrapper/Sur
 import { Switch } from "../../../components/Switch";
 import {
   SurveyDetails,
-  ChangeFilterValuePublic,
+  ChangeFilterValue,
   FilterSets,
-  PublicFilterSets,
 } from "../../../types/models";
+import FiltersSets from "../../../components/FiltersSets";
 
 export default function PublicSurveyResults() {
   const { surveyId } = useParams();
-  const [filtersSets, setFiltersSets] = useState<PublicFilterSets>({});
+  const [filterSets, setFilterSets] = useState<FilterSets>({});
 
   const {
     isLoading: isLoadingSurveys,
@@ -46,117 +46,6 @@ export default function PublicSurveyResults() {
     return data;
   });
 
-  const createFilterSet = () => {
-    const id = uniqueId();
-    const lightColor = "hsl(" + Math.floor(Math.random() * 361) + ",50%,75%)";
-    setFiltersSets({
-      ...filtersSets,
-      [id]: {
-        _id: id,
-        name: `Filter Set #${id}`,
-        color: lightColor,
-        icon: "trapeze",
-        categories: [],
-        visible: true,
-        collapsed: false,
-        filters: {},
-      },
-    });
-  };
-
-  const changeFilterValue: ChangeFilterValuePublic = (
-    id,
-    valueName,
-    newValue
-  ) => {
-    const callback = (filtersSets: any) => {
-      const newFilterSet = {
-        ...filtersSets[id],
-        [valueName]: newValue,
-      };
-      const newFilterSets = {
-        ...filtersSets,
-        [id]: newFilterSet,
-      };
-      return newFilterSets;
-    };
-    setFiltersSets(callback);
-  };
-
-  const renderContent = useMemo(
-    () => (
-      <SurveyFinishedWrapper
-        surveyTitle={survey?.title}
-        description="See trends in companies."
-      >
-        <Button
-          className="survey-response__finished__new-filter-button"
-          onClick={createFilterSet}
-        >
-          Create new filter set
-        </Button>
-        <div className="survey-response__filters">
-          {Object.values(filtersSets).map((filterSet) => {
-            return (
-              <React.Fragment key={filterSet._id}>
-                <div className="survey-response__filters__item">
-                  <div className="survey-response__filters__item__icon">
-                    <ColoredShape
-                      shape={filterSet?.icon}
-                      color={filterSet?.color}
-                    />
-                  </div>
-                  <span>{filterSet?.name}</span>
-                  <Switch
-                    value={!!filterSet.visible}
-                    setValue={() =>
-                      changeFilterValue(
-                        filterSet._id,
-                        "visible",
-                        !filterSet.visible
-                      )
-                    }
-                  />
-                  <Button
-                    className="survey-response__filters__item__collapse"
-                    onClick={() =>
-                      changeFilterValue(
-                        filterSet._id,
-                        "collapsed",
-                        !filterSet.collapsed
-                      )
-                    }
-                  >
-                    &#8595;
-                  </Button>
-                </div>
-                <Collapse
-                  className="survey-response__filters__item__selects"
-                  in={filterSet.collapsed}
-                >
-                  {surveyId && (
-                    <ResultsFilters
-                      currentFiltersValues={filterSet.filters}
-                      id={filterSet._id}
-                      surveyId={surveyId}
-                      changeFilterValue={changeFilterValue}
-                    />
-                  )}
-                </Collapse>
-              </React.Fragment>
-            );
-          })}
-        </div>
-        <Chart
-          surveyResult={Object.values(surveyResult || {})}
-          additionalData={filter(filtersSets, "visible")}
-          showMe={true}
-        />
-      </SurveyFinishedWrapper>
-    ),
-    [survey?.title, surveyResult, surveyId, ResultsFilters, filtersSets]
-  );
-
   if (isLoadingSurveys || isLoadingSurvey) {
     return <LoadingData title="Loading survey" />;
   }
@@ -166,11 +55,26 @@ export default function PublicSurveyResults() {
   }
 
   return (
-    <>
-      <div className="app-shell">
-        <BackToScreen name="Dashboard" />
-        <div className="survey-response">{renderContent}</div>
+    <div className="app-shell">
+      <BackToScreen name="Surveys List" />
+      <div className="survey-response">
+        <SurveyFinishedWrapper
+          surveyTitle={survey?.title}
+          description="See trends in companies."
+        >
+          <FiltersSets
+            filterSets={filterSets}
+            setFilterSets={setFilterSets}
+            apiUrl={`${surveyId}/companies`}
+            isPublic={true}
+          />
+          <Chart
+            surveyResult={Object.values(surveyResult || {})}
+            additionalData={filter(filterSets, "visible")}
+            showMe={true}
+          />
+        </SurveyFinishedWrapper>
       </div>
-    </>
+    </div>
   );
 }

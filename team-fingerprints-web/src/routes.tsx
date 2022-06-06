@@ -8,10 +8,8 @@ import Responses from "./routes/Responses";
 import ResponseEdit from "./routes/Responses/Edit";
 import CompaniesNew from "./routes/Companies/New";
 import RoleManagment from "./routes/RoleManagment";
-import SurveyResults from "./routes/Companies/Managment/SurveyResults";
-import SurveysList from "./routes/Companies/Managment/SurveyResults/SurveysList";
-import TeamSurveysList from "./routes/TeamManagement/Management/SurveyResults/SurveysList";
-import TeamSurveyResults from "./routes/TeamManagement/Management/SurveyResults";
+import SurveyResults from "./components/SurveyResults";
+import SurveyList from "./components/SurveyList";
 
 import CompaniesManagment from "./routes/Companies/Managment";
 import TeamManagement from "./routes/TeamManagement";
@@ -77,7 +75,7 @@ const AppRoutes = () => {
             <Route path="companies/:id" element={<CompaniesManagment />} />
             <Route
               path="companies/:companyId/surveys"
-              element={<SurveysList />}
+              element={<SurveyList />}
             />
             <Route
               path="companies/:companyId/results/:surveyId"
@@ -85,10 +83,10 @@ const AppRoutes = () => {
             />
             <Route path="companies/:companyId/team">
               <Route path=":teamId" element={<TeamManagement />} />
-              <Route path=":teamId/surveys" element={<TeamSurveysList />} />
+              <Route path=":teamId/surveys" element={<SurveyList />} />
               <Route
                 path=":teamId/surveys/:surveyId"
-                element={<TeamSurveyResults />}
+                element={<SurveyResults />}
               />
             </Route>
 

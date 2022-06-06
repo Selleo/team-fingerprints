@@ -1,1 +1,3 @@
-export * from "./BackToScreen";
+import BackToScreen from "./BackToScreen";
+
+export default BackToScreen;

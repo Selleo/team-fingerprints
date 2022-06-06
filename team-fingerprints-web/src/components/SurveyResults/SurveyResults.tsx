@@ -1,25 +1,19 @@
 import axios from "axios";
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useMutation, useQuery } from "react-query";
-import { uniqueId, filter } from "lodash";
-import { Button, Collapse } from "@mantine/core";
+import { useQuery } from "react-query";
+import { filter } from "lodash";
 
-import LoadingData from "../../../../components/LoadingData";
-import ErrorLoading from "../../../../components/ErrorLoading";
-import Chart from "../../../../components/Chart/Chart";
-import BackToScreen from "../../../../components/BackToScreen/BackToScreen";
-import ResultsFilters from "./ResultsFilters";
-import ColoredShape from "../../../../components/ColoredShape";
-import SurveyFinishedWrapper from "../../../../components/SurveyFinishedWrapper/SurveyFinishedWrapper";
-import ModalWrapper from "../../../../components/Modals/ModalWrapper";
+import LoadingData from "../../components/LoadingData";
+import ErrorLoading from "../../components/ErrorLoading";
+import Chart from "../../components/Chart/Chart";
+import BackToScreen from "../../components/BackToScreen/BackToScreen";
+import SurveyFinishedWrapper from "../../components/SurveyFinishedWrapper/SurveyFinishedWrapper";
+import FiltersSets from "../../components/FiltersSets";
+import { SurveyDetails, FilterSets } from "../../types/models";
 
-import { Switch } from "../../../../components/Switch";
-import { SurveyDetails, FilterSets } from "../../../../types/models";
-import FiltersSets from "../../../../components/FiltersSets";
-
-const TeamSurveyResults = () => {
-  const { companyId, teamId, surveyId } = useParams();
+const SurveyResults = () => {
+  const { companyId, surveyId, teamId } = useParams();
   const [filterSets, setFilterSets] = useState<FilterSets>({});
 
   const {
@@ -33,12 +27,31 @@ const TeamSurveyResults = () => {
     return data;
   });
 
+  const api = useMemo(() => {
+    if (teamId) {
+      return {
+        header: [`teamSurvey-${surveyId}`, companyId, teamId],
+        url: `${surveyId}/companies/${companyId}/teams/${teamId}`,
+      };
+    }
+    if (companyId) {
+      return {
+        header: [`companySurvey-${surveyId}`, companyId],
+        url: `${surveyId}/companies/${companyId}`,
+      };
+    }
+    return {
+      header: [`publicSurvey-${surveyId}`],
+      url: `${surveyId}/companies/`,
+    };
+  }, [teamId, companyId, surveyId]);
+
   const { isLoading: isLoadingSurvey, data: surveyResult } = useQuery<
     any,
     Error
-  >([`teamSurvey-${surveyId}`, companyId, teamId], async () => {
+  >(api.header, async () => {
     const { data } = await axios.get<SurveyDetails>(
-      `/survey-results/${surveyId}/companies/${companyId}/teams/${teamId}`
+      `/survey-results/${api.url}`
     );
     return data;
   });
@@ -62,7 +75,8 @@ const TeamSurveyResults = () => {
           <FiltersSets
             filterSets={filterSets}
             setFilterSets={setFilterSets}
-            apiUrl={`${surveyId}/companies/${companyId}/teams/${teamId}`}
+            apiUrl={api.url}
+            isPublic={!companyId}
           />
           <Chart
             surveyResult={Object.values(surveyResult || {})}
@@ -75,4 +89,4 @@ const TeamSurveyResults = () => {
   );
 };
 
-export default TeamSurveyResults;
+export default SurveyResults;

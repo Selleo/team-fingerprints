@@ -14,8 +14,8 @@ import "./login-gateway.sass";
 
 import AnimationMember from "./routes/Animation/AnimationMember";
 import AnimationLeader from "./routes/Animation/AnimationLeader";
-import ShowPublicResults from "./routes/PublicSurveys/PublicSurveyResults";
-import PublicSurveysList from "./routes/PublicSurveys/PublicSurveysList";
+import SurveyResults from "./components/SurveyResults";
+import SurveyList from "./components/SurveyList";
 import LandingPage from "./routes/LandingPage";
 
 const LoginGateway = () => {
@@ -55,12 +55,9 @@ const LoginGateway = () => {
           <>
             <QueryClientProvider client={queryClient}>
               <Routes>
-                <Route path="/public" element={<PublicSurveysList />} />
+                <Route path="/public" element={<SurveyList />} />
                 <Route path="/" element={<WelcomeScreen />} />
-                <Route
-                  path="survey/:surveyId"
-                  element={<ShowPublicResults />}
-                />
+                <Route path="survey/:surveyId" element={<SurveyResults />} />
                 <Route path="/intro/member" element={<AnimationMember />} />
                 <Route path="/intro/leader" element={<AnimationLeader />} />
                 <Route path="/landing" element={<LandingPage />} />

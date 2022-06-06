@@ -1,20 +1,21 @@
+import axios from "axios";
+
 import { useMemo } from "react";
 import { useQuery } from "react-query";
 import { isArray, isEmpty, times } from "lodash";
 import { Skeleton } from "@mantine/core";
-import axios from "axios";
+import { useParams } from "react-router-dom";
 
-import ErrorLoading from "../../../../../components/ErrorLoading";
-import BackToScreen from "../../../../../components/BackToScreen/BackToScreen";
+import ErrorLoading from "../ErrorLoading";
+import BackToScreen from "../BackToScreen";
 import ResponseItem from "./ResponseItem";
 
-import { useParams } from "react-router-dom";
-import { Survey } from "../../../../../types/models";
-import { ReactComponent as BGIcons } from "../../../../../assets/BGIcons.svg";
+import { Survey } from "../../types/models";
+import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 
 import "./styles.sass";
 
-const TeamSurveysList = () => {
+const SurveyList = () => {
   const { companyId, teamId } = useParams();
   const { isLoading, error, data } = useQuery<Survey[]>(
     "surveysAllPublic",
@@ -23,6 +24,16 @@ const TeamSurveysList = () => {
       return response.data;
     }
   );
+
+  const navigateUrl = useMemo(() => {
+    if (teamId) {
+      return `/companies/${companyId}/team/${teamId}/surveys/`;
+    }
+    if (companyId) {
+      return `/companies/${companyId}/results/`;
+    }
+    return `/survey/`;
+  }, [teamId, companyId]);
 
   const content = useMemo(() => {
     if (isLoading)
@@ -52,6 +63,7 @@ const TeamSurveysList = () => {
               item={item}
               companyId={companyId}
               teamId={teamId}
+              navigateUrl={navigateUrl}
             />
           ))}
         </ul>
@@ -59,9 +71,19 @@ const TeamSurveysList = () => {
     );
   }, [data, error, isLoading]);
 
+  const backToScreen = useMemo(() => {
+    if (teamId) {
+      return "Team Managment";
+    }
+    if (companyId) {
+      return "Company Managment";
+    }
+    return "Login";
+  }, [teamId, companyId]);
+
   return (
     <div className="responses">
-      <BackToScreen name="Team Managment" />
+      <BackToScreen name={backToScreen} />
       <h1 className="responses__headline">Surveys List</h1>
       {content}
       <div className="svg-background">
@@ -71,4 +93,4 @@ const TeamSurveysList = () => {
   );
 };
 
-export default TeamSurveysList;
+export default SurveyList;

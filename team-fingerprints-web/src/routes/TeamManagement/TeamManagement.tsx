@@ -1,20 +1,22 @@
-import { Button, Group, Modal, Skeleton } from "@mantine/core";
-import React, { useState } from "react";
-import { useMutation, useQuery } from "react-query";
-import times from "lodash/times";
-
-import { useStyles } from "./styles";
 import axios from "axios";
-import { CompanyRole, Team } from "../../types/models";
+import times from "lodash/times";
+import { useState } from "react";
+import { Button, Group, Modal, Skeleton } from "@mantine/core";
+import { useMutation, useQuery } from "react-query";
+import { useParams, useNavigate } from "react-router-dom";
+
 import EmailWhitelist from "./EmailWhitelist";
 import EmailForm from "../../components/EmailForm";
-import { queryClient } from "../../App";
-import { useParams, useNavigate } from "react-router-dom";
 
 import TeamForm from "../../components/Team/TeamForm/TeamForm";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import ErrorLoading from "../../components/ErrorLoading";
 import ColoredShape from "../../components/ColoredShape";
+import BackToScreen from "../../components/BackToScreen";
+
+import { CompanyRole, Team } from "../../types/models";
+import { queryClient } from "../../App";
+import { useStyles } from "./styles";
 
 type TeamResponse = {
   team: Team;
@@ -144,6 +146,7 @@ const TeamManagment = () => {
 
   return (
     <>
+      <BackToScreen name="Company Management" />
       <div className={classes.header}>
         <h1 className={classes.headerTitle}>
           Team Managment

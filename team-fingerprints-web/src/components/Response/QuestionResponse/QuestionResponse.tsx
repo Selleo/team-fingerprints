@@ -38,7 +38,7 @@ export default function QuestionResponse({
   disabled: boolean;
   surveyId: string;
   finishSurvey: () => void;
-  surveyTitle: string | undefined;
+  surveyTitle?: string;
 }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const currentQuestion = questionsWithAnswers[questionIndex];
@@ -101,7 +101,7 @@ export default function QuestionResponse({
   const previousButton = () => {
     return (
       <button
-        className="survey-response__button --previous"
+        className="response__button --previous"
         onClick={() => {
           changeQuestion(questionIndex - 1);
         }}
@@ -114,7 +114,7 @@ export default function QuestionResponse({
   const nextButton = () => {
     return (
       <button
-        className="survey-response__button --next"
+        className="response__button --next"
         onClick={() => {
           changeQuestion(questionIndex + 1);
         }}
@@ -137,7 +137,7 @@ export default function QuestionResponse({
               setModalVisible(true);
             }}
             disabled={disabled}
-            className="survey-response__button--submit"
+            className="response__button--submit"
           >
             Submit responses
           </button>
@@ -153,10 +153,10 @@ export default function QuestionResponse({
   };
 
   return (
-    <div className="survey-response__survey">
-      <div className="survey-response__header">
-        <h4 className="survey-response__name">{surveyTitle}</h4>
-        <h4 className="survey-response__index">
+    <div className="response">
+      <div className="response__header">
+        <h4 className="response__name">{surveyTitle}</h4>
+        <h4 className="response__index">
           {questionIndex + 1}/{numberOfQuestions}
         </h4>
       </div>
@@ -166,20 +166,16 @@ export default function QuestionResponse({
         color="#32A89C"
         style={{ backgroundColor: "#292929" }}
       />
-      <h3 className="survey-response__title">
-        {currentQuestion.question.title}
-      </h3>
-      <div className="survey-response__answers">
+      <h3 className="response__title">{currentQuestion.question.title}</h3>
+      <div className="response__answers">
         {OPTIONS.map((option) => (
           <label
-            className={`survey-response__wrapper offset-${dotPosition(
-              option.value
-            )}`}
+            className={`response__wrapper offset-${dotPosition(option.value)}`}
             htmlFor={option.value}
           >
-            <span className="survey-response__label">{option.label}</span>
+            <span className="response__label">{option.label}</span>
             <div
-              className={classNames("survey-response__input", {
+              className={classNames("response__input", {
                 "--checked": option.value == liveValue,
               })}
             ></div>
@@ -199,16 +195,14 @@ export default function QuestionResponse({
         ))}
         {liveValue && (
           <div
-            className={`survey-response--checked offset-${dotPosition(
-              liveValue
-            )}`}
+            className={`response--checked offset-${dotPosition(liveValue)}`}
             onClick={() => {
               setAndSaveNewValue("");
             }}
           ></div>
         )}
       </div>
-      <div className="survey-response__nav">
+      <div className="response__nav">
         <div>{questionIndex > 0 && previousButton()}</div>
         <div>{liveValue && nextStep()}</div>
       </div>

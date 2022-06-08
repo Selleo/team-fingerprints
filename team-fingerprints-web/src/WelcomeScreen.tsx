@@ -1,10 +1,10 @@
+import LoadingData from "./components/LoadingData";
 import { Button, Center, Text, Title } from "@mantine/core";
 import { ReactComponent as Manager } from "./assets/Manager-background.svg";
 import { ReactComponent as Employer } from "./assets/Employer-background.svg";
 import { ReactComponent as Thunder } from "./assets/Thunder.svg";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import LoadingData from "./components/LoadingData";
 
 const WelcomeScreen = () => {
   const { isLoading } = useAuth0();

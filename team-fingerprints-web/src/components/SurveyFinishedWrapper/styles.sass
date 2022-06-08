@@ -1,29 +1,8 @@
 @import 'styles/application'
 
 .results
-  margin-top: 72px
-  display: flex
-  flex-direction: column
-
-  &__finished
-    margin-left: 230px
-    margin-right: 230px
-    margin: 0 auto
-
-    &__new-filter-button
-      background-color: $color-primary
-      border: none
-      border-radius: $border-radius-sm
-      color: $color-background
-      cursor: pointer
-      display: flex
-      font-weight: $font-weight-500
-      font-size: $font-size-base
-      padding: $m-xs $m-sm
-      width: fit-content
-
-      &:hover
-        background-color: $color-primary-dark
+  width: 60vw
+  margin: 72px auto
 
   &__info
     color: $color-white26
@@ -80,4 +59,11 @@
 @include media-breakpoint-down(sm)
 
   .results
-    margin-top: 43px
+    margin: 43px 0
+    width: 100%
+
+    &__survey-name
+      font-size: 28px
+
+    &__description
+      width: 100%

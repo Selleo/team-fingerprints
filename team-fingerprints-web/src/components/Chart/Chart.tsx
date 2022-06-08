@@ -24,7 +24,7 @@ interface IProps {
   showMe: boolean;
 }
 
-const ROW_HEIGHT_PX = 60;
+const ROW_HEIGHT_PX = 80;
 
 type TrendToDisplay = TrendResults & { categoryTitle: string };
 
@@ -46,6 +46,12 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   const pixelRatio = window.devicePixelRatio;
   const ref = useRef<any>(null);
   const canvas = useRef<any>(null);
+  const chart = useRef<any>(null);
+  const data = useRef<any>(null);
+
+  const dataWidth = data.current?.clientHeight * 2;
+  const chartWidth = chart.current?.clientWidth;
+
   // responsive width and height
   useEffect(() => {
     setWidth(ref.current?.clientWidth);
@@ -182,7 +188,7 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
     return (
       <div
         style={{
-          width: screenWidth - 920,
+          width: chartWidth - dataWidth,
           height: numberOfRows * ROW_HEIGHT_PX,
         }}
         ref={ref}
@@ -195,13 +201,23 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
         />
       </div>
     );
-  }, [displayHeight, displayWidth, numberOfRows, screenWidth, style]);
+  }, [
+    displayHeight,
+    displayWidth,
+    numberOfRows,
+    screenWidth,
+    style,
+    chartWidth,
+    dataWidth,
+  ]);
 
   const renderRow = (item: TrendToDisplay, index: number) => {
     const firstRow = index === 0;
     return (
       <tr key={index}>
-        <td className="tg-0left">{item.trendSecondary}</td>
+        <td className="tg-0left" ref={data}>
+          {item.trendSecondary}
+        </td>
         {firstRow && (
           <td className="tg-0" rowSpan={numberOfRows}>
             {resultChart}
@@ -213,7 +229,7 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   };
 
   return (
-    <div className="chart">
+    <div className="chart" ref={chart}>
       <table className="tg">
         <thead>
           {userMappedTrendsData.map((item: TrendToDisplay, index: number) => {

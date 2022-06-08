@@ -32,7 +32,7 @@ export const RoleManagment = () => {
     }
   );
 
-  const leaveRole = (item: any) => {
+  const leaveRole = (item: ComplexRole) => {
     removeRoleMutation.mutate(item.roleId);
   };
 
@@ -68,15 +68,15 @@ export const RoleManagment = () => {
 
       return (
         <div className="managment__company">
-          <span className="managment__company__name">
+          <span className="managment__name">
             Company: {company?.name || "SUPER ADMIN RIGHTs"}
           </span>
-          <ul className="managment__roles">
+          <ul className="managment__roles-wrapper">
             {grouped[companyId].map(
               (item) =>
                 item && (
-                  <li className="managment__roles__role">
-                    <span className="managment__roles__role__icon">
+                  <li className="managment__role">
+                    <span className="managment__icon">
                       {item.team
                         ? `${item.role} OF TEAM ${item.team.name}`
                         : item.role}
@@ -85,7 +85,7 @@ export const RoleManagment = () => {
                       {item.role !== "USER" && (
                         <a
                           onClick={() => goToManage(item)}
-                          className="managment__roles__role__manage"
+                          className="managment__manage"
                         >
                           Manage
                         </a>
@@ -102,7 +102,7 @@ export const RoleManagment = () => {
                               setModalVisible(true);
                               setModalCompanyName(item.company.name);
                             }}
-                            className="managment__roles__role__leave"
+                            className="managment__leave"
                           >
                             Leave
                           </a>

@@ -1,4 +1,4 @@
-@import 'styles/base/variables'
+@import 'styles/application'
 
 .managment
   position: relative
@@ -9,6 +9,7 @@
 
   &__company-button
     position: absolute
+    margin-top: 20px
     right: 20px
     top: 0
     font-weight: 600
@@ -31,14 +32,12 @@
     border-radius: 10px
     margin-bottom: 20px
 
-    &__name
-      color: $color-white-label
-      font-weight: 600
-      font-size: 20px
+  &__name
+    color: $color-white-label
+    font-weight: 600
+    font-size: 20px
 
-
-
-  &__roles
+  &__roles-wrapper
     list-style-type: none
     flex-direction: column
     display: flex
@@ -46,53 +45,68 @@
     align-items: center
     padding-left: 0
 
+  &__role
+    justify-content: space-between
+    align-items: center
+    border-radius: 12px
+    border: 1px solid #ffffff42
+    box-sizing: border-box
+    display: flex
+    flex-direction: row
+    height: 73px
+    margin-bottom: 16px
+    padding-left: 27px
+    padding-right: 27px
+    width: 560px
+    display: flex
+
+  &__icon
+    font-size: 11px
+    font-weight: 600
+    border-radius: 6px
+    padding: 4px 6px
+    background-color: $color-white-label
+    color: $color-background
+    margin-right: 10px
+
+  &__title
+    flex: 1
+    font-weight: 600
+    color: $color-primary
+    text-align: center
+
+  &__manage
+    flex: 0
+    font-weight: 600
+    color: $color-white-label
+    border: 1px $color-white-label solid
+    padding: 4px 6px
+    border-radius: 6px
+    cursor: pointer
+    margin-right: 10px
+
+  &__leave
+    flex: 0
+    font-weight: 600
+    color: $color-switch
+    border: 1px $color-switch solid
+    padding: 4px 6px
+    border-radius: 6px
+    cursor: pointer
+
+@include media-breakpoint-down(sm)
+
+  .managment
+
+    &__headline
+      font-size: 38px
+      text-align: center
+
+    &__company
+      width: 100%
+      padding: 20px
+
     &__role
-      justify-content: space-between
-      align-items: center
-      border-radius: 12px
-      border: 1px solid #ffffff42
-      box-sizing: border-box
-      display: flex
-      flex-direction: row
-      height: 73px
-      margin-bottom: 16px
-      padding-left: 27px
-      padding-right: 27px
-      width: 560px
-      display: flex
-
-      &__icon
-        font-size: 11px
-        font-weight: 600
-        border-radius: 6px
-        padding: 4px 6px
-        background-color: $color-white-label
-        color: $color-background
-        margin-right: 10px
-
-
-      &__title
-        flex: 1
-        font-weight: 600
-        color: $color-primary
-        text-align: center
-
-
-      &__manage
-        flex: 0
-        font-weight: 600
-        color: $color-white-label
-        border: 1px $color-white-label solid
-        padding: 4px 6px
-        border-radius: 6px
-        cursor: pointer
-        margin-right: 10px
-
-      &__leave
-        flex: 0
-        font-weight: 600
-        color: $color-switch
-        border: 1px $color-switch solid
-        padding: 4px 6px
-        border-radius: 6px
-        cursor: pointer
+      width: 100%
+      padding: 0 20px
+      margin: 0

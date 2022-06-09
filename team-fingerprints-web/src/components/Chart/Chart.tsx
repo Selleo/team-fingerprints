@@ -49,9 +49,6 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   const chart = useRef<any>(null);
   const data = useRef<any>(null);
 
-  const dataWidth = data.current?.clientHeight * 2;
-  const chartWidth = chart.current?.clientWidth;
-
   // responsive width and height
   useEffect(() => {
     setWidth(ref.current?.clientWidth);
@@ -185,6 +182,8 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   ]);
 
   const resultChart = useMemo(() => {
+    const dataWidth = data.current?.clientHeight * 4;
+    const chartWidth = chart.current?.clientWidth;
     return (
       <div
         style={{
@@ -205,10 +204,9 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
     displayHeight,
     displayWidth,
     numberOfRows,
+    ROW_HEIGHT_PX,
     screenWidth,
     style,
-    chartWidth,
-    dataWidth,
   ]);
 
   const renderRow = (item: TrendToDisplay, index: number) => {

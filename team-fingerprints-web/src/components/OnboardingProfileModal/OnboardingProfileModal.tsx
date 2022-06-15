@@ -1,41 +1,31 @@
 import { Button } from "@mantine/core";
-import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ProfileContext } from "../../routes";
 import ModalWrapper from "../Modals/ModalWrapper";
 
 import "./styles.sass";
 
-const LOCAL_STORAGE_FLAG = "profileCheck";
+export type Props = {
+  visibleProfileModal: boolean;
+  setVisibleProfileModal: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-export const OnboardingProfileModal = () => {
-  const [visible, setVisible] = useState(false);
-  const { profile } = useContext(ProfileContext);
+export const OnboardingProfileModal = ({
+  visibleProfileModal,
+  setVisibleProfileModal,
+}: Props) => {
   const navigate = useNavigate();
-  const guardCheck = useRef<boolean>(false);
-
-  useEffect(() => {
-    if (profile && !guardCheck.current) {
-      if (!profile.userDetails && !localStorage.getItem(LOCAL_STORAGE_FLAG)) {
-        setVisible(true);
-      }
-      guardCheck.current = true;
-    }
-  }, [profile]);
 
   return (
     <ModalWrapper
-      modalMessage="It looks like you are logging in for the first time. You are only one
-      step away from getting started with Fingerprints! Fill in your basic
-      information like gender and job title."
-      modalVisible={visible}
-      setModalVisible={setVisible}
+      modalMessage="Oh no! It looks like your profile is not filled. You are only one
+      step away from getting started with Fingerprints! Fill your profile before answering surveys."
+      modalVisible={visibleProfileModal}
+      setModalVisible={setVisibleProfileModal}
     >
       <Button
         onClick={() => {
           navigate("profile");
-          setVisible(false);
-          localStorage.setItem(LOCAL_STORAGE_FLAG, "done");
+          setVisibleProfileModal(false);
         }}
         className="onboarding-profile-modal__button"
       >

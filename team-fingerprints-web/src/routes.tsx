@@ -1,7 +1,11 @@
+import axios from "axios";
+import { createContext } from "react";
+import { useQuery } from "react-query";
 import { Route, Routes } from "react-router-dom";
-import Surveys from "./routes/Surveys";
 import { AppShell } from "@mantine/core";
+import { useAuth0 } from "@auth0/auth0-react";
 
+import Surveys from "./routes/Surveys";
 import AppHeader from "./components/AppHeader";
 import SurveyDetails from "./routes/Surveys/Details";
 import Responses from "./routes/Responses";
@@ -13,16 +17,12 @@ import SurveyList from "./components/SurveyList";
 
 import CompaniesManagment from "./routes/Companies/Managment";
 import TeamManagement from "./routes/TeamManagement";
-import { Profile } from "./types/models";
-import { createContext } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useQuery } from "react-query";
-import axios from "axios";
-import { queryClient } from "./App";
 import LoadingData from "./components/LoadingData";
 import ProfileDetails from "./routes/ProfileDetails";
 import UserManagment from "./routes/UserManagment";
-import OnboardingProfileModal from "./components/OnboardingProfileModal";
+
+import { queryClient } from "./App";
+import { Profile } from "./types/models";
 
 interface ProfileContextInterface {
   profile: Profile | undefined;
@@ -102,7 +102,6 @@ const AppRoutes = () => {
           </Routes>
         )}
       </AppShell>
-      <OnboardingProfileModal />
     </ProfileContext.Provider>
   );
 };

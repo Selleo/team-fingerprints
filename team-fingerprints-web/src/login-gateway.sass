@@ -1,5 +1,4 @@
-@import 'styles/base/variables'
-@import 'styles/base/mixins'
+@import 'styles/application'
 
 .welcome-screen
   display: flex
@@ -114,3 +113,15 @@
   path
     stroke: $color-white
     transition-duration: 400ms
+
+@include media-breakpoint-down(sm)
+
+  .welcome-screen
+    display: block
+
+  .login-box
+    width: 100%
+    height: 50vh
+
+  .thunder
+    display: none

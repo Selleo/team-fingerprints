@@ -133,12 +133,12 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
           employees. To display the data on the chart, turn on the switch
           next to the category name."
         >
-          <div className="survey-response__legend">
-            <div className="survey-response__legend__item survey-response__legend__item--first">
-              <div className="survey-response__legend__item__icon">
+          <div className="results__legend">
+            <div className="results__item">
+              <div className="results__icon">
                 <CircleIcon stroke={"#32A89C"} />
               </div>
-              <span>You</span>
+              <span className="results__item-name">You</span>
               <Switch value={showMyResults} setValue={setShowMyResults} />
             </div>
             {keys(visibleData).map((key) => {
@@ -146,14 +146,16 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
                 (el) => el._id === key
               );
               return (
-                <div className="survey-response__legend__item survey-response__legend__item--first">
-                  <div className="survey-response__legend__item__icon">
+                <div className="results__item">
+                  <div className="results__icon">
                     <ColoredShape
                       shape={singleVisibleData?.pointShape}
                       color={singleVisibleData?.pointColor}
                     />
                   </div>
-                  <span>{singleVisibleData?.name}</span>
+                  <span className="results__item-name">
+                    {singleVisibleData?.name}
+                  </span>
                   <Switch
                     value={!!visibleData[key]}
                     setValue={() =>

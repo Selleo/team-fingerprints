@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { find, flatMapDeep, get, isEmpty, last, size, sortBy } from "lodash";
@@ -119,9 +118,7 @@ export default function Edit() {
     return (
       <>
         <BackToScreen name="Dashboard" />
-        <div className="survey-response">
-          <SurveyResults surveyFinished={surveyFinished} survey={survey} />
-        </div>
+        <SurveyResults surveyFinished={surveyFinished} survey={survey} />
       </>
     );
   }
@@ -129,16 +126,14 @@ export default function Edit() {
   return (
     <>
       <BackToScreen name="Dashboard" />
-      <div className="survey-response">
-        <QuestionResponse
-          questionsWithAnswers={questionsWithAnswers}
-          refetch={refetch}
-          disabled={surveyIsFinished}
-          surveyId={surveyId || ""}
-          finishSurvey={finishSurvey.mutate}
-          surveyTitle={survey?.title}
-        />
-      </div>
+      <QuestionResponse
+        questionsWithAnswers={questionsWithAnswers}
+        refetch={refetch}
+        disabled={surveyIsFinished}
+        surveyId={surveyId || ""}
+        finishSurvey={finishSurvey.mutate}
+        surveyTitle={survey?.title}
+      />
     </>
   );
 }

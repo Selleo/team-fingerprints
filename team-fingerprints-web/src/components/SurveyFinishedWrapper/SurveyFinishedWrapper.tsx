@@ -13,15 +13,11 @@ const SurveyFinishedWrapper = ({
   children,
 }: Props) => {
   return (
-    <div className="survey-response__finished">
-      <div className="survey-response__description">
-        <h5 className="survey-response__description__info">Results</h5>
-        <h1 className="survey-response__description__title">
-          {surveyTitle || "Survey Name"}
-        </h1>
-        <div className="survey-response__description__copy">{description}</div>
-        {children}
-      </div>
+    <div className="results">
+      <h5 className="results__info">Results</h5>
+      <h1 className="results__survey-name">{surveyTitle || "Survey Name"}</h1>
+      <div className="results__description">{description}</div>
+      {children}
     </div>
   );
 };

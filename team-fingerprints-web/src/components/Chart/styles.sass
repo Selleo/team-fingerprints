@@ -1,3 +1,5 @@
+@import 'styles/application'
+
 .chart
   font-size: 16px
   font-weight: 600
@@ -7,6 +9,7 @@
   .tg
     border-collapse: collapse
     border-spacing: 0
+    width: 100%
   .tg tr
     height: 60px
     border-style: none
@@ -31,3 +34,25 @@
     width: 162px
     padding-left: 10px
     text-align: right
+
+
+@include media-breakpoint-down(sm)
+
+  .chart
+    position: relative
+    line-height: 60px
+    width: 100%
+
+    .tg tr
+      font-size: 10px
+      width: 100%
+
+    .tg .tg-0left
+      position: absolute
+      left: 0
+      padding: 0
+
+    .tg .tg-0right
+      position: absolute
+      right: 0
+      padding: 0

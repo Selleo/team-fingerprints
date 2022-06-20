@@ -1,2 +1,3 @@
-import Comp from "./OnboardingProfileModal";
-export default Comp;
+import OnboardingProfileModal from "./OnboardingProfileModal";
+
+export default OnboardingProfileModal;

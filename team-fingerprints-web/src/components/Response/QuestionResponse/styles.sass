@@ -1,10 +1,8 @@
 @import 'styles/application'
 
-.survey-response
-
-  &__survey
-    width: 60%
-    margin: 0 auto
+.response
+  width: 60vw
+  margin: 72px auto
 
   &__header
     display: flex
@@ -165,11 +163,9 @@
 
 @include media-breakpoint-down(sm)
 
-  .survey-response
-    margin-top: 40px
-
-    &__survey
-      width: 100%
+  .response
+    margin: 40px 0
+    width: 100%
 
     &__title
       font-size: 20px

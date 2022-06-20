@@ -9,7 +9,7 @@ import { useFormik } from "formik";
 import ProfileSelect from "./ProfileSelect";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import ErrorLoading from "../../components/ErrorLoading";
-import BackToScreen from "../../components/BackToScreen/BackToScreen";
+import BackToScreen from "../../components/BackToScreen";
 import { FormData } from "../../types/models";
 import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
 import { ReactComponent as ProfileCircle } from "../../assets/ProfileCircle.svg";

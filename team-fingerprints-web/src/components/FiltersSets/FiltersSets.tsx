@@ -7,8 +7,7 @@ import { Button } from "@mantine/core";
 
 import LoadingData from "../LoadingData";
 import ResultsFilters from "./ResultsFilters";
-import { getRandomLightColor } from "../../utils/utils";
-
+import { getRandomLightColor } from "utils/utils";
 import { FiltersSet, FilterSets, ChangeFilterValue } from "../../types/models";
 
 import "./styles.sass";

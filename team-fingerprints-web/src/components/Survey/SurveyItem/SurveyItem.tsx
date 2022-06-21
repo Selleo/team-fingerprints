@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Button, Modal, TextInput } from "@mantine/core";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { queryClient } from "../../../App";
+import { queryClient } from "App";
 import { FullSurvey } from "team-fingerprints-common";
 
 import SurveyForm from "../SurveyForm";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 
 const SurveyItem = ({ item }: { item: FullSurvey }) => {
   const navigate = useNavigate();

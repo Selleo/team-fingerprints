@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useContext, useEffect, useRef } from "react";
 import {
   TextInput,
@@ -9,12 +10,12 @@ import {
 } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
+
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import { queryClient } from "App";
+import { Company } from "types/models";
+import { ProfileContext } from "routes";
 import { useStyles } from "./styles";
-import axios from "axios";
-import { queryClient } from "../../../App";
-import { Company } from "../../../types/models";
-import { ProfileContext } from "../../../routes";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 const CompanyForm = ({
   initialValues,

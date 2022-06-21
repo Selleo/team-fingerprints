@@ -1,10 +1,11 @@
+import { FC, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Table, Badge } from "@mantine/core";
 import { groupBy, keys, map } from "lodash";
-import { FC, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ProfileContext } from "../../routes";
-import { CompanyRole, Team } from "../../types/models";
-import ModalConfirmTrigger from "./../Modals/ModalConfirmTrigger";
+
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
+import { CompanyRole, Team } from "types/models";
+import { ProfileContext } from "routes";
 
 interface IProps {
   onRemove?: (email: string) => void;

@@ -1,7 +1,7 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { ReactComponent as LeftArrowIcon } from "../../assets/LeftArrow.svg";
+import { ReactComponent as LeftArrowIcon } from "assets/LeftArrow.svg";
 
 import "./styles.sass";
 

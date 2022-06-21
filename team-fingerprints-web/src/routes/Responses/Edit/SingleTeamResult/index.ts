@@ -1,3 +1,3 @@
-import Comp from "./SingleTeamResult";
+import SingleTeamResult from "./SingleTeamResult";
 
-export default Comp;
+export default SingleTeamResult;

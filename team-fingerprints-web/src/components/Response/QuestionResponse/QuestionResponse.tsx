@@ -6,12 +6,12 @@ import { useMutation } from "react-query";
 import { toNumber } from "lodash";
 import { Progress } from "@mantine/core";
 
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 
-import { Answer, Question } from "../../../types/models";
-import { ReactComponent as RightArrow } from "../../../assets/RightArrow.svg";
-import { ReactComponent as LeftArrowGray } from "../../../assets/LeftArrowGray.svg";
+import { Answer, Question } from "types/models";
+import { ReactComponent as RightArrow } from "assets/RightArrow.svg";
+import { ReactComponent as LeftArrowGray } from "assets/LeftArrowGray.svg";
 
 import "./styles.sass";
 

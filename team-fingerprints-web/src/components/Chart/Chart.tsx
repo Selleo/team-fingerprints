@@ -8,13 +8,13 @@ import {
   useRef,
   useState,
 } from "react";
-import useWindowDimensions from "../../hooks/useWindowDimensions";
+import useWindowDimensions from "hooks/useWindowDimensions";
 import {
   AdditionalData,
   CategoryResults,
   Shape,
   TrendResults,
-} from "../../types/models";
+} from "types/models";
 
 import "./styles.sass";
 

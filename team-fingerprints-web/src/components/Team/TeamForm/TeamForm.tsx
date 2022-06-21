@@ -8,7 +8,8 @@ import {
   Text,
 } from "@mantine/core";
 import { useFormik } from "formik";
-import { Team } from "../../../types/models";
+
+import { Team } from "types/models";
 import { useStyles } from "./styles";
 
 const TeamForm = ({

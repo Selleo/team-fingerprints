@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { Button, Modal } from "@mantine/core";
 import { Pencil1Icon } from "@modulz/radix-icons";
-import React, { useState } from "react";
-import { Trend } from "../../../types/models";
+
 import TrendForm from "../TrendForm";
+import { Trend } from "types/models";
 
 function EditTrendButton({
   surveyId,

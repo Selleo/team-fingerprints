@@ -1,5 +1,5 @@
-import { ReactComponent as RightArrowIcon } from "../../../assets/RightArrow.svg";
-import { ReactComponent as Chart } from "../../../assets/Chart.svg";
+import { ReactComponent as RightArrowIcon } from "assets/RightArrow.svg";
+import { ReactComponent as Chart } from "assets/Chart.svg";
 
 const StatusInfo = ({ status }: { status: string }) => {
   const getInfo = () => {

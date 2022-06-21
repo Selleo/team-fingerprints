@@ -5,12 +5,12 @@ import { useContext, useMemo, useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import CompanyForm from "../../components/Company/CompanyForm";
-import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
-import ModalConfirmTrigger from "../../components/Modals/ModalConfirmTrigger";
+import CompanyForm from "components/Company/CompanyForm";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 
-import { ProfileContext } from "../../routes";
-import { ComplexRole } from "../../types/models";
+import { ProfileContext } from "routes";
+import { ComplexRole } from "types/models";
 
 import "./styles.sass";
 

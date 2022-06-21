@@ -2,7 +2,7 @@ import axios from "axios";
 import { values } from "lodash";
 import { FC, useEffect } from "react";
 import { useQuery } from "react-query";
-import { Shape } from "../../../../types/models";
+import { Shape } from "types/models";
 
 export type SimpleTeamType = {
   teamId: string;

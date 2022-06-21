@@ -1,8 +1,8 @@
-import { TextInput, Button } from "@mantine/core";
+import { Button } from "@mantine/core";
 import { useFormik } from "formik";
-import { useStyles } from "./styles";
 
 import { ReactMultiEmail, isEmail } from "react-multi-email";
+import { useStyles } from "./styles";
 import "react-multi-email/style.css";
 
 interface FormValues {

@@ -1,5 +1,5 @@
-import React, { FC } from "react";
 import classnames from "classnames";
+import { FC } from "react";
 
 import "./styles.sass";
 

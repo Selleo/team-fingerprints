@@ -4,25 +4,19 @@ import { useQuery } from "react-query";
 import { times } from "lodash";
 import { Badge, Skeleton, List, Group, Text } from "@mantine/core";
 
-import AddCategoryButton from "../../../components/Category/AddCategoryButton";
-import AddQuestionButton from "../../../components/Question/AddQuestionButton";
-import AddTrendButton from "../../../components/Trend/AddTrendButton";
-import DeleteCategoryButton from "../../../components/Category/DeleteCategoryButton";
-import DeleteQuestionButton from "../../../components/Question/DeleteQuestionButton";
-import DeleteTrendButton from "../../../components/Trend/DeleteTrendButton";
-import EditCategoryButton from "../../../components/Category/EditCategoryButton";
-import EditQuestionButton from "../../../components/Question/EditQuestionButton";
-import EditTrendButton from "../../../components/Trend/EditTrendButton/EditTrendButton";
+import AddCategoryButton from "components/Category/AddCategoryButton";
+import AddQuestionButton from "components/Question/AddQuestionButton";
+import AddTrendButton from "components/Trend/AddTrendButton";
+import DeleteCategoryButton from "components/Category/DeleteCategoryButton";
+import DeleteQuestionButton from "components/Question/DeleteQuestionButton";
+import DeleteTrendButton from "components/Trend/DeleteTrendButton";
+import EditCategoryButton from "components/Category/EditCategoryButton";
+import EditQuestionButton from "components/Question/EditQuestionButton";
+import EditTrendButton from "components/Trend/EditTrendButton/EditTrendButton";
+import ErrorLoading from "components/ErrorLoading";
 
-import {
-  Category,
-  Question,
-  SurveyDetails,
-  Trend,
-} from "../../../types/models";
-
+import { Category, Question, SurveyDetails, Trend } from "types/models";
 import { CategoryIcon, PrimaryIcon, SecondaryIcon, TrendIcon } from "./Icons";
-import ErrorLoading from "../../../components/ErrorLoading";
 
 function Details() {
   const { id } = useParams();

@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { Button, Modal } from "@mantine/core";
 import { PlusCircledIcon } from "@modulz/radix-icons";
-import React, { useState } from "react";
 import QuestionForm from "../QuestionForm";
 
 function AddQuestionButton({

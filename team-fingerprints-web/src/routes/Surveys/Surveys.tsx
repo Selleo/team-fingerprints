@@ -1,17 +1,19 @@
-import { Button, Modal, Skeleton, Table } from "@mantine/core";
-import React, { useState } from "react";
-import { useQuery } from "react-query";
+import axios from "axios";
 import times from "lodash/times";
 import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
 
-import { useStyles } from "./styles";
-import SurveyItem from "../../components/Survey/SurveyItem";
-import SurveyForm from "../../components/Survey/SurveyForm";
-import axios from "axios";
-import ErrorLoading from "../../components/ErrorLoading";
+import { useState } from "react";
+import { useQuery } from "react-query";
+import { Button, Modal, Skeleton, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { FullSurvey } from "team-fingerprints-common";
+
+import SurveyItem from "components/Survey/SurveyItem";
+import SurveyForm from "components/Survey/SurveyForm";
+import ErrorLoading from "components/ErrorLoading";
+
+import { useStyles } from "./styles";
 
 const Surveys = () => {
   const { classes } = useStyles();

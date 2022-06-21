@@ -1,5 +1,4 @@
-import React from "react";
-import { Company } from "../../../types/models";
+import { Company } from "types/models";
 
 const CompanyItem = ({ item }: { item: Company }) => {
   return (

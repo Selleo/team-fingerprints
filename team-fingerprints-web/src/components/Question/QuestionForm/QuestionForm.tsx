@@ -1,13 +1,14 @@
+import axios from "axios";
 import { useEffect, useRef } from "react";
 import { TextInput, Button, Switch } from "@mantine/core";
+import { isEmpty } from "lodash";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
+
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import { queryClient } from "App";
+import { Question } from "types/models";
 import { useStyles } from "./styles";
-import axios from "axios";
-import { queryClient } from "../../../App";
-import { Question } from "../../../types/models";
-import { isEmpty } from "lodash";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
 
 const CreateQuestionForm = ({
   surveyId,

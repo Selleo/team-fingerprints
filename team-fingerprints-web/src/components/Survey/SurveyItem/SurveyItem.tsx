@@ -11,7 +11,7 @@ import SurveyForm from "../SurveyForm";
 import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
 import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 
-// TODO - inline style -> sass
+import "./styles.sass";
 
 const SurveyItem = ({ item }: { item: FullSurvey }) => {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
 
   return (
     <>
-      <tr key={item._id}>
+      <tr className="survey-item" key={item._id}>
         <td>{item.title}</td>
         <td>{item.isPublic ? "public" : "not public"}</td>
         <td>{item.archived ? "archived" : "not archived"}</td>
@@ -75,13 +75,13 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
             Edit
           </Button>
           <Button
-            style={{ marginLeft: "10px" }}
+            className="survey-item__button"
             onClick={() => setModalVisible(true)}
           >
             Edit Title
           </Button>
           <Button
-            style={{ marginLeft: "10px" }}
+            className="survey-item__button"
             onClick={() => setDuplicateModalVisible(true)}
           >
             Duplicate
@@ -103,7 +103,7 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
             renderTrigger={(setModalVisible) => (
               <Button
                 onClick={() => setModalVisible(true)}
-                style={{ marginLeft: "10px" }}
+                className="survey-item__button"
                 color={item.archived ? "pink" : "gray"}
               >
                 {item.archived ? "Unarchive" : "Archive"}
@@ -119,7 +119,7 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
                 }}
                 renderTrigger={(setModalVisible) => (
                   <Button
-                    style={{ marginLeft: "10px" }}
+                    className="survey-item__button"
                     onClick={() => setModalVisible(true)}
                     color="red"
                   >
@@ -138,7 +138,7 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
                 renderTrigger={(setModalVisible) => (
                   <Button
                     onClick={() => setModalVisible(true)}
-                    style={{ marginLeft: "10px" }}
+                    className="survey-item__button"
                     disabled={item.amountOfQuestions < 1}
                     color="green"
                   >
@@ -166,7 +166,7 @@ const SurveyItem = ({ item }: { item: FullSurvey }) => {
         title="Duplicate survey"
       >
         <TextInput
-          style={{ marginBottom: "15px" }}
+          className="survey-item__new-name"
           required
           label="New survey name"
           placeholder="New survey name"

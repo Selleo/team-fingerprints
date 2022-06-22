@@ -27,6 +27,7 @@
       "assets/*": ["./assets/*"],
       "hooks/*": ["./hooks/*"],
       "utils/*": ["./utils/*"],
+      "styles/*": [".styles/*"]
     }
   },
   "include": [

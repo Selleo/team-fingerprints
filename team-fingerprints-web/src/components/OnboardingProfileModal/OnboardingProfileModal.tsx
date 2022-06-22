@@ -1,6 +1,6 @@
 import { Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import ModalWrapper from "../Modals/ModalWrapper";
+import ModalWrapper from "components/Modals/ModalWrapper";
 
 import "./styles.sass";
 

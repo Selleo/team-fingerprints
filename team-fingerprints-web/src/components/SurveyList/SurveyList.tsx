@@ -6,12 +6,12 @@ import { isArray, isEmpty, times } from "lodash";
 import { Skeleton } from "@mantine/core";
 import { useParams } from "react-router-dom";
 
-import ErrorLoading from "../ErrorLoading";
-import BackToScreen from "../BackToScreen";
+import ErrorLoading from "components/ErrorLoading";
+import BackToScreen from "components/BackToScreen";
 import ResponseItem from "./ResponseItem";
 
-import { Survey } from "../../types/models";
-import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
+import { Survey } from "types/models";
+import { ReactComponent as BGIcons } from "assets/BGIcons.svg";
 
 import "./styles.sass";
 

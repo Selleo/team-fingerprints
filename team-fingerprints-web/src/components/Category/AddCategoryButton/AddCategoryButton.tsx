@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { Button, Modal } from "@mantine/core";
 import { PlusCircledIcon } from "@modulz/radix-icons";
-import { useState } from "react";
 import CategoryForm from "../CategoryForm";
 
 function AddCategoryButton({ surveyId }: { surveyId: string }) {

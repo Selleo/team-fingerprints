@@ -2,16 +2,15 @@ import { useContext, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { each, isEmpty, keys } from "lodash";
 
+import ColoredShape from "components/ColoredShape";
+import Chart from "components/Chart";
+import SurveyFinishedWrapper from "components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 import SingleCompanyResult from "./../SingleCompanyResult/SingleCompanyResult";
-import ColoredShape from "../../../../components/ColoredShape";
-import Chart from "../../../../components/Chart";
-import SurveyFinishedWrapper from "../../../../components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 
-import { AdditionalData, ComplexRole } from "../../../../types/models";
-import { Switch } from "../../../../components/Switch";
-import { ProfileContext } from "../../../../routes";
-import { ReactComponent as CircleIcon } from "../../../../assets/shapes/Circle.svg";
-
+import { AdditionalData, ComplexRole } from "types/models";
+import { Switch } from "components/Switch";
+import { ProfileContext } from "routes";
+import { ReactComponent as CircleIcon } from "assets/shapes/Circle.svg";
 import { SimpleTeamType } from "./../SingleTeamResult/SingleTeamResult";
 
 type ResultsPerCompany = {

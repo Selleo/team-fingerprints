@@ -1,6 +1,6 @@
 import { Select } from "@mantine/core";
 import { useCallback, useMemo, memo } from "react";
-import { ProfileSelectorProp } from "../../types/models";
+import { ProfileSelectorProp } from "types/models";
 
 const classes = {
   input: "profile__select",

@@ -1,14 +1,12 @@
-import { ReactComponent as SurveyIcon } from "../../../assets/Survey.svg";
-import { ReactComponent as TwoPeopleIcon } from "../../../assets/TwoPeople.svg";
+import { ReactComponent as SurveyIcon } from "assets/Survey.svg";
+import { ReactComponent as TwoPeopleIcon } from "assets/TwoPeople.svg";
 
 const StatusIcon = ({ status }: { status: string }) => {
+  if (status === "finished") {
+    return <TwoPeopleIcon />;
+  }
 
-    if (status === "finished") {
-        return <TwoPeopleIcon />
-    }
+  return <SurveyIcon />;
+};
 
-    return <SurveyIcon />
-
-}
-
-export default StatusIcon
+export default StatusIcon;

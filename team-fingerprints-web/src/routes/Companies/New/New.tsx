@@ -1,7 +1,8 @@
 import { Button, Modal } from "@mantine/core";
-import React, { useState } from "react";
+import { useState } from "react";
+
+import CompanyForm from "components/Company/CompanyForm";
 import { useStyles } from "./styles";
-import CompanyForm from "../../../components/Company/CompanyForm";
 
 const Companies = () => {
   const { classes } = useStyles();

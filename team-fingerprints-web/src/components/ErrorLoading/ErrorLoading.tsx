@@ -1,5 +1,5 @@
+import { ReactComponent as XCircleIcon } from "assets/XCircle.svg";
 import "./styles.sass";
-import { ReactComponent as XCircleIcon } from "../../assets/XCircle.svg";
 
 const ErrorLoading = ({ title = "Can't load this data" }) => {
   return (

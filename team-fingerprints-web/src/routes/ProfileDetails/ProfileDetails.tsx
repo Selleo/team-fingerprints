@@ -7,16 +7,16 @@ import { Skeleton } from "@mantine/core";
 import { useFormik } from "formik";
 
 import ProfileSelect from "./ProfileSelect";
-import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
-import ErrorLoading from "../../components/ErrorLoading";
-import BackToScreen from "../../components/BackToScreen/BackToScreen";
-import { FormData } from "../../types/models";
-import { ReactComponent as BGIcons } from "../../assets/BGIcons.svg";
-import { ReactComponent as ProfileCircle } from "../../assets/ProfileCircle.svg";
-import { ReactComponent as ProfileCircleFilled } from "../../assets/ProfileCircleFilled.svg";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import ErrorLoading from "components/ErrorLoading";
+import BackToScreen from "components/BackToScreen";
 
-import { Filter } from "../../types/models";
-import { ProfileContext } from "../../routes";
+import { FormData } from "types/models";
+import { ReactComponent as BGIcons } from "assets/BGIcons.svg";
+import { ReactComponent as ProfileCircle } from "assets/ProfileCircle.svg";
+import { ReactComponent as ProfileCircleFilled } from "assets/ProfileCircleFilled.svg";
+import { Filter } from "types/models";
+import { ProfileContext } from "routes";
 
 import "./styles.sass";
 

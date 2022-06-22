@@ -1,22 +1,21 @@
 import { Route, Routes } from "react-router-dom";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-
+import { MantineProvider } from "@mantine/core";
 import { useAuth0 } from "@auth0/auth0-react";
 import { NotificationsProvider } from "@mantine/notifications";
-import { MantineProvider } from "@mantine/core";
-import WelcomeScreen from "./WelcomeScreen";
-import { queryClient } from "./App";
-import AppRoutes from "./routes";
-import TokenSetup from "./components/TokenSetup";
 
-import "./login-gateway.sass";
+import WelcomeScreen from "WelcomeScreen";
+import AppRoutes from "routes";
+import TokenSetup from "components/TokenSetup";
+import AnimationMember from "routes/Animation/AnimationMember";
+import AnimationLeader from "routes/Animation/AnimationLeader";
+import SurveyResults from "components/SurveyResults";
+import SurveyList from "components/SurveyList";
+import LandingPage from "routes/LandingPage";
 
-import AnimationMember from "./routes/Animation/AnimationMember";
-import AnimationLeader from "./routes/Animation/AnimationLeader";
-import SurveyResults from "./components/SurveyResults";
-import SurveyList from "./components/SurveyList";
-import LandingPage from "./routes/LandingPage";
+import { queryClient } from "App";
+import "login-gateway.sass";
 
 const LoginGateway = () => {
   const { isAuthenticated, isLoading } = useAuth0();

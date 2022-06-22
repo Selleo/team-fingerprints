@@ -1,13 +1,11 @@
 import axios from "axios";
-
-import { useState } from "react";
 import { TrashIcon } from "@modulz/radix-icons";
 import { Button } from "@mantine/core";
 import { useMutation } from "react-query";
-import { queryClient } from "../../../App";
 
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
+import { queryClient } from "App";
 
 const DeleteTrendButton = ({
   trendId,

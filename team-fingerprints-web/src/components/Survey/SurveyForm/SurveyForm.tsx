@@ -1,17 +1,14 @@
 import axios from "axios";
 
-import { useEffect, useRef, useState } from "react";
-import { TextInput, Button, Switch, Alert, Checkbox } from "@mantine/core";
-import { BellIcon } from "@modulz/radix-icons";
+import { useEffect, useRef } from "react";
+import { TextInput, Button } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
 
-import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-
-import { useStyles } from "./styles";
-import { queryClient } from "../../../App";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import { queryClient } from "App";
 import { FullSurvey } from "team-fingerprints-common";
+import { useStyles } from "./styles";
 
 const SurveyForm = ({
   initialValues,

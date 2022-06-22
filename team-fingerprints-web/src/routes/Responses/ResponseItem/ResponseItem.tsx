@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 import StatusIcon from "./StatusIcon";
 import StatusInfo from "./StatusInfo";
-import OnboardingProfileModal from "../../../components/OnboardingProfileModal";
+import OnboardingProfileModal from "components/OnboardingProfileModal";
 
-import { ProfileContext } from "../../../routes";
-import { ResponseItem } from "../../../types/models";
+import { ProfileContext } from "routes";
+import { ResponseItem } from "types/models";
 
 type typeProps = { item: ResponseItem };
 

@@ -4,10 +4,10 @@ import { useQuery } from "react-query";
 import { isEmpty, omitBy, values as lodashValues } from "lodash";
 import { useFormik } from "formik";
 import { Button, ColorPicker, Select, TextInput } from "@mantine/core";
-import { Switch } from "../Switch";
+import { Switch } from "components/Switch";
 
-import ColoredShape from "../ColoredShape";
-import ModalWrapper from "../Modals/ModalWrapper";
+import ColoredShape from "components/ColoredShape";
+import ModalWrapper from "components/Modals/ModalWrapper";
 
 import FiltersSelect from "./FiltersSelect";
 import {
@@ -16,8 +16,8 @@ import {
   FiltersSet,
   ChangeFilterValue,
   ChangeFilterDataValue,
-} from "../../types/models";
-import ModalConfirmTrigger from "../Modals/ModalConfirmTrigger";
+} from "types/models";
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 
 type Props = {
   filterSet: FiltersSet;

@@ -4,19 +4,19 @@ import times from "lodash/times";
 import { Button, Group, Modal, Skeleton } from "@mantine/core";
 import { useState } from "react";
 import { useMutation, useQuery } from "react-query";
-import { Company, CompanyRole, Team } from "../../../types/models";
+import { Company, CompanyRole, Team } from "types/models";
 import { useNavigate, useParams } from "react-router-dom";
 
-import BackToScreen from "../../../components/BackToScreen";
-import CompanyForm from "../../../components/Company/CompanyForm";
-import EmailWhitelist from "../../../components/EmailWhitelist/EmailWhitelist";
-import EmailForm from "../../../components/EmailForm";
-import TeamForm from "../../../components/Team/TeamForm/TeamForm";
-import ColoredShape from "../../../components/ColoredShape";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ErrorLoading from "../../../components/ErrorLoading";
+import BackToScreen from "components/BackToScreen";
+import CompanyForm from "components/Company/CompanyForm";
+import EmailWhitelist from "components/EmailWhitelist/EmailWhitelist";
+import EmailForm from "components/EmailForm";
+import TeamForm from "components/Team/TeamForm/TeamForm";
+import ColoredShape from "components/ColoredShape";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import ErrorLoading from "components/ErrorLoading";
 
-import { queryClient } from "../../../App";
+import { queryClient } from "App";
 import { useStyles } from "./styles";
 
 type CompanyResponse = {

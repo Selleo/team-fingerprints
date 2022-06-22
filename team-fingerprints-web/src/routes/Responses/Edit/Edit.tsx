@@ -3,14 +3,14 @@ import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { find, flatMapDeep, get, isEmpty, last, size, sortBy } from "lodash";
 
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import LoadingData from "../../../components/LoadingData";
-import ErrorLoading from "../../../components/ErrorLoading";
-import QuestionResponse from "../../../components/Response/QuestionResponse";
-import BackToScreen from "../../../components/BackToScreen/BackToScreen";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import LoadingData from "components/LoadingData";
+import ErrorLoading from "components/ErrorLoading";
+import QuestionResponse from "components/Response/QuestionResponse";
+import BackToScreen from "components/BackToScreen/BackToScreen";
 import SurveyResults from "./SurveyResults";
 
-import { SurveyDetails } from "../../../types/models";
+import { SurveyDetails } from "types/models";
 
 export default function Edit() {
   const { onErrorWithTitle } = useDefaultErrorHandler();

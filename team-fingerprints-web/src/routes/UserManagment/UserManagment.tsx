@@ -5,8 +5,8 @@ import { Button, Group, TextInput, Title } from "@mantine/core";
 import { useNotifications } from "@mantine/notifications";
 import { useMutation } from "react-query";
 
-import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
-import ModalConfirmTrigger from "../../components/Modals/ModalConfirmTrigger";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 
 export const UserManagment = () => {
   const [email, setEmail] = useState("");

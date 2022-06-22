@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { Button, Modal } from "@mantine/core";
 import { Pencil1Icon } from "@modulz/radix-icons";
-import { useState } from "react";
-import { Question } from "../../../types/models";
+
 import QuestionForm from "../QuestionForm";
+import { Question } from "types/models";
 
 function EditQuestionButton({
   surveyId,

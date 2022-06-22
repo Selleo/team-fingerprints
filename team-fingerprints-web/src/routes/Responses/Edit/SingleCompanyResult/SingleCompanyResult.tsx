@@ -2,7 +2,7 @@ import axios from "axios";
 import { values } from "lodash";
 import { FC, useEffect } from "react";
 import { useQuery } from "react-query";
-import { Company } from "../../../../types/models";
+import { Company } from "types/models";
 import SingleTeamResult from "../SingleTeamResult";
 import { SimpleTeamType } from "../SingleTeamResult/SingleTeamResult";
 

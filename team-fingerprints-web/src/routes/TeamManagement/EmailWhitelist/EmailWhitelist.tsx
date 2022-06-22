@@ -1,10 +1,11 @@
+import { FC, useContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Table, Badge, Group } from "@mantine/core";
 import { first, groupBy, keys } from "lodash";
-import { FC, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { ProfileContext } from "../../../routes";
-import { CompanyRole } from "../../../types/models";
+
+import { ProfileContext } from "routes";
+import { CompanyRole } from "types/models";
 
 interface IProps {
   roles: CompanyRole[];

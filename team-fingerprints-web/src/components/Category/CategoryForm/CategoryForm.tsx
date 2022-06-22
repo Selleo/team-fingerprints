@@ -1,13 +1,15 @@
+import axios from "axios";
 import { useEffect, useRef } from "react";
 import { TextInput, Button } from "@mantine/core";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
-import { useStyles } from "./styles";
-import axios from "axios";
-import { queryClient } from "../../../App";
-import { Category } from "../../../types/models";
 import { isEmpty } from "lodash";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
+
+import { queryClient } from "App";
+import { Category } from "types/models";
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+
+import "./styles.sass";
 
 const CategoryForm = ({
   surveyId,
@@ -20,7 +22,6 @@ const CategoryForm = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const isCreate = isEmpty(initialValues);
-  const { classes } = useStyles();
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const onSuccess = () => {
@@ -76,7 +77,7 @@ const CategoryForm = ({
         onChange={handleChange("title")}
       />
 
-      <Button className={classes.submitButton} type="submit">
+      <Button className="submitButton" type="submit">
         {createMutation.isLoading || updateMutation.isLoading
           ? "Loading"
           : isCreate

@@ -1,5 +1,5 @@
-import { Button } from "@mantine/core";
 import { ReactNode } from "react";
+import { Button } from "@mantine/core";
 import ModalTrigger from "../ModalTrigger";
 
 type Props = {
@@ -16,7 +16,7 @@ const ModalConfirmTrigger = ({ onConfirm, ...restProps }: Props) => {
       {(setModalVisible) => (
         <>
           <Button
-            className="modal__button modal__button__confirm"
+            className="modal__button modal__confirm"
             onClick={() => {
               onConfirm();
               setModalVisible(false);
@@ -25,7 +25,7 @@ const ModalConfirmTrigger = ({ onConfirm, ...restProps }: Props) => {
             Confirm
           </Button>
           <Button
-            className="modal__button modal__button__cancel"
+            className="modal__button modal__cancel"
             onClick={() => setModalVisible(false)}
           >
             Cancel

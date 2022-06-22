@@ -2,21 +2,21 @@ import { Button, Modal } from "@mantine/core";
 import { useState } from "react";
 
 import CompanyForm from "components/Company/CompanyForm";
-import { useStyles } from "./styles";
+
+import "./styles.sass";
 
 const Companies = () => {
-  const { classes } = useStyles();
   const [createModalVisible, setCreateModalVisible] = useState(false);
 
   return (
-    <>
-      <div className={classes.header}>
-        <h1 className={classes.headerTitle}>
+    <div className="companies">
+      <div className="companies__header">
+        <h1 className="companies__title">
           Companies - you are not assigned to any company, create new company
         </h1>
         <Button
           onClick={() => setCreateModalVisible(true)}
-          className={classes.addButton}
+          className="companies__add-button"
         >
           Add new company
         </Button>
@@ -28,7 +28,7 @@ const Companies = () => {
       >
         <CompanyForm onClose={() => setCreateModalVisible(false)} />
       </Modal>
-    </>
+    </div>
   );
 };
 

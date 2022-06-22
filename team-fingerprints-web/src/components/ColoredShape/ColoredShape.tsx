@@ -5,7 +5,6 @@ import { ReactComponent as SquareIcon } from "assets/shapes/Square.svg";
 import { ReactComponent as CircleIcon } from "assets/shapes/Circle.svg";
 import { ReactComponent as TriangleIcon } from "assets/shapes/Triangle.svg";
 
-import "./styles.sass";
 interface IProps {
   color?: string;
   shape?: Shape;

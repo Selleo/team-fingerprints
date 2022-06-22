@@ -13,10 +13,9 @@ import SurveyItem from "components/Survey/SurveyItem";
 import SurveyForm from "components/Survey/SurveyForm";
 import ErrorLoading from "components/ErrorLoading";
 
-import { useStyles } from "./styles";
+import "./styles.sass";
 
 const Surveys = () => {
-  const { classes } = useStyles();
   const navigate = useNavigate();
   const [createModalVisible, setCreateModalVisible] = useState(false);
 
@@ -39,19 +38,19 @@ const Surveys = () => {
   if (error) return <ErrorLoading title="Can't load surveys data" />;
 
   return (
-    <>
-      <div className={classes.header}>
-        <h1 className={classes.headerTitle}>Surveys</h1>
+    <div className="surveys-panel">
+      <div className="surveys-panel__header">
+        <h1 className="surveys-panel__title">Surveys</h1>
         <Button
           onClick={() => setCreateModalVisible(true)}
-          className={classes.addButton}
+          className="surveys-panel__add-button"
         >
           Add new survey
         </Button>
         <Button
           onClick={() => navigate("/admin/users")}
           color="red"
-          className={classes.addButton}
+          className="surveys-panel__add-button"
         >
           Remove User
         </Button>
@@ -68,7 +67,7 @@ const Surveys = () => {
         </thead>
         {isArray(data) &&
           (isEmpty(data) ? (
-            <span className={classes.emptyCopy}>No surveys yet</span>
+            <span className="surveys-panel__empty">No surveys yet</span>
           ) : (
             <tbody>
               {data
@@ -90,7 +89,7 @@ const Surveys = () => {
       >
         <SurveyForm onClose={() => setCreateModalVisible(false)} />
       </Modal>
-    </>
+    </div>
   );
 };
 

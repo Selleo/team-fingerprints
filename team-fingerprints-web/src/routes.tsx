@@ -5,24 +5,24 @@ import { Route, Routes } from "react-router-dom";
 import { AppShell } from "@mantine/core";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import Surveys from "./routes/Surveys";
-import AppHeader from "./components/AppHeader";
-import SurveyDetails from "./routes/Surveys/Details";
-import Responses from "./routes/Responses";
-import ResponseEdit from "./routes/Responses/Edit";
-import CompaniesNew from "./routes/Companies/New";
-import RoleManagment from "./routes/RoleManagment";
-import SurveyResults from "./components/SurveyResults";
-import SurveyList from "./components/SurveyList";
+import Surveys from "routes/Surveys";
+import AppHeader from "components/AppHeader";
+import SurveyEdit from "components/SurveyEdit";
+import Responses from "routes/Responses";
+import ResponseEdit from "routes/Responses/Edit";
+import CompaniesNew from "routes/Companies/New";
+import RoleManagment from "routes/RoleManagment";
+import SurveyResults from "components/SurveyResults";
+import SurveyList from "components/SurveyList";
 
-import CompaniesManagment from "./routes/Companies/Managment";
-import TeamManagement from "./routes/TeamManagement";
-import LoadingData from "./components/LoadingData";
-import ProfileDetails from "./routes/ProfileDetails";
-import UserManagment from "./routes/UserManagment";
+import CompaniesManagment from "routes/Companies/Managment";
+import TeamManagement from "routes/TeamManagement";
+import LoadingData from "components/LoadingData";
+import ProfileDetails from "routes/ProfileDetails";
+import UserManagment from "routes/UserManagment";
 
-import { queryClient } from "./App";
-import { Profile } from "./types/models";
+import { queryClient } from "App";
+import { Profile } from "types/models";
 
 interface ProfileContextInterface {
   profile: Profile | undefined;
@@ -67,7 +67,7 @@ const AppRoutes = () => {
             <Route path="manage" element={<RoleManagment />} />
             <Route path="admin">
               <Route path="surveys" element={<Surveys />} />
-              <Route path="survey/:id" element={<SurveyDetails />} />
+              <Route path="survey/:id" element={<SurveyEdit />} />
               <Route path="users" element={<UserManagment />} />
             </Route>
             <Route path="profile" element={<ProfileDetails />} />

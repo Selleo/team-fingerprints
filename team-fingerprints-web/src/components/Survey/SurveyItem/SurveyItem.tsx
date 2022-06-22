@@ -11,6 +11,8 @@ import SurveyForm from "../SurveyForm";
 import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
 import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 
+// TODO - inline style -> sass
+
 const SurveyItem = ({ item }: { item: FullSurvey }) => {
   const navigate = useNavigate();
   const [modalVisible, setModalVisible] = useState(false);

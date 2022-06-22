@@ -8,7 +8,8 @@ import { useMutation } from "react-query";
 import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
 import { queryClient } from "App";
 import { Question } from "types/models";
-import { useStyles } from "./styles";
+
+import "./styles.sass";
 
 const CreateQuestionForm = ({
   surveyId,
@@ -25,7 +26,6 @@ const CreateQuestionForm = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const isCreate = isEmpty(initialValues);
-  const { classes } = useStyles();
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
   const onSuccess = () => {
@@ -74,7 +74,7 @@ const CreateQuestionForm = ({
   }, []);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="question-form" onSubmit={handleSubmit}>
       <TextInput
         ref={inputRef}
         value={values.title}
@@ -85,17 +85,17 @@ const CreateQuestionForm = ({
       />
 
       <Switch
-        style={{ marginTop: "10px" }}
+        className="question-form__switch"
         checked={values.primary}
         onChange={(event) => {
           handleChange("primary")(event);
         }}
-        label={`Positive answer to question indicade aswer ${
+        label={`Positive answer to question indicade answer ${
           values.primary ? "primary" : "secondary"
         }`}
       ></Switch>
 
-      <Button className={classes.submitButton} type="submit">
+      <Button className="question-form__submit-button" type="submit">
         {createMutation.isLoading || updateMutation.isLoading
           ? "Loading"
           : isCreate

@@ -20,16 +20,16 @@ export const TrendIcon = () => {
 
 export const SecondaryIcon = () => {
   return (
-    <ThemeIcon style={{ backgroundColor: "#FEC92D" }} size={30} radius="xl">
-      <Text style={{ color: "#2b2b2b" }}>S</Text>
+    <ThemeIcon className="survey-edit__secondary-icon" size={30} radius="xl">
+      <Text className="survey-edit__secondary-icon-text">S</Text>
     </ThemeIcon>
   );
 };
 
 export const PrimaryIcon = () => {
   return (
-    <ThemeIcon style={{ backgroundColor: "#48bd66" }} size={30} radius="xl">
-      <Text style={{ color: "#2b2b2b" }}>P</Text>
+    <ThemeIcon className="survey-edit__primary-icon" size={30} radius="xl">
+      <Text className="survey-edit__primary-icon-text">P</Text>
     </ThemeIcon>
   );
 };

@@ -8,7 +8,8 @@ import { useMutation } from "react-query";
 import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
 import { queryClient } from "App";
 import { FullSurvey } from "team-fingerprints-common";
-import { useStyles } from "./styles";
+
+import "./styles.sass";
 
 const SurveyForm = ({
   initialValues,
@@ -18,7 +19,6 @@ const SurveyForm = ({
   onClose: () => void;
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { classes } = useStyles();
   const isUpdate = !!initialValues;
 
   const onSuccess = () => {
@@ -66,7 +66,7 @@ const SurveyForm = ({
   }, []);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="survey-form" onSubmit={handleSubmit}>
       <TextInput
         ref={inputRef}
         required
@@ -76,7 +76,7 @@ const SurveyForm = ({
         onChange={handleChange("title")}
       />
 
-      <Button className={classes.submitButton} type="submit">
+      <Button className="survey-form__submit-button" type="submit">
         {createMutation.isLoading || updateMutation.isLoading
           ? "Loading"
           : isUpdate

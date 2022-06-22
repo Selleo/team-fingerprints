@@ -17,7 +17,8 @@ import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
 import ErrorLoading from "components/ErrorLoading";
 
 import { queryClient } from "App";
-import { useStyles } from "./styles";
+
+import "./styles.sass";
 
 type CompanyResponse = {
   company: Company;
@@ -27,7 +28,6 @@ type CompanyResponse = {
 const CompaniesManagment = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [addTeamModalVisible, setTeamModalVisible] = useState(false);
   const { onErrorWithTitle } = useDefaultErrorHandler();
@@ -108,27 +108,27 @@ const CompaniesManagment = () => {
   }
 
   return (
-    <>
+    <div className="company-panel">
       <BackToScreen name="your companies and roles" />
-      <div className={classes.header}>
-        <h1 className={classes.headerTitle}>
+      <div className="company-panel__header">
+        <h1 className="company-panel__title">
           Company Managment
           <ColoredShape
-            className={classes.companyShape}
+            className="company-panel__company-shape"
             color={company?.pointColor}
             shape={company?.pointShape}
           />
         </h1>
         <Button
           onClick={() => navigate(`surveys`)}
-          className={classes.addButton}
+          className="company-panel__add-button"
           color="green"
         >
           Show Results
         </Button>
         <Button
           onClick={() => setEditModalVisible(true)}
-          className={classes.addButton}
+          className="company-panel__add-button"
         >
           Edit company
         </Button>
@@ -157,7 +157,7 @@ const CompaniesManagment = () => {
         <Button
           onClick={() => navigate(`team/${team._id}`)}
           color="yellow"
-          className={classes.teamButton}
+          className="company-panel__team-button"
         >
           {team.name}
         </Button>
@@ -193,7 +193,7 @@ const CompaniesManagment = () => {
       >
         <TeamForm onSubmit={(values) => addNewTeam.mutate(values)} />
       </Modal>
-    </>
+    </div>
   );
 };
 

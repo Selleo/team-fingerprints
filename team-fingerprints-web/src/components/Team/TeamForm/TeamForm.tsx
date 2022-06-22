@@ -8,9 +8,9 @@ import {
   Text,
 } from "@mantine/core";
 import { useFormik } from "formik";
-
 import { Team } from "types/models";
-import { useStyles } from "./styles";
+
+import "./styles.sass";
 
 const TeamForm = ({
   initialValues,
@@ -20,7 +20,6 @@ const TeamForm = ({
   onSubmit: (values: Partial<Team>) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { classes } = useStyles();
 
   const { handleSubmit, handleChange, values } = useFormik<Partial<Team>>({
     initialValues: initialValues || {
@@ -41,7 +40,7 @@ const TeamForm = ({
   }, []);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="team-form" onSubmit={handleSubmit}>
       <TextInput
         ref={inputRef}
         required
@@ -78,7 +77,7 @@ const TeamForm = ({
         onChange={handleChange("pointColor")}
         size="md"
       />
-      <Button className={classes.submitButton} type="submit">
+      <Button className="team-form__submit-button" type="submit">
         Send
       </Button>
     </form>

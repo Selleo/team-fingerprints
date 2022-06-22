@@ -15,7 +15,6 @@ import SurveyList from "components/SurveyList";
 import LandingPage from "routes/LandingPage";
 
 import { queryClient } from "App";
-import "login-gateway.sass";
 
 const LoginGateway = () => {
   const { isAuthenticated, isLoading } = useAuth0();

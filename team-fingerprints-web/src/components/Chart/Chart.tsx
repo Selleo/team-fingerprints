@@ -212,8 +212,8 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   const renderRow = (item: TrendToDisplay, index: number) => {
     const firstRow = index === 0;
     return (
-      <tr key={index}>
-        <td className="tg-0left" ref={data}>
+      <tr className="chart__row" key={index}>
+        <td className="chart__left" ref={data}>
           {item.trendSecondary}
         </td>
         {firstRow && (
@@ -221,14 +221,14 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
             {resultChart}
           </td>
         )}
-        <td className="tg-0right">{item.trendPrimary}</td>
+        <td className="chart__right">{item.trendPrimary}</td>
       </tr>
     );
   };
 
   return (
     <div className="chart" ref={chart}>
-      <table className="tg">
+      <table className="chart__table">
         <thead>
           {userMappedTrendsData.map((item: TrendToDisplay, index: number) => {
             return renderRow(item, index);

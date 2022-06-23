@@ -47,7 +47,7 @@ const CompaniesManagment = () => {
   );
 
   const company = data?.company;
-  const companyFormInitialValues: any = {
+  const companyFormInitialValues: Partial<Company> = {
     ...company,
     pointShape: company?.pointShape || "square",
     pointColor: company?.pointColor || "#ffffff",
@@ -153,8 +153,9 @@ const CompaniesManagment = () => {
           Create new team
         </Button>
       </Group>
-      {company?.teams.map((team) => (
+      {company?.teams?.map((team) => (
         <Button
+          key={team._id}
           onClick={() => navigate(`team/${team._id}`)}
           color="yellow"
           className="company-panel__team-button"

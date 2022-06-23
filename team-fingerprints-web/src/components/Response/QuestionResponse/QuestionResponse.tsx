@@ -23,7 +23,10 @@ const OPTIONS = [
   { value: "5", label: "strongly agree" },
 ];
 
-type QuestionWithAnswer = { question: Question; answer: any };
+type QuestionWithAnswer = {
+  question: Question;
+  answer: Answer;
+};
 
 export default function QuestionResponse({
   refetch,
@@ -52,7 +55,7 @@ export default function QuestionResponse({
     return result;
   }, [questionIndex, numberOfQuestions]);
 
-  const dotPosition = (value: any) => {
+  const dotPosition = (value: number) => {
     const x = value - 1;
     const result = (x / (OPTIONS.length - 1)) * 100;
 
@@ -91,7 +94,7 @@ export default function QuestionResponse({
   );
 
   const setAndSaveNewValue = (val: string) => {
-    setLiveValue(val);
+    setLiveValue(toNumber(val));
     responseMutation.mutate({
       questionId: currentQuestion.question._id,
       value: toNumber(val),
@@ -170,13 +173,15 @@ export default function QuestionResponse({
       <div className="response__answers">
         {OPTIONS.map((option) => (
           <label
-            className={`response__wrapper offset-${dotPosition(option.value)}`}
+            className={`response__wrapper offset-${dotPosition(
+              toNumber(option.value)
+            )}`}
             htmlFor={option.value}
           >
             <span className="response__label">{option.label}</span>
             <div
               className={classNames("response__input", {
-                "--checked": option.value == liveValue,
+                "--checked": toNumber(option.value) == liveValue,
               })}
             ></div>
             <input
@@ -186,7 +191,7 @@ export default function QuestionResponse({
               id={option.value}
               type="checkbox"
               onChange={() => {
-                option.value == liveValue
+                toNumber(option.value) == liveValue
                   ? setAndSaveNewValue("")
                   : setAndSaveNewValue(option.value);
               }}

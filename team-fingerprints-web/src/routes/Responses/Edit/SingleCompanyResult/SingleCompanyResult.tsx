@@ -1,19 +1,23 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { values } from "lodash";
 import { FC, useEffect } from "react";
 import { useQuery } from "react-query";
-import { Company } from "types/models";
 import SingleTeamResult from "../SingleTeamResult";
+import { Company, CategoryResults } from "types/models";
 import { SimpleTeamType } from "../SingleTeamResult/SingleTeamResult";
 
 interface IProps {
   companyId: string;
   surveyId: string;
-  setDataForCompany: (companyId: string, data: any, hidden: boolean) => void;
+  setDataForCompany: (
+    companyId: string,
+    data: CategoryResults[],
+    hidden: boolean
+  ) => void;
   setDataForTeam: (
     companyId: string,
     teamInfo: SimpleTeamType,
-    data: any,
+    data: CategoryResults[],
     hidden: boolean
   ) => void;
   teamId: string;
@@ -27,17 +31,17 @@ const SingleCompanyResult: FC<IProps> = ({
   setDataForTeam,
   hidden = false,
 }) => {
-  const { data } = useQuery<any, Error>(
+  const { data } = useQuery<{ [key: string]: CategoryResults }, AxiosError>(
     `surveyResultsAll-${surveyId}-${companyId}`,
     async () => {
-      const { data } = await axios.get<any>(
+      const { data } = await axios.get<{ [key: string]: CategoryResults }>(
         `/survey-results/${surveyId}/companies/${companyId}`
       );
       return data;
     }
   );
 
-  const { data: companyData } = useQuery<{ company: Company }, Error>(
+  const { data: companyData } = useQuery<{ company: Company }, AxiosError>(
     ["teams", companyId],
     async () => {
       const { data } = await axios.get<{ company: Company }>(

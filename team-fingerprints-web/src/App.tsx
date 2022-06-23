@@ -1,4 +1,4 @@
-import { Auth0Provider } from "@auth0/auth0-react";
+import { AppState, Auth0Provider } from "@auth0/auth0-react";
 import { QueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import LoginGateway from "./LoginGateway";
@@ -15,7 +15,7 @@ export const queryClient = new QueryClient({
 
 const App = () => {
   const navigate = useNavigate();
-  const onRedirectCallback = (appState: any) => {
+  const onRedirectCallback = (appState: AppState) => {
     if (appState?.returnTo) {
       navigate(appState.returnTo);
     }

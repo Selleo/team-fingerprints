@@ -21,7 +21,7 @@ const CompanyForm = ({
   initialValues,
   onClose,
 }: {
-  initialValues?: Company;
+  initialValues?: Partial<Company>;
   onClose: () => void;
 }) => {
   const { invalidateProfile } = useContext(ProfileContext);

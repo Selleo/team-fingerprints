@@ -7,7 +7,13 @@ import Chart from "components/Chart";
 import SurveyFinishedWrapper from "components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 import SingleCompanyResult from "./../SingleCompanyResult/SingleCompanyResult";
 
-import { AdditionalData, ComplexRole } from "types/models";
+import {
+  AdditionalData,
+  ComplexRole,
+  SurveyDetails,
+  SurveyAnswers,
+  CategoryResults,
+} from "types/models";
 import { Switch } from "components/Switch";
 import { ProfileContext } from "routes";
 import { ReactComponent as CircleIcon } from "assets/shapes/Circle.svg";
@@ -16,7 +22,7 @@ import { SimpleTeamType } from "./../SingleTeamResult/SingleTeamResult";
 type ResultsPerCompany = {
   [key: string]: {
     role: ComplexRole;
-    categoriesArray: any[];
+    categoriesArray: CategoryResults[];
     team: boolean;
     hidden: boolean;
     teamInfo?: SimpleTeamType;
@@ -24,12 +30,14 @@ type ResultsPerCompany = {
 };
 
 type Props = {
-  surveyFinished: any;
-  survey: any;
+  surveyFinished: { _id: string; surveysAnswers: SurveyAnswers };
+  survey?: SurveyDetails;
 };
 
 const SurveyResults = ({ surveyFinished, survey }: Props) => {
-  const [visibleData, setVisibleData] = useState<any>({});
+  const [visibleData, setVisibleData] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const { profile } = useContext(ProfileContext);
   const [showMyResults, setShowMyResults] = useState(true);
   const [companiesResults, setCompaniesResult] = useState<ResultsPerCompany>(
@@ -96,7 +104,11 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
 
   const setDataForCompany =
     (role: ComplexRole) =>
-    (companyId: string, categoriesArray: any[], hidden: boolean) => {
+    (
+      companyId: string,
+      categoriesArray: CategoryResults[],
+      hidden: boolean
+    ) => {
       setCompaniesResult((prev) => ({
         ...prev,
         [companyId]: { categoriesArray, role, team: false, hidden },
@@ -108,8 +120,7 @@ const SurveyResults = ({ surveyFinished, survey }: Props) => {
     (
       _companyId: string,
       teamInfo: SimpleTeamType,
-      categoriesArray: any[],
-      hidden: boolean
+      categoriesArray: CategoryResults[]
     ) => {
       setCompaniesResult((prev) => ({
         ...prev,

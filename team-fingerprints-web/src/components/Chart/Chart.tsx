@@ -44,15 +44,15 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const pixelRatio = window.devicePixelRatio;
-  const ref = useRef<any>(null);
-  const canvas = useRef<any>(null);
-  const chart = useRef<any>(null);
-  const data = useRef<any>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const chart = useRef<HTMLDivElement>(null);
+  const data = useRef<HTMLTableDataCellElement>(null);
 
   // responsive width and height
   useEffect(() => {
-    setWidth(ref.current?.clientWidth);
-    setHeight(ref.current?.clientHeight);
+    setWidth(ref.current?.clientWidth || 0);
+    setHeight(ref.current?.clientHeight || 0);
   }, [screenWidth]);
 
   const displayWidth = Math.floor(pixelRatio * width);
@@ -69,7 +69,12 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   const numberOfRows = userMappedTrendsData.length;
 
   const renderResults = useCallback(
-    (data: TrendToDisplay[], ctx: any, color: string, shape?: Shape) => {
+    (
+      data: TrendToDisplay[],
+      ctx: CanvasRenderingContext2D,
+      color: string,
+      shape?: Shape
+    ) => {
       const dotsPositions: { x: number; y: number }[] = [];
       //position of dots
       if (data.length !== numberOfRows) {
@@ -182,8 +187,9 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   ]);
 
   const resultChart = useMemo(() => {
-    const dataWidth = data.current?.clientHeight * 4;
-    const chartWidth = chart.current?.clientWidth;
+    const dataWidth = (data.current?.clientWidth || 1) * 2;
+    const chartWidth = chart.current?.clientWidth || 1;
+
     return (
       <div
         style={{

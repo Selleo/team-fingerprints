@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { find, flatMapDeep, get, isEmpty, last, size, sortBy } from "lodash";
@@ -10,7 +10,7 @@ import QuestionResponse from "components/Response/QuestionResponse";
 import BackToScreen from "components/BackToScreen/BackToScreen";
 import SurveyResults from "./SurveyResults";
 
-import { SurveyDetails } from "types/models";
+import { SurveyDetails, SurveyAnswers } from "types/models";
 
 export default function Edit() {
   const { onErrorWithTitle } = useDefaultErrorHandler();
@@ -29,10 +29,16 @@ export default function Edit() {
     isLoading: isLoadingSurveyFinished,
     data: surveyFinished,
     refetch: refetchIsFinished,
-  } = useQuery<any, Error>(`surveyFinishedOne-${surveyId}`, async () => {
-    const { data } = await axios.get<any>(`/survey-answers/${surveyId}`);
-    return data;
-  });
+  } = useQuery<{ _id: string; surveysAnswers: SurveyAnswers }, AxiosError>(
+    `surveyFinishedOne-${surveyId}`,
+    async () => {
+      const { data } = await axios.get<{
+        _id: string;
+        surveysAnswers: SurveyAnswers;
+      }>(`/survey-answers/${surveyId}`);
+      return data;
+    }
+  );
 
   const finishSurvey = useMutation(
     async () => {
@@ -52,10 +58,16 @@ export default function Edit() {
     error: errorLoadingSurveyResponse,
     data: surveyResponse,
     refetch,
-  } = useQuery<any, Error>(`surveyResponseOne-${surveyId}`, async () => {
-    const { data } = await axios.get<any>(`/survey-answers/${surveyId}`);
-    return data;
-  });
+  } = useQuery<{ _id: string; surveysAnswers: SurveyAnswers }, Error>(
+    `surveyResponseOne-${surveyId}`,
+    async () => {
+      const { data } = await axios.get<{
+        _id: string;
+        surveysAnswers: SurveyAnswers;
+      }>(`/survey-answers/${surveyId}`);
+      return data;
+    }
+  );
 
   const questions = sortBy(
     flatMapDeep(

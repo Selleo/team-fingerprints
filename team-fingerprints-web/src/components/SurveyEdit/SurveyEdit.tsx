@@ -18,7 +18,9 @@ import ErrorLoading from "components/ErrorLoading";
 import { Category, Question, SurveyDetails, Trend } from "types/models";
 import { CategoryIcon, PrimaryIcon, SecondaryIcon, TrendIcon } from "./Icons";
 
-function Details() {
+import "./styles.sass";
+
+const SurveyEdit = () => {
   const { id } = useParams();
   const {
     isLoading,
@@ -41,18 +43,18 @@ function Details() {
     );
 
   return (
-    <div>
-      <h2>
+    <div className="survey-edit">
+      <h2 className="survey-edit__title">
         {survey.title}
         <Badge
-          style={{ marginLeft: "10px", top: 0 }}
+          className="survey-edit__badge"
           variant={survey.isPublic ? "dot" : "outline"}
         >
           {survey.isPublic ? "Public" : "Not public"}
         </Badge>
       </h2>
       <AddCategoryButton surveyId={survey._id} />
-      <List style={{ padding: "10px" }}>
+      <List className="survey-edit__category-list">
         {survey.categories.map((category: Category) => (
           <List.Item icon={<CategoryIcon />}>
             <Group>
@@ -65,18 +67,20 @@ function Details() {
                 />
               )}
             </Group>
-            <Group style={{ marginTop: "10px" }}>
+            <Group className="survey-edit__add-trend">
               <AddTrendButton surveyId={survey._id} categoryId={category._id} />
             </Group>
-            <List style={{ padding: "10px" }}>
+            <List className="survey-edit__category-list">
               {category.trends.map((trend: Trend) => {
                 return (
                   <List.Item icon={<TrendIcon />}>
                     <Group>
-                      <Text color="#48bd66">
+                      <Text className="survey-edit__primary">
                         primary: <strong>{trend.primary}</strong>
                       </Text>
-                      <Text color="#FEC92D">secondary: {trend.secondary}</Text>
+                      <Text className="survey-edit__secondary">
+                        secondary: {trend.secondary}
+                      </Text>
                       <EditTrendButton
                         trend={trend}
                         surveyId={survey._id}
@@ -90,7 +94,7 @@ function Details() {
                         />
                       )}
                     </Group>
-                    <Group style={{ marginTop: "10px" }}>
+                    <Group className="survey-edit__add-question">
                       <AddQuestionButton
                         trendId={trend._id}
                         surveyId={survey._id}
@@ -98,9 +102,7 @@ function Details() {
                       />
                     </Group>
                     <List
-                      style={{
-                        padding: "10px",
-                      }}
+                      className="survey-edit__questions-list"
                       spacing="xs"
                       size="sm"
                       center
@@ -142,6 +144,6 @@ function Details() {
       </List>
     </div>
   );
-}
+};
 
-export default Details;
+export default SurveyEdit;

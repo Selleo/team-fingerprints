@@ -2,8 +2,9 @@ import { Button } from "@mantine/core";
 import { useFormik } from "formik";
 
 import { ReactMultiEmail, isEmail } from "react-multi-email";
-import { useStyles } from "./styles";
 import "react-multi-email/style.css";
+
+import "./styles.sass";
 
 interface FormValues {
   emails: string[];
@@ -16,8 +17,6 @@ const EmailForm = ({
   initialValues?: FormValues;
   onSubmit: (val: Partial<FormValues>) => void;
 }) => {
-  const { classes } = useStyles();
-
   const { handleSubmit, values, setFieldValue } = useFormik<
     Partial<FormValues>
   >({
@@ -28,7 +27,7 @@ const EmailForm = ({
   });
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="email-form" onSubmit={handleSubmit}>
       <ReactMultiEmail
         placeholder="placeholder"
         emails={values.emails}
@@ -54,11 +53,11 @@ const EmailForm = ({
         }}
       />
 
-      <p className={classes.info}>
+      <p className="email-form__info">
         You can parse there emails separated with spaces
       </p>
 
-      <Button className={classes.submitButton} type="submit">
+      <Button className="email-form__submitButton" type="submit">
         Send
       </Button>
     </form>

@@ -6,7 +6,7 @@ import { filter } from "lodash";
 
 import LoadingData from "components/LoadingData";
 import ErrorLoading from "components/ErrorLoading";
-import Chart from "components/Chart/Chart";
+import Chart from "components/Chart";
 import BackToScreen from "components/BackToScreen/BackToScreen";
 import SurveyFinishedWrapper from "components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 import FiltersSets from "components/FiltersSets";

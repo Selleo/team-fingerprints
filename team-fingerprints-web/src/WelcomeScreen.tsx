@@ -6,6 +6,8 @@ import { ReactComponent as Thunder } from "./assets/Thunder.svg";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
+import "./welcome-screen.sass";
+
 const WelcomeScreen = () => {
   const { isLoading } = useAuth0();
   const navigate = useNavigate();

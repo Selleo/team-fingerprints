@@ -2,9 +2,12 @@ import axios from "axios";
 import { TrashIcon } from "@modulz/radix-icons";
 import { Button } from "@mantine/core";
 import { useMutation } from "react-query";
-import { queryClient } from "../../../App";
-import useDefaultErrorHandler from "../../../hooks/useDefaultErrorHandler";
-import ModalConfirmTrigger from "../../Modals/ModalConfirmTrigger";
+
+import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
+import { queryClient } from "App";
+
+import "./styles.sass";
 
 const DeleteCategoryButton = ({
   categoryId,
@@ -35,13 +38,13 @@ const DeleteCategoryButton = ({
       }}
       renderTrigger={(setModalVisible) => (
         <Button
+          className="deleteCategory"
           leftIcon={<TrashIcon />}
           variant="outline"
           onClick={() => {
             setModalVisible(true);
           }}
           compact
-          style={{ color: "#ff0000", borderColor: "#ff0000" }}
         >
           Delete Category
         </Button>

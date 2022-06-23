@@ -16,7 +16,8 @@ import BackToScreen from "components/BackToScreen";
 
 import { CompanyRole, Team } from "types/models";
 import { queryClient } from "App";
-import { useStyles } from "./styles";
+
+import "./styles.sass";
 
 type TeamResponse = {
   team: Team;
@@ -27,7 +28,6 @@ const TeamManagment = () => {
   const navigation = useNavigate();
   const { onErrorWithTitle } = useDefaultErrorHandler();
   const params = useParams();
-  const { classes } = useStyles();
   const [editModalVisible, setEditModalVisible] = useState(false);
 
   const [whitelistModalVisible, setWhitelistModalVisible] = useState(false);
@@ -145,13 +145,13 @@ const TeamManagment = () => {
   if (error) return <ErrorLoading title="Can't load team info and roles" />;
 
   return (
-    <>
+    <div className="team-panel">
       <BackToScreen name="Company Management" />
-      <div className={classes.header}>
-        <h1 className={classes.headerTitle}>
+      <div className="team-panel__header">
+        <h1 className="team-panel__title">
           Team Managment
           <ColoredShape
-            className={classes.teamShape}
+            className="team-panel__team-shape"
             color={team?.pointColor}
             shape={team?.pointShape}
           />
@@ -160,28 +160,30 @@ const TeamManagment = () => {
         <Group>
           <Button
             onClick={() => navigation(`surveys`)}
-            className={classes.addButton}
+            className="team-panel__add-button"
             color="green"
           >
             Show Results
           </Button>
           <Button
             onClick={() => setEditModalVisible(true)}
-            className={classes.addButton}
+            className="team-panel__add-button"
           >
             Edit team
           </Button>
           <Button
             color="red"
             onClick={() => deleteTeamMuatation.mutate()}
-            className={classes.addButton}
+            className="team-panel__add-button"
           >
             Remove team
           </Button>
         </Group>
       </div>
-      <h2>Team Name: {team?.name}</h2>
-      <h3>Team Description: {team?.description}</h3>
+      <h2 className="team-panel__name">Team Name: {team?.name}</h2>
+      <h3 className="team-panel__description">
+        Team Description: {team?.description}
+      </h3>
       <EmailWhitelist
         removeLeaderRole={removeLeaderRole.mutate}
         onRemove={removeRole.mutate}
@@ -215,7 +217,7 @@ const TeamManagment = () => {
           onSubmit={(values) => editTeamMuatation.mutate(values)}
         />
       </Modal>
-    </>
+    </div>
   );
 };
 

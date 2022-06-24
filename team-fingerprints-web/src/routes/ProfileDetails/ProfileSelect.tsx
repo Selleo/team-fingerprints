@@ -3,10 +3,10 @@ import { useCallback, useMemo, memo } from "react";
 import { ProfileSelectorProp } from "types/models";
 
 const classes = {
-  input: "profile__select",
-  label: "profile__select--label",
-  dropdown: "profile__select--dropdown",
   root: "profile__select--root",
+  label: "profile__select--label",
+  input: "profile__select",
+  dropdown: "profile__select--dropdown",
 };
 
 const MemoizedSelect = memo(Select);

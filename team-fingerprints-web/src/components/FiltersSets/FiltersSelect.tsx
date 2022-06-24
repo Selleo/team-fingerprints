@@ -20,6 +20,11 @@ type Values = {
 const selectClasses = {
   root: "filters__filter",
   label: "filters__filter-label",
+  input: "filters__filter-input",
+  dropdown: "filters__filter-dropdown",
+  value: "filters__filter-value",
+  values: "filters__filter-values",
+  searchInput: "filters__filter-placeholder",
 };
 
 const FiltersSelect = ({
@@ -43,8 +48,8 @@ const FiltersSelect = ({
     <MultiSelect
       classNames={selectClasses}
       key={filter._id}
-      label={filter.name}
-      placeholder="Select"
+      label={filterSet?.filters[filter.filterPath] && filter.name}
+      placeholder={filter.name}
       searchable
       clearable
       value={filterSet?.filters[filter.filterPath]}

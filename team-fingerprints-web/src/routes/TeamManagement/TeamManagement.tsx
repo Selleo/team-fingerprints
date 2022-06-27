@@ -190,15 +190,18 @@ const TeamManagment = () => {
         roles={roles}
         makeALeader={makeALeader.mutate}
       />
-      <hr />
-      <Button onClick={() => setWhitelistModalVisible(true)}>
-        Add email to whitelist
+
+      <Button
+        style={{ marginTop: "20px" }}
+        onClick={() => setWhitelistModalVisible(true)}
+      >
+        Add user by email
       </Button>
 
       <Modal
         opened={whitelistModalVisible}
         onClose={() => setWhitelistModalVisible(false)}
-        title="Add emails to whitelist"
+        title="Add user to the team"
       >
         <EmailForm
           onSubmit={(val) =>

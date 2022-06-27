@@ -142,8 +142,10 @@ const CompaniesManagment = () => {
         roles={roles}
         teams={company?.teams}
       />
-      <hr />
-      <Button onClick={() => setWhitelistModalVisible(true)}>
+      <Button
+        style={{ marginTop: "20px" }}
+        onClick={() => setWhitelistModalVisible(true)}
+      >
         Add user by email
       </Button>
 
@@ -178,7 +180,7 @@ const CompaniesManagment = () => {
       <Modal
         opened={whitelistModalVisible}
         onClose={() => setWhitelistModalVisible(false)}
-        title="Add user by email"
+        title="Add user to the company"
       >
         <EmailForm
           onSubmit={(val) =>

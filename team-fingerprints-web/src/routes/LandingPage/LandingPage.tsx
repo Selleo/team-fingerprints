@@ -1,11 +1,22 @@
-import { Button, Center, Title, Text } from "@mantine/core";
-import { ReactComponent as BGIcons } from "assets/BGIcons.svg";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button, Center, Title, Text } from "@mantine/core";
+import { ReactComponent as BGIcons } from "assets/BGIcons.svg";
 
 const LandingPage = () => {
   const { loginWithRedirect, isLoading } = useAuth0();
   const navigate = useNavigate();
+
+  const loginCheck = localStorage.getItem("loginCheck");
+
+  const redirectUrl = useMemo(() => {
+    if (loginCheck) {
+      return "/manage";
+    } else {
+      return "/";
+    }
+  }, [loginCheck]);
 
   return (
     <>
@@ -20,12 +31,13 @@ const LandingPage = () => {
         </Text>
         <Button
           className="login__button"
-          onClick={() =>
+          onClick={() => {
             loginWithRedirect({
               connection: "google-oauth2",
-              appState: { returnTo: "/" },
-            })
-          }
+              appState: { returnTo: redirectUrl },
+            });
+            localStorage.removeItem("loginCheck");
+          }}
         >
           {isLoading ? "Loading" : "Log in"}
         </Button>

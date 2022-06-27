@@ -1,12 +1,13 @@
-import LoadingData from "./components/LoadingData";
-import { Button, Center, Text, Title } from "@mantine/core";
-import { ReactComponent as Manager } from "./assets/Manager-background.svg";
-import { ReactComponent as Employer } from "./assets/Employer-background.svg";
-import { ReactComponent as Thunder } from "./assets/Thunder.svg";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button, Center, Text, Title } from "@mantine/core";
 
-import "./welcome-screen.sass";
+import LoadingData from "components/LoadingData";
+import { ReactComponent as Manager } from "assets/Manager-background.svg";
+import { ReactComponent as Employer } from "assets/Employer-background.svg";
+import { ReactComponent as Thunder } from "assets/Thunder.svg";
+
+import "welcome-screen.sass";
 
 const WelcomeScreen = () => {
   const { isLoading } = useAuth0();
@@ -31,7 +32,10 @@ const WelcomeScreen = () => {
           </Text>
           <Button
             className="login__button --manager"
-            onClick={() => navigate("/intro/leader")}
+            onClick={() => {
+              localStorage.setItem("loginCheck", "manager");
+              navigate("/intro/leader");
+            }}
           >
             {isLoading ? "Loading" : "Get Started"}
           </Button>
@@ -51,7 +55,10 @@ const WelcomeScreen = () => {
           </Text>
           <Button
             className="login__button"
-            onClick={() => navigate("/intro/member")}
+            onClick={() => {
+              localStorage.removeItem("loginCheck");
+              navigate("/intro/member");
+            }}
           >
             {isLoading ? "Loading" : "Get Started"}
           </Button>

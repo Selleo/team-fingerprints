@@ -12,7 +12,7 @@ const classes = {
 const MemoizedSelect = memo(Select);
 
 const ProfileSelect = (props: ProfileSelectorProp) => {
-  const { item, handleChange, handleSubmit, values } = props;
+  const { item, setFieldValue, handleSubmit, values } = props;
 
   const itemSelect = useMemo(() => {
     const data = [
@@ -27,10 +27,10 @@ const ProfileSelect = (props: ProfileSelectorProp) => {
 
   const onChangeCallback = useCallback(
     async (e) => {
-      await handleChange(item.filterPath)(e);
+      await setFieldValue(item.filterPath, e);
       await handleSubmit();
     },
-    [item.filterPath, handleChange, handleSubmit]
+    [item.filterPath, setFieldValue, handleSubmit]
   );
 
   return (

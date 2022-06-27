@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { isEmpty, omitBy, values as lodashValues } from "lodash";
@@ -11,6 +11,7 @@ import ModalWrapper from "components/Modals/ModalWrapper";
 
 import FiltersSelect from "./FiltersSelect";
 import {
+  CategoryResults,
   FilterSelect,
   Shape,
   FiltersSet,
@@ -59,12 +60,15 @@ const ResultsFilters = ({
     },
   });
 
-  useQuery<any, Error>(
+  useQuery(
     [`chartData-${filterSet._id}`, apiUrl, currentFiltersValues, showModal],
     async () => {
-      const { data } = await axios.get<any>(`/survey-results/${apiUrl}`, {
-        params: currentFiltersValues,
-      });
+      const { data } = await axios.get<{ [key: string]: CategoryResults }>(
+        `/survey-results/${apiUrl}`,
+        {
+          params: currentFiltersValues,
+        }
+      );
       const categoriesArray = lodashValues(data);
       changeFilterValue(filterSet?._id, "categories", categoriesArray);
     }
@@ -75,10 +79,12 @@ const ResultsFilters = ({
     setShowModal(false);
   };
 
-  const { data: availableFilters } = useQuery<any, Error>(
+  const { data: availableFilters } = useQuery<FilterSelect[], AxiosError>(
     ["surveyAvailableFilters", apiUrl],
     async () => {
-      const { data } = await axios.get<FiltersSet>(`/survey-filters/${apiUrl}`);
+      const { data } = await axios.get<FilterSelect[]>(
+        `/survey-filters/${apiUrl}`
+      );
       return data;
     }
   );

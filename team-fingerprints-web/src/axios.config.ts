@@ -1,11 +1,11 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { isEmpty } from "lodash";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.common["Authorization"] =
   "Bearer safdaifEUJIFGIWYUEFCCVWBevcfvq";
 
-const applyDefaultAPIVersioning = (url: string | undefined): string => {
+const applyDefaultAPIVersioning = (url?: string): string => {
   if (!url) {
     return "";
   }
@@ -19,9 +19,9 @@ const applyDefaultAPIVersioning = (url: string | undefined): string => {
 
 if (isEmpty((axios.interceptors.request as any).handlers)) {
   axios.interceptors.request.use(
-    (config: any) => {
+    (config: AxiosRequestConfig) => {
       const token = localStorage.getItem("token");
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers!.Authorization = `Bearer ${token}`;
       config.url = applyDefaultAPIVersioning(config.url);
       return config;
     },

@@ -71,14 +71,19 @@ export type Company = {
 };
 
 export type Answer = {
-  questionId: string;
+  questionId: string | ObjectIterator<Answer, boolean>;
   value: number;
 };
 
-export type SurveyResponse = {
-  questionId: string;
-  value: number;
-};
+export type SurveyAnswers = [
+  {
+    amountOfAnswers: number;
+    answers: Answer;
+    completionStatus: string;
+    surveyId: string;
+    surveyResult: CategoryResults[];
+  }
+];
 
 export type SurveyDetails = Survey & { categories: Category[] };
 
@@ -185,7 +190,7 @@ export type FormData = {
 
 export type ProfileSelectorProp = {
   item: Filter;
-  handleChange: (e: string | ChangeEvent<any>) => any;
+  setFieldValue: (field: string, value: string) => void;
   handleSubmit: () => void;
   values: FormData;
 };
@@ -194,5 +199,5 @@ export type FilterSelect = {
   name: string;
   _id: string;
   filterPath: string;
-  values: any;
+  values: [{ value: string; _id: string; label: string }];
 };

@@ -60,7 +60,7 @@ const ProfileDetails = () => {
     {} as FormData
   );
 
-  const { handleSubmit, handleChange, values } = useFormik<FormData>({
+  const { handleSubmit, setFieldValue, values } = useFormik<FormData>({
     enableReinitialize: true,
     initialValues,
     onSubmit: (values) => {
@@ -116,14 +116,14 @@ const ProfileDetails = () => {
             <ProfileSelect
               item={item}
               handleSubmit={handleSubmit}
-              handleChange={handleChange}
+              setFieldValue={setFieldValue}
               values={values}
             />
           ))}
         </ul>
       </div>
     );
-  }, [data, error, isLoading, values, handleSubmit, handleChange]);
+  }, [data, error, isLoading, values, handleSubmit, setFieldValue]);
 
   return (
     <div className="profile">

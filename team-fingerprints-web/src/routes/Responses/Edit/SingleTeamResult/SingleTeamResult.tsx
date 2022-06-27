@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { values } from "lodash";
 import { FC, useEffect } from "react";
 import { useQuery } from "react-query";
-import { Shape } from "types/models";
+import { Shape, CategoryResults } from "types/models";
 
 export type SimpleTeamType = {
   teamId: string;
@@ -17,7 +17,7 @@ interface IProps {
   setDataForTeam: (
     companyId: string,
     teamInfo: SimpleTeamType,
-    data: any,
+    data: CategoryResults[],
     hidden: boolean
   ) => void;
   teamInfo: SimpleTeamType;
@@ -31,10 +31,10 @@ const SingleTeamResult: FC<IProps> = ({
   teamInfo,
   hidden = false,
 }) => {
-  const { data } = useQuery<any, Error>(
+  const { data } = useQuery<{ [key: string]: CategoryResults }, AxiosError>(
     `surveyResultsAll-${surveyId}-${companyId}-${teamInfo.teamId}`,
     async () => {
-      const { data } = await axios.get<any>(
+      const { data } = await axios.get<{ [key: string]: CategoryResults }>(
         `/survey-results/${surveyId}/companies/${companyId}/teams/${teamInfo.teamId}`
       );
       return data;

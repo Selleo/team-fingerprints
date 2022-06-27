@@ -8,7 +8,7 @@ import { Button } from "@mantine/core";
 import LoadingData from "../LoadingData";
 import ResultsFilters from "./ResultsFilters";
 import { getRandomLightColor } from "utils/utils";
-import { FiltersSet, FilterSets, ChangeFilterValue } from "../../types/models";
+import { FiltersSet, FilterSets, ChangeFilterValue } from "types/models";
 
 import "./styles.sass";
 
@@ -33,7 +33,7 @@ const FiltersSets = ({
   >(
     ["filterSets", surveyId, companyId],
     async () => {
-      const { data } = await axios.get<any>(
+      const { data } = await axios.get<FilterSets>(
         `/filter-templates/${apiUrl}/filters`
       );
       return data;
@@ -55,7 +55,7 @@ const FiltersSets = ({
   }, [isPublic, filtersData]);
 
   const createMutation = useMutation(
-    async (filtersSet: any) => {
+    async (filtersSet: FiltersSet) => {
       return axios.post(`/filter-templates/${apiUrl}/filters`, filtersSet);
     },
     {
@@ -92,11 +92,13 @@ const FiltersSets = ({
 
   const createFilterSet = () => {
     const lightColor = getRandomLightColor();
+    const id = uniqueId();
 
     const newFilterSet = {
+      _id: id,
       name: `Filter Set`,
       pointColor: lightColor,
-      pointShape: "trapeze",
+      pointShape: "trapeze" as const,
       categories: [],
       visible: true,
       filters: { country: ["623ae947b92be5c33bfee380"] },
@@ -105,7 +107,6 @@ const FiltersSets = ({
     if (!isPublic) {
       createMutation.mutate(newFilterSet);
     } else {
-      const id = uniqueId();
       setFilterSets({
         ...filterSets,
         [id]: {

@@ -57,6 +57,7 @@ const SingleCompanyResult: FC<IProps> = ({
     <>
       {companyData?.company?.teams?.map?.((team) => (
         <SingleTeamResult
+          key={team._id}
           surveyId={surveyId}
           companyId={companyId}
           teamInfo={{

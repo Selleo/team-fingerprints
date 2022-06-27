@@ -144,10 +144,10 @@ const CompaniesManagment = () => {
       />
       <hr />
       <Button onClick={() => setWhitelistModalVisible(true)}>
-        Add email to whitelist
+        Add user by email
       </Button>
 
-      <Group>
+      <Group className="teams">
         <h2> Teams </h2>
         <Button onClick={() => setTeamModalVisible(true)}>
           Create new team
@@ -178,7 +178,7 @@ const CompaniesManagment = () => {
       <Modal
         opened={whitelistModalVisible}
         onClose={() => setWhitelistModalVisible(false)}
-        title="Add emails to whitelist"
+        title="Add user by email"
       >
         <EmailForm
           onSubmit={(val) =>

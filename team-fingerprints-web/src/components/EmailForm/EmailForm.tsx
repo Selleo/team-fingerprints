@@ -29,7 +29,7 @@ const EmailForm = ({
   return (
     <form className="email-form" onSubmit={handleSubmit}>
       <ReactMultiEmail
-        placeholder="placeholder"
+        placeholder="email"
         emails={values.emails}
         onChange={(_emails: string[]) => {
           setFieldValue("emails", _emails);
@@ -58,7 +58,7 @@ const EmailForm = ({
       </p>
 
       <Button className="email-form__submitButton" type="submit">
-        Send
+        Add
       </Button>
     </form>
   );

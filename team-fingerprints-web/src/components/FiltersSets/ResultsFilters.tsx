@@ -121,26 +121,28 @@ const ResultsFilters = ({
         <div className="filters__selects">
           <div className="filters__config">
             <div className="filters__appearance">
-              <div className="filters__section">Appearance</div>
+              <div className="filters__title">Appearance</div>
               <TextInput
-                className="filters__name-input"
+                classNames={{
+                  root: "filters__name",
+                  input: "filters__name-input",
+                  label: "filters__name-label",
+                }}
                 label="Name"
                 value={filterSetData.name}
                 onChange={(e) => {
                   changeFilterDataValue("name", e.target.value);
                 }}
               />
-              <div className="filters__shape-title">Shape</div>
               <div className="filters__shape-wrapper">
-                <div className="filters__shape">
-                  <ColoredShape
-                    shape={filterSetData?.pointShape}
-                    color={filterSetData?.pointColor}
-                  />
-                </div>
                 <Select
-                  className="filters__shape"
+                  classNames={{
+                    root: "filters__shape",
+                    input: "filters__shape-input",
+                    label: "filters__shape-label",
+                  }}
                   placeholder="Pick one"
+                  label="Shape"
                   value={filterSetData.pointShape}
                   data={[
                     { value: "triangle", label: "Triangle" },
@@ -152,11 +154,17 @@ const ResultsFilters = ({
                     changeFilterDataValue("pointShape", e)
                   }
                 />
+                <div className="filters__shape">
+                  <ColoredShape
+                    shape={filterSetData?.pointShape}
+                    color={filterSetData?.pointColor}
+                  />
+                </div>
               </div>
-              <div>
-                <label className="filters__shapes-label">Color</label>
+              <div className="filters__color">
+                <label className="filters__color-label">Color</label>
                 <ColorPicker
-                  className="filters__color"
+                  className="filters__color-picker"
                   format="hex"
                   value={filterSetData.pointColor}
                   size="md"
@@ -167,7 +175,7 @@ const ResultsFilters = ({
               </div>
             </div>
             <div className="filters__data">
-              <div>Data</div>
+              <div className="filters__title">Data</div>
               {availableFilters?.map((filter: FilterSelect) => (
                 <FiltersSelect
                   key={filter._id}

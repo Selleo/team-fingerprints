@@ -27,15 +27,6 @@
     border: none
     margin-bottom: 10px
 
-  &__shapes-label
-    display: inline-block
-    margin-bottom: 4px
-    font-size: 14px
-    font-weight: 500
-    margin-top: 10px
-    word-break: break-word
-    -webkit-tap-highlight-color: transparent
-
   &__selects
     width: 100%
 
@@ -55,27 +46,83 @@
     align-items: center
     width: 40px
 
+  &__name
+    position: relative
+    width: 100%
+
+  &__name:focus-within
+
+    .filters__name-input
+      border-color: $color-primary !important
+
   &__name-input
     background-color: #121212
+    border: 1px solid #fff
+    border-radius: 10px
+    height: 48px
 
-  &__section
-    margin-bottom: 10px
+  &__name-label
+    margin: 10px 0
+    font-size: 12px
+    line-height: 24px
+    padding: 0 10px
+    top: -22px
+    left: 10px
+    position: absolute
+    z-index: 1
+    background-color: #121212
 
-  &__shape-title
-    margin-top: 20px
+  &__title
+    margin-bottom: 20px
 
   &__shape-wrapper
     display: flex
     align-content: center
     justify-content: space-between
-    margin-left: 5px
 
   &__shape
-    margin-top: 10px
+    margin-top: 20px
     display: flex
     align-items: center
+    position: relative
+
+  &__shape:focus-within
+
+    .filters__shape-input
+      border-color: $color-primary !important
+
+  &__shape-input
+    background-color: #121212
+    border: 1px solid #fff
+    border-radius: 10px
+    height: 48px
+
+  &__shape-label
+    margin: 10px 0
+    font-size: 12px
+    line-height: 24px
+    padding: 0 10px
+    top: -22px
+    left: 10px
+    position: absolute
+    z-index: 1
+    background-color: #121212
 
   &__color
+    position: relative
+    margin-top: 20px
+
+  &__color-label
+    font-size: 12px
+    font-weight: 500
+    position: absolute
+    z-index: 1
+    top: -5px
+    background-color: #121212
+    padding: 5px
+    border-radius: 0 0 10px 0
+
+  &__color-picker
     width: 100%
 
   &__appearance
@@ -86,9 +133,54 @@
 
   &__filter
     margin: 10px 0
+    position: relative
+
+  &__filter:focus-within
+
+    .filters__filter-input
+      border-color: $color-primary !important
+
+  &__filter label
+    margin: 10px 0
+    font-size: 12px
+    line-height: 24px
+    padding: 0 10px
+    top: -22px
+    left: 10px
+    position: absolute
+    z-index: 1
+    background-color: #121212
+
+  &__filter-input
+    font-size: 16px
+    font-weight: 400
+    border: 1px solid #fff
+    border-radius: 10px
+    background-color: #121212
+    margin-bottom: 10px
+    padding: 6px 10px
+    height: auto
 
   &__filter-label
     text-transform: capitalize
+    font-size: 14px
+
+  &__filter-placeholder
+    text-transform: capitalize
+
+  &__filter-values
+    margin-left: 0
+
+  &__filter-value
+    border-radius: 5px
+    border: 1px solid #fff
+    margin-left: 5px
+    height: 25px
+
+  &__filter-dropdown
+    margin-top: -5px
+    background-color: #202020
+    border-radius: 10px
 
   &__new
     background-color: #121212
@@ -111,9 +203,6 @@
 
   &__buttons-wrapper
     margin-top: 0
-
-  &__shape
-    margin-top: 5px
 
   &__config
     display: flex
@@ -146,3 +235,7 @@
 
     &:hover
         background-color: $color-red-dark
+
+.mantine-MultiSelect-rightSection
+  top: -10px
+  right: 5px

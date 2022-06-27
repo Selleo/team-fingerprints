@@ -187,7 +187,7 @@ const Chart: FC<IProps> = ({ surveyResult, additionalData, showMe }) => {
   ]);
 
   const resultChart = useMemo(() => {
-    const dataWidth = (data.current?.clientWidth || 1) * 2;
+    const dataWidth = (data.current?.clientHeight || 1) * 4;
     const chartWidth = chart.current?.clientWidth || 1;
 
     return (

@@ -39,26 +39,35 @@ const TeamForm = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
+  const classNames = {
+    root: "team-form__input",
+    input: "team-form__input-area",
+    label: "team-form__label",
+  };
+
   return (
     <form className="team-form" onSubmit={handleSubmit}>
       <TextInput
+        classNames={classNames}
         ref={inputRef}
         required
-        label="Team name"
+        label={values.name && "Team name"}
         placeholder="Team name"
         value={values.name}
         onChange={handleChange("name")}
       />
 
       <Textarea
+        classNames={classNames}
         required
-        label="Team description"
+        label={values.description && "Team description"}
         placeholder="Team description"
         value={values.description}
         onChange={handleChange("description")}
       />
 
       <Select
+        classNames={{ ...classNames, dropdown: "team-form__dropdown" }}
         label="Shape"
         placeholder="Pick one"
         data={[
@@ -70,14 +79,15 @@ const TeamForm = ({
         onChange={(e: string) => handleChange("pointShape")(e)}
         value={values.pointShape}
       />
-      <Text>Shape color</Text>
+      <Text className="team-form__color-label">Color</Text>
       <ColorPicker
+        className="company-form__color"
         format="hex"
         value={values.pointColor}
         onChange={handleChange("pointColor")}
         size="md"
       />
-      <Button className="team-form__submit-button" type="submit">
+      <Button className="team-form__submit" type="submit">
         Send
       </Button>
     </form>

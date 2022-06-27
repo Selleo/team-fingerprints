@@ -15,7 +15,8 @@ import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
 import { queryClient } from "App";
 import { Company } from "types/models";
 import { ProfileContext } from "routes";
-import { useStyles } from "./styles";
+
+import "./styles.sass";
 
 const CompanyForm = ({
   initialValues,
@@ -26,7 +27,6 @@ const CompanyForm = ({
 }) => {
   const { invalidateProfile } = useContext(ProfileContext);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { classes } = useStyles();
   const isUpdate = !!initialValues;
   const { onErrorWithTitle } = useDefaultErrorHandler();
 
@@ -80,30 +80,40 @@ const CompanyForm = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
+  const classNames = {
+    root: "company-form__input",
+    input: "company-form__input-area",
+    label: "company-form__label",
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="company-form" onSubmit={handleSubmit}>
       <TextInput
+        classNames={classNames}
         ref={inputRef}
         required
-        label="Company name"
+        label={values.name && "Company name"}
         placeholder="Company name"
         value={values.name}
         onChange={handleChange("name")}
       />
       <Textarea
+        classNames={classNames}
         required
-        label="Company description"
+        label={values.description && "Company description"}
         placeholder="Company description"
         value={values.description}
         onChange={handleChange("description")}
       />
       <TextInput
-        label="Company domain"
+        classNames={classNames}
+        label={values.domain && "Company domain"}
         placeholder="Company domain"
         value={values.domain}
         onChange={handleChange("domain")}
       />
       <Select
+        classNames={{ ...classNames, dropdown: "company-form__dropdown" }}
         label="Shape"
         placeholder="Pick one"
         data={[
@@ -115,14 +125,15 @@ const CompanyForm = ({
         onChange={(e: string) => handleChange("pointShape")(e)}
         value={values.pointShape}
       />
-      <Text>Shape color</Text>
+      <Text className="company-form__color-label">Color</Text>
       <ColorPicker
+        className="company-form__color"
         format="hex"
         value={values.pointColor}
         onChange={handleChange("pointColor")}
         size="md"
       />
-      <Button className={classes.submitButton} type="submit">
+      <Button className="company-form__submit" type="submit">
         {createMutation.isLoading || updateMutation.isLoading
           ? "Loading"
           : isUpdate

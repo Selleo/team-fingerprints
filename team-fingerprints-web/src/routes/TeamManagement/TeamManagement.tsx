@@ -44,6 +44,8 @@ const TeamManagment = () => {
   const team = data?.team;
   const roles = data?.roles || ([] as CompanyRole[]);
 
+  const teamHasMember = roles.find((role) => role.userId);
+
   const addEmailToWhitelist = useMutation(
     (emails: string[]) => {
       return axios.post<string>(
@@ -160,6 +162,7 @@ const TeamManagment = () => {
             }}
             className="team-panel__add-button"
             color="green"
+            disabled={!!!teamHasMember}
           >
             Show Results
           </Button>

@@ -1,4 +1,7 @@
+# Backend server
+
 ## Setup app
+
 Run redis with docker before starting app
 ```bash
 $ docker-compose up --build

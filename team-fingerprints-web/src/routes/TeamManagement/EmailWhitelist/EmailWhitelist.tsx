@@ -1,8 +1,7 @@
 import { FC, useContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Table, Badge, Group } from "@mantine/core";
+import { Table, Badge, Button } from "@mantine/core";
 import { first, groupBy, keys } from "lodash";
-import { useNavigate } from "react-router-dom";
 
 import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 import { ProfileContext } from "routes";
@@ -31,21 +30,22 @@ const EmailWhitelist: FC<IProps> = ({
       elem.role === "COMPANY_ADMIN"
   );
   const { user } = useAuth0();
-  const navigate = useNavigate();
   const currentUserEmail = user?.email;
   const grouped = groupBy(roles, "email");
 
+  const currentLeader = roles.find((role) => role.role === "TEAM_LEADER");
+  const currentUserisLeader = currentUserEmail === currentLeader?.email;
+
   const rows = (keys(grouped) || []).map((email) => {
     const roles = grouped[email];
-    const thatsMe = email === currentUserEmail;
 
     return (
-      <tr className="team-table" key={email}>
+      <tr className="company-table" key={email}>
         <td>{email}</td>
-        <td>
+        <td className="company-table__content">
           {roles.map((role) => {
             const isALeader = role.role === "TEAM_LEADER";
-            const roleInTeam = isALeader ? "LEAD" : "MEMBER";
+            const roleInTeam = isALeader ? "TEAM LEADER" : "MEMBER";
 
             return (
               <Badge
@@ -80,6 +80,38 @@ const EmailWhitelist: FC<IProps> = ({
             );
           })}
         </td>
+        {currentUserIsCompanyAdmin && (
+          <td>
+            {!currentUserisLeader && email !== currentLeader?.email && (
+              <Button
+                className="company-table__make-leader"
+                size="xs"
+                compact
+                variant="outline"
+                onClick={() => {
+                  makeALeader?.(email);
+                }}
+                color="green"
+              >
+                Make a leader
+              </Button>
+            )}
+            {currentUserisLeader && email == currentLeader?.email && (
+              <Button
+                className="company-table__make-leader"
+                size="xs"
+                compact
+                variant="outline"
+                onClick={() => {
+                  onRemove?.(currentLeader?._id);
+                }}
+                color="red"
+              >
+                Remove a leader
+              </Button>
+            )}
+          </td>
+        )}
       </tr>
     );
   });
@@ -90,6 +122,7 @@ const EmailWhitelist: FC<IProps> = ({
         <tr>
           <th>Users</th>
           <th>Roles</th>
+          {currentUserIsCompanyAdmin && <th>Actions</th>}
         </tr>
       </thead>
       <tbody>{rows}</tbody>

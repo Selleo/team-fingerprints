@@ -162,7 +162,7 @@ const TeamManagment = () => {
             }}
             className="team-panel__add-button"
             color="green"
-            disabled={!!!teamHasMember}
+            disabled={Boolean(!teamHasMember)}
           >
             Show Results
           </Button>

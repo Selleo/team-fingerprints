@@ -1,11 +1,14 @@
 import { FC, useContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button, Table, Badge, Group } from "@mantine/core";
+import { Table, Badge, Group } from "@mantine/core";
 import { first, groupBy, keys } from "lodash";
 import { useNavigate } from "react-router-dom";
 
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 import { ProfileContext } from "routes";
 import { CompanyRole } from "types/models";
+
+import "./styles.sass";
 
 interface IProps {
   roles: CompanyRole[];
@@ -33,72 +36,51 @@ const EmailWhitelist: FC<IProps> = ({
   const grouped = groupBy(roles, "email");
 
   const rows = (keys(grouped) || []).map((email) => {
+    const roles = grouped[email];
     const thatsMe = email === currentUserEmail;
 
     return (
-      <>
-        <tr style={{ backgroundColor: "#444" }} key={email}>
-          <td>{email}</td>
-          <td></td>
-          <td></td>
-        </tr>
-        {grouped[email].map((role) => {
-          const isALeader = role.role === "TEAM_LEADER";
-          const roleInTeam = isALeader ? "LEAD" : "MEMBER";
+      <tr className="team-table" key={email}>
+        <td>{email}</td>
+        <td>
+          {roles.map((role) => {
+            const isALeader = role.role === "TEAM_LEADER";
+            const roleInTeam = isALeader ? "LEAD" : "MEMBER";
 
-          return (
-            <tr key={role._id}>
-              <td></td>
-              {thatsMe ? (
-                <td>That's you</td>
-              ) : (
-                <td>
-                  {user ? (
-                    <Badge>{roleInTeam}</Badge>
-                  ) : (
-                    <Badge>{`PENDING ${roleInTeam}`}</Badge>
-                  )}
-                </td>
-              )}
-              <td>
-                {thatsMe ? (
-                  <Button onClick={() => navigate("/manage")} color="blue">
-                    Self role managment
-                  </Button>
-                ) : (
-                  <Group>
-                    {
-                      <Button onClick={() => onRemove?.(role._id)} color="red">
-                        Remove
-                      </Button>
-                    }
-                    {currentUserIsCompanyAdmin && (
-                      <>
-                        {!isALeader && (
-                          <Button
-                            onClick={() => makeALeader?.(role.email)}
-                            color="green"
-                          >
-                            Make a leader
-                          </Button>
-                        )}
-                        {isALeader && (
-                          <Button
-                            onClick={() => removeLeaderRole?.(role.email)}
-                            color="red"
-                          >
-                            Remove leadership
-                          </Button>
-                        )}
-                      </>
+            return (
+              <Badge
+                size="lg"
+                variant="dot"
+                className="company-table__badge"
+                color={role.userId ? "green" : "yellow"}
+              >
+                <div className="company-table__badge-wrapper">
+                  <div>
+                    {!role.userId && (
+                      <span className="company-table__pending">PENDING </span>
                     )}
-                  </Group>
-                )}
-              </td>
-            </tr>
-          );
-        })}
-      </>
+                    {roleInTeam}
+                  </div>
+                  <ModalConfirmTrigger
+                    modalMessage="Are you sure you want to delete this role?"
+                    onConfirm={() => {
+                      onRemove?.(role._id);
+                    }}
+                    renderTrigger={(setModalVisible) => (
+                      <button
+                        onClick={() => setModalVisible(true)}
+                        className="company-table__x"
+                      >
+                        X
+                      </button>
+                    )}
+                  />
+                </div>
+              </Badge>
+            );
+          })}
+        </td>
+      </tr>
     );
   });
 
@@ -106,9 +88,8 @@ const EmailWhitelist: FC<IProps> = ({
     <Table>
       <thead>
         <tr>
-          <th>Whitelisted Emails</th>
-          <th>Is in system?</th>
-          <th>Actions</th>
+          <th>Users</th>
+          <th>Roles</th>
         </tr>
       </thead>
       <tbody>{rows}</tbody>

@@ -13,16 +13,12 @@ import useDefaultErrorHandler from "hooks/useDefaultErrorHandler";
 import ErrorLoading from "components/ErrorLoading";
 import ColoredShape from "components/ColoredShape";
 import BackToScreen from "components/BackToScreen";
+import ModalConfirmTrigger from "components/Modals/ModalConfirmTrigger";
 
-import { CompanyRole, Team } from "types/models";
+import { CompanyRole, Team, TeamResponse } from "types/models";
 import { queryClient } from "App";
 
 import "./styles.sass";
-
-type TeamResponse = {
-  team: Team;
-  roles: CompanyRole[];
-};
 
 const TeamManagment = () => {
   const navigation = useNavigate();
@@ -149,7 +145,7 @@ const TeamManagment = () => {
       <BackToScreen name="Company Management" />
       <div className="team-panel__header">
         <h1 className="team-panel__title">
-          Team Managment
+          Team Managment - {team?.name}
           <ColoredShape
             className="team-panel__team-shape"
             color={team?.pointColor}
@@ -159,7 +155,9 @@ const TeamManagment = () => {
 
         <Group>
           <Button
-            onClick={() => navigation(`surveys`)}
+            onClick={() => {
+              navigation(`surveys`);
+            }}
             className="team-panel__add-button"
             color="green"
           >
@@ -171,18 +169,26 @@ const TeamManagment = () => {
           >
             Edit team
           </Button>
-          <Button
-            color="red"
-            onClick={() => deleteTeamMuatation.mutate()}
-            className="team-panel__add-button"
-          >
-            Remove team
-          </Button>
+          <ModalConfirmTrigger
+            modalMessage="Are you sure you want to remove this team?"
+            onConfirm={() => {
+              deleteTeamMuatation.mutate();
+            }}
+            renderTrigger={(setModalVisible) => (
+              <Button
+                color="red"
+                onClick={() => setModalVisible(true)}
+                className="team-panel__add-button"
+              >
+                Remove team
+              </Button>
+            )}
+          />
         </Group>
       </div>
-      <h2 className="team-panel__name">Team Name: {team?.name}</h2>
       <h3 className="team-panel__description">
-        Team Description: {team?.description}
+        <span className="team-panel__description-header">Description:</span>
+        {team?.description}
       </h3>
       <EmailWhitelist
         removeLeaderRole={removeLeaderRole.mutate}
@@ -190,15 +196,18 @@ const TeamManagment = () => {
         roles={roles}
         makeALeader={makeALeader.mutate}
       />
-      <hr />
-      <Button onClick={() => setWhitelistModalVisible(true)}>
-        Add email to whitelist
+
+      <Button
+        style={{ marginTop: "20px" }}
+        onClick={() => setWhitelistModalVisible(true)}
+      >
+        Add user by email
       </Button>
 
       <Modal
         opened={whitelistModalVisible}
         onClose={() => setWhitelistModalVisible(false)}
-        title="Add emails to whitelist"
+        title="Add user to the team"
       >
         <EmailForm
           onSubmit={(val) =>

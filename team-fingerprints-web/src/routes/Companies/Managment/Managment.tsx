@@ -4,7 +4,7 @@ import times from "lodash/times";
 import { Button, Group, Modal, Skeleton } from "@mantine/core";
 import { useState } from "react";
 import { useMutation, useQuery } from "react-query";
-import { Company, CompanyRole, Team } from "types/models";
+import { Company, CompanyRole, Team, CompanyResponse } from "types/models";
 import { useNavigate, useParams } from "react-router-dom";
 
 import BackToScreen from "components/BackToScreen";
@@ -19,11 +19,6 @@ import ErrorLoading from "components/ErrorLoading";
 import { queryClient } from "App";
 
 import "./styles.sass";
-
-type CompanyResponse = {
-  company: Company;
-  roles: CompanyRole[];
-};
 
 const CompaniesManagment = () => {
   const navigate = useNavigate();
@@ -112,7 +107,7 @@ const CompaniesManagment = () => {
       <BackToScreen name="your companies and roles" />
       <div className="company-panel__header">
         <h1 className="company-panel__title">
-          Company Managment
+          Company Managment - {company?.name}
           <ColoredShape
             className="company-panel__company-shape"
             color={company?.pointColor}
@@ -120,7 +115,9 @@ const CompaniesManagment = () => {
           />
         </h1>
         <Button
-          onClick={() => navigate(`surveys`)}
+          onClick={() => {
+            navigate(`surveys`);
+          }}
           className="company-panel__add-button"
           color="green"
         >
@@ -133,21 +130,29 @@ const CompaniesManagment = () => {
           Edit company
         </Button>
       </div>
-      <h2>
-        {company?.name} - {company?.domain}
-      </h2>
-      <h3>{company?.description}</h3>
+      <h3 className="company-panel__description">
+        <span className="company-panel__description-header">Description: </span>
+        {company?.description}
+      </h3>
+      {company?.domain && (
+        <h3 className="company-panel__domain">
+          <span className="company-panel__domain-header">Domain:</span>{" "}
+          {company?.domain}
+        </h3>
+      )}
       <EmailWhitelist
         onRemove={removeRole.mutate}
         roles={roles}
         teams={company?.teams}
       />
-      <hr />
-      <Button onClick={() => setWhitelistModalVisible(true)}>
-        Add email to whitelist
+      <Button
+        className="company-panel__add-user-button"
+        onClick={() => setWhitelistModalVisible(true)}
+      >
+        Add user by email
       </Button>
 
-      <Group>
+      <Group className="teams">
         <h2> Teams </h2>
         <Button onClick={() => setTeamModalVisible(true)}>
           Create new team
@@ -178,7 +183,7 @@ const CompaniesManagment = () => {
       <Modal
         opened={whitelistModalVisible}
         onClose={() => setWhitelistModalVisible(false)}
-        title="Add emails to whitelist"
+        title="Add user to the company"
       >
         <EmailForm
           onSubmit={(val) =>

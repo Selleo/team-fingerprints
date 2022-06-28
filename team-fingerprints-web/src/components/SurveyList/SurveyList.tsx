@@ -10,7 +10,7 @@ import ErrorLoading from "components/ErrorLoading";
 import BackToScreen from "components/BackToScreen";
 import ResponseItem from "./ResponseItem";
 
-import { Survey } from "types/models";
+import { Survey, CompanyResponse, TeamResponse } from "types/models";
 import { ReactComponent as BGIcons } from "assets/BGIcons.svg";
 
 import "./styles.sass";
@@ -25,6 +25,28 @@ const SurveyList = () => {
     }
   );
 
+  const { data: company } = useQuery<CompanyResponse>(
+    `companies${companyId}`,
+    async () => {
+      const response = await axios.get<CompanyResponse>(
+        `/companies/${companyId}`
+      );
+      return response.data;
+    },
+    { enabled: !!companyId }
+  );
+
+  const { data: team } = useQuery<TeamResponse>(
+    `team${teamId}`,
+    async () => {
+      const response = await axios.get<TeamResponse>(
+        `/companies/${companyId}/teams/${teamId}`
+      );
+      return response.data;
+    },
+    { enabled: !!teamId }
+  );
+
   const navigateUrl = useMemo(() => {
     if (teamId) {
       return `/companies/${companyId}/team/${teamId}/surveys/`;
@@ -33,6 +55,16 @@ const SurveyList = () => {
       return `/companies/${companyId}/results/`;
     }
     return `/survey/`;
+  }, [teamId, companyId]);
+
+  const header = useMemo(() => {
+    if (teamId) {
+      return `Survey Results - ${team?.team.name}`;
+    }
+    if (companyId) {
+      return `Survey Results - ${company?.company.name}`;
+    }
+    return "Survey List";
   }, [teamId, companyId]);
 
   const content = useMemo(() => {
@@ -84,7 +116,8 @@ const SurveyList = () => {
   return (
     <div className="responses">
       <BackToScreen name={backToScreen} />
-      <h1 className="responses__headline">Surveys List</h1>
+
+      <h1 className="responses__headline">{header}</h1>
       {content}
       <div className="svg-background">
         <BGIcons />

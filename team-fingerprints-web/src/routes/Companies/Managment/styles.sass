@@ -1,3 +1,6 @@
+@import 'styles/base/variables'
+@import 'styles/base/mixins'
+
 .company-panel
 
   &__header
@@ -7,17 +10,45 @@
   &__title
     flex: 1
 
+  &__description
+    margin: 20px 0
+    font-size: 16px
+
+  &__description-header
+    color: $color-primary
+    display: block
+
+  &__domain
+    font-size: 16px
+    margin-bottom: 20px
+
+  &__domain-header
+    color: $color-primary
+    display: block
+
   &__company-shape
     margin-left: 20px
 
   &__add-button
     flex: 0
-    margin: 20px
+    margin-left: 20px
 
   &__team-button
     margin-bottom: 10px
-    margin-right: 10px
+    margin-right: 20px
+    background-color: unset
+    border: 1px solid #fff
+    border-radius: 10px
+    height: 150px
+    width: 150px
+    margin-top: 10px
 
+    &:hover
+      background-color: #0A0B0B
+      border-color: $color-primary
+
+  &__add-user-button
+    margin-top: 20px
 
 .teams
   margin-top: 50px

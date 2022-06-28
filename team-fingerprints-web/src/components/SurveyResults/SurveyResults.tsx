@@ -10,7 +10,12 @@ import Chart from "components/Chart";
 import BackToScreen from "components/BackToScreen/BackToScreen";
 import SurveyFinishedWrapper from "components/SurveyFinishedWrapper/SurveyFinishedWrapper";
 import FiltersSets from "components/FiltersSets";
-import { SurveyDetails, FilterSets } from "types/models";
+import {
+  SurveyDetails,
+  FilterSets,
+  CompanyResponse,
+  TeamResponse,
+} from "types/models";
 
 const SurveyResults = () => {
   const { companyId, surveyId, teamId } = useParams();
@@ -26,6 +31,28 @@ const SurveyResults = () => {
     );
     return data;
   });
+
+  const { data: company } = useQuery<CompanyResponse>(
+    `companies${companyId}`,
+    async () => {
+      const response = await axios.get<CompanyResponse>(
+        `/companies/${companyId}`
+      );
+      return response.data;
+    },
+    { enabled: !!companyId }
+  );
+
+  const { data: team } = useQuery<TeamResponse>(
+    `team${teamId}`,
+    async () => {
+      const response = await axios.get<TeamResponse>(
+        `/companies/${companyId}/teams/${teamId}`
+      );
+      return response.data;
+    },
+    { enabled: !!teamId }
+  );
 
   const api = useMemo(() => {
     if (teamId) {
@@ -44,6 +71,16 @@ const SurveyResults = () => {
       header: [`publicSurvey-${surveyId}`],
       url: `${surveyId}/companies/`,
     };
+  }, [teamId, companyId, surveyId]);
+
+  const description = useMemo(() => {
+    if (teamId) {
+      return team?.team.name;
+    }
+    if (companyId) {
+      return company?.company.name;
+    }
+    return "companies.";
   }, [teamId, companyId, surveyId]);
 
   const { isLoading: isLoadingSurvey, data: surveyResult } = useQuery<
@@ -70,7 +107,7 @@ const SurveyResults = () => {
       <div className="survey-response">
         <SurveyFinishedWrapper
           surveyTitle={survey?.title}
-          description="See trends in companies."
+          description={`See trends in ${description}`}
         >
           <FiltersSets
             filterSets={filterSets}

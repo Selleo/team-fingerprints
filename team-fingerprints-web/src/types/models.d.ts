@@ -201,3 +201,13 @@ export type FilterSelect = {
   filterPath: string;
   values: [{ value: string; _id: string; label: string }];
 };
+
+type CompanyResponse = {
+  company: Company;
+  roles: CompanyRole[];
+};
+
+type TeamResponse = {
+  team: Team;
+  roles: CompanyRole[];
+};
